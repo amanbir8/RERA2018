@@ -1,3 +1,4 @@
 *.nupkg
 CRUD/App_Data/ZipDownloads/
 .vs/
+CRUD/Dump20260512/
