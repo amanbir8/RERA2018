@@ -1,0 +1,178 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormN_PreHearingNotice
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">            
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                <tr>
+                    <td colspan="2" style="text-align:left;">
+                        @{
+                            var StrPathImg1 = "images/";
+                            var StrPathImg2 = "logo-big.png";
+                            var StrPathImg = StrPathImg1 + StrPathImg2;
+                        }
+                        <itext creationdate="@DateTime.Now.ToString()" producer="RazorPDF">
+                            <img height="95" width="95" src="@Context.Server.MapPath("~/" + StrPathImg)" />
+                        </itext>
+                    </td>
+                    <td colspan="2" style="text-align:center;">
+                        <label class="control-label"><strong>REAL  ESTATE  REGULATORY  AUTHORITY, PUNJAB</strong></label><br />
+                        <label class="control-label"><strong>Plot No. 3, Block B, 1st Floor, Sector 18, Madhya Marg, Chandigarh</strong></label><br />
+                        <label class="control-label"><strong>www.rera.punjab.gov.in</strong></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:right;">
+                        @{
+                            var varDate = System.DateTime.Now.Date;
+                        }
+                        @Html.DisplayName("Dated: " + varDate.ToString("dd/MM/yyyy"))
+                    </td>
+                </tr>
+            </table>
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                <tr>
+                    <td colspan="4" style="text-align:center;">
+                        <label class="control-label"><strong>NOTICE FOR APPEARANCE /</strong></label>
+                        <strong>@Html.DisplayFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } })</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:left;">
+                        @Html.DisplayFor(model => model.Complainant_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:center;">
+                        <label class="control-label"><strong>Versus</strong></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:left;">
+                        @Html.DisplayFor(model => model.Respondent_Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:center;">
+                        <label class="control-label"><strong>NOTICE TO RESPONDENT/s</strong></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:left;">
+                        <label class="control-label">To</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:left;">
+                        @Html.DisplayFor(model => model.Respondent_Name, new { htmlAttributes = new { @class = "form-control" } })<br />
+                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })<br />
+                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressDistrictCodeName, new { htmlAttributes = new { @class = "form-control" } })<br />
+                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressStateCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.DisplayName(", PIN ")
+                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:left;">
+                        @Html.DisplayName("Email: ")
+                        @Html.DisplayFor(model => model.Respondent_EmailAddress)<br />
+                        @if (Model.Respondent_MobileNumber != 0)
+                        {
+                            @Html.DisplayName("Phone: ")
+                            @Html.DisplayFor(model => model.Respondent_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                        }
+                    </td>
+                </tr>                
+                <tr>
+                    <td colspan="4" style="text-align:justify;">
+                        <br />
+                        <label class="control-label">Subject: - Notice under section 31 of Real Estate (Regulation and Development) Act, 2016 read with rule 36 (2) of Punjab State Real Estate (Regulation and Development) Rules, 2017.</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:justify;">
+                        <br />
+                        <label class="control-label">Whereas <b>Complaint No. - @Html.DisplayFor(model => model.ComplainantApplicant_RelatedComplaint_Code, new { htmlAttributes = new { @class = "form-control" } })</b> against you has been received with the Authority from the complainant(s) @Html.DisplayFor(model => model.Complainant_Name, new { htmlAttributes = new { @class = "form-control" } }) (copy enclosed herewith alongwith requisite documents). The complainant has alleged contraventions by you of various Sections/Rules of the Real Estate (Regulation and Development) Act, 2016 and Punjab State Real Estate (Regulation and Development) Rules, 2017.</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:justify;">
+                        <label class="control-label">By way of this notice, you are hereby, directed to appear in person or through your authorized representative before <strong>@Html.DisplayFor(model => model.B_column, new { htmlAttributes = new { @class = "form-control" } })</strong>, the Real Estate Regulatory Authority, Punjab situated at First Floor, Block-B, Plot Number-3, (Near Govt. Press UT), Madhya Marg, Sector-18A, Chandigarh, on <strong>@Html.DisplayFor(model => model.PreHearingDate, new { htmlAttributes = new { @class = "form-control" } })</strong> at <strong>@Html.DisplayFor(model => model.PreHearingTime, new { htmlAttributes = new { @class = "form-control" } })</strong>, to answer the alleged contraventions as mentioned above.</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:justify;">
+                        <label class="control-label">
+                            Further as per directions, you are required to file a reply to the complaint within <strong>@Html.DisplayFor(model => model.C_column, new { htmlAttributes = new { @class = "form-control" } }) days</strong> of the receipt of this mail and a copy of the same be supplied to complainant two days in advance by way of Registered post/Speed post or reputed Courier by that date. Hence fail not.
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:justify;">
+                        <label class="control-label">
+                            It is made clear that in case of your failure to attend the proceedings on the above mentioned fixed date, the matter will be decided in your absence and in accordance with law.
+                        </label>
+                    </td>
+                </tr>
+                @*<tr>
+                    <td colspan="4" style="text-align:left;">
+                        <br />
+                        <label class="control-label">
+                            Please view enclosed requisite documents herewith by clicking here (View Form and Documents (Link)).
+                        </label>
+                    </td>
+                </tr>*@
+                <tr>
+                    <td colspan="4" style="text-align:right;">
+                        <br />
+                        <br />
+                        <label class="control-label"><b>Registrar/Authorized Signatory</b></label>
+                        <br />
+                        <label class="control-label">Real Estate Regulatory Authority, Punjab</label>
+                    </td>
+                </tr>
+                @{
+                    var snocc = 0;
+                }
+                @if (Model.addmoreRespondent != null)
+                {
+                    if (Model.addmoreRespondent.Count > 0)
+                    {
+                        <tr>
+                            <td colspan="4" style="text-align:left;">
+                                <br />
+                                <label class="control-label">
+                                    <strong>CC:</strong>
+                                </label>
+                            </td>
+                        </tr>
+                        foreach (var item in Model.addmoreRespondent)
+                        {
+                            {
+                                snocc = snocc + 1;
+                            }
+                            <tr>
+                                <td colspan="4" style="text-align:left;">
+                                    @Html.DisplayName(@snocc.ToString())
+                                    @Html.DisplayName(") ")
+                                    @Html.DisplayFor(modelItem => item.Name_of_Respondant_or_Applicant)
+                                    @Html.DisplayName("(")
+                                    @Html.DisplayFor(modelItem => item.Service_AddressDistrictCode)
+                                    @Html.DisplayName(", ")
+                                    @Html.DisplayFor(modelItem => item.Service_AddressStateCode)
+                                    @Html.DisplayName(")")
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+            </table>
+
+        </div>
+    </div>
+</div>

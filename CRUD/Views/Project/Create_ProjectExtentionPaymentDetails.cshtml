@@ -1,0 +1,517 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_Project_ExtensionFormEPayment
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script>
+        $(function () {
+            //debugger;ProjectPayment_TitleCode
+            $('#ProjectPayment_TitleCode').change(function () {
+                $('#ProjectPayment_TitleName').empty();
+                $("input[name='ProjectPayment_TitleName']").val($("#ProjectPayment_TitleCode option:selected").text());
+                //alert($("#AgentPayment_TitleCode option:selected").text());
+        });
+    });
+</script>
+<script type="text/javascript">
+      //function showPhoto(input) {
+      //  if (input.files && input.files[0]) {
+      //      var filerdr = new FileReader();
+      //      filerdr.onload = function (e) {
+      //          $('#user_Photo').attr('src', e.target.result);
+      //      }
+      //      filerdr.readAsDataURL(input.files[0]);
+      //      //$(':input[type="submit"]').prop('disabled', false);
+      //      //$('#Create').prop('disabled', false);
+      //      $('#Photo_AddressShow').empty();
+      //      $("#Photo_AddressShow").val(input.files[0].name);
+      //  }
+      //}
+
+      var baseUrl = $('body').attr('data-base-url');
+
+      function showPhoto(input) {
+          if (input.files && input.files[0]) {
+              var filerdr = new FileReader();
+              filerdr.onload = function (e) {
+                  //$('#user_Photo').attr('src', e.target.result);
+                  var selectedFile = input.files[0];
+                  var imageType = 'image/jpeg';
+                  if (selectedFile.type.match(imageType)) {
+                      $('#user_Photo').attr('src', e.target.result);
+                  }
+                  if (selectedFile.type.match('application/pdf')) {
+                      var dataURL = baseUrl + 'images/pdf-icon.gif';
+                      $('#user_Photo').attr('src', dataURL);
+                      $('#user_Photo').attr('width', '78');
+                      $('#user_Photo').attr('height', '78');
+                  }
+              }
+              filerdr.readAsDataURL(input.files[0]);
+              //$(':input[type="submit"]').prop('disabled', false);
+              //$('#Create').prop('disabled', false);
+              $('#Photo_AddressShow').empty();
+              $("#Photo_AddressShow").val(input.files[0].name);
+          }
+      }
+</script>
+
+<script>
+$(function() {
+    $('[data-spzoom]').spzoom();
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $('table#promoter-documents-list-table').dataTable({
+        'aoColumnDefs': [{
+            'bSortable': false,
+            'aTargets': [5, 6]
+        }],
+        "language": {
+            "info": "Showing _START_ to _END_ of _TOTAL_ records",
+            "lengthMenu": "Show _MENU_ records"
+        },
+        "pagingType": "full_numbers"
+    });
+});
+</script>
+
+<script>
+    $(function () {
+        $('#Date_of_Payment_RegistrationFee').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+    });        
+</script>
+ 
+<script type="text/javascript">
+        $(document).ready(function () {
+
+            $(document).on('click', '#BtnDrp', function (e) {
+                e.preventDefault();
+                var proceedButton = $(this);
+                var drpText = $(document).find("select#ProjectPaymentRelated_ProjectRegistration_ID").val();
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                }
+                else {
+                    $("#idMainForm").show();                    
+                    $(proceedButton).parents('form').submit();
+                }
+            });
+
+            $(document).on('click', '#BtnMainform', function (e) {
+                var submitButton = $(this);
+                e.preventDefault();
+                var drpText = $(document).find("select#ProjectPaymentRelated_ProjectRegistration_ID").val();
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                    drpText = "";
+                    return false;
+                }
+                else {
+
+                    var files = $("#Photo_Address").get(0).files;
+                    var path = $('#user_Photo').attr('src').replace('/', '');
+
+                    if (files.length > 0 || path.length > 0) {
+                        $(submitButton).parents('form').submit();
+                    }
+                    else {
+                        alert("Bad request! Add Scan copy of DD/Banker Cheque file to Upload!")
+                        return false;
+                    }                   
+                }
+            });
+
+            //new PNotify({
+            //    title: 'Notification',
+            //    text: 'In addition to the project registration fee, INR 5000/- as annual portal convenience fee needs to be submitted.',
+            //    hide: false                
+            //});
+
+            new PNotify({
+                title: 'Notification',
+                text: 'All payments need to be in the form of a Demand Draft in favor of Real Estate Regulatory Authority, Punjab. Further, 50% of original registration fees (excluding late fee/ any penalty)/- as the extension of registration of project fee needs to be submitted.',
+                type: 'info',
+                hide: false                
+            });
+        });
+</script>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Form-E  [See rule 6(1)]  Application for Extension of Registration of Project</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+    <style>
+        .nav-tabs > li.active > a {
+            border-top: 2px solid #7bb73f;
+        }
+
+        .nav-tabs > li > a {
+            background-color: #eee;
+            color: #333;
+        }
+    </style>
+
+    <div class="row" style="margin-bottom:5px;">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="formE-tab" href="@Url.Action("Create_ProjectExtensionFormEDocument", "Project")" role="tab" aria-controls="formE" aria-selected="false">Step I (Form-E Details)</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link active" id="formEpayment-tab" href="@Url.Action("Create_ProjectExtentionPaymentDetails", "Project")" role="tab" aria-controls="formEpayment" aria-selected="true">Step II (Payment)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="formEreviewconfirm-tab" href="@Url.Action("Create_ProjectExtentionReviewConfirmDetails", "ProjectConfirmExtension")" role="tab" aria-controls="formEreviewconfirm" aria-selected="false">Step III (Review/Confirm)</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Step-II : Payment for Extension Fees (Form-E) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm("DropdownlistProjectExtensionPaymentDetails", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Project</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label">Select Project</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownListFor(m => m.ProjectPaymentRelated_ProjectRegistration_ID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "Select Project", new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            <div @if (Session["Project_id"] != null) { @Html.Raw("style=''")       } else { @Html.Raw("style='display: none;'")       }>
+                                @using (Html.BeginForm("Create_ProjectExtentionPaymentDetails", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(model => model.ProjectPayment_IndexID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.HiddenFor(model => model.ProjectPayment_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.HiddenFor(model => model.ProjectPaymentRelated_ProjectRegistration_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Payment Details</legend>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ProjectPayment_TitleCode, htmlAttributes: new { @class = "control-label mand" })
+                                                                @Html.HiddenFor(model => model.ProjectPayment_TitleName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            </div>
+                                                            @if (Model.PayFeeMaster != null)
+                                                            {                                                                
+                                                                <div class="col-md-3">                                                                   
+                                                                    @Html.DropDownListFor(model => model.ProjectPayment_TitleCode, new SelectList(Model.PayFeeMaster, "PaymentType_Code", "PaymentType"), "Select", new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.ProjectPayment_TitleCode, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3">
+                                                                    @Html.DropDownListFor(model => model.ProjectPayment_TitleCode, new SelectList(" "), "Select Payment Type", new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.ProjectPayment_TitleCode, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            }                                                            
+                                                            <div class="col-md-3">
+                                                                @{var listItems2 = new List<SelectListItem>
+                                                                        {
+
+                                                                            new SelectListItem {  Text = "Select" , Value=""  },
+                                                                            new SelectListItem {  Text = "Demand Draft" , Value="Demand Draft"  },
+                                                                            new SelectListItem {  Text = "Bankers Cheque" , Value="Bankers Cheque"  },
+                                                                        };
+                                                                }
+                                                                @Html.LabelFor(model => model.Payment_Mode, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.Payment_Mode, new SelectList(listItems2, "Value", "Text"), new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.Payment_Mode, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Registration_Fee, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="The project extension fee as 50% of original registration (project registration) fees (excluding late fee/ any penalty)/-">
+                                                                @Html.EditorFor(model => model.Registration_Fee, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.Registration_Fee, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            @*<div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Other_Fee, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.Other_Fee, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.Other_Fee, "", new { @class = "text-danger" })
+                                                            </div>*@
+                                                            @*<div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Bank_Charges, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.Bank_Charges, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.Bank_Charges, "", new { @class = "text-danger" })
+                                                            </div>*@
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Date_of_Payment_RegistrationFee, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.Date_of_Payment_RegistrationFee, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(model => model.Date_of_Payment_RegistrationFee, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                    
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Bank_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(m => m.Bank_Name, new SelectList(Model.BankMaster, "BankName", "BankName"), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.Bank_Name, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Branch_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.Branch_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.Branch_Name, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.DD_BankersCheque_Number, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.DD_BankersCheque_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.DD_BankersCheque_Number, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.DD_BankersCheque_Amount, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.DD_BankersCheque_Amount, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.DD_BankersCheque_Amount, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                    
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Upload Scan copy of DD/ Bankers Cheque</legend>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ImageDDorBankersCheque_FilePath, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <div class="input-group">
+                                                                    <label class="input-group-btn">
+                                                                        <span class="btn btn-primary">
+                                                                            Browse… <input type="file" id="Photo_Address" name="Photo_Address" onchange="showPhoto(this)" style="display: none;" multiple="" />
+                                                                        </span>
+                                                                    </label>
+                                                                    <input type="text" id="Photo_AddressShow" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.HiddenFor(model => model.ImageDDorBankersCheque_FilePath)
+                                                                @Html.HiddenFor(model => model.ImageDDorBankersCheque_FileName)
+                                                            </div>                                                           
+                                                            <div class="col-md-3">
+                                                                @if (Model.prpongoing != null)
+                                                                {
+                                                                    if (Path.GetExtension(Model.ImageDDorBankersCheque_FileName.ToString()) == ".pdf")
+                                                                    {
+                                                                        <a href="~/@Html.DisplayFor(model => model.ImageDDorBankersCheque_FilePath)@Html.DisplayFor(model => model.ImageDDorBankersCheque_FileName)" target="_blank">
+                                                                            <img id="user_Photo" src="~/images/pdf-icon.png" alt="Document" height="35" width="35" />
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a href="~/@Html.DisplayFor(model => model.ImageDDorBankersCheque_FilePath)@Html.DisplayFor(model => model.ImageDDorBankersCheque_FileName)" data-spzoom>
+                                                                            <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/@Html.DisplayFor(model => model.ImageDDorBankersCheque_FilePath)@Html.DisplayFor(model => model.ImageDDorBankersCheque_FileName)" alt="No Image" />
+                                                                        </a>
+                                                                    }
+                                                                }                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-6">
+                                                                @TempData["notice"]<br />Photo Should be in .jpg format and less than 512KB
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                @if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                {
+                                                    <input type="submit" value="@TempData["submitvalueFormEpayment"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                }
+                                                else
+                                                {
+                                                    if (Convert.ToInt32(TempData["ProjectExtensionFormIsdraftValue"]) == 1 || Convert.ToInt32(TempData["ProjectExtensionFormIsdraftValue"]) == 5 || Convert.ToInt32(TempData["ProjectExtensionFormIsdraftValue"]) == 6)
+                                                    {
+                                                        <input type="submit" value="@TempData["submitvalueFormEpayment"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="submit" value="@TempData["submitvalueFormEpayment"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                    }
+                                                }
+                                                &nbsp;
+                                                @Html.ActionLink("Reset", "Create_ProjectExtentionPaymentDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                }
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                        <thead>
+                                            <tr>
+                                                 <th>
+                                                    @Html.DisplayNameFor(model => model.ProjectPayment_TitleName)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.Bank_Name)
+                                                </th>
+                                                <th style="width:18%;">
+                                                    @Html.DisplayNameFor(model => model.DD_BankersCheque_Number)
+                                                </th>
+                                                <th style="width:18%;">
+                                                    @Html.DisplayNameFor(model => model.DD_BankersCheque_Amount)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.Date_of_Payment_RegistrationFee)
+                                                </th>
+                                                <th>@Html.DisplayName("View")</th>
+                                                <th style="width:9%;">@Html.DisplayName("Edit| Delete")</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.prpongoing)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.ProjectPayment_TitleName)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Bank_Name)
+                                                    </td>
+                                                    <td style="width:18%;">
+                                                        @Html.DisplayFor(modelItem => item.DD_BankersCheque_Number)
+                                                    </td>
+                                                    <td style="width:18%;">
+                                                        @Html.DisplayFor(modelItem => item.DD_BankersCheque_Amount)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Date_of_Payment_RegistrationFee)
+                                                    </td>
+                                                    <td align="center">
+                                                        <a href="~/@Html.DisplayFor(modelItem => item.ImageDDorBankersCheque_FilePath)/@Html.DisplayFor(modelItem => item.ImageDDorBankersCheque_FileName)" target="_blank" title="View Document"><i class="fa fa-external-link-square"></i></a>
+                                                    </td>
+                                                    <td align="center" style="width:9%;">
+                                                        @if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                        {
+                                                            @Html.ActionLink("View", "Edit_ProjectExtentionPaymentDetails", new { ProjectRegistration_ID = item.ProjectPaymentRelated_ProjectRegistration_ID, ProjectPayment_IndexID = item.ProjectPayment_IndexID, ProjectPayment_ID = item.ProjectPayment_ID }, new { @title = "View Payment Details" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("Edit", "Edit_ProjectExtentionPaymentDetails", new { ProjectRegistration_ID = item.ProjectPaymentRelated_ProjectRegistration_ID, ProjectPayment_IndexID = item.ProjectPayment_IndexID, ProjectPayment_ID = item.ProjectPayment_ID }, new { @title = "Edit Payment Details" }) @("| ")
+                                                            @Html.ActionLink("Delete", "Delete_ProjectExtentionPaymentDetails", new { ProjectRegistration_ID = item.ProjectPaymentRelated_ProjectRegistration_ID, ProjectPayment_IndexID = item.ProjectPayment_IndexID, ProjectPayment_ID = item.ProjectPayment_ID }, new { onclick = "return confirm('Do you want to delete?');", @title = "Delete Payment Details" })
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

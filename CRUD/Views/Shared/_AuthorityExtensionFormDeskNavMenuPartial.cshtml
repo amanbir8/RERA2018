@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNet.Identity
+
+<script>
+    $(document).ready(function () {
+        
+        var currentLoc = window.location.pathname;
+        var currentLocName = window.location.pathname.split('/');
+        var currentLink = currentLocName[3];
+        $(document).find('a.tab-btns[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff' });
+        $(document).find('a.btn-drpmenuitem[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff', 'background-color': '#064576' });
+        switch (currentLink) {
+            case 'Display_PromoterIndPrintForm':                
+            case 'Display_PromoterOthIndPrintForm':
+            case 'Display_PromoterTrackLitigationsDetails':
+            case 'Display_PromoterDoc':
+                $("#drpMenuButton_PromoterProfileAndDocuments").addClass('active').css({ 'color': '#fff' });
+                break;
+            case 'Display_ProjectRegistrationDetails':
+            case 'Display_ProjectLitigations':
+            case 'Display_ProjectProfessionalDetails':
+            case 'Display_ProjectSpecialBankAccount':
+                $("#drpMenuButton_ProjectDetails").addClass('active').css({ 'color': '#fff' });
+                break;
+            case 'Display_ProjectLandKhasraDetails':
+            case 'Display_ProjectRegistrationFeeDetails':
+                $("#drpMenuButton_LandandRegistrationFees").addClass('active').css({ 'color': '#fff' });
+                break;
+            case 'Display_ProjectUpdatesCIIEFPDetails':
+            case 'Display_ProjectPhotographDetails':
+                $("#drpMenuButton_ProjectStatusUpdates").addClass('active').css({ 'color': '#fff' });
+                break;
+            default:
+                $(document).find('a.tab-btns[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff' });
+                break;
+        }
+    });
+</script>
+
+@if (Request.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <fieldset class="col-md-12">
+                    <legend class="my">View Extension for Registration (Project) Application Details</legend>
+                    <div class="row" id="mygroupmenutabbtns">
+                        <div class="form-group">
+                            <div class="col-md-12">                                
+                                @*<div class="dropdown pull-left" style="padding: 0 3px 0 0;">
+                                    <button class="btn tab-btns btn-outline btn-primary dropdown-toggle" type="button" id="drpMenuButton_PromoterProfileAndDocuments" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Promoter Profile and Documents <i class="fa fa-caret-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="drpMenuButton_PromoterProfileAndDocuments">
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_PromoterIndPrintForm", "Helpdesk")">Promoter Profile</a></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_PromoterTrackLitigationsDetails", "Helpdesk")">Promoter Track Record</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_PromoterDoc", "Helpdesk")">Promoter Documents</a></li>
+                                    </ul>
+                                </div>
+                                <div class="dropdown pull-left" style="padding: 0 3px 0 0;">
+                                    <button class="btn tab-btns btn-outline btn-primary dropdown-toggle" type="button" id="drpMenuButton_ProjectDetails" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Project Details <i class="fa fa-caret-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="drpMenuButton_ProjectDetails">
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_ProjectRegistrationDetails", "Helpdesk")">Project Details</a></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_ProjectSpecialBankAccount", "Helpdesk")">Project Special Bank A/C</a></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_ProjectLitigations", "Helpdesk")">Project Litigations</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_ProjectProfessionalDetails", "Helpdesk")">Project Professionals</a></li>
+                                    </ul>
+                                </div>
+                                <div class="dropdown pull-left" style="padding: 0 3px 0 0;">
+                                    <button class="btn tab-btns btn-outline btn-primary dropdown-toggle" type="button" id="drpMenuButton_LandandRegistrationFees" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Land and Registration Fees <i class="fa fa-caret-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="drpMenuButton_LandandRegistrationFees">
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_ProjectLandKhasraDetails", "Helpdesk")">Project Land</a></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_ProjectRegistrationFeeDetails", "Helpdesk")">Registration Fee Details</a></li>
+                                    </ul>
+                                </div>
+                                <div class="pull-left" style="padding: 0 3px 0 0;">
+                                    @Html.ActionLink("NOCs related to Project", "Display_ApprovalDetails", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                                </div>
+                                <div class="pull-left" style="padding: 0 3px 0 0;">
+                                    @Html.ActionLink("Project Documents", "Display_ProjectDocuments", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                                </div>
+                                <div class="dropdown pull-left" style="padding: 0 3px 0 0;">
+                                    <button class="btn tab-btns btn-outline btn-primary dropdown-toggle" type="button" id="drpMenuButton_ProjectStatusUpdates" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Project Status Updates <i class="fa fa-caret-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="drpMenuButton_ProjectStatusUpdates">
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_ProjectUpdatesCIIEFPDetails", "Helpdesk")">Project Updates</a></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_ProjectPhotographDetails", "Helpdesk")">Project Photographs</a></li>
+                                    </ul>
+                                </div>*@
+                                <div class="pull-left" style="padding: 0 3px 0 0;"> 
+                                    @Html.ActionLink("Form - Extension of Registration", "Display_ProjectExtensionForm", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })                                    
+                                </div>                                
+                                <div class="pull-left" style="padding: 0 3px 0 0;">
+                                    @Html.ActionLink("Fee - Extension of Registration", "Display_ProjectExtensionFormFeeDetails", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })                                                                        
+                                </div>
+                                <div class="pull-left" style="padding: 0 3px 0 0;">
+                                    @*<a href="javascript:void(0);" class = "btn btn-outline tab-btns btn-primary">Check List Sheet</a>*@
+                                    @Html.ActionLink("Check List Sheet", "ProjectFormExtensionInfoCheckListDisplay", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                                </div>
+                                <div class="pull-left">
+                                    @Html.ActionLink("Action", "ProjectExtensionInfoEventInsert", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+}
+

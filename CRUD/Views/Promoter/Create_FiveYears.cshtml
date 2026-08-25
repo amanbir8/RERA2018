@@ -1,0 +1,1017 @@
+﻿@model CRUD.Models.Promoter.ClsPrp_OngoingProjectLFiveYears
+
+<style>   
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<script>$.uiBackCompat = false;</script>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>
+    $(function () {
+
+        // var $j = jQuery.noConflict();
+        @*if($(@ViewBag.submitvalue)!= "Update")
+            {*@
+        //alert(ViewBag.submitvalue);
+        // alert(ViewBag.submitvalue);
+
+        if ($('#RExtentofDelayProject').val() == "0" || $('#RExtentofDelayProject').val() == "") {
+            $('#div_reasonfordelay').hide();
+            $('#RExtentofDelayProject').val("0");
+        }
+        else {
+            $('#div_reasonfordelay').show();
+        }
+
+
+        if ($('input[name=IsPaymentDetailsPending_RelatedLand]:checked').val() == "N") {
+            $('#DetailPaymentPendingProject').val("0");
+            $('#show_payment_pending').hide();
+        }
+        else {
+            $('#show_payment_pending').show();
+        }
+
+        if ($('#DetailPaymentPendingProject').val() == "") {
+            $('#DetailPaymentPendingProject').val("0");
+            $('#show_payment_pending').hide();
+        }
+
+
+        //$('#ProjectStartDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        //$('#OCDateProject').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        //$('#ACDProject').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        // $('#ProjectStartDate').datepicker({ changeMonth: true, changeYear: true, });
+        // $('#OCDateProject').datepicker({ changeMonth: true, changeYear: true, });//end date
+        // $('#ACDProject').datepicker({ changeMonth: true, changeYear: true, });
+
+
+
+        $("#ProjectStartDate").datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate() + 1);
+                $("#OCDateProject").datepicker("option", "minDate", dt);
+            }
+        });
+
+        $("#OCDateProject").datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+                var projStartDate = $("#ProjectStartDate").val();
+                if (projStartDate == '') {
+                    alert('Please select Project Start Date first!');
+                    $("#OCDateProject").val('');
+                    return false;
+                }
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate());
+                $("#ProjectStart_Date").datepicker("option", "maxDate", dt);
+                $("#ACDProject").datepicker("option", "minDate", dt);
+                //$("#ProjectCompletion_ProposedDate").datepicker("option", "minDate", dt);
+                CalculateDiff();
+            }
+        });
+
+        $("#ACDProject").datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            //minDate: "0D",
+            onSelect: function (selected) {
+                var compOrigDate = $("#OCDateProject").val();
+                if (compOrigDate == '') {
+                    alert('Please select Original Proposed Date of Completion first!');
+                    $("#ACDProject").val('');
+                    return false;
+                }
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate());
+                $("#OCDateProject").datepicker("option", "maxDate", dt);
+                CalculateDiff();
+            }
+        });
+
+
+
+
+        $('input[name=IsPaymentDetailsPending_RelatedLand]').click(function () {
+            //debugger;
+            if ($('input[name=IsPaymentDetailsPending_RelatedLand]:checked').val() == "N") {
+                $('#DetailPaymentPendingProject').val("0");
+                $('#show_payment_pending').hide();
+                //$('#show1').hide();
+                //$('#show2').hide();
+            }
+            else {
+
+                $('#show_payment_pending').show();
+
+            }
+
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [4]//, 5]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+
+    });
+
+
+    // To calulate difference b/w two dates
+    function CalculateDiff() {
+
+        if ($("#OCDateProject").val() != "" && $("#ACDProject").val() != "") {
+            var From_date = new Date($("#OCDateProject").val());
+            var To_date = new Date($("#ACDProject").val());
+            var toDateTime = To_date.getTime();
+            var fromDateTime = From_date.getTime();
+
+            var oneDay = 1000 * 60 * 60 * 24;
+            var diff_date = toDateTime - fromDateTime;
+            var diffInDays = Math.round(diff_date / oneDay);
+
+            if (diffInDays > 0) {
+                // alert(years + " year(s) " + months + " month(s) " + days + " and day(s)");
+                $('#div_reasonfordelay').show();
+            }
+            else {
+                $('#div_reasonfordelay').hide();
+                $('#RExtentofDelayProject').val("0");
+            }
+
+        }
+        else {
+            //alert("Please select dates");
+            return false;
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function () {        
+
+        $(document).on('click', 'a#addreasonsOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            $("#div_reasonfordelayaddreasons").show();            
+        });
+
+        $('#chkYes1').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Delay in acquisition of project land, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                //$('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes2').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Letter of Intent to develop society or colony, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                //$('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes3').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'CLU certificate, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                //$('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes4').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'License to develop society or colony, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                //$('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes5').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'License as promoter from the competent Authority, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                //$('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes6').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Delay in carry out construction activities , ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                //$('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes7').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Delay in obtaining regulatory clearances, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                //$('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes8').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Services from utilities, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                //$('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes9').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Cost Overrun (lack of funds), ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                //$('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes10').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Inappropriate and inadequate procurement , ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                //$('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes11').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Ineffective planning and scheduling of project, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                //$('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes12').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Shortage of construction materials, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                //$('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+
+        $('#chkYes13').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Shortage of labors, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                //$('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+
+        $('#chkYes14').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#RExtentofDelayProject").val();
+                $("#RExtentofDelayProject").val('');
+                $("#RExtentofDelayProject").val(varGetvalues + 'Weather effect on construction activities, ');
+            } else {
+                $("#RExtentofDelayProject").val('0');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                //$('#chkYes14').prop('checked', false);
+            }
+        });
+
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Track Record of the Promoter</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Details and Profile of On-Going and Completed Projects in Past Five Years or since Inception
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
+                                <h6> @TempData["message"]</h6>
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.Id, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.Application_id, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.Promoter_Experience_ID, new { htmlAttributes = new { @class = "form-control" } })
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Project Profile</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Projectname, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Projectname, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Projectname, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @{var listItems1 = new List<SelectListItem>
+                                                                    {
+
+                                                                        new SelectListItem {  Text = "..." , Value=""  },
+                                                                        new SelectListItem {  Text = "On-going" , Value="On-going"  },
+                                                                        new SelectListItem {  Text = "Complete" , Value="Complete"  },
+                                                                    };
+                                                            }
+                                                            @Html.LabelFor(model => model.ProjectStatus, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.ProjectStatus, new SelectList(listItems1, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.ProjectStatus, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @{var listItems = new List<SelectListItem>
+                                                                    {
+                                                                        new SelectListItem {  Text = "..." , Value=""  },
+                                                                        new SelectListItem {  Text = "Residential" , Value="1"  },
+                                                                        new SelectListItem {  Text = "Commercial" , Value="2"  },
+                                                                        new SelectListItem {  Text = "Industrial" , Value="3"  },
+                                                                        new SelectListItem {  Text = "Mixed Development" , Value="4"  },
+                                                                    };
+                                                            }
+                                                            @Html.LabelFor(model => model.ProjectType, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.ProjectType, new SelectList(listItems, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.ProjectType, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @{var listItems2 = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "Promoter Owned" , Value="0"  },
+                                                                    new SelectListItem {  Text = "Leased" , Value="1"  },
+                                                                    new SelectListItem {  Text = "Joint Development" , Value="2"  },
+
+                                                                };
+                                                            }
+                                                            @Html.LabelFor(model => model.TypeLandofProject, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.TypeLandofProject, new SelectList(listItems2, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.TypeLandofProject, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AreaConUProject, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.AreaConUProject, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.AreaConUProject, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                           @Html.LabelFor(model => model.ProjectStartDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectStartDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectStartDate, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.OCDateProject, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Date of Completion of Project proposed at the time of Project Launch.">
+                                                            @Html.EditorFor(model => model.OCDateProject, new { htmlAttributes = new { @class = "form-control", onChange = "CalculateDiff(this);" } })
+                                                            @Html.ValidationMessageFor(model => model.OCDateProject, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ACDProject, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Date of Completion of Project if already completed and expected date of completion of project if project is on-going.">
+                                                            @Html.EditorFor(model => model.ACDProject, new { htmlAttributes = new { @class = "form-control", onChange = "CalculateDiff(this);" } })
+                                                            @Html.ValidationMessageFor(model => model.ACDProject, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group" id="div_reasonfordelay" style="display:none">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RExtentofDelayProject, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RExtentofDelayProject, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RExtentofDelayProject, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <br/>
+                                                            <a id="addreasonsOpenerButton" href="javascript:void(0);">Add Reasons...</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group" id="div_reasonfordelayaddreasons" style="display:none">
+                                                        <div class="col-md-3">                                                           
+                                                        </div>
+                                                        <div class="col-md-9">                                                            
+                                                            <label class="control-label">
+                                                                &nbsp;<input type="checkbox" id="chkYes1" />&nbsp;Delay in acquisition of project land<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes2" />&nbsp;Delay in obtaining Letter of Intent to develop society/ colony<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes3" />&nbsp;Delay in obtaining CLU certificate<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes4" />&nbsp;Delay in obtaining License to develop society/ colony<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes5" />&nbsp;Delay in obtaining License as promoter from the competent Authority<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes6" />&nbsp;Delay in carry out construction activities<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes7" />&nbsp;Delay in obtaining regulatory clearances like Fire NOC, Environment NOC, Mining NOC etc.<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes8" />&nbsp;Delay in providing services from utilities<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes9" />&nbsp;Cost Overrun - lack of funds to carry out construction activities<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes10" />&nbsp;Due to inappropriate and inadequate procurement<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes11" />&nbsp;Ineffective planning and scheduling of project<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes12" />&nbsp;Shortage of construction materials<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes13" />&nbsp;Shortage of labors<br />
+                                                                &nbsp;<input type="checkbox" id="chkYes13" />&nbsp;Weather effect on construction activities<br />
+                                                            </label>                                                            
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Any Litigation Related to Project (Yes/No)?</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.LitgToProject, "Y") Yes
+                                                                @Html.RadioButtonFor(model => model.LitgToProject, "N") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.LitgToProject, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Any Payment Pending Related to Land (Yes/No)?</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @*@Html.LabelFor(model => model.IsPaymentDetailsPending_RelatedLand, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                             @Html.EditorFor(model => model.IsPaymentDetailsPending_RelatedLand, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.IsPaymentDetailsPending_RelatedLand, "", new { @class = "text-danger" }) *@
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsPaymentDetailsPending_RelatedLand, "Y") Yes
+                                                                @Html.RadioButtonFor(model => model.IsPaymentDetailsPending_RelatedLand, "N") No @*, new { @checked = true }*@
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsPaymentDetailsPending_RelatedLand, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div id="show_payment_pending" style="display:none">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.DetailPaymentPendingProject, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.DetailPaymentPendingProject, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.DetailPaymentPendingProject, "", new { @class = "text-danger" })
+                                                            </div>                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                    @*<div class="form-group">
+                        @Html.LabelFor(model => model.Flag, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Flag, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Flag, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+                                    @*<div class="form-group">
+                        @Html.LabelFor(model => model.LitgToProject, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.LitgToProject, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.LitgToProject, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+
+                                    @*<div id="show" class="modal-header">
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CaseTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.CaseTitle, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CaseTitle, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CaseNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.CaseNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CaseNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.NameofAuthorityForumwhereCasisPendingresolved, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.NameofAuthorityForumwhereCasisPendingresolved, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.NameofAuthorityForumwhereCasisPendingresolved, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DetailPaymentPendingProject, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.DetailPaymentPendingProject, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.DetailPaymentPendingProject, "", new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+
+
+                            <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                @if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                {
+                                                    <input type="submit" value="@ViewBag.submitvalue" class="btn btn-outline btn-primary" disabled = "disabled" />
+                                                }
+                                                else
+                                                {
+                                                    if (Convert.ToInt32(TempData["PromoterIsdraftValue"]) == 1 || Convert.ToInt32(TempData["PromoterIsdraftValue"]) == 5 || Convert.ToInt32(TempData["PromoterIsdraftValue"]) == 6)
+                                                    {
+                                                        <input type="submit" value="@ViewBag.submitvalue" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="submit" value="@ViewBag.submitvalue" class="btn btn-outline btn-primary" />
+                                                    }
+                                                    //<input type="submit" value="@ViewBag.submitvalue" class="btn btn-outline btn-primary" />
+                                                }                                                
+                                                &nbsp;
+                                                @Html.ActionLink("Reset", "create_FiveYears", "Promoter", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                        }
+
+                            <div class="row">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            @*<th style="visibility: hidden;">
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th style="visibility: hidden;">
+                    @Html.DisplayNameFor(model => model.Application_id)
+                </th>
+                <th style="visibility: hidden;">
+                    @Html.DisplayNameFor(model => model.Promoter_Experience_ID)
+                </th>*@
+                                                                            <th>
+                                                                                @Html.DisplayNameFor(model => model.Projectname)
+                                                                            </th>
+                                                                            <th>
+                                                                                @Html.DisplayNameFor(model => model.ProjectType)
+                                                                            </th>
+                                                                            <th>
+                                                                                @Html.DisplayNameFor(model => model.ProjectStatus)
+                                                                            </th>
+                                                                            <th>
+                                                                                @Html.DisplayNameFor(model => model.AreaConUProject)
+                                                                            </th>
+                                                                            @* <th>
+                    @Html.DisplayNameFor(model => model.ProjectStartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OCDateProject)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ACDProject)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RExtentofDelayProject)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TypeLandofProject)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LitgToProject)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CaseTitle)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CaseNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NameofAuthorityForumwhereCasisPendingresolved)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DetailPaymentPendingProject)
+                </th>*@
+                                                                            <th>@Html.DisplayName("Edit| Delete")</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (var item in Model.prpongoing)
+                                                                        {
+                                                                            <tr>
+                                                                                @*<td style="visibility: hidden;">
+                        @Html.DisplayFor(modelItem => item.Promoter_Experience_ID)
+                    </td>
+                    <td style="visibility: hidden;">
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td style="visibility: hidden;">
+                        @Html.DisplayFor(modelItem => item.Application_id)
+                    </td>*@
+                                                                                <td>
+                                                                                    @Html.DisplayFor(modelItem => item.Projectname)
+                                                                                </td>
+                                                                                <td>
+                                                                                    @switch (item.ProjectType)
+                                                                                    {
+                                                                                        case "1":
+                                                                                            @Html.DisplayName("Residential Project")
+                                                                                            break;
+                                                                                        case "2":
+                                                                                            @Html.DisplayName("Commercial Project")
+                                                                                            break;
+                                                                                        case "3":
+                                                                                            @Html.DisplayName("Industrial Project")
+                                                                                            break;
+                                                                                        case "4":
+                                                                                            @Html.DisplayName("Mixed Development Project")
+                                                                                            break;
+                                                                                        default:
+                                                                                            @Html.DisplayFor(modelItem => item.ProjectType)
+                                                                                            break;
+                                                                                    }
+                                                                                </td>
+                                                                                <td>
+                                                                                    @Html.DisplayFor(modelItem => item.ProjectStatus)
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    @Html.DisplayFor(modelItem => item.AreaConUProject)
+                                                                                </td>
+                                                                                @*td>
+                        @Html.DisplayFor(modelItem => item.ProjectStartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OCDateProject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ACDProject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RExtentofDelayProject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TypeLandofProject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LitgToProject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CaseTitle)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CaseNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NameofAuthorityForumwhereCasisPendingresolved)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DetailPaymentPendingProject)
+                    </td>*@
+
+                                                                                <td>
+                                                                                    @if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                                                    {
+                                                                                        @Html.ActionLink("View", "Edit_FiveYears", new { Promoter_Experience_ID = item.prpongoing, id = item.Id, Application_id = item.Application_id })
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        @Html.ActionLink("Edit", "Edit_FiveYears", new { Promoter_Experience_ID = item.prpongoing, id = item.Id, Application_id = item.Application_id }) @("| ")
+                                                                                        @Html.ActionLink("Delete", "Delete_FiveYears", new { Promoter_Experience_ID = item.prpongoing, id = item.Id, Application_id = item.Application_id }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                                                    }
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+
+                                                                    </tbody>
+                                                                 </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                            <!-- /.col-lg-12 (nested) -->
+                        </div>
+                                        <!-- /.row (nested) -->
+                                    </div>
+                                    <!-- /.panel-body -->
+                                </div>
+                <!-- /.panel -->
+                            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+                                                                                @Scripts.Render("~/bundles/jqueryval")
+
+                                                                                <!-- Metis Menu Plugin JavaScript -->
+                                                                            
+                                                                                <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}
+
+
+

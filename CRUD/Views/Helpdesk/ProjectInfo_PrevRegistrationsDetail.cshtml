@@ -1,0 +1,141 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_ProjectRERAnumberDiaryNumberRefHist
+
+@{
+    Layout = null;
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <strong>Project Previous Registration Details</strong>
+    </div>
+
+    <div class="panel-body">
+
+        @if (Model.prpongoing != null && Model.prpongoing.Count > 0)
+        {
+            foreach (var item in Model.prpongoing)
+            {
+                <!-- PROJECT DETAILS -->
+                <fieldset class="col-md-12">
+                    <legend>Project Details</legend>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>Project Name</b></div>
+                        <div class="col-md-3">@item.ProjectName</div>
+
+                        <div class="col-md-3"><b>Promoter Name</b></div>
+                        <div class="col-md-3">@item.PromoterName</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>Diary Number</b></div>
+                        <div class="col-md-3">@item.ProjectRegDiaryNumber_Name</div>
+
+                        <div class="col-md-3"><b>RERA Number</b></div>
+                        <div class="col-md-3">@item.RERAnumberRegistration</div>
+                    </div>
+                </fieldset>
+
+                <!-- REGISTRATION DETAILS -->
+                <fieldset class="col-md-12">
+                    <legend>Registration Details</legend>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>Issue Date</b></div>
+                        <div class="col-md-3">
+                            @(item.RERAnumberIssueDate?.ToString("dd-MM-yyyy"))
+                        </div>
+
+                        <div class="col-md-3"><b>Valid Upto</b></div>
+                        <div class="col-md-3">
+                            @(item.RERAnumberRegUptoDate?.ToString("dd-MM-yyyy"))
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- PROJECT ADDRESS -->
+                <fieldset class="col-md-12">
+                    <legend>Project Address</legend>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>Address</b></div>
+                        <div class="col-md-9">
+                            @item.ProjectAddressLine1 @item.ProjectAddressLine2
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>District</b></div>
+                        <div class="col-md-3">@item.ProjectAddressDistrict</div>
+
+                        <div class="col-md-3"><b>State</b></div>
+                        <div class="col-md-3">@item.ProjectAddressState</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>Sub Division</b></div>
+                        <div class="col-md-3">@item.ProjectAddressSubDivision</div>
+
+                        <div class="col-md-3"><b>PIN</b></div>
+                        <div class="col-md-3">@item.ProjectAddressPIN</div>
+                    </div>
+                </fieldset>
+
+                <!-- AUTHORIZED PERSON -->
+                <fieldset class="col-md-12">
+                    <legend>Authorized Person Details</legend>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>Name</b></div>
+                        <div class="col-md-3">
+                            @item.AuthorizedPerson_FirstName @item.AuthorizedPerson_LastName
+                        </div>
+
+                        <div class="col-md-3"><b>Email</b></div>
+                        <div class="col-md-3">@item.AuthorizedPerson_Email</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>Mobile</b></div>
+                        <div class="col-md-3">@item.AuthorizedPerson_Mobile</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>Address</b></div>
+                        <div class="col-md-9">
+                            @item.AuthorizedPerson_AddressLine1 @item.AuthorizedPerson_AddressLine2
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3"><b>District</b></div>
+                        <div class="col-md-3">@item.AuthorizedPerson_District</div>
+
+                        <div class="col-md-3"><b>State</b></div>
+                        <div class="col-md-3">@item.AuthorizedPerson_State</div>
+                    </div>
+                </fieldset>
+
+                <!-- REMARKS -->
+                <fieldset class="col-md-12">
+                    <legend>Remarks</legend>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            @item.RemarksIfAny
+                        </div>
+                    </div>
+                </fieldset>
+
+                <hr />
+            }
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                No Record Found
+            </div>
+        }
+
+    </div>
+</div>

@@ -1,0 +1,800 @@
+﻿@model  CRUD.Models.HelpDeskComplaint.Cls_Prp_FormN_CaseAssignment
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+
+    table#promoter-documents-list-table tr td a.button {
+        display: none;
+    }
+
+    table#promoter-documents-list-table tr:hover td a.button {
+        display: inline-block;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+
+    .bg-plus-square-glow-show {
+        /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
+        /*box-shadow: 0 0 10px #FF4961;*/
+        color: green;
+    }
+
+    .bg-pdf-glow-show {
+        /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
+        /*box-shadow: 0 0 10px #FF4961;*/
+        color: #7bb73f;
+    }
+</style>
+
+
+<script src=@Url.Content("~/js/jquery-3.2.1.min.js")></script>
+
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>
+    $(function () {
+        var baseUrl = $('body').attr('data-base-url');
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [9]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers",
+
+            responsive: true
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('.Dak_Date').datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true
+        })
+
+        $(".datepicker").datepicker({
+            dateFormat: "dd-M-yy",
+            changeMonth: true,
+            changeYear: true
+        });
+    });
+</script>
+
+
+@*<script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#AssignementBench_ID").change(function () {
+                var selectedName = $("#AssignementBench_ID option:selected").text();
+                $("#AssignementBench_Name").val(selectedName);
+            });
+
+            function updateBenchState() {
+                var benchDropdown = $('#AssignementBench_ID');
+                var benchNameHidden = $('#AssignementBench_Name');
+
+                // Check if the "Manual" radio button is selected
+                if ($('#rbBenchManual').is(':checked')) {
+                    // --- MANUAL MODE ---
+                    benchDropdown.prop('disabled', false);
+                } else {
+                    // --- AUTOMATIC MODE ---
+
+                    benchDropdown.prop('disabled', true);
+
+                    benchDropdown.val('');
+                    benchNameHidden.val('');
+                }
+            }
+
+            // Event handler: Run the function whenever a radio button is clicked
+            $('input[name="IsManualAssignBench"]').on('change', function () {
+                updateBenchState();
+            });
+
+            // Initial run: Set the correct state when the page first loads
+            updateBenchState();
+
+        });
+    </script>*@
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#AssignementBench_ID").change(function () {
+            var selectedName = $("#AssignementBench_ID option:selected").text();
+            $("#AssignementBench_Name").val(selectedName);
+        });
+
+        function updateBenchState() {
+            var benchDropdown = $('#AssignementBench_ID');
+            var benchNameHidden = $('#AssignementBench_Name');
+            var onlineRadioButton = $('#rbBenchAutomatic');
+            var onlineId = onlineRadioButton.data('online-id');
+            var onlineName = onlineRadioButton.data('online-name');
+
+            if ($('#rbBenchManual').is(':checked')) {
+                // --- MANUAL MODE ---
+                benchDropdown.prop('disabled', false);
+                benchDropdown.find("option[value='" + onlineId + "']").remove();
+
+                if (benchDropdown.val() == onlineId) {
+                    benchDropdown.val('');
+                    benchNameHidden.val('');
+                }
+            } else {
+                // --- ONLINE MODE ---
+                if (benchDropdown.find("option[value='" + onlineId + "']").length === 0) {
+                    benchDropdown.append($('<option>', { value: onlineId, text: onlineName }));
+                }
+                benchDropdown.val(onlineId);
+                benchNameHidden.val(onlineName);
+                benchDropdown.prop('disabled', true);
+            }
+        }
+
+        $('input[name="IsManualAssignBench"]').on('change', updateBenchState);
+
+        updateBenchState();
+
+        $('#caseAssignmentForm').on('submit', function () {
+            $('#AssignementBench_ID').prop('disabled', false);
+        });
+    });
+</script>
+
+@*<script type="text/javascript">
+            $(document).ready(function () {
+                var indexId = @Model.InstitutionFormN_IndexID;
+
+                var fieldsToToggle = $('#optionalDetailsFieldset').find('input, select');
+                if (indexId > 0) {
+                    fieldsToToggle.prop('disabled', false);
+                } else {
+                    fieldsToToggle.prop('disabled', true);
+                }
+
+            });
+    </script>*@
+@*<script type="text/javascript">
+        $(document).ready(function () {
+            function toggleOptionalDetailsState() {
+                //var fieldsToToggle = $('#optionalDetailsFieldset').find('input, select, textarea');
+                var fieldsToToggle = $('#optionalDetailsFieldset :input');
+
+                if ($('input[name="IsComplaintHardcopySetYesNo"]:checked').val() == "1") {
+                    fieldsToToggle.prop('disabled', false);
+                } else {
+                    fieldsToToggle.prop('disabled', true);
+                }
+            }
+            $('input[name="IsComplaintHardcopySetYesNo"]').on('change', function () {
+                toggleOptionalDetailsState();
+            });
+            toggleOptionalDetailsState();
+
+        });
+    </script>*@
+
+@*<script>
+
+        $(document).ready(function () {
+            if ($('.isHardcopy:checked').val() === '0') {
+                $('.hardcopydetails').slideUp(400);
+            }
+            else {
+                $('.hardcopydetails').slideDown(400);
+            }
+
+            $('.isHardcopy').change(function () {
+                if ($(this).val() === '1') {
+                    $('.hardcopydetails').slideDown(400);
+                }
+                else {
+                    $('.hardcopydetails').slideUp(400);
+                }
+            })
+        })
+    </script>*@
+<script>
+    $(document).ready(function () {
+        function toggleHardcopySection() {
+            var val = $('.isHardcopy:checked').val();
+            if (val === '1') {
+                $('.hardcopydetails').slideDown(400);
+            } else {
+                $('.hardcopydetails').slideUp(400);
+            }
+        }
+        toggleHardcopySection();
+        $('.isHardcopy').change(function () {
+            toggleHardcopySection();
+        });
+         var isLocked = '@Model.IsLock';
+        if (isLocked === '1') {
+            //$("#optionalDetailsFieldset input[type=text], #optionalDetailsFieldset input[type=number]").prop("readonly", true);
+
+            $("#optionalDetailsFieldset select").prop("disabled", true);
+            $(".Dak_Date").prop("readonly", true).datepicker("disable");
+            $("#optionalDetailsFieldset input").prop("readonly", true);
+        }
+    });
+</script>
+
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Complaint (Form-M) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Complaint (Form-M) : Hearing Record Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Complaint Form-M - ( @Html.DisplayFor(model => model.zapRelated_RegDiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zapComplainantName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5 project-name">
+                                                        @Html.DisplayFor(model => model.zapComplainantName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zapComplaintFormLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zapComplaintFormLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskComplaintNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;"><a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Add Case Assignment/Institution Details</h4>
+                                </div>
+                            </div>
+
+                            @using (Html.BeginForm("FormN_InstitutionDataAdd", "HelpdeskComplaint", FormMethod.Post, new { enctype = "multipart/form-data", id = "caseAssignmentForm" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                @Html.HiddenFor(model => model.InstitutionFormN_IndexID)
+                                @Html.HiddenFor(model => model.InstitutionFormN_ID)
+                                @Html.HiddenFor(model => model.Institution_Ref_ID)
+                                @Html.HiddenFor(model => model.User_ID)
+                                @Html.HiddenFor(model => model.ComplaintType_MN)
+                                @Html.HiddenFor(model => model.InstitutionFormN_Code)
+                                @Html.HiddenFor(model => model.B_column)
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Complaint Institution Details</legend>
+                                                @*<div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Institution_Ref_Number, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @if (Model.InstitutionFormN_IndexID > 0)
+                                                                {
+                                                                    @Html.EditorFor(model => model.Institution_Ref_Number, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.EditorFor(model => model.Institution_Ref_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                }
+                                                                @Html.ValidationMessageFor(model => model.Institution_Ref_Number, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>*@
+
+                                                @*------working--------------*@
+
+                                                @*<div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Institution_Ref_Number, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.TextBoxFor(model => model.Institution_Ref_Number, new { @class = "form-control", @readonly = "readonly" })
+                                                                @Html.ValidationMessageFor(model => model.Institution_Ref_Number, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Institution_Ref_Date, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @if (Model.InstitutionFormN_IndexID > 0)
+                                                                {
+                                                                    @Html.EditorFor(model => model.Institution_Ref_Date, "{0:dd-MM-yyyy}", new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.EditorFor(model => model.Institution_Ref_Date, new { htmlAttributes = new { @class = "form-control datepicker" } })
+                                                                }
+                                                                @Html.ValidationMessageFor(model => model.Institution_Ref_Date, "", new { @class = "text-danger" })
+
+                                                            </div>
+                                                        </div>
+                                                    </div>*@
+
+                                                @*------------------working-------------*@
+
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Institution_Ref_Number, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.TextBoxFor(model => model.Institution_Ref_Number, new { @class = "form-control", @readonly = "readonly" })
+                                                            @Html.ValidationMessageFor(model => model.Institution_Ref_Number, "", new { @class = "text-danger" })
+                                                        </div>
+
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Institution_Ref_Date, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if (Model.InstitutionFormN_IndexID > 0)
+                                                            {
+                                                                @Html.EditorFor(model => model.Institution_Ref_Date, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                                            }
+                                                            else
+                                                            {
+                                                                @*@Html.EditorFor(model => model.Institution_Ref_Date, new { htmlAttributes = new { @class = "form-control datepicker" } })*@
+                                                                @Html.TextBoxFor(model => model.Institution_Ref_Date, new { @class = "form-control datepicker", @Value = DateTime.Now.ToString("dd-MMM-yyyy") })
+                                                            }
+                                                            @Html.ValidationMessageFor(model => model.Institution_Ref_Date, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+
+
+                                                @*<div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.AssignementBench_ID, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Respective Bench of Preliminary-Hearing/ Hearing.">
+                                                                @Html.DropDownListFor(
+                                                                    m => m.AssignementBench_ID,
+                                                                    new SelectList(Model.PreHearingBenchMaster, "PreHearingBench_ID", "PreHearingBenchName"),
+                                                                    "Select",
+                                                                    new { @class = "form-control", @id = "AssignementBench_ID" }
+                                                                )
+                                                                @Html.HiddenFor(model => model.AssignementBench_Name, new { id = "AssignementBench_Name" })
+
+                                                                @Html.ValidationMessageFor(model => model.AssignementBench_ID, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>*@
+
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Bench Assignment</label>
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(model => model.IsManualAssignBench, 1, new { id = "rbBenchManual" }) Manual Mode
+                                                            </label>
+                                                            @*<label class="radio-inline">
+                                                                    @Html.RadioButtonFor(model => model.IsManualAssignBench, 0, new { id = "rbBenchAutomatic" }) Online Mode
+                                                                </label>*@
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(model => model.IsManualAssignBench, 0, new { id = "rbBenchAutomatic", data_online_id = Model.onlineBench_ID, data_online_name = Model.onlineBenchName }) Online Mode
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AssignementBench_ID, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Respective Bench.">
+                                                            @Html.DropDownListFor(m => m.AssignementBench_ID, new SelectList(Model.PreHearingBenchMaster, "PreHearingBench_ID", "PreHearingBenchName"), "Select", new { @class = "form-control", @id = "AssignementBench_ID" })
+                                                            @Html.HiddenFor(model => model.AssignementBench_Name, new { id = "AssignementBench_Name" })
+                                                            @Html.ValidationMessageFor(model => model.AssignementBench_ID, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.IsComplaintHardcopySetYesNo, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(model => model.IsComplaintHardcopySetYesNo, "1", new { @class = "isHardcopy" }) Yes
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                @*  @Html.RadioButtonFor(model => model.IsComplaintHardcopySetYesNo, "0", new { @class = "isHardcopy", @checked = "checked" }) No*@
+                                                                @Html.RadioButtonFor(model => model.IsComplaintHardcopySetYesNo, "0", new { @class = "isHardcopy" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsComplaintHardcopySetYesNo, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hardcopydetails">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12" id="optionalDetailsFieldset">
+                                                <legend class="my">Complaint- Details(optional)</legend>
+                                                @{
+                                                    var numberList = new List<SelectListItem>();
+                                                    numberList.Add(new SelectListItem { Text = "Select Number", Value = "0" });
+                                                    for (int i = 1; i <= 25; i++)
+                                                    {
+                                                        numberList.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                                                    }
+                                                }
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Dak_Number, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Dak_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.HiddenFor(model => model.Dak_Number)
+                                                            @Html.ValidationMessageFor(model => model.Dak_Number, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Dak_Date, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Dak_Date, new { htmlAttributes = new { @class = "form-control Dak_Date", @autocomplete = "off" } })
+                                                            @Html.HiddenFor(model => model.Dak_Date)
+                                                            @Html.ValidationMessageFor(model => model.Dak_Date, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @*<div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.IsComplaintHardcopySetYesNo, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-9">
+                                                                <label class="radio-inline">
+                                                                    @Html.RadioButtonFor(model => model.IsComplaintHardcopySetYesNo, "1", new { @checked = "checked" }) Yes
+                                                                </label>
+                                                                <label class="radio-inline">
+                                                                    @Html.RadioButtonFor(model => model.IsComplaintHardcopySetYesNo, "0") No
+                                                                </label>
+                                                                @Html.ValidationMessageFor(model => model.IsComplaintHardcopySetYesNo, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>*@
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.HardcopySetNumber, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.HardcopySetNumber, numberList, new { @class = "form-control" })
+                                                            @Html.HiddenFor(model => model.HardcopySetNumber)
+                                                            @* @Html.ValidationMessageFor(model => model.HardcopySetNumber, "", new { @class = "text-danger" })*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.NumberOfComplainant, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.NumberOfComplainant, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.HiddenFor(model => model.NumberOfComplainant)
+                                                            @Html.ValidationMessageFor(model => model.NumberOfComplainant, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.NumberOfRespondent, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.NumberOfRespondent, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.HiddenFor(model => model.NumberOfRespondent)
+                                                            @Html.ValidationMessageFor(model => model.NumberOfRespondent, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Others</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Remarks and status of complaint, if any.">
+                                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.NatureOfComplaint_Statement, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.NatureOfComplaint_Statement, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.NatureOfComplaint_Statement, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.NatureOfComplaint_Key1, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(model => model.NatureOfComplaint_Key1, "1") Yes
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(model => model.NatureOfComplaint_Key1, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.NatureOfComplaint_Key1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.NatureOfComplaint_Key2, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(model => model.NatureOfComplaint_Key2, "1") Yes
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(model => model.NatureOfComplaint_Key2, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.NatureOfComplaint_Key2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.NatureOfComplaint_Key3, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(model => model.NatureOfComplaint_Key3, "1") Yes
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                @Html.RadioButtonFor(model => model.NatureOfComplaint_Key3, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.NatureOfComplaint_Key3, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ReliefSought_Statement, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ReliefSought_Statement, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.ReliefSought_Statement, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @if (Model.IsDraft != 1)
+                                            {
+                                                <input type="submit" value="@TempData["Institutionsubmitvalue"]" class="btn btn-outline btn-primary" />
+                                            }
+                                            else
+                                            {
+                                                <input type="submit" value="@TempData["Institutionsubmitvalue"]" class="btn btn-outline btn-primary" />
+                                            }
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "FormN_CaseAssignment", "HelpdeskComplaint", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            @Html.DisplayName("SNo")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.HardcopySetNumber)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.NumberOfComplainant)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.NumberOfRespondent)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Remarks")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Date of Upload")
+                                                        </th>
+                                                        @if (ViewBag.UserRoleId == "7330c9a0-4296-4ddf-a421-0d0c491adf2d")
+                                                        {
+                                                            <th>@Html.DisplayName("View | Edit | Delete")</th>
+                                                        }
+                                                        else
+                                                        {
+                                                            <th>@Html.DisplayName("View")</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        int srnumber = 0;
+                                                    }
+                                                    @foreach (var item in Model.prpongoing)
+                                                    {
+                                                        {
+                                                            srnumber = srnumber + 1;
+                                                        }
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DisplayName(srnumber.ToString())
+                                                            </td>
+
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.HardcopySetNumber)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.NumberOfComplainant)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.NumberOfRespondent)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.CreatedOn)
+                                                            </td>
+                                                            @if (ViewBag.UserRoleId == "7330c9a0-4296-4ddf-a421-0d0c491adf2d")
+                                                            {
+                                                                <td>
+                                                                    @Html.ActionLink("View", "Edit_FormN_InstitutionData", new { InstitutionFormN_ID = item.InstitutionFormN_IndexID }) |
+                                                                    @Html.ActionLink("Edit", "Edit_FormN_InstitutionData", new { InstitutionFormN_ID = item.InstitutionFormN_IndexID }) |
+                                                                    @Html.ActionLink("Delete", "Delete_FormN_InstitutionFormN", new { InstitutionFormN_ID = item.InstitutionFormN_IndexID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@Html.ActionLink("View", "Edit_FormN_InstitutionData", new { InstitutionFormN_ID = item.InstitutionFormN_IndexID })</td>
+                                                            }
+                                                            @*<td>
+
+                                                                        @Html.ActionLink("Edit", "Edit_FormN_InstitutionData", new { InstitutionFormN_ID = item.InstitutionFormN_IndexID }) @("| ")
+                                                                        @Html.ActionLink("Delete", "Delete_FormN_InstitutionFormN", new { InstitutionFormN_ID = item.InstitutionFormN_IndexID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                                        @Html.ActionLink("View", "Edit_FormN_InstitutionData", new { InstitutionFormN_ID = item.InstitutionFormN_IndexID })
+
+                                                                </td>*@
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.col-lg-12 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

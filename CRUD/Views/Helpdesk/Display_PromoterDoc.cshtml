@@ -1,0 +1,696 @@
+﻿@model CRUD.Models.HelpDesk.Clsprp_AuthorityDesk_PromoterDocuments
+
+<script>
+    $(document).ready(function () {
+
+        var BASE_URLm = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var projectId = 0;//$.trim($(parentRow).find('input.hdnProjectID').val());
+            projectId = parseInt(projectId);
+            var criteriaCode = $(this).attr('data-criteria-code');
+            criteriaCode = parseInt(criteriaCode);
+            $.ajax({
+                url: BASE_URLm + 'Helpdesk/ProjectInfoCheckListInsert',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'criteriaCode': criteriaCode },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    //alert(1);
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            //var diaryNo = $.trim($(parentRow).find('td.project-diary-number').attr('data-diary-no'));
+            //var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            //$(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 25,
+            "lengthMenu": [[25, 50, 75, 100], [25, 50, 75, 100]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [1, 6]
+            }]
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+    });
+</script>
+
+<script>
+    function openSideScreen(promotorId, documentIndexId) {
+        var baseUrl = $('body').attr('data-base-url');
+        var apiUrl = '@System.Configuration.ConfigurationManager.AppSettings["docpagesBaseURL"]';
+        $.ajax({
+            type: "GET",
+            url: baseUrl + "Helpdesk/GetPromoterDoc",
+            datatype: "Json",
+            data: { 'Pid': promotorId, 'docIndexID': documentIndexId },
+            beforeSend: function () {
+                startPreloader();
+            },
+            success: function (data) {
+                stopPreloader();
+                var fileUrl = '';
+                $.each(data.prpPromoterDocList, function (index, value) {
+                    if (value.PromoterDoc_IndexID == documentIndexId) {
+                        fileUrl = value.PromoterDoc_FilePath;
+                    }
+                });
+
+                var filename = fileUrl;
+                var extension = filename.replace(/^.*\./, '');
+                if (extension == filename) {
+                    extension = '';
+                } else {
+                    extension = extension.toLowerCase();
+                }
+                switch (extension) {
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                        $("#mySidescreenDocumentEmbed").hide();
+                        $("#mySidescreenDocumentImage").show();
+                        $("#mySidescreenDocImg").attr('src', apiUrl + fileUrl);
+                        $("#documentTypeDiscription").text('(File Type: JPEG/JPG)');
+                        break;
+                    case 'pdf':
+                        $("#mySidescreenDocumentEmbed").show();
+                        $("#mySidescreenDocumentImage").hide();
+                        $("#mySidescreenDocEmbedd").attr('src', apiUrl + fileUrl + '#view=FitH&scrollbar=0&toolbar=0&navpanes=1');
+                        $("#documentTypeDiscription").text('(File Type: PDF)');
+                        break;
+                    default:
+                        $("#mySidescreenDocumentEmbed").show();
+                        $("#mySidescreenDocumentImage").hide();
+                        $("#mySidescreenDocEmbedd").attr('src', apiUrl + fileUrl + '#view=FitH&scrollbar=0&toolbar=0&navpanes=1');
+                        $("#documentTypeDiscription").text('(File Type: Other File)');
+                        break;
+                }
+                //$("#myiframe").attr('src', apiUrl + fileUrl);
+            }
+        });
+
+        document.getElementById("mySidescreen").style.width = "40%";
+        document.getElementById("mySidescreen").style.height = "100%";
+        document.getElementById("wrapper").style.marginLeft = "40%";
+        document.getElementById("wrapper").style.transition = "0.3s";
+        document.getElementById("page-wrapper").style.marginLeft = "0px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "block";
+        //document.getElementById("myclosesideshutter").style.marginLeft = "40%";
+        document.getElementById("myclosesideshutter").style.transition = "0.3s";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function closeSideScreen() {
+        document.getElementById("mySidescreen").style.width = "0";
+        document.getElementById("wrapper").style.marginLeft = "0";
+        document.getElementById("page-wrapper").style.marginLeft = "250px";
+        document.getElementById("side-menu").style.display = "block";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "none";
+    }
+
+    function closeSideShutter() {
+        document.getElementById("mySidescreen").style.width = "250px";
+        document.getElementById("wrapper").style.marginLeft = "0";
+        document.getElementById("page-wrapper").style.marginLeft = "250px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "block";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function openSideShutter() {
+        document.getElementById("mySidescreen").style.width = "40%";
+        document.getElementById("mySidescreen").style.height = "100%";
+        document.getElementById("wrapper").style.marginLeft = "40%";
+        document.getElementById("page-wrapper").style.marginLeft = "0px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "block";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function zoominSideScreen() {
+        document.getElementById("mySidescreen").style.width = "250px";
+        document.getElementById("wrapper").style.marginLeft = "0";
+        document.getElementById("page-wrapper").style.marginLeft = "250px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "block";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function zoomoutSideScreen() {
+        document.getElementById("mySidescreen").style.width = "60%";
+        document.getElementById("mySidescreen").style.height = "100%";
+        document.getElementById("wrapper").style.marginLeft = "60%";
+        document.getElementById("page-wrapper").style.marginLeft = "0px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function openSidebarNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("mySidenav").style.height = "50%";
+        document.getElementById("mySidenav").style.marginBottom = "0";
+        document.getElementById("main").style.marginLeft = "250px";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "none";
+    }
+
+    function closeSidebarNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+        //document.getElementById("mybtnsidenav").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "none";
+    }
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+        $(document).on('click', 'a.modalOpenerButtonExpandChecklist', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmCriteriaID = $(this).attr('data-criteria-code');
+            var parmCriteriaSubID = $(this).attr('data-subcriteria-code');
+            var parmCriteriaFlag = $(this).attr('data-criteria-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmCriteriaID = parseInt(parmCriteriaID);
+            parmCriteriaSubID = parseInt(parmCriteriaSubID);
+            parmCriteriaFlag = parseInt(parmCriteriaFlag);
+
+            var varDNumber = $("#zipProject_DiaryNumber").val();
+            var varProjectName = $("#zipProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectInfoCheckListDisplayLogByFlag',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'parmProjectId': parmProjectId, 'parmCriteriaID': parmCriteriaID, 'parmCriteriaSubID': parmCriteriaSubID, 'parmCriteriaFlag': parmCriteriaFlag },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Checklist History Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+        $(document).on('click', 'a.modalOpenerButtonExpandDocument', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmdocID = $(this).attr('data-document-code');
+            var parmdocSubID = $(this).attr('data-subdocument-code');
+            var parmdocFlag = $(this).attr('data-document-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmdocID = parseInt(parmdocID);
+            parmdocSubID = parseInt(parmdocSubID);
+            parmdocFlag = parseInt(parmdocFlag);
+
+            var varDNumber = $("#zipProject_DiaryNumber").val();
+            var varProjectName = $("#zipProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectInfoDocumentDisplayByFlag',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'parmProjectId': parmProjectId, 'parmdocID': parmdocID, 'parmdocSubID': parmdocSubID, 'parmdocFlag': parmdocFlag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Document Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+        
+        $(document).on("click", "a.lock-doclist-details", lockUnlockHandlerDoclist);
+        $(document).on("click", "a.lock-doc-details", lockUnlockHandlerDocument);
+
+        //Lock-Unlock-Loader-Handler (Documents list Details)
+        var parmLockUnlockdoclist = $.trim($(document).find('#IsDraftListDocuments').val());
+        if (parmLockUnlockdoclist == 1) { //L        
+            $("#btnLockdoclistDetails").prop('disabled', false);
+            $("#btnLockdoclistDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockdoclistDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockdoclistDetails").attr("title", "Unlock Details");
+            $("#btnLockdoclistDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockdoclist == 5) { //UL         
+            $("#btnLockdoclistDetails").prop('disabled', false);
+            $("#btnLockdoclistDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockdoclistDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockdoclistDetails").attr("title", "Lock Details");
+            $("#btnLockdoclistDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockdoclist == 6) { //PL         
+            $("#btnLockdoclistDetails").prop('disabled', true);
+            $("#btnLockdoclistDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockdoclistDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockdoclistDetails").attr("title", "Unlock Details");
+            $("#btnLockdoclistDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockdoclistDetails").prop('disabled', true);
+            $("#btnLockdoclistDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockdoclistDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockdoclistDetails").attr("title", "Lock Details");
+            $("#btnLockdoclistDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+    });
+
+    function lockUnlockHandlerDoclist() {
+
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmLockUnlock = $.trim($(document).find('#IsDraftListDocuments').val());
+            var parmPromoterID = $.trim($(document).find('#zipRelated_Promoter_ID').val());
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_PromoterDocumentList',
+                data: { 'parmProjectId': parmProjectId, 'parmLockUnlock': parmLockUnlock, 'parmPromoterID': parmPromoterID },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockdoclistDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockdoclistDetails").attr("title", "Unlock Details");
+                        $("#btnLockdoclistDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockdoclistDetails").prop('disabled', true);
+                        $("#btnLockdoclistDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockdoclistDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockdoclistDetails").attr("title", "Lock Details");
+                        $("#btnLockdoclistDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockdoclistDetails").prop('disabled', true);
+                        $("#btnLockdoclistDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+    function lockUnlockHandlerDocument() {
+
+        var elem = $(this);
+        var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+        var parmPromoterID = $.trim($(document).find('#zipRelated_Promoter_ID').val());
+        var parmLockUnlockdoc = $(this).attr('data-locknnlockdoc-code');
+        var parmDocindex = $(this).attr('data-docindex-code');
+
+        if (parmLockUnlockdoc == 1 || parmLockUnlockdoc == 5) {
+
+            var btnLabel = $(this).attr("title");
+            var cnfrmTxt = "Do you want to lock details?";
+            if (btnLabel == "Unlock Details") {
+                var cnfrmTxt = "Do you want to unlock details?";
+            }
+
+            if (confirm(cnfrmTxt)) {
+                var baseUrllockunlock = $('body').attr('data-base-url');
+
+                $.ajax({
+                    type: 'GET',
+                    url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_PromoterDocumentByIndex',
+                    data: { 'parmProjectId': parmProjectId, 'parmLockUnlock': parmLockUnlockdoc, 'parmPromoterID': parmPromoterID, 'parmDocIndex': parmDocindex },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        alert(data.status);
+                        if (data.statusCode == 101) {
+                            elem.find("span").removeClass("btn-warning").addClass("btn-primary");
+                            elem.attr("title", "Unlock Details");
+                            elem.find("i").removeClass("fa-unlock").addClass("fa-key");
+                            elem.prop('disabled', true);
+                            elem.find("span").addClass("disabledlockunlock");
+                        } else if (data.statusCode == 105) {
+                            elem.find("span").removeClass("btn-primary").addClass("btn-warning");
+                            elem.attr("title", "Lock Details");
+                            elem.find("i").removeClass("fa-key").addClass("fa-unlock");
+                            elem.prop('disabled', true);
+                            elem.find("span").addClass("disabledlockunlock");
+                        }
+                    },
+                    failure: function (data) {
+                        alert('Bad Request! Failed');
+                    },
+                    error: function (err) {
+                        alert('Bad Request! Error');
+                    }
+                });
+            }
+        }
+        else {
+            $(this).preventDefault();
+        }
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project Application Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Promoter Profile Document(s) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Project /Application - ( @Html.DisplayFor(model => model.zipProject_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zipProjectName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.DisplayFor(model => model.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.HiddenFor(model => model.zipProjectName)
+                                                        @Html.HiddenFor(model => model.zipProject_DiaryNumber)
+                                                        @Html.HiddenFor(model => model.zipRelated_Project_ID)
+                                                        @Html.HiddenFor(model => model.IsDraftListDocuments)
+                                                        @Html.HiddenFor(model => model.zipRelated_Promoter_ID)
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipProjectLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zipProjectLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskNavMenuPartial")
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a data-criteria-code="153" class="modalOpenerButton" href="javascript:void(0);" title="Add Remarks (If Any)"><i class="fa fa-list-ul fa-fw"></i> </a>Promoter Profile Document(s) Details
+                                        <span class="pull-right">
+                                            <a class="modalOpenerButtonExpandChecklist" data-criteria-code="612" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                            @*<a class="modalOpenerButtonExpandDocument" data-document-code="158" data-subdocument-code="0" data-document-flag="1" href="javascript:void(0);" title="View Documents"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-text" aria-hidden="true"></i></span></a>*@
+                                            <a class="a lock-doclist-details" id="btnLockdoclistDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-key" aria-hidden="true"></i></span></a>
+                                        </span>
+                                    </h4>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.DisplayName("Sr No")</th>
+                                            <th style="width:10%" align="justify">@Html.DisplayName("Activity")</th>
+                                            <th>@Html.DisplayNameFor(model => model.PromoterDoc_InfoName)</th>
+                                            <th>@Html.DisplayNameFor(model => model.PromoterDoc_ReferenceNumber)</th>
+                                            <th>@Html.DisplayNameFor(model => model.PromoterDoc_IssueDate)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Remarks_IfAny)</th>
+                                            <th>
+                                                @Html.DisplayName("View")
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int sno = 0;
+                                        }
+                                        @foreach (var item in Model.prpongoing)
+                                        {
+                                            {
+                                                sno = sno + 1;
+                                            }
+                                        <tr class="odd gradeX">
+                                            <td>@Html.DisplayName(sno.ToString())</td>
+                                            <td style="width:8%" align="center">
+                                                <span>
+                                                    <a class="modalOpenerButtonExpandChecklist" data-criteria-code="612" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                                    @if (item.IsDraft == 1)
+                                                    { //L
+                                                        <a class="a lock-doc-details" data-locknnlockdoc-code="@Html.DisplayFor(modelItem => item.IsDraft)" data-docindex-code="@Html.DisplayFor(modelItem => item.PromoterDoc_IndexID)" href="javascript:void(0);" title="Unlock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-key" aria-hidden="true"></i></span></a>
+                                                    }
+                                                    else if (item.IsDraft == 5)
+                                                    { //UL
+                                                        <a class="a lock-doc-details" data-locknnlockdoc-code="@Html.DisplayFor(modelItem => item.IsDraft)" data-docindex-code="@Html.DisplayFor(modelItem => item.PromoterDoc_IndexID)" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                                    }
+                                                    else if (item.IsDraft == 6)
+                                                    { //PL
+                                                        <a class="a lock-doc-details" data-locknnlockdoc-code="@Html.DisplayFor(modelItem => item.IsDraft)" data-docindex-code="@Html.DisplayFor(modelItem => item.PromoterDoc_IndexID)" href="javascript:void(0);" title="Unlock Details"><span class="btn btn-outline btn-primary btn-xs disabledlockunlock"><i class="fa fa-key" aria-hidden="true"></i></span></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="a lock-doc-details" data-locknnlockdoc-code="@Html.DisplayFor(modelItem => item.IsDraft)" data-docindex-code="@Html.DisplayFor(modelItem => item.PromoterDoc_IndexID)" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs disabledlockunlock"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                                    }
+                                                </span>
+                                            </td>
+                                            <td>@Html.DisplayFor(modelItem => item.PromoterDoc_InfoName)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.PromoterDoc_ReferenceNumber)</td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.PromoterDoc_IssueDate)
+                                                @Html.HiddenFor(modelItem => item.zipRelated_Project_ID, new { @class = "hdnProjectID" })
+                                                @Html.HiddenFor(modelItem => item.Promoter_ID)
+                                            </td>
+                                            <td>@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                                            <td align="center">
+                                                <a href="~/@Html.DisplayFor(modelItem => item.PromoterDoc_FilePath)" target="_blank"><i class="fa fa-external-link-square"></i></a>
+                                            </td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<div id="mybtnsidenav" class="btn-sidenav">
+    <a onclick="openSidebarNav()" class="btn-primary">View Promoter's Document(s)</a>
+</div>
+
+
+<div id="myopensideshutter" class="opensideshutter" style="display:none;" data-toggle="tooltip" data-placement="right" title="Expand side panel">
+    <a href="javascript:void(0)" onclick="openSideShutter()">
+        <i class="fa fa-angle-double-right" style="font-size: 18px;
+        background: #7bb73f;
+        color: #22247b;
+        padding: 10px 8px 10px 8px; border:none;">
+        </i>
+    </a>
+</div>
+
+<div id="mySidenav" class="sidenav">
+    <div class="titlebar-name">Promoter's Document(s):</div>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeSidebarNav()">&times;</a>
+    @foreach (var item in Model.prpongoing)
+    {
+        <ul style="color:#FFF;">
+            <li><a href="javascript:void(0)" data-record-id="" onclick="openSideScreen(@item.Promoter_ID, @item.PromoterDoc_IndexID)">@Html.DisplayFor(modelItem => item.PromoterDoc_InfoName)@Html.DisplayName(" (")@Html.DisplayFor(modelItem => item.PromoterDoc_ReferenceNumber)@Html.DisplayName(")")</a></li>
+        </ul>
+    }
+</div>
+
+<!-- Use any element to open the sidenav , item.PromoterDoc_InfoName, item.PromoterDoc_ReferenceNumber -->
+<div id="mySidescreen" class="sidescreen">
+    <div class="titlebar-name" id="documentDiscription">Promoter's Document(s):</div>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeSideScreen()" data-toggle="tooltip" data-placement="bottom" title="Minimize"><b><i style="font-size:16px; background-color:white;" class="fa">&#xf2d1;</i></b></a>
+    <div class="titlebarsubscript-name" id="documentTypeDiscription"></div>
+    <div id="mySidescreenDocumentImage" style="display:none;">
+        <img id="mySidescreenDocImg" src="" class="sidescreenContainer" />
+    </div>
+    <div id="mySidescreenDocumentEmbed" style="display:none;">
+        <embed id="mySidescreenDocEmbedd" src="" class="sidescreenContainer" style="min-height:800px;" type="application/pdf" />
+    </div>
+    @*<iframe class="iframepopup" id="myiframe"></iframe>*@
+    <button id="mySidescreenbtnZoomOut" class="btnZoomInOut" onclick="zoomoutSideScreen()" style="display:none;"><i class="fa fa-search-plus" aria-hidden="true"></i></button>
+    <button id="mySidescreenbtnZoomIn" class="btnZoomInOut" onclick="zoominSideScreen()" style="display:none;"><i class="fa fa-search-minus" aria-hidden="true"></i></button>
+    <button id="mySidescreenbtnZoomOff" class="btnZoomInOut" onclick="closeSideScreen()" style="display:none; left:80px;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+</div>
+
+<div id="myclosesideshutter" class="closesideshutter" style="display:none;" data-toggle="tooltip" data-placement="right" title="Collapse side panel">
+    <a href="javascript:void(0)" onclick="closeSideShutter()">
+        <i class="fa fa-angle-double-left" style="font-size: 18px;
+        background: #7bb73f;
+        color: #22247b;
+        padding: 10px 8px 10px 8px;">
+        </i>
+    </a>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                @*<h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>*@
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet"></link>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>  
+}

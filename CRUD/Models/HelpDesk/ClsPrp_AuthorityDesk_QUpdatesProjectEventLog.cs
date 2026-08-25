@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace CRUD.Models.HelpDesk
+{
+    public class ClsPrp_AuthorityDesk_QUpdatesProjectEventLog
+    {
+
+        public long QUpdateProjectEventAction_ID { get; set; }
+        [Required]
+        [Display(Name = "Action Operation Type")]
+        public long EventAction_Type { get; set; }
+        public string EventAction_IdentifiedBy { get; set; }
+        [Display(Name = "Last Updated On")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? EventAction_IdentifiedOn { get; set; }
+        public long Related_Promoter_ID { get; set; }
+        public long Related_Project_ID { get; set; }
+        public int Related_QUpdateProject_Year { get; set; }
+        public string Related_QUpdateProject_QuarterName { get; set; }
+        [Display(Name = "Promoter Diary Number")]
+        public string DiaryNumber_Promoter { get; set; }
+        [Display(Name = "Project Diary Number")]
+        public string DiaryNumber_Project { get; set; }
+        [Display(Name = "Diary Number")]
+        public string DiaryNumber_QUpdateProject { get; set; }
+        public string EventAction_Summary { get; set; }
+        public string EventAction_Description { get; set; }
+        public string EventAction_Category { get; set; }
+        [Display(Name = "Application Status")]
+        public string EventAction_Aggregate { get; set; }
+        public string EventAction_Relationship { get; set; }
+        [Display(Name = "Assigned To")]
+        public string AssignedTo { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? Target_ResolutionDate { get; set; }
+        public string Target_ResolutionSummary { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? Actual_ResolutionDate { get; set; }
+        public int IsBefore_TargetResolution { get; set; }
+        public string ProgressStatus { get; set; }
+        [Display(Name = "Remarks, If Any")]
+        [Required]
+        [DataType(DataType.MultilineText)]
+        [StringLength(2400)]
+        [RegularExpression(@"^[/\0-9a-zA-Z''-',.\s()]{1,2400}$", ErrorMessage = "Special characters are not allowed. Maximum length is 2400.")]
+        public string Remarks_IfAny { get; set; }
+        public int IsActive { get; set; }
+        public int IsDraft { get; set; }
+        public int IsActiveProvider { get; set; }
+        public int IsLock { get; set; }
+        public string CreatedBy { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? CreatedOn { get; set; }
+        public string ModifyBy { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? ModifyOn { get; set; }
+
+        [Display(Name = "Project Name")]
+        public string ProjectName { get; set; }
+        [Display(Name = "RERA Registration Number")]
+        public string RERAregistrationNumber { get; set; }
+        [Display(Name = "Issue Date")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? RegistrationIssueDate { get; set; }
+        [Display(Name = "Registration Valid Upto Date")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? RegistrationValidUptoDate { get; set; }
+        [Display(Name = "Last Modified On")]
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? ProjectLastModifiedOn { get; set; }
+        [Display(Name = "Quarter Year")]
+        public string setQuarterValue_Year { get; set; }
+        [Display(Name = "Quarter Name")]
+        public string setQuarterValue_Name { get; set; }
+
+        public List<ClsPrp_AuthorityDesk_QUpdatesProjectEventLog> prpongoing { get; set; }
+        public ClsPrp_AuthorityDesk_QUpdatesProjectEventLog()
+        {
+            prpongoing = new List<ClsPrp_AuthorityDesk_QUpdatesProjectEventLog>();
+
+        }
+        public List<ClsPrp_AuthorityDesk_QUpdatesProjectEvent_Master> EventMaster { get; set; }
+    }
+}

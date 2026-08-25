@@ -1,0 +1,1215 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_ProjectPUCSpecialBankAccount
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/dist/css/rera-toggleshow.css")" rel="stylesheet" />
+<!-- DataTables JavaScript -->
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+<!-- Custom Theme JavaScript -->
+<script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        var getUrlCPvalue;        
+
+        @if (TempData["returnUrlCPvalue"].ToString() != "")
+        {
+            <text>
+                getUrlCPvalue = '@TempData["returnUrlCPvalue"]';
+            </text>
+        }
+
+        $(document).on('click', 'a.controlpanelHomeButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + getUrlCPvalue;
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Special Bank Account</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Add or change project special bank account details with reference to Registration Number/ RERA Number/ Diary Number/ PUC Number.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> IT Manager can intialize the project special bank account change request details.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+
+    .border-left-danger {
+        border-left: .15rem solid #FF4961 !important;
+    }
+
+    .border-left-warning {
+        border-left: .25rem solid #f6c23e !important;
+    }
+
+    .bg-exclamation-triangle-warning {
+        color: #FF4961 !important;
+        display: inline-block !important;
+    }
+
+    .bg-exclamation-triangle-none {
+        display: none !important;
+    }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-spzoom]').spzoom();
+
+        $("#RERAnumberRegistration_Input").inputmask({ mask: function () { return ["AAAAAA-AAA99-AA9999"]; } });
+        $("#ReferenceRegistrationProject_Input").inputmask({ mask: function () { return ["AAA9999AAA9999"]; } });
+        $("#ReferenceRegistrationPUC_Input").inputmask({ mask: function () { return ["AAAA99999999"]; } });
+        $("#ReferenceNumber_Input").inputmask({ mask: function () { return ["9999"]; } });
+
+        $('#ReferenceNumberDate_Input').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+	    $('#RERAnumberIssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+	    $('#RERAnumberRegUptoDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+	    $('#RERAnumberExtensionRegUptoDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+	    $('#PUC_ReferencePUC_Date').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+	});
+</script>
+<script>
+    $(document).ready(function () {
+        $(".btnRequestOptionsACR").click(function (e) {
+            e.preventDefault();
+            var isAllValid = false;
+            var prmRequestFlag = $("input[name='ReferenceNumberFlag_Input']:checked").val();
+            if (prmRequestFlag == 15) {
+                if ($('#RERAnumberRegistration_Input').val() != '') {
+                    var xpRelated_RegistrationNumber = $("#RERAnumberRegistration_Input").val();
+                    var n = xpRelated_RegistrationNumber.length;
+
+                    if (parseInt(n) >= parseInt(19)) {
+                        isAllValid = true;
+                    }
+                    else {
+                        alert('Invalid! Registration Number!');
+                        isAllValid = false;
+                    };
+                }
+                else {
+                    alert('The mandatory (*) fields are required.');
+                    isAllValid = false;
+                };
+            }
+            else if (prmRequestFlag == 16) {
+                if ($('#ReferenceRegistrationProject_Input').val() != '') {
+                    var xpRelated_ProjectDNumber = $("#ReferenceRegistrationProject_Input").val();
+                    var n = xpRelated_ProjectDNumber.length;
+
+                    if (parseInt(n) >= parseInt(14)) {
+                        isAllValid = true;
+                    }
+                    else {
+                        alert('Invalid! Project Diary Number!');
+                        isAllValid = false;
+                    };
+                }
+                else {
+                    alert('The mandatory (*) fields are required.');
+                    isAllValid = false;
+                };
+            }
+            else if (prmRequestFlag == 17) {
+                if ($('#ReferenceRegistrationPUC_Input').val() != '') {
+                    var xpRelated_PucDNumber = $("#ReferenceRegistrationPUC_Input").val();
+                    var n = xpRelated_PucDNumber.length;
+
+                    if (parseInt(n) >= parseInt(12)) {
+                        isAllValid = true;
+                    }
+                    else {
+                        alert('Invalid! PUC Diary Number!');
+                        isAllValid = false;
+                    };
+                }
+                else {
+                    alert('The mandatory (*) fields are required.');
+                    isAllValid = false;
+                };
+            }
+            else if (prmRequestFlag == 18) {
+                if ($('#ReferenceNumber_Input').val() != '') {
+                    var xpRelated_RefNumber = $("#ReferenceNumber_Input").val();
+                    var xpRelated_RefDate = $("#ReferenceNumberDate_Input").val();
+                    var nx = xpRelated_RefNumber.length;
+                    var ny = xpRelated_RefDate.length;
+                    if (parseInt(ny) >= parseInt(11)) {
+                        if (parseInt(nx) >= parseInt(4)) {
+                            isAllValid = true;
+                        }
+                        else {
+                            alert('Invalid! PUC Reference Number!');
+                            isAllValid = false;
+                        };
+                    }
+                    else {
+                        alert('Invalid! PUC Reference Number!');
+                        isAllValid = false;
+                    };                    
+                }
+                else {
+                    alert('The mandatory (*) fields are required.');
+                    isAllValid = false;
+                };
+            }
+            else {
+                isAllValid = false;
+            };
+
+            if (isAllValid) {
+                var pwRelated_RegNumber = "";
+                var pwRelated_PrjDNumber = "";
+                var pwRelated_PucDNumber = "";
+                var pwRelated_RefNumber = "";
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0');
+                var yyyy = today.getFullYear();
+                var pwRelated_RefDate = mm + '/' + dd + '/' + yyyy;
+
+                var pwRequestFlag = $("input[name='ReferenceNumberFlag_Input']:checked").val();
+                if (pwRequestFlag == 15) {
+                    pwRelated_RegNumber = $("#RERAnumberRegistration_Input").val();
+                }
+                else if (pwRequestFlag == 16) {
+                    pwRelated_PrjDNumber = $("#ReferenceRegistrationProject_Input").val();
+                }
+                else if (pwRequestFlag == 17) {
+                    pwRelated_PucDNumber = $("#ReferenceRegistrationPUC_Input").val();
+                }
+                else if (pwRequestFlag == 18) {
+                    pwRelated_RefNumber = $("#ReferenceNumber_Input").val();
+                    pwRelated_RefDate = $("#ReferenceNumberDate_Input").val();
+                };
+
+                Date.prototype.toShortFormat = function () {
+                    let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    let day = this.getDate();
+                    let day1 = (day < 10 ? '0' : '') + day;
+                    let monthIndex = this.getMonth();
+                    let monthName = monthNames[monthIndex];
+                    let year = this.getFullYear();
+                    return `${day1}-${monthName}-${year}`;
+                };
+
+                var BASE_URLn = $('body').attr('data-base-url');
+                $.ajax({
+                    type: "POST",
+                    url: BASE_URLn + 'HelpdeskControlPanel/GetExistingProjectRegistrationACRSpecialBankAccountByID',
+                    datatype: "Json",
+                    data: { "mRequestFlag": pwRequestFlag, "mRegNumber": pwRelated_RegNumber, "mDNumber": pwRelated_PrjDNumber, "mPucDNumber": pwRelated_PucDNumber, "mPUCnumber": pwRelated_RefNumber, "mPUCdate": pwRelated_RefDate },
+                    beforeSend: function () {
+                        startPreloader();
+                    },
+                    success: function (data) {
+                        stopPreloader();
+                        if (data) {
+                            if (data.status == true) {
+                                $("#dnoPACR").addClass('show').removeClass('hide');
+                                $("#pucPACR").addClass('show').removeClass('hide');
+                                $("#detailsPACR01").addClass('show').removeClass('hide');
+                                $("#detailsPACR02").addClass('show').removeClass('hide');
+                                $("#detailsPACR03").addClass('show').removeClass('hide');
+                                $("#othersPACR").addClass('show').removeClass('hide');
+                                $("#submitPACR").addClass('show').removeClass('hide');
+                                $("#InvalidPACR").addClass('show').removeClass('hide');                                
+
+                                $.each(data, function () {
+                                    $(this).each(function () {
+                                        $('#Related_Project_ID').val(this.Project_ID);
+                                        $('#Related_Promoter_ID').val(this.Promoter_ID);
+                                        $('#RERAnumberRegistration').val(this.RERAnumberRegistration);
+                                        $('#RelatedApplicationPUC_ID').val(this.PUC_ID);                                        
+                                        var getIssueDate = String(this.RERAnumberIssueDate);
+                                        var getUptoDate = String(this.RERAnumberRegUptoDate);
+                                        var dateIssueDate = new Date(parseInt(getIssueDate.substr(6)));
+                                        var dateUptoDate = new Date(parseInt(getUptoDate.substr(6)));
+                                        $('#RERAnumberIssueDate').val(dateIssueDate.toShortFormat());
+                                        $('#RERAnumberRegUptoDate').val(dateUptoDate.toShortFormat());
+                                        $('#ProjectDiaryNumber').val(this.ProjectDiaryNumber);
+                                        $('#ProjectName').val(this.ProjectName);
+                                        $('#PromoterName').val(this.PromoterName);
+                                        $("input[name='IsExtensionRegistration'][value=" + this.IsExtensionRegistration + "]").attr('checked', 'checked');
+                                        $("input[name='ProjectType'][value=" + this.ProjectType + "]").attr('checked', 'checked');
+                                        $('#ProjectAddressDistrict').val(this.ProjectAddressDistrict);
+                                        if (this.IsExtensionRegistration == 1) {
+                                            $("#rowExtnDateCol01").addClass('show').removeClass('hide');
+                                            $("#rowExtnDateCol02").addClass('show').removeClass('hide');
+                                            $("#rowExtnDNoCol01").addClass('show').removeClass('hide');
+                                            $("#rowExtnDNoCol02").addClass('show').removeClass('hide');
+                                            var getExtnUptoDate = String(this.RERAnumberExtensionRegUptoDate);
+                                            var dateExtnUptoDate = new Date(parseInt(getExtnUptoDate.substr(6)));
+                                            $('#RERAnumberExtensionRegUptoDate').val(dateExtnUptoDate.toShortFormat());
+                                            $('#ExtensionRegdDiaryNumber').val(this.ExtensionRegdDiaryNumber);
+                                        }
+                                        else {
+                                            $("#rowExtnDateCol01").addClass('hide').removeClass('show');
+                                            $("#rowExtnDateCol02").addClass('hide').removeClass('show');
+                                            $("#rowExtnDNoCol01").addClass('hide').removeClass('show');
+                                            $("#rowExtnDNoCol02").addClass('hide').removeClass('show');
+                                        };                                        
+                                        $('#mFlagPUC_YesNo').val(this.mFlagPUC_YesNo);
+                                        $('#mFlagPUC_OpenClosed').val(this.mFlagPUC_OpenClosed);
+                                        $('#mFlagPUC_ApprovedNotApproved').val(this.mFlagPUC_ApprovedNotApproved);
+
+                                        //Start-Cnt-Vw
+                                        var mxFlagPUC_YesNo = String(this.mFlagPUC_YesNo);
+                                        var mxFlagPUC_OpenClosed = String(this.mFlagPUC_OpenClosed);
+                                        var mxFlagPUC_ApprovedNotApproved = String(this.mFlagPUC_ApprovedNotApproved);                                        
+                                        if (mxFlagPUC_YesNo == 'Y') {
+                                            if (mxFlagPUC_OpenClosed == 'Open') {
+                                                if (mxFlagPUC_ApprovedNotApproved == 'A55') {
+                                                    $("#dnoPACR").addClass('show').removeClass('hide');
+                                                    $("#pucPACR").addClass('show').removeClass('hide');                                                   
+                                                    $("#detailsPACR01").addClass('show').removeClass('hide');
+                                                    $("#detailsPACR02").addClass('show').removeClass('hide');
+                                                    $("#detailsPACR03").addClass('show').removeClass('hide');
+                                                    $("#othersPACR").addClass('show').removeClass('hide');
+                                                    $("#submitPACR").addClass('show').removeClass('hide');
+                                                    $("#InvalidPACR").addClass('hide').removeClass('show');
+
+                                                    $('#PUC_DiaryNumber').val(this.PUC_DiaryNumber);
+                                                    $('#PUC_ReferencePUC_Name').val(this.PUC_ReferencePUC_Name);
+                                                    var getRefPUCDate = String(this.PUC_ReferencePUC_Date);
+                                                    var dateReferencePUC = new Date(parseInt(getRefPUCDate.substr(6)));
+                                                    $('#PUC_ReferencePUC_Date').val(dateReferencePUC.toShortFormat());
+                                                    $('#PUC_RequestCategoryName').val(this.PUC_RequestCategoryName);
+                                                    $('#PUC_RequestCategoryID').val(this.PUC_RequestCategoryID);
+                                                }
+                                                else {
+                                                    $("#dnoPACR").addClass('show').removeClass('hide');
+                                                    $("#pucPACR").addClass('hide').removeClass('show');
+                                                    $("#detailsPACR01").addClass('hide').removeClass('show');
+                                                    $("#detailsPACR02").addClass('hide').removeClass('show');
+                                                    $("#detailsPACR03").addClass('hide').removeClass('show');
+                                                    $("#othersPACR").addClass('hide').removeClass('show');
+                                                    $("#submitPACR").addClass('hide').removeClass('show');
+                                                    $("#InvalidPACR").addClass('show').removeClass('hide');
+                                                };
+                                            }
+                                            else {
+                                                $("#dnoPACR").addClass('show').removeClass('hide');
+                                                $("#pucPACR").addClass('hide').removeClass('show');
+                                                $("#detailsPACR01").addClass('hide').removeClass('show');
+                                                $("#detailsPACR02").addClass('hide').removeClass('show');
+                                                $("#detailsPACR03").addClass('hide').removeClass('show');
+                                                $("#othersPACR").addClass('hide').removeClass('show');
+                                                $("#submitPACR").addClass('hide').removeClass('show');
+                                                $("#InvalidPACR").addClass('show').removeClass('hide');
+                                            };
+                                        }
+                                        else {
+                                            $("#dnoPACR").addClass('show').removeClass('hide');
+                                            $("#pucPACR").addClass('hide').removeClass('show');
+                                            $("#detailsPACR01").addClass('hide').removeClass('show');
+                                            $("#detailsPACR02").addClass('hide').removeClass('show');
+                                            $("#detailsPACR03").addClass('hide').removeClass('show');
+                                            $("#othersPACR").addClass('hide').removeClass('show');
+                                            $("#submitPACR").addClass('hide').removeClass('show');
+                                            $("#InvalidPACR").addClass('show').removeClass('hide');
+                                        };
+                                        //End-Cnt-Vw
+                                    });
+                                });
+                            }
+                            else {
+                                alert('Invalid! Registration Number!');
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert("oops! Something went wrong")
+                    }
+                });
+            };
+        });
+
+        $("#RERAnumberRegistration_Input").change(function (e) {
+            e.preventDefault();            
+            $("#dnoPACR").addClass('hide').removeClass('show');
+            $("#pucPACR").addClass('hide').removeClass('show');
+            $("#detailsPACR01").addClass('hide').removeClass('show');
+            $("#detailsPACR02").addClass('hide').removeClass('show');
+            $("#detailsPACR03").addClass('hide').removeClass('show');
+            $("#othersPACR").addClass('hide').removeClass('show');
+            $("#submitPACR").addClass('hide').removeClass('show');
+            $("#InvalidPACR").addClass('hide').removeClass('show');
+        });
+        $("#ReferenceRegistrationProject_Input").change(function (e) {
+            e.preventDefault();
+            $("#dnoPACR").addClass('hide').removeClass('show');
+            $("#pucPACR").addClass('hide').removeClass('show');
+            $("#detailsPACR01").addClass('hide').removeClass('show');
+            $("#detailsPACR02").addClass('hide').removeClass('show');
+            $("#detailsPACR03").addClass('hide').removeClass('show');
+            $("#othersPACR").addClass('hide').removeClass('show');
+            $("#submitPACR").addClass('hide').removeClass('show');
+            $("#InvalidPACR").addClass('hide').removeClass('show');
+        });
+        $("#ReferenceRegistrationPUC_Input").change(function (e) {
+            e.preventDefault();
+            $("#dnoPACR").addClass('hide').removeClass('show');
+            $("#pucPACR").addClass('hide').removeClass('show');
+            $("#detailsPACR01").addClass('hide').removeClass('show');
+            $("#detailsPACR02").addClass('hide').removeClass('show');
+            $("#detailsPACR03").addClass('hide').removeClass('show');
+            $("#othersPACR").addClass('hide').removeClass('show');
+            $("#submitPACR").addClass('hide').removeClass('show');
+            $("#InvalidPACR").addClass('hide').removeClass('show');
+        });
+        $("#ReferenceNumber_Input").change(function (e) {
+            e.preventDefault();
+            $("#dnoPACR").addClass('hide').removeClass('show');
+            $("#pucPACR").addClass('hide').removeClass('show');
+            $("#detailsPACR01").addClass('hide').removeClass('show');
+            $("#detailsPACR02").addClass('hide').removeClass('show');
+            $("#detailsPACR03").addClass('hide').removeClass('show');
+            $("#othersPACR").addClass('hide').removeClass('show');
+            $("#submitPACR").addClass('hide').removeClass('show');
+            $("#InvalidPACR").addClass('hide').removeClass('show');
+        });
+        $("#ReferenceNumberDate_Input").change(function (e) {
+            e.preventDefault();
+            $("#dnoPACR").addClass('hide').removeClass('show');
+            $("#pucPACR").addClass('hide').removeClass('show');
+            $("#detailsPACR01").addClass('hide').removeClass('show');
+            $("#detailsPACR02").addClass('hide').removeClass('show');
+            $("#detailsPACR03").addClass('hide').removeClass('show');
+            $("#othersPACR").addClass('hide').removeClass('show');
+            $("#submitPACR").addClass('hide').removeClass('show');
+            $("#InvalidPACR").addClass('hide').removeClass('show');
+        });
+
+        var vcheckvalueregdextndate = $("input[name='IsExtensionRegistration']:checked").val();
+        if (vcheckvalueregdextndate == '1') {
+            $("#rowExtnDateCol01").addClass('show').removeClass('hide');
+            $("#rowExtnDateCol02").addClass('show').removeClass('hide');
+            $("#rowExtnDNoCol01").addClass('show').removeClass('hide');
+            $("#rowExtnDNoCol02").addClass('show').removeClass('hide');
+        }
+        else if (vcheckvalueregdextndate == '0') {
+            $("#rowExtnDateCol01").addClass('hide').removeClass('show');
+            $("#rowExtnDateCol02").addClass('hide').removeClass('show');
+            $("#rowExtnDNoCol01").addClass('hide').removeClass('show');
+            $("#rowExtnDNoCol02").addClass('hide').removeClass('show');
+        }
+
+        $(document).on('click', '.radio-typeprojectregdextnvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowExtnDateCol01").addClass('show').removeClass('hide');
+                $("#rowExtnDateCol02").addClass('show').removeClass('hide');
+                $("#rowExtnDNoCol01").addClass('show').removeClass('hide');
+                $("#rowExtnDNoCol02").addClass('show').removeClass('hide');                
+            }
+            else if (this.value == '0') {
+                $("#rowExtnDateCol01").addClass('hide').removeClass('show');
+                $("#rowExtnDateCol02").addClass('hide').removeClass('show');
+                $("#rowExtnDNoCol01").addClass('hide').removeClass('show');
+                $("#rowExtnDNoCol02").addClass('hide').removeClass('show');
+            }
+        });
+        
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            var files = $("#Photo_Address").get(0).files;
+            var path = $('#user_Photo').attr('src').replace('/', '');
+            if (files.length > 0 || path.length > 0) {
+                $(submitButton).parents('form').submit();
+            }
+            else {
+                alert("Please Add Scan copy of Cancel Cheque file to Upload!")
+                return false;
+            }            
+        });
+    });
+</script>
+<script type="text/javascript">
+      function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                $('#user_Photo').attr('src', e.target.result);
+            }
+            filerdr.readAsDataURL(input.files[0]);
+            $('#Photo_AddressShow').empty();
+            $("#Photo_AddressShow").val(input.files[0].name);
+        }
+    }
+</script>
+<script type="text/javascript">
+    @if (TempData["MessagePrjACR"].ToString() != "")
+    { 
+        <text >
+            $(document).ready(function () {
+                swal({
+                    title: "Message",
+                    text: "@TempData["MessagePrjACR"]",
+                    type: "success"
+                });
+            });
+        </text>
+    }
+</script>
+<script>
+    $(document).ready(function () {
+
+        var vcheckrangevalue = $("input[name='ReferenceNumberFlag_Input']:checked").val();
+        if (vcheckrangevalue == '15') {
+            $("#rowReraID").addClass('show').removeClass('hide');
+            $("#rowPrjDNo").addClass('hide').removeClass('show');
+            $("#rowPucDNo").addClass('hide').removeClass('show');
+            $("#rowPucRefNo").addClass('hide').removeClass('show');
+        }
+        else if (vcheckrangevalue == '16') {
+            $("#rowReraID").addClass('hide').removeClass('show');
+            $("#rowPrjDNo").addClass('show').removeClass('hide');
+            $("#rowPucDNo").addClass('hide').removeClass('show');
+            $("#rowPucRefNo").addClass('hide').removeClass('show');
+        }
+        else if (vcheckrangevalue == '17') {
+            $("#rowReraID").addClass('hide').removeClass('show');
+            $("#rowPrjDNo").addClass('hide').removeClass('show');
+            $("#rowPucDNo").addClass('show').removeClass('hide');
+            $("#rowPucRefNo").addClass('hide').removeClass('show');
+        }
+        else if (vcheckrangevalue == '18') {
+            $("#rowReraID").addClass('hide').removeClass('show');
+            $("#rowPrjDNo").addClass('hide').removeClass('show');
+            $("#rowPucDNo").addClass('hide').removeClass('show');
+            $("#rowPucRefNo").addClass('show').removeClass('hide');
+        };
+
+        $(document).on('click', '.radio-pucregistration', function (e) {
+            if (this.value == '15') {
+                $("#rowReraID").addClass('show').removeClass('hide');
+                $("#rowPrjDNo").addClass('hide').removeClass('show');
+                $("#rowPucDNo").addClass('hide').removeClass('show');
+                $("#rowPucRefNo").addClass('hide').removeClass('show');
+            }
+            else if (this.value == '16') {
+                $("#rowReraID").addClass('hide').removeClass('show');
+                $("#rowPrjDNo").addClass('show').removeClass('hide');
+                $("#rowPucDNo").addClass('hide').removeClass('show');
+                $("#rowPucRefNo").addClass('hide').removeClass('show');
+            }
+            else if (this.value == '17') {
+                $("#rowReraID").addClass('hide').removeClass('show');
+                $("#rowPrjDNo").addClass('hide').removeClass('show');
+                $("#rowPucDNo").addClass('show').removeClass('hide');
+                $("#rowPucRefNo").addClass('hide').removeClass('show');
+            }
+            else if (this.value == '18') {
+                $("#rowReraID").addClass('hide').removeClass('show');
+                $("#rowPrjDNo").addClass('hide').removeClass('show');
+                $("#rowPucDNo").addClass('hide').removeClass('show');
+                $("#rowPucRefNo").addClass('show').removeClass('hide');
+            };
+        });
+
+    });
+</script>
+<style>
+    .panel-info > .panel-heading a[aria-expanded="false"]:after {
+        content: none;        
+    }
+
+    .panel-info > .panel-heading a[aria-expanded="false"].collapsed:after {
+        content: none;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', 'a.panel-accordion-toggle', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var criteriaCode = $(this).attr('data-parent');
+            switch (criteriaCode) {
+                case '#accordionPUCprojectdetail':
+                    $("#btnAccordionPUCproject").find("span").toggleClass("btn-outline");
+                    $("#btnAccordionPUCproject").find("i").toggleClass("fa-expand fa-compress");
+                    break;                
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('#Bank_AddressStateCode').change(function () {
+            $('#Bank_AddressDistrictCode').empty();
+            var baseUrl = $('body').attr('data-base-url');
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "HelpdeskControlPanel/GetDistrictByStateId",
+                datatype: "Json",
+                data: { StateId: $('#Bank_AddressStateCode').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#Bank_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                    });
+                }
+            });
+        });
+
+        $('#Bank_AccountNumber').change(function () {
+            var AcNo = $("#Bank_AccountNumber").val();
+            var baseUrl = $('body').attr('data-base-url');
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "HelpdeskControlPanel/CheckBankAccountNumber",
+                data: '{AccountNumber: "' + AcNo + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response) {
+                        alert("Bank Account Number Already exist! Try another.")
+                        $("#Bank_AccountNumber").val(0);
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Control Panel</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row panel-group" id="accordionPUCprojectdetail">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Control Panel : CP 13.1 Special Bank Account of Registered Project [ACR] Details
+                    <span class="pull-right">
+                        <a id="btnAccordionPUCproject" data-toggle="collapse" data-parent="#accordionPUCprojectdetail" href="#collapsePUCregisteredproject" class="panel-accordion-toggle" aria-expanded="false" title="Expand/Compress Details"><span class="btn btn-primary btn-xs btn-outline"><i class="fa fa-compress" aria-hidden="true"></i></span></a>                     
+                        <a class="controlpanelHomeButton" href="javascript:void(0);" title="Home"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-home" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>                        
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id="frmACRsearchOptions" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Search Options</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Search For</label>                                                
+                                            </div>
+                                            <div class="col-md-9">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.ReferenceNumberFlag_Input, "15", new { id = "chkReraRegistrationNumber", @class = "radio-pucregistration", @checked = "checked" }) RERA Number
+                                                    @Html.RadioButtonFor(model => model.ReferenceNumberFlag_Input, "16", new { id = "chkProjectDNumber", @class = "radio-pucregistration" }) Project Diary Number
+                                                    @Html.RadioButtonFor(model => model.ReferenceNumberFlag_Input, "17", new { id = "chkPucDNumber", @class = "radio-pucregistration" }) PUC Diary Number
+                                                    @Html.RadioButtonFor(model => model.ReferenceNumberFlag_Input, "18", new { id = "chkReferencePUCNumber", @class = "radio-pucregistration" }) Reference PUC Number
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.ReferenceNumberFlag_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="rowReraID">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Registration Number</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.RERAnumberRegistration_Input, new { htmlAttributes = new { @class = "form-control", @placeholder = "RERA Number", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.RERAnumberRegistration_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" value="Proceed" class="btn btn-outline btn-primary btnRequestOptionsACR" />
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "ACR_ProjectSpecialBankAccountDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row hide" id="rowPrjDNo">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Project Diary Number</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.ReferenceRegistrationProject_Input, new { htmlAttributes = new { @class = "form-control", @placeholder = "Project Diary Number", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.ReferenceRegistrationProject_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" value="Proceed" class="btn btn-outline btn-primary btnRequestOptionsACR" />
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "ACR_ProjectSpecialBankAccountDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row hide" id="rowPucDNo">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">PUC Diary Number</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.ReferenceRegistrationPUC_Input, new { htmlAttributes = new { @class = "form-control", @placeholder = "Diary Number", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.ReferenceRegistrationPUC_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" value="Proceed" class="btn btn-outline btn-primary btnRequestOptionsACR" />
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "ACR_ProjectSpecialBankAccountDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row hide" id="rowPucRefNo">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Reference PUC Number</label>
+                                            </div>
+                                            <div class="col-md-1">
+                                                @Html.EditorFor(model => model.ReferenceNumber_Input, new { htmlAttributes = new { @class = "form-control", @placeholder = "PUC", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.ReferenceNumber_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.ReferenceNumberDate_Input, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Date", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.ReferenceNumberDate_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="Submit" value="Proceed" class="btn btn-outline btn-primary btnRequestOptionsACR" />
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "ACR_ProjectSpecialBankAccountDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+
+                            @using (Html.BeginForm("ACR_ProjectSpecialBankAccountDetails", "HelpdeskControlPanel", FormMethod.Post, new { enctype = "multipart/form-data", id="frmProjectACR" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.ProjectPUC_SpecialBankAccount_IndexID)
+                                @Html.HiddenFor(m => m.ProjectPUC_SpecialBankAccount_ID)
+                                @Html.HiddenFor(m => m.Related_Promoter_ID)
+                                @Html.HiddenFor(m => m.Related_Project_ID)
+                                @Html.HiddenFor(m => m.RelatedApplicationPUC_ID)
+                                @Html.HiddenFor(m => m.SpecialBankAccountAdditional_IndexID)
+                                @Html.HiddenFor(m => m.SpecialBankAccountAdditional_ID)
+
+                                @Html.HiddenFor(m => m.mFlagPUC_YesNo)
+                                @Html.HiddenFor(m => m.mFlagPUC_OpenClosed)
+                                @Html.HiddenFor(m => m.mFlagPUC_ApprovedNotApproved)
+
+                                <div class="row hide" id="dnoPACR">
+                                    <div id="collapsePUCregisteredproject" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Registration Number Details</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.RERAnumberRegistration, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Reference RERA Registration Number of Project with the authority.">
+                                                                @Html.EditorFor(model => model.RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.RERAnumberRegistration, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.RERAnumberIssueDate, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(model => model.RERAnumberIssueDate, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(model => model.RERAnumberRegUptoDate, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Extension of Registration (Yes/No)?</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label class="form-group">
+                                                                    @Html.RadioButtonFor(model => model.IsExtensionRegistration, "1", new { @class = "radio-typeprojectregdextnvalue" }) Yes
+                                                                    @Html.RadioButtonFor(model => model.IsExtensionRegistration, "0", new { @class = "radio-typeprojectregdextnvalue" }) No
+                                                                </label>
+                                                                @Html.ValidationMessageFor(model => model.IsExtensionRegistration, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3 hide" id="rowExtnDateCol01">
+                                                                @Html.LabelFor(model => model.RERAnumberExtensionRegUptoDate, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3 hide" id="rowExtnDateCol02">
+                                                                @Html.EditorFor(model => model.RERAnumberExtensionRegUptoDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(model => model.RERAnumberExtensionRegUptoDate, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ProjectDiaryNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Reference Diary Number of Project Application with the authority.">
+                                                                @Html.EditorFor(model => model.ProjectDiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.ProjectDiaryNumber, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3 hide" id="rowExtnDNoCol01">
+                                                                @Html.LabelFor(model => model.ExtensionRegdDiaryNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3 hide" id="rowExtnDNoCol02" data-toggle="tooltip" data-placement="top" title="Reference Diary Number of Extension of Registreation Application with the authority.">
+                                                                @Html.EditorFor(model => model.ExtensionRegdDiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.ExtensionRegdDiaryNumber, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Type of Project</label>
+                                                            </div>
+                                                            <div class="col-md-9">
+                                                                <label class="form-group">
+                                                                    @Html.RadioButtonFor(model => model.ProjectType, "PR", new { @class = "radio-typeprojectvalue" }) Residential
+                                                                    @Html.RadioButtonFor(model => model.ProjectType, "PC", new { @class = "radio-typeprojectvalue" }) Commercial
+                                                                    @Html.RadioButtonFor(model => model.ProjectType, "PI", new { @class = "radio-typeprojectvalue" }) Industrial
+                                                                    @Html.RadioButtonFor(model => model.ProjectType, "PM", new { @class = "radio-typeprojectvalue" }) Mixed
+                                                                    @Html.RadioButtonFor(model => model.ProjectType, "OT", new { @class = "radio-typeprojectvalue" }) Other
+                                                                </label>
+                                                                @Html.ValidationMessageFor(model => model.ProjectType, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Project Name registered with the Authority.">
+                                                                @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.PromoterName, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Promoter Name registered with the Authority.">
+                                                                @Html.EditorFor(model => model.PromoterName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.PromoterName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ProjectAddressDistrict, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            @if (Model.prpdistrictMaster != null)
+                                                            {
+                                                                <div class="col-md-3">
+                                                                    @Html.DropDownListFor(model => model.ProjectAddressDistrict, new SelectList(Model.prpdistrictMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.ProjectAddressDistrict, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3">
+                                                                    @Html.DropDownListFor(model => model.ProjectAddressDistrict, new SelectList(" "), "Select District", new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.ProjectAddressDistrict, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="pucPACR">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">PUC Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PUC_DiaryNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Project Paper Under Consideration [PUC] Information.">
+                                                            @Html.EditorFor(model => model.PUC_DiaryNumber, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PUC_DiaryNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PUC_RequestCategoryID, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        @if (Model.prpchangerequestcategoryMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.PUC_RequestCategoryID, new SelectList(Model.prpchangerequestcategoryMaster, "ChangeRequest_Code", "ChangeRequest_Aggregate"), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.PUC_RequestCategoryID, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.PUC_RequestCategoryID, new SelectList(" "), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.PUC_RequestCategoryID, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PUC_ReferencePUC_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.PUC_ReferencePUC_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Number", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PUC_ReferencePUC_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PUC_ReferencePUC_Date, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.PUC_ReferencePUC_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Date", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PUC_ReferencePUC_Date, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="detailsPACR01">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Special Bank Account Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Bank_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        @if (Model.prpBankMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(m => m.Bank_Name, new SelectList(Model.prpBankMaster, "BankName", "BankName"), "Select", new { @class = "form-control" })                                                                
+                                                                @Html.ValidationMessageFor(model => model.Bank_Name, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(m => m.Bank_Name, new SelectList("", "BankName", "BankName"), "Select", new { @class = "form-control" })                                                                
+                                                                @Html.ValidationMessageFor(model => model.Bank_Name, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Branch_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Branch_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Branch_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Bank_AccountNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Bank_AccountNumber, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Bank_AccountNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Bank_IFSC_Code, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Bank_IFSC_Code, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Bank_IFSC_Code, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.A_column, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="detailsPACR02">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Bank Address Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Bank_AddressLine1, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Bank_AddressLine1, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Bank_AddressLine1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Bank_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Bank_AddressLine2, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Bank_AddressLine2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select State</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.Bank_AddressStateCode, new SelectList(Model.prpstateMaster, "StateId", "StateName"), "Select", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(m => m.Bank_AddressStateCode, "", new { @class = "text-danger" })                                                            
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select District</label>
+                                                        </div>
+                                                        @if (Model.prpdistrictMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.Bank_AddressDistrictCode, new SelectList(Model.prpdistrictMaster, "DistrictId", "DistrictName"), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.Bank_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.Bank_AddressDistrictCode, new SelectList(" "), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.Bank_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Bank_AddressPIN, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Bank_AddressPIN, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Bank_AddressPIN, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="detailsPACR03">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Upload Scan Copy of Cancelled Cheque</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.ImageCancelledCheque_FilePath, htmlAttributes: new { @class = "control-label mand" })</div>                                                        
+                                                        <div class="col-md-3">
+                                                            <div class="input-group">
+                                                                <label class="input-group-btn">
+                                                                    <span class="btn btn-primary">
+                                                                        Browse… <input type="file" id="Photo_Address" name="Photo_Address" onchange="showPhoto(this)" style="display: none;" multiple="" />
+                                                                    </span>
+                                                                </label>
+                                                                <input type="text" id="Photo_AddressShow" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.HiddenFor(model => model.ImageCancelledCheque_FilePath)
+                                                            @Html.HiddenFor(model => model.ImageCancelledCheque_FileName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>                                                        
+                                                        <div class="col-md-3">
+                                                            <a href="~/@Html.DisplayFor(model => model.ImageCancelledCheque_FilePath)@Html.DisplayFor(model => model.ImageCancelledCheque_FileName)" data-spzoom>
+                                                                <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/@Html.DisplayFor(model => model.ImageCancelledCheque_FilePath)@Html.DisplayFor(model => model.ImageCancelledCheque_FileName)" alt="No Image" />
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            @TempData["notice"]<br />Photo Should be in .jpg format and less than 512KB
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="othersPACR">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Others</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">a.) Is valid for public view?</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "1", new { id = "chkIsPublicViewY", @class = "radio-publicviewvalue", @checked = "checked" }) Yes
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "0", new { id = "chkIsPublicViewN", @class = "radio-publicviewvalue" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsPublicView, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">b.) Is Any Condition?</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsConditionAnnexure, "1", new { id = "chkIsConditionalY", @class = "radio-IsConditionalvalue", @checked = "checked" }) Yes
+                                                                @Html.RadioButtonFor(model => model.IsConditionAnnexure, "0", new { id = "chkIsConditionalN", @class = "radio-IsConditionalvalue" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsConditionAnnexure, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="submitPACR">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @if (Model.RoleAccessFlag == "SA")
+                                            {
+                                                <input type="submit" value="@TempData["PrjACRsubmitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                            }
+                                            else
+                                            {
+                                                if (Model.IsDraft == 1)
+                                                {
+                                                    <input type="submit" value="@TempData["PrjACRsubmitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="submit" value="@TempData["PrjACRsubmitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                }
+                                            }
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "ACR_ProjectSpecialBankAccountDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="InvalidPACR">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Not Applicable</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-2">
+                                                            @Html.Label("PUC Status Summary", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-9 alert alert-danger">
+                                                            Invalid! The update/modification [PUC] of Special Bank Account of registered project [Closed/ No Records Found]. Try Another, If Any.
+                                                        </div>
+                                                    </div>
+                                                </div>                                               
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

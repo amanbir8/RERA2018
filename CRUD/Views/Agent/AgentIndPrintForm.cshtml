@@ -1,0 +1,631 @@
+﻿@model CRUD.Models.Agent.CLSAgent_Multiple_Model
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Real Estate Agent Application Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Agent - Individual - Registration Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Real Estate Agent Application - ( @Html.DisplayFor(model => model.zapAgent_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zapAgentName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.DisplayFor(model => model.zapAgentName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zapAgentLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zapAgentLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskAgentNavMenuPartial")
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">Agent (Individual) Registration Details</h4>
+                                </div>
+                            </div>
+                                @foreach (var item in Model.Agent)
+                                {
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Agent Registration Details</legend>
+                                                <div id="idReraNo" class="row" style="display: none">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.Existing_RERANumber, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(modelItem => item.Existing_RERANumber)
+                                                             
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.Agent_FirstName, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                         
+                                                           
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.Agent_MiddleName)
+                                                               
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.Agent_LastName, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.Agent_LastName)
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.Father_FirstName, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.Father_FirstName)
+                                                                
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.Father_MiddleName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.Father_MiddleName)
+                                                              
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.Father_LastName, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.Father_LastName)
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.PAN_Number, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.PAN_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => item.PAN_Number, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.Aadhaar_Number, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.Aadhaar_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => item.Aadhaar_Number, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.MobileNumber, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => item.MobileNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                          
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.PhoneNumber_Number, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.PhoneNumber_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => item.PhoneNumber_Number, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.Occupation, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.Occupation, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => item.Occupation, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.EmailAddress, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => item.EmailAddress, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label ">Do you have other State/UT RERA registration No:</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+
+                                                                @if (item.IsOtherStateUT_RERAregistration == "Y")
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                @if (item.IsOtherStateUT_RERAregistration == "N")
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                                 
+                                                            </label>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                  
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Permanent Address</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.P_AddressLine1, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.P_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                              
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.P_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.P_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.Label("State", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => model.P_AddressState)
+
+                                                            </div>
+
+
+                                                        <div class="col-md-3">
+                                                            @Html.Label("District", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => model.P_AddressDist)
+
+                                                            </div>
+
+                                                        </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.P_AddressPIN, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.P_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                               
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Address for Place of Business</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.BusinessPlace_AddressLine1, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.BusinessPlace_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => item.BusinessPlace_AddressLine1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.BusinessPlace_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.BusinessPlace_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => item.BusinessPlace_AddressLine2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.Label("State", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.BusinessPlace_AddressState)
+
+                                                        </div>
+
+
+                                                        <div class="col-md-3">
+                                                            @Html.Label("District", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.BusinessPlace_AddressDistrict)
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.BusinessPlace_AddressPIN, htmlAttributes: new { @class = "control-label " })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.BusinessPlace_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                              
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Address for Official Communication</legend>
+                                                  
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.BComm_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.BComm_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                               
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.BComm_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.BComm_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                               
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                           
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.BComm_AddressState)
+                                                        </div>
+                                                          
+                                                           
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => model.BComm_AddressDistrict)
+                                                            </div>
+                                                           
+                                                           
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => item.BComm_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => item.BComm_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                   
+
+                                    
+                            }
+
+                        </div>
+
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+@if (Model.IsOtherStateUT_RERAregistration != "N")
+{
+    <div id="wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h3 class="page-header" style="margin-top: 15px;">RERA Registration Details with Other State/UT(s)</h3>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        Registration Details for Agent Member with Other State/UT(s)
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                @if (Model.Agent_OtherStateUTMember != null)
+                                {
+
+                                    foreach (var item in Model.Agent_OtherStateUTMember)
+                                    {
+
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my">RERA Registration Details</legend>
+
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <LabelFor class="control-LabelFor ">State</LabelFor>
+                                                                </div>
+                                                                <div class="col-md-3">
+
+                                                                    @Html.DisplayFor(model => model.P_AddressState)
+
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.Label("RERA Registration Issue Date", htmlAttributes: new { @class = "control-LabelFor " })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.RERAregistration_IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    @Html.ValidationMessageFor(model => item.RERAregistration_IssueDate, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.Label("RERA Registration Number", htmlAttributes: new { @class = "control-LabelFor " })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.RERAregistration_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    @Html.ValidationMessageFor(model => item.RERAregistration_Number, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.Label("RERA Registration Expiry Date")
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.RERAregistration_ExpiryDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    @Html.ValidationMessageFor(model => item.RERAregistration_ExpiryDate, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                            
+
+                                    }
+                                }
+
+
+                            </div>
+                        </div>
+
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+}
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Payment Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Payment for Registration Fees
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @if (Model.AgentPayment != null)
+                            {
+                                foreach (var item in Model.AgentPayment)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Payment Details</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+
+                                                                @Html.HiddenFor(model => item.AgentPayment_TitleName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => item.AgentPayment_TitleName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+</div>
+
+                                                            <div class="col-md-3">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.Registration_Fee, htmlAttributes: new { @class = "control-label " })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.Registration_Fee, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => item.Registration_Fee, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.Other_Fee, htmlAttributes: new { @class = "control-label " })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.Other_Fee, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => item.Other_Fee, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.Bank_Charges, htmlAttributes: new { @class = "control-label " })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.Bank_Charges, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => item.Bank_Charges, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.Date_of_Payment_RegistrationFee, htmlAttributes: new { @class = "control-label " })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.Date_of_Payment_RegistrationFee, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => item.Date_of_Payment_RegistrationFee, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.Bank_Name, htmlAttributes: new { @class = "control-label " })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.Bank_Name)
+                                                                @Html.ValidationMessageFor(model => item.Bank_Name, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.Branch_Name, htmlAttributes: new { @class = "control-label " })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.Branch_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => item.Branch_Name, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.DD_BankersCheque_Number, htmlAttributes: new { @class = "control-label " })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.DD_BankersCheque_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => item.DD_BankersCheque_Number, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.DD_BankersCheque_Amount, htmlAttributes: new { @class = "control-label " })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.DD_BankersCheque_Amount, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => item.DD_BankersCheque_Amount, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                }
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+}

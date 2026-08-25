@@ -1,0 +1,1154 @@
+﻿@model CRUD.Models.HelpdeskAdmin.ClsPrp_AdminDesk_NoticeSectionFiveNineByLA
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            $(submitButton).parents('form').submit();
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        if ($('#OrderDate').val() == "01-Jan-0001") {
+            $('#OrderDate').val("");
+        }
+
+        if ($('#CurrentStatusDate').val() == "01-Jan-0001") {
+            $('#CurrentStatusDate').val("");
+        }
+
+        if ($('#NoticeDate').val() == "01-Jan-0001") {
+            $('#NoticeDate').val("");
+        }
+
+        if ($("#Notice_ModeOfComplaint option:selected").text() == "Other") {
+            $("#showModeOfComplaint1").show();
+            $("#showModeOfComplaint2").show();
+        }
+        else {
+            $("#showModeOfComplaint1").hide();
+            $("#showModeOfComplaint2").hide();
+        }
+
+        $('#Notice_ModeOfComplaint').change(function () {
+            if ($("#Notice_ModeOfComplaint option:selected").text() == "Other")
+            {
+                $("#showModeOfComplaint1").show();
+                $("#showModeOfComplaint2").show();
+            }
+            else
+            {
+                $("#showModeOfComplaint1").hide();
+                $("#showModeOfComplaint2").hide();
+            }
+        });
+
+        if ($('#NoticesSectionFiveNine_IDName').val() == "0" || $('#NoticesSectionFiveNine_IDName').val() == "" || $('#NoticesSectionFiveNine_IDName').val() == "0.00") {
+            $("#NoticesSectionFiveNineR1").hide();
+            $("#NoticesSectionFiveNineR2").hide();
+        }
+        else
+        {
+            $("#NoticesSectionFiveNineR1").show();
+            $("#NoticesSectionFiveNineR2").show();
+        }
+
+        if ($('#Complainant_AadhaarNumber').val() == "0" || $('#Complainant_AadhaarNumber').val() == "" || $('#Complainant_AadhaarNumber').val() == "0.00") {
+            $('#Complainant_AadhaarNumber').val("");
+        }
+        if ($('#Complainant_LandlineFaxNumber').val() == "0" || $('#Complainant_LandlineFaxNumber').val() == "" || $('#Complainant_LandlineFaxNumber').val() == "0.00") {
+            $('#Complainant_LandlineFaxNumber').val("");
+        }
+        if ($('#Complainant_MobileNumber').val() == "0" || $('#Complainant_MobileNumber').val() == "" || $('#Complainant_MobileNumber').val() == "0.00") {
+            $('#Complainant_MobileNumber').val("");
+        }        
+
+        if ($('#AuthorizedCounsel_MobileNumber').val() == "0" || $('#AuthorizedCounsel_MobileNumber').val() == "" || $('#AuthorizedCounsel_MobileNumber').val() == "0.00") {
+            $('#AuthorizedCounsel_MobileNumber').val("");
+        }
+        if ($('#AuthorizedCounsel_LandlineFaxNumber').val() == "0" || $('#AuthorizedCounsel_LandlineFaxNumber').val() == "" || $('#AuthorizedCounsel_LandlineFaxNumber').val() == "0.00") {
+            $('#AuthorizedCounsel_LandlineFaxNumber').val("");
+        }
+
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script>
+        $(function () {
+            var baseUrl = $('body').attr('data-base-url');
+        $.ajax({
+            type: "GET",
+            url: baseUrl + "/HelpdeskAdmin/GetState",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    if (value != null) {
+                        $('#OfficeResComplainant_AddressStateCode').append('<option value="' + value.StateId + '">' + value.StateName + '</option>');
+                        $("#OfficeResComplainant_AddressStateCode option:contains(undefined)").remove();
+                    }
+                });
+            }
+        });
+
+        $('#OfficeResComplainant_AddressStateCode').change(function () {
+            $('#OfficeResComplainant_AddressDistrictCode').empty();
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "/HelpdeskAdmin/GetDistrictByStateId",
+                datatype: "Json",
+                data: { StateId: $('#OfficeResComplainant_AddressStateCode').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#OfficeResComplainant_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                    });
+                }
+            });
+        });
+    });
+</script>
+<script>
+        $(function () {
+            var baseUrl = $('body').attr('data-base-url');
+        $.ajax({
+            type: "GET",
+            url: baseUrl + "/HelpdeskAdmin/GetState",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    if (value != null) {
+                        $('#ServiceNoticesComplainant_AddressStateCode').append('<option value="' + value.StateId + '">' + value.StateName + '</option>');
+                        $("#ServiceNoticesComplainant_AddressStateCode option:contains(undefined)").remove();
+                    }
+                });
+            }
+        });
+
+        $('#ServiceNoticesComplainant_AddressStateCode').change(function () {
+            $('#ServiceNoticesComplainant_AddressDistrictCode').empty();
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "/HelpdeskAdmin/GetDistrictByStateId",
+                datatype: "Json",
+                data: { StateId: $('#ServiceNoticesComplainant_AddressStateCode').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#ServiceNoticesComplainant_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                    });
+                }
+            });
+        });
+    });
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('#IsOfficeResComplainantAddress_SameAsServiceNoticeAddress').on("click", function () {
+            if ($(this).is(':checked')) {
+                //[OPTIONAL] Copy the selected value
+                var selectedValue = $("#OfficeResComplainant_AddressStateCode option:selected").val();
+                $("input[name='ServiceNoticesComplainant_AddressStateCode']").find("option[value = '" + selectedValue + "']").attr("selected", "selected");
+                $("input[name='ServiceNoticesComplainant_AddressLine1']").val($("input[name='OfficeResComplainant_AddressLine1']").val());
+                $("input[name='ServiceNoticesComplainant_AddressLine2']").val($("input[name='OfficeResComplainant_AddressLine2']").val());
+                $("select[name='ServiceNoticesComplainant_AddressStateCode']").val($("select[name='OfficeResComplainant_AddressStateCode']").val());
+
+                $("select[name='ServiceNoticesComplainant_AddressDistrictCode']").val($("select[name='OfficeResComplainant_AddressDistrictCode']").val());
+                $("input[name='ServiceNoticesComplainant_AddressPIN']").val($("input[name='OfficeResComplainant_AddressPIN']").val());
+            } else {
+                $("input[name='ServiceNoticesComplainant_AddressLine1']").val('');
+                $("input[name='ServiceNoticesComplainant_AddressLine2']").val('');
+                $("input[name='ServiceNoticesComplainant_AddressPIN']").val('');
+                $("select[name='ServiceNoticesComplainant_AddressDistrictCode']").val('');
+                $("select[name='ServiceNoticesComplainant_AddressStateCode']").val('');
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+		$(function() {
+		    $("#OrderTime").inputmask({ mask: function () { return ["9:99 AA", "99:99 AA"]; } });
+
+		    $('#HearingBenchCode').change(function () {
+		        $('#HearingBenchName').empty();
+		        $("input[name='HearingBenchName']").val($("#HearingBenchCode option:selected").text());
+		    });
+
+		    $('#DistrictTown_InfoCode').change(function () {
+		        $('#DistrictTown_InfoName').empty();
+		        $("input[name='DistrictTown_InfoName']").val($("#DistrictTown_InfoCode option:selected").text());
+		    });
+
+		    $(document).on('click', 'a.panel-accordion-toggle', function (e) {
+		        e.preventDefault();
+		        var elem = $(this);
+		        var criteriaCode = $(this).attr('data-parent');
+
+		        var criteriaCmdA = "#btnAccordionNoticeSectionFiveNine";
+		        var criteriaSelectorA = "#accordionNoticeSectionFiveNine";
+		        var criteriaCmdD = "#btnAccordionNoticeSectionDescription";
+		        var criteriaSelectorD = "#accordionNoticeSectionDescription";
+
+		        switch (criteriaCode) {
+		            case criteriaSelectorA:
+		                $(criteriaCmdA).find("span").toggleClass("btn-outline");
+		                $(criteriaCmdA).find("i").toggleClass("fa-minus-circle fa-plus-circle");
+		                break;
+		            case criteriaSelectorD:
+		                $(criteriaCmdD).find("span").toggleClass("btn-outline");
+		                $(criteriaCmdD).find("i").toggleClass("fa-minus-circle fa-plus-circle");
+		                break;
+		        }
+		    });
+
+		    $("input[name='IsPersonalHearing']").click(function () {
+		        if ($("#chkBenchHearingDate").is(":checked")) {
+		            $("#showOrderHearingDate").removeClass("hide");
+		            $("#showOrderTime1").removeClass("hide");
+		            $("#showOrderTime2").removeClass("hide");
+		            $("#showHearingtitle").removeClass("hide");
+		            $("#showOrdertitle").addClass("hide");
+		            $("#rowHearingBench").removeClass("hide");
+		            $("#rowUnderSection").removeClass("hide");
+		            $("input[name='OrderDateStatusTitle']").val("Hearing Date").text();
+		        }
+		        if ($("#chkBenchOrderDate").is(":checked")) {
+		            $("#showOrderHearingDate").removeClass("hide");
+		            $("#showOrderTime1").addClass("hide");
+		            $("#showOrderTime2").addClass("hide");
+		            $("#showHearingtitle").addClass("hide");
+		            $("#showOrdertitle").removeClass("hide");
+		            $("#rowHearingBench").removeClass("hide");
+		            $("#rowUnderSection").removeClass("hide");
+		            $("input[name='OrderDateStatusTitle']").val("Order Date").text();
+		        }
+		        if ($("#chkBenchOther").is(":checked")) {
+		            $("#showOrderHearingDate").addClass("hide");
+		            $("#showOrderTime1").addClass("hide");
+		            $("#showOrderTime2").addClass("hide");
+		            $("#showHearingtitle").addClass("hide");
+		            $("#showOrdertitle").addClass("hide");
+		            $("#rowHearingBench").addClass("hide");
+		            $("#rowUnderSection").addClass("hide");
+		            $("input[name='OrderDateStatusTitle']").val("None of them").text();
+		        }		        
+		    });
+            
+		    //var varhearingcode = $(".radio-IsPersonalHearing").val();
+		    //$(".radio-IsPersonalHearing[value='" + varhearingcode + "']").attr("checked", true);
+		    var varhearingcode = $("#OrderDateStatusTitle").val();
+		    if (varhearingcode == "Hearing Date") {
+		        $("#showOrderHearingDate").removeClass("hide");
+		        $("#showOrderTime1").removeClass("hide");
+		        $("#showOrderTime2").removeClass("hide");
+		        $("#showHearingtitle").removeClass("hide");
+		        $("#showOrdertitle").addClass("hide");
+		        $("#rowHearingBench").removeClass("hide");
+		        $("#rowUnderSection").removeClass("hide");
+		        $("input[name='OrderDateStatusTitle']").val("Hearing Date").text();
+		    }
+		    else {
+		        if (varhearingcode == "Order Date") {
+		            $("#showOrderHearingDate").removeClass("hide");
+		            $("#showOrderTime1").addClass("hide");
+		            $("#showOrderTime2").addClass("hide");
+		            $("#showHearingtitle").addClass("hide");
+		            $("#showOrdertitle").removeClass("hide");
+		            $("#rowHearingBench").removeClass("hide");
+		            $("#rowUnderSection").removeClass("hide");
+		            $("input[name='OrderDateStatusTitle']").val("Order Date").text();
+		        }
+		        else {
+		            $("#showOrderHearingDate").addClass("hide");
+		            $("#showOrderTime1").addClass("hide");
+		            $("#showOrderTime2").addClass("hide");
+		            $("#showHearingtitle").addClass("hide");
+		            $("#showOrdertitle").addClass("hide");
+		            $("#rowHearingBench").addClass("hide");
+		            $("#rowUnderSection").addClass("hide");
+		            $("input[name='OrderDateStatusTitle']").val("None of them").text();
+		        }
+		    };
+
+		    $('#CurrentEvent_IdentifiedCode').change(function () {
+		        var baseUrl = $('body').attr('data-base-url');
+		        $.ajax({
+		            type: "POST",
+		            url: baseUrl + "HelpdeskAdmin/GetNoticeSectionFiveNineMasterByEventId",
+		            datatype: "Json",
+		            data: { EventId: $('#CurrentEvent_IdentifiedCode').val() },
+		            success: function (data) {
+		                $.each(data, function (index, value) {
+		                    $('#getStatusFileInfo').show();		                    
+		                    $('#DocFileDiscription').text("Description : " + value.EventAction_Description);
+		                });
+		            }
+		        });
+		    });
+
+		    $('#CurrentEvent_IdentifiedCode').change(function () {
+		        $('#CurrentEvent_IdentifiedAggregateName').empty();
+		        $('#CurrentStatusTitle').empty();
+		        $("input[name='CurrentEvent_IdentifiedAggregateName']").val($("#CurrentEvent_IdentifiedCode option:selected").text());
+		        $("input[name='CurrentStatusTitle']").val($("#CurrentEvent_IdentifiedCode option:selected").text());
+		    });
+		});
+</script>
+<script>
+    $(function () {
+        $('[data-spzoom]').spzoom();
+
+        $('table#complaint-sections-list-table').dataTable({
+            responsive: true,
+            "pageLength": 25,
+            "lengthMenu": [[25, 50, 100, 200, 250], [25, 50, 100, 200, 250]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [7]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    
+        $('#NoticeDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#OrderDate').datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate());
+                $("#CurrentStatusDate").datepicker("option", "maxDate", dt);
+            }
+        });
+        $('#CurrentStatusDate').datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+                var HearingDate = $("#OrderDate").val();
+                var HearingFlag = $(".radio-IsPersonalHearing:checked").val();
+                if (HearingFlag != 0) {
+                    if (HearingDate == '') {
+                        alert('Please select Next Hearing Date Fixed first!');
+                        $("#CurrentStatusDate").val('');
+                        return false;
+                    }
+                }
+                else {
+                    return true;
+                }
+            }
+        });
+    });
+</script>
+<script>
+    $(function () {
+        var getUrlCourtvalue;
+        @if (TempData["returnUrlFNByPSvalue"].ToString() != "")
+        {
+            <text>
+                getUrlCourtvalue = '@TempData["returnUrlFNByPSvalue"]';
+            </text>
+        };
+
+        switch (getUrlCourtvalue){
+            case "ComplaintsNoticeSection":
+                break;
+            case "ExtractComplaintsNoticeSection":
+                $("#btnAccordionComplaintNoticeForm").find("span").toggleClass("btn-outline");
+                $("#btnAccordionComplaintNoticeForm").find("i").toggleClass("fa-plus-square fa-minus-square");
+
+                $('#collapseComplaintNoticeForm_Detail').toggle();
+                $('#collapseComplaintNoticeForm_List').toggle();
+                break;
+            default:
+                break;
+        };
+
+        $(document).on('click', 'a.custom-accordion-toggle', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            if (getUrlCourtvalue != "ExtractComplaintsNoticeSection") {
+                var criteriaCode = $(this).attr('data-parent');
+
+                var criteriaCmd = "#btnAccordionComplaintNoticeForm";
+                var criteriaSelector = "#accordionComplaintNoticeForm";
+
+                switch (criteriaCode) {
+                    case criteriaSelector:
+                        $(criteriaCmd).find("span").toggleClass("btn-outline");
+                        $(criteriaCmd).find("i").toggleClass("fa-minus-square fa-plus-square");
+                        break;
+                }
+            }
+        });
+
+        $(".frmshow-complaintnotices").click(function () {
+            if (confirm('Are You Sure You want to Edit Complaint Form!!')) {
+                $("#btnAccordionComplaintNoticeForm").find("span").toggleClass("btn-outline");
+                $("#btnAccordionComplaintNoticeForm").find("i").toggleClass("fa-plus-square fa-minus-square");
+
+                $('#collapseComplaintNoticeForm_Detail').toggle();
+                $('#collapseComplaintNoticeForm_List').toggle();
+                return true;
+            }
+            else
+                return false;
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var BASEsfn_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalDownloadExcelButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            window.location = BASEsfn_URL + 'HelpdeskAdmin/ComplaintNoticeSectionForm_ExportToExcel';
+            $('input[type=text]').each(function () {
+                $(this).val('');
+            });
+        });
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Complaint/Notices Under Section(s)</b><br/> <i class="fa fa-check-square" style="color:#fff"></i> Registration or submission wrt Complaint /Notices applications under different Sections of RERA Act.<br/> <i class="fa fa-check-square" style="color:#fff"></i> For any additional questions or the feedback regarding web-portal, please contact IT team.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Notices (Section 59 /Other Sections) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel-group" id="accordionComplaintNoticeForm">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        Notices (Under Section 59 /Other Sections) Details
+                        <span class="pull-right">
+                            <a id="btnAccordionComplaintNoticeForm" data-toggle="collapse" data-parent="#accordionComplaintNoticeForm" href=".collapseComplaintNoticeForm" class="custom-accordion-toggle" aria-expanded="false" title="Add Complaint"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-plus-square" aria-hidden="true"></i></span></a>
+                            <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+                            <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                        </span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                @using (Html.BeginForm())
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(model => model.NoticesSectionFiveNine_IndexID, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.NoticesSectionFiveNine_ID, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.SerialOrderNumber, htmlAttributes: new { @class = "control-label" })
+
+                                    @Html.HiddenFor(model => model.CurrentEvent_IdentifiedAggregateName, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.CurrentEvent_IdentifiedBy, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.CurrentEvent_IdentifiedOn, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.DeskAction_IdentifiedCode, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.DeskAction_IdentifiedAggregateName, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.DeskAction_IdentifiedBy, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.DeskAction_IdentifiedOn, htmlAttributes: new { @class = "control-label" })
+
+                                    @Html.HiddenFor(model => model.OrderDateStatusTitle, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.HearingBenchName, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.CurrentStatusTitle, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.DistrictTown_InfoName, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.IsActive, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.IsDraft, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.IsPublicView, htmlAttributes: new { @class = "control-label" })
+
+                                    @Html.HiddenFor(model => model.Notice_RelatedReferenceID, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.Notice_RelatedReferenceDate, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.Notice_RelatedReferenceName, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.Notice_RelatedReferenceCode, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.NoticesSectionFiveNine_IDName, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.NoticesSectionFiveNine_IDYear, htmlAttributes: new { @class = "control-label" })
+
+                                    @Html.HiddenFor(model => model.A_column, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.B_column, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.C_column, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.D_column, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.E_column, htmlAttributes: new { @class = "control-label" })
+
+                                    <div id="collapseComplaintNoticeForm_Detail" class="panel-collapse collapse collapseComplaintNoticeForm" aria-expanded="false" style="">
+                                        <div class="panel-group" id="accordionNoticeSectionDescription">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <fieldset class="col-md-12">
+                                                            <legend class="my">(1.) Notice Details</legend>
+
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3" id="NoticesSectionFiveNineR1" style="display:none;">
+                                                                        @Html.LabelFor(model => model.NoticesSectionFiveNine_IDName, htmlAttributes: new { @class = "control-label mand" })
+                                                                    </div>
+                                                                    <div class="col-md-3" id="NoticesSectionFiveNineR2" style="display:none;" data-toggle="tooltip" data-placement="right" title="Notice or file number details of document.">
+                                                                        @Html.EditorFor(model => model.NoticesSectionFiveNine_IDName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @readonly = "readonly" } })
+                                                                        @Html.ValidationMessageFor(model => model.NoticesSectionFiveNine_IDName, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <label class="control-label mand">Date of Institution</label>
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.EditorFor(model => model.NoticeDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.NoticeDate, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(model => model.NoticeFile_NumberDetails, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Previous reference Notice or file number (old file number) details of document.">
+                                                                        @Html.EditorFor(model => model.NoticeFile_NumberDetails, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.NoticeFile_NumberDetails, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        @{var listItemsModeComplaint = new List<SelectListItem>
+                                                                            {
+                                                                                new SelectListItem {  Text = "..." , Value=""  },
+                                                                                new SelectListItem {  Text = "By Post" , Value="By Post"  },
+                                                                                new SelectListItem {  Text = "By eMail" , Value="By eMail"  },
+                                                                                new SelectListItem {  Text = "By Hand" , Value="By Hand"  },
+                                                                                new SelectListItem {  Text = "By Online" , Value="By Online"  },
+                                                                                new SelectListItem {  Text = "Other" , Value="Other"  },
+                                                                            };
+                                                                        }
+                                                                        @Html.LabelFor(model => model.Notice_ModeOfComplaint, htmlAttributes: new { @class = "control-label mand" })
+                                                                    </div>
+                                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Mode of complaint receipt under Section 59 or other Sections of RERA Act">
+                                                                        @Html.DropDownListFor(model => model.Notice_ModeOfComplaint, new SelectList(listItemsModeComplaint, "Value", "Text"), new { @class = "form-control" })
+                                                                        @Html.ValidationMessageFor(model => model.Notice_ModeOfComplaint, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div class="col-md-3" id="showModeOfComplaint1" style="display:none;">
+                                                                        @Html.LabelFor(model => model.Notice_ModeOfComplaintSpecifyOthers, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3" id="showModeOfComplaint2" style="display:none;">
+                                                                        @Html.EditorFor(model => model.Notice_ModeOfComplaintSpecifyOthers, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.Notice_ModeOfComplaintSpecifyOthers, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br />
+                                                            <b>Project and Promoter Details</b>
+                                                            <hr />
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label mand" })
+                                                                    </div>
+                                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Project's name reference with notice under Section 59 or Other Sections of RERA Act.">
+                                                                        @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(model => model.ProjectNameWithAddressDetails, htmlAttributes: new { @class = "control-label mand" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.EditorFor(model => model.ProjectNameWithAddressDetails, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.ProjectNameWithAddressDetails, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(model => model.DistrictTown_InfoName, htmlAttributes: new { @class = "control-label mand" })
+                                                                    </div>
+                                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="District or town details of notice under section 59 or Other Sections of RERA Act.">
+                                                                        @Html.DropDownListFor(m => m.DistrictTown_InfoCode, new SelectList(Model.subdivisondistrictMaster, "SubDivision_Code", "SubDivision_Name"), "Select", new { @class = "form-control" })
+                                                                        @Html.ValidationMessageFor(model => model.DistrictTown_InfoCode, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <span class="pull-right">
+                                                                            <a id="btnAccordionNoticeSectionDescription" data-toggle="collapse" data-parent="#accordionNoticeSectionDescription" href="#collapseNoticeSectionDescription" class="panel-accordion-toggle" aria-expanded="false" title="Expand/Compress Details"><span class="btn btn-primary btn-outline btn-xs"><i class="fa fa-plus-circle" aria-hidden="true"> read more</i></span></a>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="collapseNoticeSectionDescription" class="panel-collapse collapse" aria-expanded="false" style="">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.PromoterName, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Promoter's name reference with notice under Section 59 or Other Sections of RERA Act.">
+                                                                            @Html.EditorFor(model => model.PromoterName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.PromoterName, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.PromoterNameWithAddressDetails, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.PromoterNameWithAddressDetails, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.PromoterNameWithAddressDetails, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Mobile Number of Promoter</label>
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Mobile Number of the Promoter without any prefix and country code.">
+                                                                            @Html.EditorFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Email Address of Promoter</label>
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Active and valid email Id of the Promoter for all official communication with the Authority.">
+                                                                            @Html.EditorFor(model => model.B_column, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br />
+                                                                <b>Notice/ Complaint Details</b>
+                                                                <hr />
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Brief description of complaint<br />[Max. 250 character(s)]</label>
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Notice or Complaint Description (if any).">
+                                                                            @Html.EditorFor(model => model.RemarksIfAny, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.RemarksIfAny, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-group" id="accordionNoticeSectionFiveNine">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <fieldset class="col-md-12">
+                                                            <legend class="my">(2a.) Particulars of the complainant</legend>
+
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        <label class="control-label">Name of Complainant</label>
+                                                                    </div>
+                                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Name of the Complainant as per the PAN Card.">
+                                                                        @Html.EditorFor(model => Model.Complainant_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.Complainant_Name, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <label class="control-label">Email Address of Complainant</label>
+                                                                    </div>
+                                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Active and valid email Id of the Complainant for all official communication with the Authority.">
+                                                                        @Html.EditorFor(model => model.Complainant_EmailAddress, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.Complainant_EmailAddress, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        <label class="control-label">Mobile Number of Complainant</label>
+                                                                    </div>
+                                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Mobile Number of the Complainant without any prefix and country code.">
+                                                                        @Html.EditorFor(model => model.Complainant_MobileNumber, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.Complainant_MobileNumber, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        <label class="control-label">Landline Number or Fax Number of Complainant</label>
+                                                                    </div>
+                                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Landline Number or Fax Number with std code and without '0' prefix, eg. 1721234567.">
+                                                                        @Html.EditorFor(model => model.Complainant_LandlineFaxNumber, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.Complainant_LandlineFaxNumber, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        <label class="control-label">Aadhaar Number of Complainant</label>
+                                                                    </div>
+                                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="12 Digit Aadhaar Number of the Complainant.">
+                                                                        @Html.EditorFor(model => model.Complainant_AadhaarNumber, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                        @Html.ValidationMessageFor(model => model.Complainant_AadhaarNumber, "", new { @class = "text-danger" })
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <span class="pull-right">
+                                                                            <a id="btnAccordionNoticeSectionFiveNine" data-toggle="collapse" data-parent="#accordionNoticeSectionFiveNine" href="#collapseNoticeSectionFiveNine" class="panel-accordion-toggle" aria-expanded="false" title="Expand/Compress Details"><span class="btn btn-primary btn-outline btn-xs"><i class="fa fa-plus-circle" aria-hidden="true"> read more</i></span></a>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="collapseNoticeSectionFiveNine" class="panel-collapse collapse" aria-expanded="false" style="">
+                                                                <br />
+                                                                <b>Address of the existing office / residence of the complainant</b>
+                                                                <hr />
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address Line 1</label>
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Valid address for all official communication with the Authority.">
+                                                                            @Html.EditorFor(model => model.OfficeResComplainant_AddressLine1, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressLine1, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address Line 2</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.OfficeResComplainant_AddressLine2, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressLine2, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address State</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DropDownListFor(model => model.OfficeResComplainant_AddressStateCode, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                                            @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressStateCode, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address District</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DropDownListFor(model => model.OfficeResComplainant_AddressDistrictCode, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                                            @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address PIN Code</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.OfficeResComplainant_AddressPIN, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressPIN, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br />
+                                                                <b>Address for Service of All Notices</b>
+                                                                <hr />
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            <label class="control-label">
+                                                                                @Html.CheckBox("IsOfficeResComplainantAddress_SameAsServiceNoticeAddress", Model.IsOfficeResComplainantAddress_SameAsServiceNoticeAddress.Equals("0") ? false : true, new { htmlAttributes = new { @class = "align-left" } })
+                                                                            </label>
+                                                                            <label class="control-label">Please check if address for service of all notices is same as address of the existing office / residence of the complainant?</label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address Line 1</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.ServiceNoticesComplainant_AddressLine1, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.ServiceNoticesComplainant_AddressLine1, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address Line 2</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.ServiceNoticesComplainant_AddressLine2, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.ServiceNoticesComplainant_AddressLine2, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address State</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DropDownListFor(model => model.ServiceNoticesComplainant_AddressStateCode, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                                            @Html.ValidationMessageFor(model => model.ServiceNoticesComplainant_AddressStateCode, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address District</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DropDownListFor(model => model.ServiceNoticesComplainant_AddressDistrictCode, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                                            @Html.ValidationMessageFor(model => model.ServiceNoticesComplainant_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label">Address PIN Code</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.ServiceNoticesComplainant_AddressPIN, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.ServiceNoticesComplainant_AddressPIN, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my">(2b.) Particulars of the authorized representative/ advocate/ counsel details on behalf of the complainant</legend>
+
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Name of Authorized Representative/ Counsel</label>
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Name of Advocate or Consultant for representation, if any.">
+                                                                    @Html.EditorFor(model => model.AuthorizedCounsel_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                    @Html.ValidationMessageFor(model => model.AuthorizedCounsel_Name, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Email ID of Authorized Representative/ Counsel</label>
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Active and valid email Id of the representative for all official communication with the Authority.">
+                                                                    @Html.EditorFor(model => model.AuthorizedCounsel_EmailAddress, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                    @Html.ValidationMessageFor(model => model.AuthorizedCounsel_EmailAddress, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Mobile Number of Authorized Representative/ Counsel</label>
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Mobile Number of the representative without any prefix and country code.">
+                                                                    @Html.EditorFor(model => model.AuthorizedCounsel_MobileNumber, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                    @Html.ValidationMessageFor(model => model.AuthorizedCounsel_MobileNumber, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Landline or Fax Number of Authorized Representative/ Counsel</label>
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Landline Number or Fax Number with std code and without '0' prefix, eg. 1721234567.">
+                                                                    @Html.EditorFor(model => model.AuthorizedCounsel_LandlineFaxNumber, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                    @Html.ValidationMessageFor(model => model.AuthorizedCounsel_LandlineFaxNumber, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my">(3.) Hearing Bench and Hearing Details</legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label mand">Select Option</label>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label>
+                                                                        @Html.RadioButtonFor(model => model.IsPersonalHearing, 1, htmlAttributes: new { @id = "chkBenchHearingDate", @class = "radio-IsPersonalHearing" }) Hearing Date
+                                                                        @Html.RadioButtonFor(model => model.IsPersonalHearing, 2, htmlAttributes: new { @id = "chkBenchOrderDate", @class = "radio-IsPersonalHearing" }) Order Date
+                                                                        @Html.RadioButtonFor(model => model.IsPersonalHearing, 0, htmlAttributes: new { @id = "chkBenchOther", @class = "radio-IsPersonalHearing" }) None of them
+                                                                    </label>
+                                                                    @Html.ValidationMessageFor(model => model.IsPersonalHearing, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row hide" id="showOrderHearingDate">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3" id="showHearingtitle">
+                                                                    <label class="control-label mand">Next Hearing Date Fixed</label>
+                                                                </div>
+                                                                <div class="col-md-3 hide" id="showOrdertitle">
+                                                                    @Html.LabelFor(model => model.OrderDate, htmlAttributes: new { @class = "control-label mand" })
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Order/ Hearing Date related to notice under Section(s) of RERA Act document.">
+                                                                    @Html.EditorFor(model => model.OrderDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                    @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-3 hide" id="showOrderTime1">
+                                                                    <label class="control-label mand">Next Hearing Time Fixed</label>
+                                                                </div>
+                                                                <div class="col-md-3 hide" id="showOrderTime2">
+                                                                    @Html.EditorFor(model => model.OrderTime, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                    @Html.ValidationMessageFor(model => model.OrderTime, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row hide" id="rowHearingBench">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label mand">Complaint Hearing Bench</label>
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Respective Bench of Preliminary-Hearing/ Hearing.">
+                                                                    @Html.DropDownListFor(m => m.HearingBenchCode, new SelectList(Model.PreHearingBenchMaster, "PreHearingBenchCode", "PreHearingBenchName"), "Select", new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.HearingBenchCode, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row hide" id="rowUnderSection">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label mand">Under Section</label>
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Under section of notice/ complaint with reference to RERA Act.">
+                                                                    @Html.DropDownListFor(m => m.FixedFor, new SelectList(Model.eCourtUnderSectionMaster, "UnderSectionCode", "UnderSectionName"), "Select", new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.FixedFor, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label mand">Fixed For/ Status</label>
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Fixed For or Current status of notice/ complaint under section 59 or other sections of RERA Act.">
+                                                                    @Html.DropDownListFor(m => m.CurrentEvent_IdentifiedCode, new SelectList(Model.EventMaster, "EventAction_Code", "EventAction_Aggregate"), "Select", new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.CurrentEvent_IdentifiedCode, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label mand">Business On Date/ Date Fixed for Proceeding</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.EditorFor(model => model.CurrentStatusDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                    @Html.ValidationMessageFor(model => model.CurrentStatusDate, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" id="getStatusFileInfo" style="display:none">
+                                                            <div class="help-block col-md-offset-3 col-md-7">
+                                                                <div id="DocFileDiscription" class="info"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Remarks, If Any</label>
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Hearing or Order related Remarks (If Any) with reference to Notice/ File Number.">
+                                                                    @Html.EditorFor(model => model.OrderDateWithRemarksIfAny, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                    @Html.ValidationMessageFor(model => model.OrderDateWithRemarksIfAny, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my">(4.) Notice/ Complaint Status Details</legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => model.CurrentStatusWithRemarks, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.EditorFor(model => model.CurrentStatusWithRemarks, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                    @Html.ValidationMessageFor(model => model.CurrentStatusWithRemarks, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                    &nbsp;
+                                                    @Html.ActionLink("Reset", "ComplaintsNoticeSectionFiveNineDetailsByPS", "HelpdeskAdmin", null, new { @class = "btn btn-outline btn-primary" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div id="collapseComplaintNoticeForm_List" class="panel-collapse in collapseComplaintNoticeForm" aria-expanded="false" style="">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-bordered" id="complaint-sections-list-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>@Html.DisplayName("SNo")</th>
+                                                                <th>@Html.DisplayNameFor(model => model.NoticesSectionFiveNine_IDName)</th>
+                                                                <th>@Html.DisplayNameFor(model => model.DistrictTown_InfoName)</th>
+                                                                <th>@Html.DisplayNameFor(model => model.ProjectName)</th>                                                                
+                                                                <th>@Html.DisplayName("Fixed For")</th>
+                                                                <th>@Html.DisplayNameFor(model => model.OrderDate)</th>
+                                                                <th>@Html.DisplayName("Date of Institution")</th>
+                                                                <th width="10%">@Html.DisplayName("Edit Details")</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int snoNoticeSectionFiveNine = 0;
+                                                            }
+                                                            @foreach (var item in Model.prpNoticeSectionFiveNineByLA)
+                                                            {
+                                                                {
+                                                                    snoNoticeSectionFiveNine = snoNoticeSectionFiveNine + 1;
+                                                                }
+                                                                <tr>
+                                                                    <td>@Html.DisplayName(snoNoticeSectionFiveNine.ToString())</td>
+                                                                    <td>@Html.DisplayFor(modelItem => item.NoticesSectionFiveNine_IDName)</td>
+                                                                    <td>@Html.DisplayFor(modelItem => item.DistrictTown_InfoName)</td>
+                                                                    <td>@Html.DisplayFor(modelItem => item.ProjectName)</td>                                                                    
+                                                                    <td>@Html.DisplayFor(modelItem => item.CurrentStatusTitle)</td>
+                                                                    <td>
+                                                                        @if (item.OrderDateStatusTitle == string.Empty)
+                                                                        {
+                                                                            @Html.DisplayName("--")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Html.DisplayFor(modelItem => item.OrderDateStatusTitle)
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (item.NoticeDate == DateTime.MinValue)
+                                                                        {
+                                                                            @Html.DisplayName("")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Html.DisplayFor(modelItem => item.NoticeDate)
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.ActionLink("Edit", "Edit_ComplaintsNoticeSectionFiveNineDetailsByPS", new { pIndexID = item.NoticesSectionFiveNine_IndexID, pKeyID = item.NoticesSectionFiveNine_ID }, new { @class = "frmshow-complaintnotices" })
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.row (nested) -->
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+</div>
+<!-- /.wrapper -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

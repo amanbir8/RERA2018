@@ -1,0 +1,250 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_Mobile_Agent
+@{
+    Layout = null;
+}
+
+<script>
+    $(document).ready(function () {
+        var xpBASE_URL = $('body').attr('data-base-url');
+        $('.btn-toggle-lockend').on('click', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+
+            var regReraID = $.trim($(parentRow).find('input.hdnRERAID').val());
+            var realestateagentID = $.trim($(parentRow).find('input.hdnAgentID').val());
+            var renewalagentID = $.trim($(parentRow).find('input.hdnRenewalAgentID').val());
+            var prmrenewalagentYear = $.trim($(parentRow).find('input.hdnRenewalAgentYear').val());
+            var mobileNumber = $.trim($(parentRow).find('input.hdnMobileNumber').val());
+            var prmFlag = $.trim($(parentRow).find('input.hdnLockEnabledFlag').val());
+
+            var prmLockoutEnabled = $(elem).hasClass('active');
+            var elemid = $(elem).attr('id');
+
+            var varcnfrm = 0;
+            var cnfrmTxt = "Do you want to modify the user lock/unlock options?";
+            if (confirm(cnfrmTxt)) {
+                // Save it!
+                varcnfrm = 1;
+                if ($(this).attr('data-toggle') == 'button') {
+                    $.ajax({
+                        type: 'GET',
+                        url: xpBASE_URL + 'HelpdeskControlPanel/LockoutEnabledHandler_AgentMobileNumbersById',
+                        data: { 'prmreraId': regReraID, 'prmagentID': realestateagentID, 'prmrenewalagentID': renewalagentID, 'prmrenewalagentYR': prmrenewalagentYear, 'prmmobileNumber': mobileNumber, 'prmLockoutEnabled': prmLockoutEnabled },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            alert(data.status);
+                            if (data.statusCode == 101 || data.statusCode == 105) {
+                                setactionlockendTogglebtnYN(data.statusCode, elemid);
+                            } else {
+                                setdefaultlockendTogglebtnYN(prmFlag, elemid);
+                            }
+                        },
+                        failure: function (data) {
+                            alert('Bad Request! Failed');
+                            setdefaultlockendTogglebtnYN(prmFlag, elemid);
+                        },
+                        error: function (err) {
+                            alert('Bad Request! Error');
+                            setdefaultlockendTogglebtnYN(prmFlag, elemid);
+                        }
+                    });
+                }
+            }
+            if (varcnfrm != 1) {
+                disablelockendTogglebtnYN(elemid);
+            }
+        });
+    });
+
+    function setdefaultlockendTogglebtnYN(dataString, srID) {
+        var dataAction = dataString;
+        var varlockendFlag = 0;
+        if (dataAction != '0') {
+            //YPV(1) NPV(0)
+            varlockendFlag = 1;
+        };
+        var srtitle = '#';
+        var vallockendShowId = srtitle.concat(srID);
+        switch (varlockendFlag) {
+            case 0:
+                $(document).find(vallockendShowId.trim()).removeClass('active');
+                break;
+            case 1:
+                $(document).find(vallockendShowId.trim()).addClass('active');
+                break;
+        }
+    }
+    function setactionlockendTogglebtnYN(dataID, srID) {
+        var dataAction = dataID;
+        var varlockendFlag = 0;
+        if (dataAction == 101) {
+            //YPV(1) NPV(0)
+            varlockendFlag = 1;
+        };
+        var srtitle = '#';
+        var vallockendShowId = srtitle.concat(srID);
+        var len = vallockendShowId.toString().trim().length;
+        var res = vallockendShowId.substring(17, len);
+        var strpvstatus = '#lockendtogglestatus';
+        var vallockendstatusShowId = strpvstatus.concat(res);
+        switch (varlockendFlag) {
+            case 0:
+                $(document).find(vallockendShowId.trim()).removeClass('active');
+                $(document).find(vallockendstatusShowId.trim()).addClass('border-left-danger warning');
+                break;
+            case 1:
+                $(document).find(vallockendShowId.trim()).addClass('active');
+                $(document).find(vallockendstatusShowId.trim()).removeClass('border-left-danger warning');
+                break;
+        }
+    }
+    function disablelockendTogglebtnYN(srID) {
+        var srtitle = '#';
+        var vallockendShowId = srtitle.concat(srID);
+        $(document).find(vallockendShowId.trim()).prop('disabled', true);
+        $(document).find(vallockendShowId.trim()).addClass("disabledlockunlock");
+    }
+</script>
+<script>    
+    function showLockEnabledTogglebtnYN(dataString, srNo) {
+        var dataAction = dataString;
+        var varemailconfirmFlag = 0;
+        if (dataAction != '0') {
+            //YPV(1) NPV(0)
+            varemailconfirmFlag = 1;
+        };
+
+        var valemailconfirmShowId = '#lockendtogglebtn' + srNo;
+        var strpvstatus = '#lockendtogglestatus';
+        var valemailconfirmstatusShowId = strpvstatus.concat(srNo);
+        switch (varemailconfirmFlag) {
+            case 0:
+                $(document).find(valemailconfirmShowId.trim()).removeClass('active');
+                $(document).find(valemailconfirmstatusShowId.trim()).addClass('border-left-danger warning');
+                break;
+            case 1:
+                $(document).find(valemailconfirmShowId.trim()).addClass('active');
+                $(document).find(valemailconfirmstatusShowId.trim()).removeClass('border-left-danger warning');
+                break;
+        }
+    }
+    $(document).ready(function () {
+        $('table#dataTables-mobilenumbers').DataTable({
+            responsive: true,
+            "pageLength": 15,
+            "lengthMenu": [[15, 30, 50, 75, 100], [15, 30, 50, 75, 100]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [7]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    });
+</script>
+
+<br />
+<div class="row">
+    <div class="col-lg-12">
+        <div class="table-responsive">
+            <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-mobilenumbers">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayName("SNo")</th>
+                        <th>@Html.DisplayNameFor(model => model.AMN_ReferenceName)</th>
+                        <th>@Html.DisplayNameFor(model => model.AMN_ReferenceDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.AMN_ContactName)</th>
+                        <th>@Html.DisplayNameFor(model => model.AMN_Designation)</th>
+                        <th>@Html.DisplayNameFor(model => model.AMN_MobileNumber)</th>
+                        <th>@Html.DisplayNameFor(model => model.AMN_PhoneType)</th>
+                        <th>@Html.DisplayName("Locked Enabled (Yes/No)?")</th>
+                        <th>@Html.DisplayName("Is Verified (Yes/No)?")</th>
+                        <th>@Html.DisplayName("Public View (Yes/No)?")</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int sno = 0;
+                        string lockendtogglebtnID = string.Empty;
+                        string lockendtogglestatusID = string.Empty;
+                    }
+                    @foreach (var item in Model.prpongoing)
+                    {
+                        {
+                            sno = sno + 1;
+                            lockendtogglebtnID = "lockendtogglebtn" + @sno.ToString();
+                            lockendtogglestatusID = "lockendtogglestatus" + @sno.ToString();
+                        }
+                        <tr class="odd gradeX">
+                            <td>@Html.DisplayName(sno.ToString())</td>
+                            <td>@Html.DisplayFor(modelItem => item.AMN_ReferenceName)</td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AMN_ReferenceDate)
+                                @Html.HiddenFor(modelItem => item.RERAnumberRegistration, new { @class = "hdnRERAID" })
+                                @Html.HiddenFor(modelItem => item.Agent_ID, new { @class = "hdnAgentID" })
+                                @Html.HiddenFor(modelItem => item.RenewalAgent_ID, new { @class = "hdnRenewalAgentID" })                                
+                                @Html.HiddenFor(modelItem => item.RenewalAgent_Year, new { @class = "hdnRenewalAgentYear" })
+                                @Html.HiddenFor(modelItem => item.AMN_MobileNumber, new { @class = "hdnMobileNumber" })
+                                @Html.HiddenFor(modelItem => item.IsLock, new { @class = "hdnLockEnabledFlag" })
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.AMN_ContactName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.AMN_Designation)</td>
+                            <td>@Html.DisplayFor(modelItem => item.AMN_MobileNumber)</td>
+                            <td>@Html.DisplayFor(modelItem => item.AMN_PhoneType)</td>
+                            <td class="text-center">
+                                @if (Model.RoleAccessFlag == "PR")
+                                {
+                                    <script type="text/javascript">
+                                        $(document).ready(function () {
+                                            showLockEnabledTogglebtnYN("@item.IsLock.ToString()", "@sno.ToString()");
+                                        });
+                                    </script>
+                                    <button type="button" id=@lockendtogglebtnID.ToString() class="btn btn-sm btn-toggle btn-secondary btn-toggle-lockend" data-toggle="button" aria-pressed="false" autocomplete="off" title="Is Locked (Yes/No)?">
+                                        <div class="handle"></div>
+                                    </button>
+                                }
+                                else
+                                {
+                                    if (item.IsLock == 1)
+                                    {
+                                        @Html.DisplayName("Yes")
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayName("No")
+                                    }
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (item.IsVerified == 1)
+                                {
+                                    @Html.DisplayName("Yes")
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("No")
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (item.IsPublicView == 1)
+                                {
+                                    @Html.DisplayName("Yes")
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("No")
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- /.row (nested) -->
+</div>

@@ -1,0 +1,92 @@
+﻿@model CRUD.Models.classAgentRenewalPayment.ClsPrp_AgentRenewalApplication_PaymentIntegration
+
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+
+@*Payment Failed*@
+
+<div id="wrapper">
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Error Message</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                @Html.Label("Error Message", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-9 alert alert-warning">
+                                                "No Records Found", for renewal of registration as per the <i>'Registered Real-Estate Agent'</i> details.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}
+
+
+
+
+

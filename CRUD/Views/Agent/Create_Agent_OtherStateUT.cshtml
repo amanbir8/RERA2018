@@ -1,0 +1,295 @@
+﻿@model CRUD.Models.Agent.ClsprpRERA_Agent_OtherStateUT_regRERAdetails
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+    $(function () {
+        var baseUrl = $('body').attr('data-base-url');
+        $.ajax({
+            type: "GET",
+            url: baseUrl + "Agent/GetState",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#StateCode').append('<option value="' + value.StateId + '">' + value.StateName + '</option>');
+                    $("#StateCode option:contains(undefined)").remove();
+                });
+            }
+        });
+    });
+    function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                $('#user_Photo').attr('src', e.target.result);
+            }
+            filerdr.readAsDataURL(input.files[0]);
+            //$(':input[type="submit"]').prop('disabled', false);
+            //$('#Create').prop('disabled', false);
+            $('#Photo_AddressShow').empty();
+            $("#Photo_AddressShow").val(input.files[0].name);
+        }
+    }
+</script>
+<script>
+    $(function () {
+        $('[data-spzoom]').spzoom();
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [4]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    });
+</script>
+<script>
+    $(function () {
+        $('#RERAregistration_IssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#RERAregistration_ExpiryDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Application for Registration</b><br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-I: Agent Profile.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-II: Organization Member Details (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-III: Upload Document(s).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-IV: Other State/UT Registration Number Detail (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-V: Application Fee.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-VI: Review and Confirm Application Form.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Note down Diary Number for your future reference.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">RERA Registration Details with Other State/UT(s)</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Registration Details for Agent Member with Other State/UT(s)
+                    <span class="pull-right">
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
+                                @*<h5>@ViewBag.Message</h5>*@
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.Agent_OtherStateUT_regRERA_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.Agent_ID, new { htmlAttributes = new { @class = "form-control" } })
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">RERA Registration Details</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select State</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if(Model.stateMaster != null)
+                                                            {
+                                                                @Html.DropDownListFor(m => m.StateCode, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(m => m.StateCode, "", new { @class = "text-danger" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownListFor(m => m.StateCode, new SelectList(" "), "Select State", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(m => m.StateCode, "", new { @class = "text-danger" })
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.Label("RERA Registration Number", htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RERAregistration_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAregistration_Number, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.Label("RERA Registration Issue Date", htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RERAregistration_IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAregistration_IssueDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.Label("RERA Registration Expiry Date", htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RERAregistration_ExpiryDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAregistration_ExpiryDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @if (Convert.ToInt32(TempData["AgentIsdraftValue"]) == 1)
+                                            {
+                                                <input type="submit" value="@TempData["submitvalue"]" class="btn btn-outline btn-primary" disabled="disabled" />
+                                            }
+                                            else
+                                            {
+                                                if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                {
+                                                    <input type="submit" value="@TempData["submitvalue"]" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="submit" value="@TempData["submitvalue"]" class="btn btn-outline btn-primary"  />
+                                                }
+                                            }
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "Create_Agent_OtherStateUT", "Agent", null, new { @class = "btn btn-outline btn-primary" })                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            @Html.DisplayName("State/UT Name")
+                                                        </th>                                                        
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RERAregistration_Number)
+                                                        </th>                                                        
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RERAregistration_IssueDate)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RERAregistration_ExpiryDate)
+                                                        </th>
+                                                        <th>@Html.DisplayName("Edit| Delete")</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.Agent_OtherStateUTMember)
+                                                    {
+                                                        <tr> 
+                                                            <td>
+                                                                @if (item.StateName_OtherUT != string.Empty)
+                                                                {
+                                                                    @Html.DisplayFor(modelItem => item.StateName_OtherUT)
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("NA")
+                                                                }
+                                                            </td>                                                           
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RERAregistration_Number)
+                                                            </td>                                                            
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RERAregistration_IssueDate)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RERAregistration_ExpiryDate)
+                                                            </td>
+                                                            <td>
+                                                                @if (Convert.ToInt32(TempData["AgentIsdraftValue"]) == 1)
+                                                                {
+                                                                    @Html.ActionLink("View", "Edit_Agent_OtherStateUT", new { Agent_OtherStateUT_regRERA_IndexID = item.Agent_OtherStateUT_regRERA_IndexID, Agent_ID = item.Agent_ID })
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                                    {
+                                                                        @Html.ActionLink("View", "Edit_Agent_OtherStateUT", new { Agent_OtherStateUT_regRERA_IndexID = item.Agent_OtherStateUT_regRERA_IndexID, Agent_ID = item.Agent_ID })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.ActionLink("Edit", "Edit_Agent_OtherStateUT", new { Agent_OtherStateUT_regRERA_IndexID = item.Agent_OtherStateUT_regRERA_IndexID, Agent_ID = item.Agent_ID }) @("| ")
+                                                                        @Html.ActionLink("Delete", "Delete_Agent_OtherStateUT", new { Agent_OtherStateUT_regRERA_ID = item.Agent_OtherStateUT_regRERA_ID, Agent_OtherStateUT_regRERA_IndexID = item.Agent_OtherStateUT_regRERA_IndexID, Agent_ID = item.Agent_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                                    }
+                                                                }                                                                
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

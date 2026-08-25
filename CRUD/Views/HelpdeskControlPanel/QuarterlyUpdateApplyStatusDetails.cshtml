@@ -1,0 +1,251 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_QuarterlyUpdatesApplyFile
+
+@{
+    Layout = null;
+}
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/css-validator/style.css")" />
+
+<script>
+    $(function () {
+        $('#ReferenceDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#Locked_From_Date').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#Locked_To_Date').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var baseUrl = $('body').attr('data-base-url');
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var usermanagerModal = $(document).find('#myModal');
+            $(usermanagerModal).fadeOut(1000, function () {
+                $(usermanagerModal).modal('hide');
+            });
+        });
+    });
+</script>
+<script>
+    jQuery.validator.addMethod("alphanumericcc", function (value, element) {
+        // return this.optional(element) || /^\w+(\s+\w+)*$/.test($.trim(value));
+        return this.optional(element) || /^[a-zA-Z0-9 ,-.()/]*$/.test($.trim(value));
+    }, "Special characters are not allowed. Maximum length is 250");
+
+    $("#myform_QUPsApplyStatusInsert").validate({
+        rules: {
+            Remarks_IfAny: {
+                required: true,
+                alphanumericcc: true
+            },
+            RERA_RegistrationID: {
+                required: true,
+                alphanumericcc: true
+            },
+            DiaryNumber_Project: {
+                required: true,
+                alphanumericcc: true
+            },
+            DiaryNumber_ExtensionProject: {
+                required: true,
+                alphanumericcc: true
+            },
+            ReferenceNumber: {
+                required: true,
+                alphanumericcc: true
+            },
+            ReferenceDate: {
+                required: true,
+                alphanumericcc: true
+            },
+            Locked_From_Date: {
+                required: true,
+                alphanumericcc: true
+            },
+            Locked_To_Date: {
+                required: true,
+                alphanumericcc: true
+            },
+            IsActiveProvider: {
+                required: true,
+                number: true
+            },
+            IsLock: {
+                required: true,
+                number: true
+            },
+        }
+    });
+</script>
+<script>
+   // get remaining words count for textarea
+   var maxMessageLength = 250;
+   var messageField = $('#myform_QUPsApplyStatusInsert').find('textarea#Remarks_IfAny');
+   $('body').on('input', 'textarea#Remarks_IfAny', function (e) {       
+       var msgVal = $(this).val();
+       var msgValLen = msgVal.length;
+       if (msgValLen <= maxMessageLength) {
+           var remaining = parseInt(maxMessageLength - msgValLen);
+           $(this).parents('.form-group').find('.words-remain').html(remaining + ' characters remaining');
+       }
+   });
+</script>
+
+<div id="wrapper">    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                @using (Html.BeginForm("QuarterlyUpdateApplyStatusDetails", "HelpdeskControlPanel", FormMethod.Post, new { enctype = "multipart/form-data", id = "myform_QUPsApplyStatusInsert" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(model => model.QUP_ProjectProvider_IndexID)
+                                    @Html.HiddenFor(model => model.QUP_ProjectProvider_ID)
+                                    @Html.HiddenFor(model => model.UserID)
+                                    @Html.HiddenFor(model => model.PromoterID)
+                                    @Html.HiddenFor(model => model.ProjectID)
+                                    @Html.HiddenFor(model => model.QUpdateProject_Year)
+                                    @Html.HiddenFor(model => model.QUpdateProject_QuarterName)
+                                    @Html.HiddenFor(model => model.RERA_RegistrationID)
+                                    @Html.HiddenFor(model => model.DiaryNumber_Project)
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.RERA_RegistrationID, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.RERA_RegistrationID, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @disabled = "disabled" } })
+                                            @Html.ValidationMessageFor(model => model.RERA_RegistrationID, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-4">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.Label("Project Diary Number", htmlAttributes: new { @class = "control-label mand" }) 
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.DiaryNumber_Project, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @disabled = "disabled" } })
+                                            @Html.ValidationMessageFor(model => model.DiaryNumber_Project, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-4">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.Label("Extn Diary Number", htmlAttributes: new { @class = "control-label mand" })                                            
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.DiaryNumber_ExtensionProject, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                            @Html.ValidationMessageFor(model => model.DiaryNumber_ExtensionProject, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-4">                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.Label("Reference Number & Date", htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.ReferenceNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "Ref Number", @autocomplete = "off" } })
+                                            @Html.ValidationMessageFor(model => model.ReferenceNumber, "", new { @class = "text-danger" })
+                                        </div>                                    
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.ReferenceDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "Ref Date", @autocomplete = "off" } })
+                                            @Html.ValidationMessageFor(model => model.ReferenceDate, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.Label("Locked From/To Date", htmlAttributes: new { @class = "control-label mand" })                                            
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.Locked_From_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "From Date", @autocomplete = "off" } })
+                                            @Html.ValidationMessageFor(model => model.Locked_From_Date, "", new { @class = "text-danger" })
+                                        </div>                                    
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.Locked_To_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "To Date", @autocomplete = "off" } })
+                                            @Html.ValidationMessageFor(model => model.Locked_To_Date, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.IsLock, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label class="form-group">
+                                                @Html.RadioButtonFor(model => model.IsLock, "1", new { @id = "chkLockYes", @required = "required" }) Yes
+                                                @Html.RadioButtonFor(model => model.IsLock, "0", new { @id = "chkLockNo", @required = "required" }) No
+                                            </label>
+                                            @Html.ValidationMessageFor(model => model.IsLock, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.IsActiveProvider, htmlAttributes: new { @class = "control-label mand" })                                            
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label class="form-group">
+                                                @Html.RadioButtonFor(model => model.IsActiveProvider, "1", new { @id = "chkConfirmLockYes", @required = "required" }) Yes
+                                                @Html.RadioButtonFor(model => model.IsActiveProvider, "0", new { @id = "chkConfirmLockNo", @required = "required" }) No
+                                            </label>
+                                            @Html.ValidationMessageFor(model => model.IsActiveProvider, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-4"></div>
+                                        <div class="col-md-8">                                            
+                                            <i class="words-remain help-block col-md-6">
+                                                250 characters remaining
+                                            </i>                                            
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-offset-4 col-md-8">
+                                            <input type="submit" value="Submit" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                            <button type="button" id="cancelOrder" class="btn btn-primary">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->

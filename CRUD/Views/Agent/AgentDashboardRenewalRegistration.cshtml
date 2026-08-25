@@ -1,0 +1,388 @@
+﻿@model CRUD.Models.Agent.ClsPrp_RenewalAgent_DiaryNumberAgentDashbaord
+
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/dist/css/main.css")">
+<style>
+    .row100 td{
+        padding-left: 25px !important;
+    }
+    .row100.head th{
+        padding-left: 25px !important;
+    }
+    #descCheckListEnvelop{
+        max-height: 300px;
+        overflow-y : scroll;
+    }
+</style>
+<script>
+    $(function () {
+        "use strict";
+        $('.column100').on('mouseover', function () {
+            var table1 = $(this).parent().parent().parent();
+            var table2 = $(this).parent().parent();
+            var verTable = $(table1).data('vertable') + "";
+            var column = $(this).data('column') + "";
+
+            $(table2).find("." + column).addClass('hov-column-' + verTable);
+            $(table1).find(".row100.head ." + column).addClass('hov-column-head-' + verTable);
+        });
+
+        $('.column100').on('mouseout', function () {
+            var table1 = $(this).parent().parent().parent();
+            var table2 = $(this).parent().parent();
+            var verTable = $(table1).data('vertable') + "";
+            var column = $(this).data('column') + "";
+
+            $(table2).find("." + column).removeClass('hov-column-' + verTable);
+            $(table1).find(".row100.head ." + column).removeClass('hov-column-head-' + verTable);
+        });
+
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a#divdescriptionOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+
+            var diaryNo = $.trim($(parentRow).find('input.hdnAgentDiaryNumber').val());
+            var agentName = $.trim($(parentRow).find('input.hdnAgentName').val());
+
+            var AgentId = $.trim($(parentRow).find('input.hdnRelAgentID').val());
+            var RenewalAgentId = $.trim($(parentRow).find('input.hdnRelRnAgentID').val());
+            var RenewalAgentSequenceId = $.trim($(parentRow).find('input.hdnRelRnAgentSeqID').val());
+            var RenewalAgentYearId = $.trim($(parentRow).find('input.hdnRelRnAgentYrID').val());
+            AgentId = parseInt(AgentId);
+            RenewalAgentId = parseInt(RenewalAgentId);
+            RenewalAgentSequenceId = parseInt(RenewalAgentSequenceId);
+            RenewalAgentYearId = parseInt(RenewalAgentYearId);
+            var progressbarDiv = $('#showDescriptionChecklist');
+            $("#showDescriptionChecklistName").html('');
+            $("#showDescriptionChecklistNameTitle").html('');
+            $.ajax({
+                url: BASE_URL + 'Agent/GetRenewalAgentChecklistNotAcceptedByAgentId',
+                dataType: 'Json',
+                type: 'GET', 
+                data: { 'AgentId': AgentId, 'RenewalAgentId': RenewalAgentId, 'RenewalAgentSequenceId': RenewalAgentSequenceId, 'RenewalAgentYearId': RenewalAgentYearId },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    progressbarDiv.fadeIn(2000);
+
+                    $("#showDescriptionChecklist").show();
+                    $("#showDescriptionChecklistName").html(response);
+
+                    $("#showDescriptionChecklistTitle").show();
+                    $("#showDescriptionChecklistNameTitle").html("Agent Name : " + agentName + " (" + diaryNo + ")");
+                }
+            });
+        });
+
+        $(document).on('click', 'a#modalOpenerAppRenewalRegistrationButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+
+            var rnaDetailsModal = $(document).find('#myModal');
+            $(rnaDetailsModal).find('.modal-body').html('');
+            
+            var agentdiaryNo = $.trim($(parentRow).find('input.hdnRelRegdDNumber').val());
+            var renewalagentName = $.trim($(parentRow).find('input.hdnAgentName').val());
+            var renewalagentdiaryNo = $.trim($(parentRow).find('input.hdnAgentDiaryNumber').val());
+            var agentId = $.trim($(parentRow).find('input.hdnRelAgentID').val());
+            var renewalagentId = $.trim($(parentRow).find('input.hdnRelRnAgentID').val());
+            var renewalagentsequenceId = $.trim($(parentRow).find('input.hdnRelRnAgentSeqID').val());
+            var renewalagentyearId = $.trim($(parentRow).find('input.hdnRelRnAgentYrID').val());            
+            agentId = parseInt(agentId);
+            renewalagentId = parseInt(renewalagentId);
+            renewalagentsequenceId = parseInt(renewalagentsequenceId);
+            renewalagentyearId = parseInt(renewalagentyearId);
+            $.ajax({
+                url: BASE_URL + 'Agent/RenewalAgent_InfoApplicationStatusView',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'AgentId': agentId, 'RenewalAgentId': renewalagentId, 'RenewalAgentSequenceId': renewalagentsequenceId, 'RenewalAgentYearId': renewalagentyearId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(rnaDetailsModal).find('.modal-body').html(response);
+                    $(rnaDetailsModal).find('table').DataTable({
+                        responsive: true,
+                        "ordering": false,
+                        "searching": false,
+                        "paging": false,
+                        "info": false,
+                        "lengthChange": false
+                    });
+                }
+            });
+            $(rnaDetailsModal).find('.modal-header input#renewalagentDiaryNumberId').val(renewalagentdiaryNo);
+            $(rnaDetailsModal).find('h4.modal-title a').html(renewalagentdiaryNo + ' (' + renewalagentName + ')');
+            $(rnaDetailsModal).modal('show');
+        });
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Dashboard</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <style>
+        .nav-tabs > li.active > a {
+            border-top: 2px solid #7bb73f; /*ff0000;*/
+            color: #7bb73f;
+            font-weight: bold;
+        }
+
+        .nav-tabs > li > a {
+            background-color: #eee;
+            color: #333;            
+        }
+    </style>
+    <div class="row" style="margin-bottom:5px;">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="app-registration-tab" href="@Url.Action("AgentDashboard", "Agent")" role="tab" aria-controls="app-registration" aria-selected="true">Application for Registration</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link active" id="app-renewal-tab" href="@Url.Action("AgentDashboardRenewalRegistration", "Agent")" role="tab" aria-controls="app-renewal" aria-selected="false">Application for Renewal of Registration</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="table100 ver1 m-b-110 table-responsive">
+                <table class="table-striped" data-vertable="ver1" style="border: 1px solid #e2e2e2;">
+                    <thead>
+                        <tr class="row100 head">
+                            <th class="column100 column1" style="width: 20%;" data-column="column1">@Html.DisplayNameFor(model => model.Agent_Name)</th>
+                            <th class="column100 column2" style="width: 14%;" data-column="column2">@Html.DisplayNameFor(model => model.AgentRegDiaryNumber_Name)</th>
+                            <th class="column100 column4" style="width: 25%;" data-column="column4">@Html.DisplayNameFor(model => model.EventAction_Aggregate)</th>
+                            <th class="column100 column5" style="width: 12%;" data-column="column5">@Html.DisplayNameFor(model => model.EventAction_IdentifiedOn)</th>
+                            <th class="column100 column6" style="width: 29%;" data-column="column6">@Html.DisplayNameFor(model => model.Agent_RERAregistrationNumber)</th>
+
+                        </tr>
+                    </thead>
+                    <tbody style="">
+                        @{
+                            int sno = 0;
+                            string realestateagentalertmessageshowId = "";
+                        }
+                        @if (Model.prpongoing.Count>0)
+                        {
+                            foreach (var item in Model.prpongoing)
+                            {
+                                {
+                                    sno = sno + 1;
+                                }
+                                <tr class="row100">
+                                    <td class="column100 column1" data-column="column1">
+                                        @Html.DisplayFor(modelItem => item.Agent_Name)
+                                        @Html.HiddenFor(modelItem => item.Agent_ID, new { @class = "hdnAgentID" })
+                                        @Html.HiddenFor(modelItem => item.Agent_Name, new { @class = "hdnAgentName" })
+                                        @Html.HiddenFor(modelItem => item.Registration_Number_ReferenceID, new { @class = "hdnRenewalAgentId" })
+                                        @Html.HiddenFor(modelItem => item.Registration_Number_ReferenceNumber, new { @class = "hdnRegistrationNumber" })
+                                        @Html.HiddenFor(modelItem => item.RenewalAgentRegDiaryNumber_Name, new { @class = "hdnAgentDiaryNumber" })
+                                        @Html.HiddenFor(modelItem => item.Related_RenewalAgent_ID, new { @class = "hdnRelRnAgentID" })
+                                        @Html.HiddenFor(modelItem => item.Related_RenewalOrderSequence, new { @class = "hdnRelRnAgentSeqID" })
+                                        @Html.HiddenFor(modelItem => item.Related_RelatedRenewalAgent_Year, new { @class = "hdnRelRnAgentYrID" })
+                                        @Html.HiddenFor(modelItem => item.Related_Agent_ID, new { @class = "hdnRelAgentID" })
+                                        @Html.HiddenFor(modelItem => item.Related_Agent_Type, new { @class = "hdnRelTypeAgentID" })
+                                        @Html.HiddenFor(modelItem => item.Related_RERAnumberRegistration, new { @class = "hdnRelRegdNumber" })
+                                        @Html.HiddenFor(modelItem => item.Related_AgentDiaryNumber_Name, new { @class = "hdnRelRegdDNumber" })
+                                    </td>
+                                    <td class="column100 column2" data-column="column2">                                        
+                                        @Html.DisplayFor(modelItem => item.RenewalAgentRegDiaryNumber_Name)
+                                    </td>                            
+                                    <td class="column100 column4" data-column="column4"> 
+                                        @*Application Submitted (Renewal of registration PBRERA-SAS80-REA1761 which expires on 20-Jul-2025)*@                              
+                                        @Html.DisplayFor(modelItem => item.EventAction_Aggregate)
+                                        @if (item.EventAction_Type == "290007")
+                                        {
+                                            <div class="btn-group">
+                                                <a id="divdescriptionOpenerButton" class="btn btn-primary btn-xs" href="javascript:void(0);" title="View Status Summary"><i class="fa fa-eye"></i></a>
+                                                <a id="modalOpenerAppRenewalRegistrationButton" class="btn btn-primary btn-xs" href="javascript:void(0);" title="View Status Details"><i class="fa fa-file-pdf-o"></i></a>                                             
+                                            </div>                                           
+                                        }                               
+                                    </td>
+                                    <td class="column100 column5" data-column="column5">
+                                        @Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)
+                                    </td>
+                                    <td class="column100 column6" data-column="column6">
+                                        @if (item.EventAction_Type == "290008")
+                                        {
+                                            {
+                                                realestateagentalertmessageshowId = "realestateagent-alert-message-show" + sno.ToString();
+                                            }
+                                            <script type="text/javascript">
+                                                $(document).ready(function () {
+                                                    showAlertMessageColor("@item.EventAction_IdentifiedOn.ToString()", "@sno.ToString()");
+                                                });
+                                            </script>                                    
+                                            <span id=@realestateagentalertmessageshowId.ToString()>                                        
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            if (item.Registration_Number_Flag == 21)
+                                            {
+                                                @Html.DisplayFor(modelItem => item.RERA_Registration_Number)
+                                                @Html.DisplayName(" (Issue Date: ")
+                                                @Html.DisplayFor(modelItem => item.LastRenewal_Registration_IssueDate)
+                                                @Html.DisplayName(" and Valid upto Date: ")
+                                                @Html.DisplayFor(modelItem => item.LastRenewal_Registration_ValidUptoDate)
+                                                @Html.DisplayName(")")
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => item.Agent_RERAregistrationNumber)
+                                            }
+                                        }                               
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="row100">
+                                <td class="column100 column1" data-column="column1">
+                                    @Html.DisplayName("--")
+                                </td>
+                                <td class="column100 column2" data-column="column2">
+                                    @Html.DisplayName("--")
+                                </td>
+                                <td class="column100 column4" data-column="column4">
+                                    @Html.DisplayName("--")
+                                </td>
+                                <td class="column100 column5" data-column="column5">
+                                    @Html.DisplayName("--")
+                                </td>
+                                <td class="column100 column6" data-column="column6">
+                                    @Html.DisplayName("--")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" id="showDescriptionChecklistTitle" style="display: none">
+                <br />
+                <div class="col-md-12 alert alert-warninge">
+                    <div id="showDescriptionChecklistNameTitle" class="info">HH</div>
+                </div>
+            </div>
+            <div class="row100" id="showDescriptionChecklist" style="display: none">
+                <div class="col-md-12 alert alert-warning" id="descCheckListEnvelop">
+                    <div id="showDescriptionChecklistName" class="info">HH</div>
+                </div>
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Renewal of Registration - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+                <input type="hidden" name="renewalagentDiaryNumberId" id="renewalagentDiaryNumberId" value="" />
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+
+    <script>
+        function showAlertMessageColor(dateString, srNo) {
+
+            var dateInCompleteAction = new Date(dateString);
+
+            var date0 = new Date();
+            var date1 = new Date();
+            var date2 = new Date();            
+
+            date1.setDate(dateInCompleteAction.getDate());
+            date1.setMonth(dateInCompleteAction.getMonth());
+            date1.setFullYear(dateInCompleteAction.getFullYear());
+
+            date2.setDate(date1.getDate());
+            date2.setMonth(date1.getMonth());
+            date2.setFullYear(date1.getFullYear());            
+
+            date2.setDate(date1.getDate() + 21);          
+
+            var diffTime2 = (date2.getTime() - date0.getTime());
+            var diffDays2 = Math.ceil(diffTime2 / (1000 * 60 * 60 * 24));           
+
+            var varSetR2 = false;
+            if (diffDays2 < 0 || diffDays2 == 0) {
+                varSetR2 = true;
+            };            
+
+            var alertregdmessageShowId = '#realestateagent-alert-message-show' + srNo;
+
+            var varAlertMessageFlag = "Registration number and RC uploading in-process.";
+            if (varSetR2 != false) {
+                varAlertMessageFlag = "--";
+            };            
+            $(document).find(alertregdmessageShowId.trim()).text(varAlertMessageFlag);
+        }
+    </script> 
+}
+
+
+

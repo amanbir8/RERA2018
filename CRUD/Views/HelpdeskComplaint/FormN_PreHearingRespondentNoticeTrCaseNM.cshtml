@@ -1,0 +1,271 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormN_PreHearingNotice
+
+@{
+    Layout = null;
+}
+
+<style>
+    .nav-gridshow-tabs > li.active > a {
+        border-top: 2px solid #7bb73f;
+    }
+
+    .nav-gridshow-tabs > li > a {
+        background-color: #eee;
+        color: #333;
+    }
+
+    .display-griddata-tabs > li.active > a {
+        border-top: 2px solid #064576;
+        color: #064576;
+    }
+
+    .display-griddata-tabs > li > a {
+        background-color: #eee;  /*#d9edf7;*/
+        color: #064576;
+    }
+
+    .main_content {
+        width: auto;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div>
+            <div class="main_content" id="main-content">
+                <ul class="nav nav-tabs display-griddata-tabs">
+                    <li class="nav-item active">
+                        <a class="nav-link active" data-toggle="tab" href="#Primary-Respondent" name-code="PrimResp">Primary Respondent</a>
+                    </li>                    
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#Secondary-Respondent" name-code="AddResp">Additional Respondent(s)</a>
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink(" ", "FormN_PreHearingRespondentNoticeZipPDFTrCaseNM", new { FNC = Model.ComplainantApplicant_RelatedComplaint_ID, FNRIC = Model.ComplaintFormN_IndexID, FNRC = Model.ComplaintFormN_ID }, new { @target = "_blank", @title = "Print", @class = "nav-link fa fa-print" })
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <!--   Primary-Respondent-Notice   -->
+                    <div class="tab-pane active" id="Primary-Respondent">
+                        <div id="main-content">
+                            <div class="row">
+                                <div class="col-md-12" style="text-align:right;">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12 text-center font-weight-bold">
+                                        <label class="control-label"><strong>NOTICE FOR APPEARANCE /</strong></label>
+                                        <strong>@Html.DisplayFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } })</strong>                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12 text-center">
+                                        <label class="control-label">REAL ESTATE REGULATORY AUTHORITY, PUNJAB</label><br />
+                                        <label class="control-label">First Floor, Block-B, Plot Number-3, (Near Govt. Press UT), Madhya Marg, Sector-18A, Chandigarh - 160018</label><br /><br />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        @Html.DisplayFor(model => model.Complainant_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <label class="control-label"><strong>Versus</strong></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.DisplayFor(model => model.Respondent_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12 text-center font-weight-bold">
+                                        <label class="control-label"><strong>NOTICE TO RESPONDENT/s</strong></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <label class="control-label">To</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-offset-1 col-md-11">
+                                        @Html.DisplayFor(model => model.Respondent_Name, new { htmlAttributes = new { @class = "form-control" } })<br />
+                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })<br />
+                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressDistrictCodeName, new { htmlAttributes = new { @class = "form-control" } })<br />
+                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressStateCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <br />
+                                        <label class="control-label">Subject: - Notice under section 31 of Real Estate (Regulation and Development) Act, 2016 read with rule 36 (2) of Punjab State Real Estate (Regulation and Development) Rules, 2017.</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <br />
+                                        <label class="control-label">Whereas <b>Complaint No. - @Html.DisplayFor(model => model.ComplainantApplicant_RelatedComplaint_Code, new { htmlAttributes = new { @class = "form-control" } })</b> against you has been received with the Authority from the complainant(s) @Html.DisplayFor(model => model.Complainant_Name, new { htmlAttributes = new { @class = "form-control" } }) (copy enclosed herewith alongwith requisite documents). The complainant has alleged contraventions by you of various Sections/Rules of the Real Estate (Regulation and Development) Act, 2016 and Punjab State Real Estate (Regulation and Development) Rules, 2017.</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <label class="control-label">By way of this notice, you are hereby, directed to appear in person or through your authorized representative before <strong>@Html.DisplayFor(model => model.B_column, new { htmlAttributes = new { @class = "form-control" } })</strong>, the Real Estate Regulatory Authority, Punjab situated at First Floor, Block-B, Plot Number-3, (Near Govt. Press UT), Madhya Marg, Sector-18A, Chandigarh, on <strong>@Html.DisplayFor(model => model.PreHearingDate, new { htmlAttributes = new { @class = "form-control" } })</strong> at <strong>@Html.DisplayFor(model => model.PreHearingTime, new { htmlAttributes = new { @class = "form-control" } })</strong>, to answer the alleged contraventions as mentioned above.</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <label class="control-label">
+                                            Further as per directions, you are required to file a reply to the complaint within <strong>@Html.DisplayFor(model => model.C_column, new { htmlAttributes = new { @class = "form-control" } }) days</strong> of the receipt of this mail and a copy of the same be supplied to complainant two days in advance by way of Registered post/Speed post or reputed Courier by that date. Hence fail not.
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <label class="control-label">
+                                            It is made clear that in case of your failure to attend the proceedings on the above mentioned fixed date, the matter will be decided in your absence and in accordance with law.
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <br />
+                                        <label class="control-label">
+                                            Please view enclosed requisite documents herewith by clicking here (View Form and Documents (Link)).
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-3">
+                                        <label class="control-label">Name of Authorized Representative/ Counsel</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.DisplayFor(model => model.AuthorizedRepresentativeCounsel_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="control-label">Email ID of Authorized Representative/ Counsel</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.DisplayFor(model => model.AuthorizedRepresentativeCounsel_EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                    </div>                    
+                    <!--   Secondary-Respondent-Notice   -->
+                    <div class="tab-pane fade" id="Secondary-Respondent">
+                        <div id="main-content">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    &nbsp;
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="row">
+
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-exampleDocument">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>@Html.DisplayName("Sr No")</th>
+                                                            <th>@Html.DisplayName("Name of Respondant")</th>
+                                                            <th>@Html.DisplayName("Address for Service of All Notices")</th>
+                                                            <th>@Html.DisplayName("Email Address")</th>
+                                                            <th>@Html.DisplayName("Phone Number")</th>                                                            
+                                                            <th>@Html.DisplayName("Print")</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            int sno = 0;
+                                                        }
+                                                        @foreach (var item in Model.addmoreRespondent)
+                                                        {
+                                                            {
+                                                                sno = sno + 1;
+                                                            }
+                                                            <tr class="odd gradeX">
+                                                                <td>@Html.DisplayName(sno.ToString())</td>
+                                                                <td>@Html.DisplayFor(modelItem => item.Name_of_Respondant_or_Applicant)</td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Service_AddressLine1)
+                                                                    @Html.DisplayFor(modelItem => item.Service_AddressLine2)
+                                                                    @Html.DisplayName(", ")
+                                                                    @Html.DisplayFor(modelItem => item.Service_AddressDistrictCode)
+                                                                    @Html.DisplayName(", ")
+                                                                    @Html.DisplayFor(modelItem => item.Service_AddressStateCode)
+                                                                    @if (item.Service_AddressPIN != 0)
+                                                                    {
+                                                                        @Html.DisplayName(", PIN ")
+                                                                        @Html.DisplayFor(modelItem => item.Service_AddressPIN)
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.EmailAddress)
+                                                                    @Html.HiddenFor(modelItem => item.AdditionRespondent_IndexID, new { @class = "hdnProjectID" })
+                                                                    @Html.HiddenFor(modelItem => item.AdditionRespondent_ID)
+                                                                    @Html.HiddenFor(modelItem => item.AdditionRespondent_RelatedComplaint_ID)
+                                                                    @Html.HiddenFor(modelItem => item.Profile_ID)
+                                                                </td>
+                                                                <td>
+                                                                    @if (item.MobileNumber != 0)
+                                                                    {
+                                                                        @Html.DisplayFor(modelItem => item.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("--")
+                                                                    }
+                                                                </td>                                                                
+                                                                <td align="center">
+                                                                    @Html.ActionLink(" ", "FormN_PreHearingRespondentNoticePDFTrCaseNM", new { FNC = item.AdditionRespondent_RelatedComplaint_ID, FNRIC = item.AdditionRespondent_IndexID, FNRC = item.AdditionRespondent_ID }, new { @target = "_blank", @title = "Print", @class = "fa fa-print" })                                                                    
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

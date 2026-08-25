@@ -1,0 +1,931 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormN_OrderJudgements
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<link href="@Url.Content("~/css/jquery-ui-fileupload.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>
+    $(function () {
+        var baseUrl = $('body').attr('data-base-url');      
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('table#interim-orders-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [8, 9]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers",
+
+            responsive: true
+        });
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script>
+    $(function () {
+        $('#oDate_of_Institution').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#oDate_of_Decision').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#oeCourt_CaseType_Date').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#oDate_of_TrueCopy').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#oDate_of_Upload').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#oeCourt_ReferenceDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+    });
+</script>
+
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+
+<script>
+    function singleFileSelected() {
+        var baseUrl = $('body').attr('data-base-url');
+        $(".InfoContainer").fadeIn();
+        var selectedFile = ($("#UploadedFile"))[0].files[0];//FileControl.files[0];
+        if (selectedFile) {
+            var FileSize = 0;
+            var imageType = /image.*/;
+            if (selectedFile.size > 1048576) {
+                FileSize = Math.round(selectedFile.size * 100 / 1048576) / 100 + " MB";
+            }
+            else if (selectedFile.size > 1024) {
+                FileSize = Math.round(selectedFile.size * 100 / 1024) / 100 + " KB";
+            }
+            else {
+                FileSize = selectedFile.size + " Bytes";
+            }
+
+            // here we will add the code of thumbnail preview of upload images
+            $("#showFileInfoGrid").show();
+            $("#FileName").text("Name : " + selectedFile.name);
+            $("#FileType").text("Type : " + selectedFile.type);
+            $("#FileSize").text("Size : " + FileSize);
+
+            $("#showSaveFileUploadMessage").hide();
+
+            if (selectedFile.type.match(imageType)) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = reader.result;
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "100";
+                    img.width = "100";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(100);
+                    $("#Imagecontainer").width(100);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+            if (selectedFile.type.match('application/pdf')) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = baseUrl + 'images/pdf.png';
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "35";
+                    img.width = "35";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(35);
+                    $("#Imagecontainer").width(35);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#FormUpload").submit(function (event) {
+            var form = $('#FormUpload')[0];
+            var baseUrl = $('body').attr('data-base-url');
+            var files = ($("#UploadedFile"))[0].files[0];//FileControl.files[0];
+
+            if (typeof files === 'undefined') {
+                $("#showSaveFileUploadMessage").show();
+                $("#saveFileUploadMessageName").text("Note : Please Add files... to Upload!");
+                return false;
+            }
+            if (files.size > 0) {
+                var formData = new FormData(form);
+                for (var i = 0; i < files.length; i++) {
+                    formData.append(files[i].name, files[i]);
+                }
+                var progressbarLabel = $('body').find('#progressBar-label');
+                var progressbarDiv = $('body').find('#progressbar');
+
+                $.ajax({
+                    url: baseUrl + 'HelpdeskComplaint/FormN_OrderJudgmentDocumentUpload',
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        if (data.statusCode == 101)
+                        {
+                            progressbarLabel.text('COMPLETE');
+                            progressbarDiv.fadeOut(2000);
+                            $(".InfoContainer").fadeOut(2000);
+                            $("#showFileInfo").fadeOut(2500);
+
+                            // Load Uploaded List - Highlight Pending Docs
+                            highlightPendingDocs();
+                        }
+                        else
+                        {
+                            progressbarLabel.text('Bad Request! Upload Failed');
+                            progressbarDiv.fadeOut(2000);
+
+                            $("#showSaveFileUploadMessage").show();
+                            $("#saveFileUploadMessageName").text("Note : " + data.status);
+                        }
+                    },
+                    failure: function(data) {
+                        alert('Bad Request! Upload Failed');
+                    },
+                    error: function (err) {
+                        alert('Bad Request! Upload Failed');
+                    }
+                });
+
+                progressbarLabel.text('UPLOADING ...');
+                progressbarDiv.progressbar({
+                    value: false
+                }).fadeIn(500);
+
+                $("#showSaveFileUploadMessage").hide();
+            }
+            return false;
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', 'a.panel-accordion-toggle', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var criteriaCode = $(this).attr('data-parent');
+            switch (criteriaCode) {
+                case '#accordionformnOrderJudgementdetails':
+                    $("#btnAccordionformnOrderJudgements").find("span").toggleClass("btn-outline");
+                    $("#btnAccordionformnOrderJudgements").find("i").toggleClass("fa-upload fa-times");
+                    $("#btnAccordionformnOrderJudgements").attr("title", function (index, attr) {
+                        return attr == 'Cancel Uploads' ? 'Upload Order & Judgements' : 'Cancel Uploads';
+                    });
+                    break;
+            }
+        });
+
+        $('#oeCourt_CaseType_Name').change(function () {
+            if (this.value == '5001') {
+                $("#rowCaseTypeDesc01").addClass('hide').removeClass('show');
+            }
+            else {
+                $("#rowCaseTypeDesc01").addClass('show').removeClass('hide');
+            };
+        });
+
+        $('#oOrderDocument_InfoName').change(function () {
+            if (this.value == '1003') {
+                $("#rowOrderRef01").addClass('show').removeClass('hide');
+            }
+            else {
+                $("#rowOrderRef01").addClass('hide').removeClass('show');
+            };
+            if (this.value == '1004') {
+                $("#rowOrderTrueCopy01").addClass('show').removeClass('hide');
+            }
+            else {
+                $("#rowOrderTrueCopy01").addClass('hide').removeClass('show');
+            };
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(document).on("click", "a.info-help-details", infohelpHandlerOrderJudgements);
+    });
+
+    function infohelpHandlerOrderJudgements() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Order & Judgements</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Add or upload order & judgements document with reference to complaint diary number and hearing details.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> True Copy prepared by and prepared date of order & judgements with reference to registrar stamp details.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        var popBASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a#modalOpenerOrderDetailButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var OrderDetailsModal = $(document).find('#myModal');
+            $(OrderDetailsModal).find('.modal-body').html('');
+
+            // ajax to fetch data corresponding to complaint-Id
+            var formNumber = $.trim($(parentRow).find('input.hdnFormNumber').val());
+            var formId = $.trim($(parentRow).find('input.hdnFormID').val());
+            var formType = $.trim($(parentRow).find('input.hdnFormType').val());
+            var transferId = $.trim($(parentRow).find('input.hdnTransferCode').val());
+            var transferType = $.trim($(parentRow).find('input.hdnTransferType').val());
+            formId = parseInt(formId);
+            transferId = parseInt(transferId);
+            $.ajax({
+                url: popBASE_URL + 'HelpdeskComplaint/FormN_OrderJudgmentsForShowDetails',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'frmNumber': formNumber, 'frmId': formId, 'frmType': formType, 'frmtransferId': transferId, 'frmtransferType': transferType },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(OrderDetailsModal).find('.modal-body').html(response);
+                    $(OrderDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.complaint-diary-number').attr('data-diary-no'));
+            var complainantNam = $.trim($(parentRow).find('td.complainant-name').attr('data-complainant-name'));
+            $(OrderDetailsModal).find('h4.modal-title').html('Order & Judgement Details - <a href="javascript:void(0);"></a>');
+            $(OrderDetailsModal).find('.modal-title a').html(diaryNo + ' (' + complainantNam + ')');
+            $(OrderDetailsModal).modal('show');
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Complaint (Form-N) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Complaint (Form-N) : Order & Judgement Record Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Complaint Form-N - ( @Html.DisplayFor(model => model.zapRelated_RegDiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zapComplainantName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5 project-name">
+                                                        @Html.DisplayFor(model => model.zapComplainantName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zapComplaintFormLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zapComplaintFormLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskComplaintFormNNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Order & Judgement(s) [Complaint Orders & Description] Details
+                                        <span class="pull-right">
+                                            <a id="btnAccordionformnOrderJudgements" data-toggle="collapse" data-parent="#accordionformnOrderJudgementdetails" href="#collapseformnOrderJudgements" class="panel-accordion-toggle" aria-expanded="false" title="Upload Order & Judgements"><span class="btn btn-primary btn-xs btn-outline"><i class="fa fa-upload" aria-hidden="true"></i></span></a>
+                                            <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                                        </span>
+                                    </h4>
+                                </div>
+                            </div>
+                            <div id="collapseformnOrderJudgements" class="panel-collapse collapse" aria-expanded="false" style="">
+                                @using (Html.BeginForm("FormN_OrderJudgmentDocumentUpload", "HelpdeskComplaint", FormMethod.Post, new { enctype = "multipart/form-data", @id = "FormUpload" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                    @Html.HiddenFor(model => model.oRelated_Profile_ID)
+                                    @Html.HiddenFor(model => model.oRelated_User_ID)
+                                    @Html.HiddenFor(model => model.oRelated_Complaint_ID)
+                                    @Html.HiddenFor(model => model.oRelated_ComplaintType_MN)
+                                    @Html.HiddenFor(model => model.oRelated_ComplaintDiaryNumber)
+                                    @Html.HiddenFor(model => model.oBench_Code)
+                                    @Html.HiddenFor(model => model.oBench_Name)
+                                    @Html.HiddenFor(model => model.oTransferTypeOption)
+                                    @Html.HiddenFor(model => model.oIsTransferCase)
+                                    @Html.HiddenFor(model => model.oRelated_CaseTransferN_IndexID)
+                                    @Html.HiddenFor(model => model.oRelated_CaseTransferN_ID)
+                                    @Html.HiddenFor(model => model.oRelated_PreHearingDate_IndexID)
+                                    @Html.HiddenFor(model => model.oRelated_PreHearingDate_ID)
+                                    @Html.HiddenFor(model => model.oRelated_eCourt_CaseAllocationN_IndexID)
+                                    @Html.HiddenFor(model => model.oRelated_eCourt_CaseAllocationN_ID)
+                                    @Html.HiddenFor(model => model.oTransferCase_DiaryNumber)
+
+                                    @Html.HiddenFor(model => model.oComplainantName)
+                                    @Html.HiddenFor(model => model.oRespondentName)
+                                    @Html.HiddenFor(model => model.oDate_of_Filing)
+                                    @Html.HiddenFor(model => model.oDate_of_Hearing)
+                                    @Html.HiddenFor(model => model.SerialOrderNumber)
+                                    @Html.HiddenFor(model => model.oSerialOrderNumber)
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Complaint Hearing Details</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oComplainantName, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => model.oComplainantName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oRespondentName, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => model.oRespondentName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if (Model.oComplainantName != "UnKnown")
+                                                    {
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => model.oDate_of_Filing, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => model.oDate_of_Filing, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => model.oDate_of_Hearing, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => model.oDate_of_Hearing, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oIsTransferCase, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @if (Model.oIsTransferCase == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oTransferTypeOption, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => model.oTransferTypeOptionName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oDate_of_Institution, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.oDate_of_Institution, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(m => m.oDate_of_Institution, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oDate_of_Decision, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.oDate_of_Decision, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(m => m.oDate_of_Decision, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oPresentComplainantAuthorityName, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.oPresentComplainantAuthorityName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(m => m.oPresentComplainantAuthorityName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oPresentRespondentAuthorityName, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.oPresentRespondentAuthorityName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(m => m.oPresentRespondentAuthorityName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Complaint Case Details</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oeCourt_CaseType_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Respective title of the Case. (e.g. ReOpen, Review etc.)">
+                                                                @Html.DropDownListFor(m => m.oeCourt_CaseType_Name, new SelectList(Model.eCourtCaseTypeMaster, "CaseTypeCode", "CaseTypeName"), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(m => m.oeCourt_CaseType_Name, "", new { @class = "text-danger" })
+                                                            </div>                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="row hide" id="rowCaseTypeDesc01">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oeCourt_CaseType_Date, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.oeCourt_CaseType_Date, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(m => m.oeCourt_CaseType_Date, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oeCourt_CaseType_Description, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.oeCourt_CaseType_Description, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(m => m.oeCourt_CaseType_Description, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oeCourt_UnderSectionName, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Respective section of the Case with respect to final order and judgement(s).">
+                                                                @Html.DropDownListFor(m => m.oeCourt_UnderSectionName, new SelectList(Model.eCourtUnderSectionMaster, "UnderSectionCode", "UnderSectionName"), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(m => m.oeCourt_UnderSectionName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.oA_column, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.oA_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(m => m.oA_column, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Order(s) Document Details</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-lg-12">
+                                                                <div class="form-group">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(m => m.oOrderDocument_InfoName, htmlAttributes: new { @class = "control-label mand" })
+                                                                            </div>
+                                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Name or title of the document to be attached.">
+                                                                                @Html.DropDownListFor(m => m.oOrderDocument_InfoName, new SelectList(Model.eCourtOrderDescMaster, "OrderDocumentInfoCode", "OrderDocumentInfoName"), "Select", new { @class = "form-control" })
+                                                                                @Html.ValidationMessageFor(m => m.oOrderDocument_InfoName, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(m => m.oUpload_Total_PageNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.EditorFor(m => m.oUpload_Total_PageNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                @Html.ValidationMessageFor(m => m.oUpload_Total_PageNumber, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row hide" id="rowOrderRef01">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(m => m.oeCourt_ReferenceName, htmlAttributes: new { @class = "control-label mand" })
+                                                                            </div>
+                                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Number of the order document, for example as Annexure-I or Annexure-A or Reference Number etc.">
+                                                                                @Html.EditorFor(m => m.oeCourt_ReferenceName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                                @Html.ValidationMessageFor(m => m.oeCourt_ReferenceName, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(m => m.oeCourt_ReferenceDate, htmlAttributes: new { @class = "control-label mand" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.EditorFor(m => m.oeCourt_ReferenceDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                                @Html.ValidationMessageFor(m => m.oeCourt_ReferenceDate, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>                                                                    
+                                                                    <div class="row hide" id="rowOrderTrueCopy01">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                <label class="control-label mand">True Copy Prepared By</label>
+                                                                                @{var listItemsTrueCopy = new List<SelectListItem>
+                                                                                    {
+                                                                                        new SelectListItem {  Text = "Select" , Value=""  },
+                                                                                        new SelectListItem {  Text = "Reader AO" , Value="Reader AO"  },
+                                                                                        new SelectListItem {  Text = "Private Secretary" , Value="Private Secretary"  },
+                                                                                        new SelectListItem {  Text = "Manager Legal" , Value="Manager Legal"  },
+                                                                                        new SelectListItem {  Text = "AM Legal" , Value="AM Legal"  },
+                                                                                        new SelectListItem {  Text = "Authorized Person" , Value="Authorized Person"  },
+                                                                                    };
+                                                                                }
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DropDownListFor(m => m.oTrueCopyPreparedBy, new SelectList(listItemsTrueCopy, "Value", "Text"), new { @class = "form-control" })
+                                                                                @Html.ValidationMessageFor(m => m.oTrueCopyPreparedBy, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                <label class="control-label mand">True Copy Prepared Date</label>
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.EditorFor(m => m.oDate_of_TrueCopy, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                                @Html.ValidationMessageFor(m => m.oDate_of_TrueCopy, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                <label class="control-label mand">Bench Stamp Description</label>
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.EditorFor(m => m.oBench_StampDescription, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                @Html.ValidationMessageFor(m => m.oBench_StampDescription, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(m => m.oDate_of_Upload, htmlAttributes: new { @class = "control-label mand" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.EditorFor(m => m.oDate_of_Upload, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                                                @Html.ValidationMessageFor(m => m.oDate_of_Upload, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-12">
+                                                                                @TempData["notice"]<br />Note: (i) Document /Order(s) to be uploaded should be in .PDF format not exceeding ten in numbers and size of all documents /orders must not exceed 2MB.
+                                                                                <br />(ii) Document /Order(s) of the complaint (If any) should be upload in serial order.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="showFileInfo">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Upload Order(s) in related to the complaint</legend>
+                                                    <div class="form-group">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3"></div>
+                                                                        <div class="col-md-9" id="FormContent">
+                                                                            <span class="btn btn-success fileinput-button">
+                                                                                <i class="glyphicon glyphicon-plus"></i>
+                                                                                <span>Add files...</span>
+                                                                                <input type="file" name="UploadedFile" id="UploadedFile" onchange="singleFileSelected()" />
+                                                                            </span>
+                                                                            @if (Model.oIsActive != 1)
+                                                                            {
+                                                                                <input type="submit" value="Start upload" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                if (Model.oIsLatestActive != 1)
+                                                                                {
+                                                                                    <input type="submit" value="Start upload" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <button class="btn btn-outline btn-primary" type="submit" value="submit" id="Submit_btn">
+                                                                                        <i class="glyphicon glyphicon-upload"></i>
+                                                                                        <span>Start upload</span>
+                                                                                    </button>
+                                                                                }
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" id="showFileInfoGrid" style="display:none">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3"></div>
+                                                                        <div class="col-md-9">
+                                                                            <div class="InfoContainer">
+                                                                                <div id="Imagecontainer" style="height:100px;width:100px"></div>
+                                                                                <div id="FileName" class="info"></div>
+                                                                                <div id="FileType" class="info"></div>
+                                                                                <div id="FileSize" class="info"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3"></div>
+                                                                        <div class="col-md-6">
+                                                                            <div id="progressbar" style="position: relative; display: none">
+                                                                                <span style="position: absolute; left: 35%; top: 20%" id="progressBar-label">
+                                                                                    UPLOADING ...
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" id="showSaveFileUploadMessage" style="display: none">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-offset-3 col-md-6 alert alert-warning">
+                                                                            <div id="saveFileUploadMessageName" class="info">HH</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                @using (Html.BeginForm("FormN_OrderJudgmentDetails", "HelpdeskComplaint", FormMethod.Post, new { enctype = "multipart/form-data", @id = "FormProceed" }))
+                                {
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                @if (TempData["FormNComplaintValidOrderDocumentName"] != null)
+                                                {
+                                                    <b><font color="red">@TempData["FormNComplaintValidOrderDocumentName"].ToString()</font></b>
+                                                }
+                                            </div>
+                                            <div class="col-md-12">
+                                                @Html.ActionLink("Back to List (View Orders)", "FormN_OrderJudgmentDetails", "HelpdeskComplaint", null, new { @class = "btn btn-outline btn-primary" })
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "FormN_OrderJudgmentDetails", "HelpdeskComplaint", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered" id="interim-orders-list-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            @Html.DisplayName("SNo")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.ApplicationNumber)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.oDate_of_Filing)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.Date_of_Decision)
+                                                        </th>                                                        
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.ApplicantName)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RespondentName)
+                                                        </th> 
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.oeCourt_CaseType_Name)
+                                                        </th>                                               
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.IsPublicView)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("View")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Delete")
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        int pageNumber = 0;
+                                                    }
+                                                    @foreach (var item in Model.prpongoing)
+                                                    {
+                                                        {
+                                                            pageNumber = pageNumber + 1;
+                                                        }
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DisplayName(pageNumber.ToString())
+                                                            </td>
+                                                            <td class="complaint-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.ApplicationNumber)">                                                                
+                                                                <a id="modalOpenerOrderDetailButton" href="javascript:void(0);" title="View Description">
+                                                                    @Html.DisplayFor(modelItem => item.ApplicationNumber)
+                                                                </a>                                                         
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.oDate_of_Filing)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.Date_of_Decision)
+                                                            </td>                                                            
+                                                            <td class="complainant-name" data-complainant-name="@Html.DisplayFor(modelItem => item.ApplicantName)">
+                                                                @Html.DisplayFor(modelItem => item.ApplicantName)
+                                                                @Html.HiddenFor(modelItem => item.ApplicationNumber, new { @class = "hdnFormNumber" })
+                                                                @Html.HiddenFor(modelItem => item.A_column, new { @class = "hdnFormID" })
+                                                                @Html.HiddenFor(modelItem => item.B_column, new { @class = "hdnFormType" }) 
+                                                                @Html.HiddenFor(modelItem => item.oIsTransferCase, new { @class = "hdnTransferCode" })
+                                                                @Html.HiddenFor(modelItem => item.oTransferTypeOption, new { @class = "hdnTransferType" })                                                          
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RespondentName)
+                                                            </td> 
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.oeCourt_CaseType_Name)
+                                                            </td>                                                   
+                                                            <td>
+                                                                @if (item.IsPublicView == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            </td>
+                                                            <td align="center">                                                                                                                               
+                                                                <a href="~/@Html.DisplayFor(modelItem => item.ViewJugdementAO_FilePath)/@Html.DisplayFor(modelItem => item.ViewJugdementAO_FileName)" target="_blank" tite="View PDF"><i class="fa fa-external-link-square"></i></a>                                                                
+                                                            </td>
+                                                            <td align="center">
+                                                                @if (item.oIsLock != 1)
+                                                                {
+                                                                    if (item.oIsFlag == 1 || item.oIsFlag == 2 || item.oIsFlag == 3 || item.oIsFlag == 4)
+                                                                    {
+                                                                        @Html.ActionLink(" ", "Delete_FormN_OrderJudgmentDocumentFormNandTransNM", new { inFormN_DocIndexID = item.OrderJudgementByAO_IndexID, inFormN_DocID = item.OrderJudgementByAO_ID, inFormN_ID = item.A_column, inFormN_Type = item.B_column, inLinkageFormN_IndexID = item.oOrderDesc_formN_eCourtIndexID, inLinkageFormN_ID = item.oOrderDesc_formN_eCourtID, inIsTransferCase = item.oIsTransferCase, inTransferTypeOption = item.oTransferTypeOption }, new { onclick = "return confirm('Do you want to delete?');", @class = "fa fa-remove", @title = "Delete" })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <i class="fa fa-ban" style="color:#064576;" aria-hidden="true" title="Delete locked"></i>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i class="fa fa-ban" style="color:#064576;" aria-hidden="true" title="Delete Locked"></i>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                                                                                                  
+                            <!-- /.col-lg-12 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

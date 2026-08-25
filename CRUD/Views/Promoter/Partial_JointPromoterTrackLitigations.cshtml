@@ -1,0 +1,83 @@
+﻿@model CRUD.Models.Promoter.ClsPrp_JointPromoter_TrackLitigations
+
+<script>
+    $(document).ready(function () {
+        var jpromoterflagValue = @TempData["JointPromoter_IsdraftValue"].ToString();
+        if(jpromoterflagValue=="1"){
+            $('.btn-jointpromoter-litigations').prop('disabled', true);            
+        }
+        else
+        {
+            $('.btn-jointpromoter-litigations').prop('disabled', false);            
+        };
+    });
+</script>
+
+<div class="row">
+    <div class="form-group">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="joint-promoter-partial-list-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Project_Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Case_Title)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Case_Number)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Authority_ForumName_CasePendingResolved)
+                            </th>
+                            <th>@Html.DisplayName("Edit| Delete")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.prpongoing)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Project_Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Case_Title)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Case_Number)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Authority_ForumName_CasePendingResolved)
+                                </td>
+                                <td>
+                                    @if (item.IsLock == 1)
+                                    {
+                                        @Html.ActionLink("View", "Edit_JointPromoterTrackLitigations", new { JPrmAppID = item.Related_JointPromoter_ID, JPrmType = item.Related_JointPromoterType, JPrmLitigationIndexID = item.JointPromoter_Litigations_IndexID, JPrmLitigationID = item.JointPromoter_Litigation_ID })
+                                    }
+                                    else if (Model.IsLock == 0)
+                                    {
+                                        if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                        {
+                                            @Html.ActionLink("View", "Edit_JointPromoterTrackLitigations", new { JPrmAppID = item.Related_JointPromoter_ID, JPrmType = item.Related_JointPromoterType, JPrmLitigationIndexID = item.JointPromoter_Litigations_IndexID, JPrmLitigationID = item.JointPromoter_Litigation_ID })
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Edit", "Edit_JointPromoterTrackLitigations", new { JPrmAppID = item.Related_JointPromoter_ID, JPrmType = item.Related_JointPromoterType, JPrmLitigationIndexID = item.JointPromoter_Litigations_IndexID, JPrmLitigationID = item.JointPromoter_Litigation_ID }) @("| ")
+                                            @Html.ActionLink("Delete", "Delete_JointPromoterTrackLitigations", new { JPrmAppID = item.Related_JointPromoter_ID, JPrmType = item.Related_JointPromoterType, JPrmLitigationIndexID = item.JointPromoter_Litigations_IndexID, JPrmLitigationID = item.JointPromoter_Litigation_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.ActionLink("View", "Edit_JointPromoterTrackLitigations", new { JPrmAppID = item.Related_JointPromoter_ID, JPrmType = item.Related_JointPromoterType, JPrmLitigationIndexID = item.JointPromoter_Litigations_IndexID, JPrmLitigationID = item.JointPromoter_Litigation_ID })
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

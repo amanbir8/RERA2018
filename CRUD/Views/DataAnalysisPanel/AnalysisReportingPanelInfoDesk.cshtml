@@ -1,0 +1,702 @@
+﻿@model CRUD.Models.DataAnalysisPanel.ClsPrp_AnalysisReportingPanel_View_InfoDesk
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        $(document).on("click", "a.info-help-details", infohelpHandlerReportsPortaldetails);
+    });
+
+    function infohelpHandlerReportsPortaldetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Portal Reports Panel</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Web Reporting And Web Analysis of Project(s), Agent(s) and Complaint(s).<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> It displays the generation options that are defined for the respective report.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> It provides a comprehensive web reporting platforms.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .collapsible {
+        background-color: #999999; /*#7bb73f  #d9edf7;*/
+        border-color: #bce8f1;
+        color: white;
+        cursor: pointer;
+        padding: 10px;
+        width: 95%;
+        border: none;
+        border-radius: .35rem;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+    }
+
+    .active, .collapsible:hover, .collapsible:active {
+        background-color: #31708f;
+    }
+
+    .collapsible:after {
+        content: '\002B'; /*'\2212'*/
+        color: white;
+        font-weight: bold;
+        float: right;
+        margin-left: 5px;
+    }
+
+    .border-left-primary {
+        border-left: .25rem solid #4e73df !important;
+    }
+
+    .sub-items a {
+        border-left: .5rem solid #7bb73f;
+    }
+
+    .sub-items a:hover {
+        border-left: .5rem solid #31708f;
+        font-weight: bold;
+    }
+
+    li {
+        margin: 0px;
+        list-style: none;
+        color: #999999;
+    }
+
+    .sub-items a {
+        position: relative;
+        display: block;
+        margin: 0 auto;
+        width: 92.9%;
+        text-indent: 24px;
+        line-height: 39px;
+        background: #f5f5f5;
+        margin-bottom: 1px;
+        text-align: left;
+        margin-top: 2px;
+        padding-top: 0px;
+    }
+
+    .sub-items {
+        display: none;
+        background: #fff;
+        margin: 0px;
+        width: 100%;
+    }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Reporting Panel</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Reports Panel : Web Reporting And Web Analysis of Project(s), Agent(s) and Complaint(s)
+                    <span class="pull-right">                        
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12" style="margin-top: 15px;">
+                            <div class="col-md-4 col-xs-12">
+
+                                <div class="panel-group" id="accordionR0011">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0011" href="#collapseR0011" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 1 - Data Analysis Reports</button>
+                                    </div>
+                                    <div id="collapseR0011" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R1.1	Status of Projects, Agents and Complaints</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R1.2 Application Wise Time Taken Report</a>
+                                            </li>                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0012">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0012" href="#collapseR0012" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 2 - Tentative Reports : Projects</button>
+                                    </div>
+                                    <div id="collapseR0012" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R2.1 Registered Projects</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R2.2 Extended Projects/Extension of Registrations</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R2.3 Annual Audited Statements of Accounts (Form-5)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R2.4 Quarterly Updates of Projects</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R2.5 Revoked Registered Projects</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R2.6 Completion Projects (CC/PCC/OC)</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0013">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0013" href="#collapseR0013" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 3 - General Reports : Projects</button>
+                                    </div>
+                                    <div id="collapseR0013" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R3.1 Annual Reports In relation to Promoters</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R3.2 Status of Application for Projects</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R3.3 Status of Application for Extension of Registration for Projects</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R3.4 Status of Application for PUC</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R3.5 Compare filters of Quarterly Updates of Projects</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R3.6 Email and Phones Directory</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R3.7 Special Bank Account Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R3.8 Project Type Reports</a>
+                                            </li>                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0014">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0014" href="#collapseR0014" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 4 - Compliance Reports : Projects</button>
+                                    </div>
+                                    <div id="collapseR0014" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R4.1 Form-5 Defaulters List</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R4.2 Completion Date Expired Projects</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R4.3 Quarterly Updates Defaulters List</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R4.4 Shortfall Applications More Than Three Months</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R4.5 Percentage-wise filters of Project Completion Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R4.6 Allotment: Percentage-wise filters of sold or booked Reports</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0015">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0015" href="#collapseR0015" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 5 - Daily Reports/ Alerts : Projects</button>
+                                    </div>
+                                    <div id="collapseR0015" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R5.1 Applications Pending Against Officer</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R5.2 Non-Encumbrance/ Encumbrance Report</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R5.3 Shortfall/ Checklist Status Report</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R5.4 Notifications Report</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0016">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0016" href="#collapseR0016" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 6 - Change Request Reports : Projects</button>
+                                    </div>
+                                    <div id="collapseR0016" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R6.1 Special Bank Account Change Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R6.2 Authorized Person Change Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R6.3 Promoter Address Change Reports</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0017">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0017" href="#collapseR0017" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 7 - Special Reports : Projects</button>
+                                    </div>
+                                    <div id="collapseR0017" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R7.1 Parliament/ Assembly Constituencies Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R7.2 Zone/ District/ Sub-division Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R7.3 Mega Project/ Regularized Project Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R7.4 Value of Project Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R7.5 Dwelling Units and Area of the project Reports</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0018">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0018" href="#collapseR0018" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 8 - Geo Tagging Reports</button>
+                                    </div>
+                                    <div id="collapseR0018" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">                                            
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R8.1 Project Location</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R8.2 Type of Project</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0019">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0019" href="#collapseR0019" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 9 - Payment Reconciliation Reports</button>
+                                    </div>
+                                    <div id="collapseR0019" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R9.1 Project Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R9.2 Extension of Registration Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R9.3 Real-Estate Agent Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R9.4 Renewal of Registration Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R9.5 Complaint Wise (Authority)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R9.6 Complaint Wise (Adjudicating)</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0020">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0020" href="#collapseR0020" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 10 - Financial Reports</button>
+                                    </div>
+                                    <div id="collapseR0020" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R10.1 Fee Received</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R10.2 Fee Received - Agent</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R10.3 Fee Received - Project</a>
+                                            </li> 
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R10.4 Fee Received - Complaints</a>
+                                            </li>                                           
+                                        </ul>
+                                    </div>
+                                </div>                                                               
+                            </div>                           
+                            <div class="col-md-4 col-xs-12">
+                                <div class="panel-group" id="accordionR0021">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0021" href="#collapseR0021" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 11 - Tentative Reports : Agents</button>
+                                    </div>
+                                    <div id="collapseR0021" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R11.1 Registered Agents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R11.2 Offline Registered Agents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R11.3 Renewal of Registration for Agents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R11.4 Revoked Registered Agents</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0022">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0022" href="#collapseR0022" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 12 - General Reports : Agents</button>
+                                    </div>
+                                    <div id="collapseR0022" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R12.1 Annual Reports In relation to Real Estate Agents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R12.2 Status of Application for Agents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R12.3 Status of Application for Renewal of Registration for Agents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R12.4 Status of Application for PUC</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R12.5 Email and Phones Directory</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0023">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0023" href="#collapseR0023" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 13 - Compliance Reports : Agents</button>
+                                    </div>
+                                    <div id="collapseR0023" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R13.1 Validity Date Expired Report</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px; margin-top: 1px">R13.2 Shortfall Applications More Than Three Months</a>
+                                            </li>                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0024">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0024" href="#collapseR0024" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 14 - Daily Reports/ Alerts : Agents</button>
+                                    </div>
+                                    <div id="collapseR0024" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R14.1 Applications Pending Against Officer</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px; margin-top: 1px">R14.2 Shortfall/ Checklist Status Report</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px; margin-top: 1px">R14.3 Notifications Report</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0025">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0025" href="#collapseR0025" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 15 - Change Request Reports : Agents</button>
+                                    </div>
+                                    <div id="collapseR0025" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R15.1 Place of Business Address</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px; margin-top: 1px">R15.2 Authorized Person Change Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px; margin-top: 1px">R15.3 Type of Agent Change Reports</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0026">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0026" href="#collapseR0026" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 16 - Special Reports : Agents</button>
+                                    </div>
+                                    <div id="collapseR0026" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R16.1 Parliament/ Assembly Constituencies Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R16.2 Zone/ District/ Sub-division Wise</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0027">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0027" href="#collapseR0027" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 17 - General Reports : Complaints</button>
+                                    </div>
+                                    <div id="collapseR0027" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R17.1 Complaint Cases Filling Per Month/Year</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R17.2 Complaint Cases Institutions Per Month/Year</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R17.3 Status of Complaint Cases</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R17.4 Complains Against Promoters/ Projects</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R17.5 Complaints Against Agents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R17.6 Email and Phones Directory</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0028">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0028" href="#collapseR0028" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 18 - Cause List</button>
+                                    </div>
+                                    <div id="collapseR0028" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R18.1 Bench Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R18.2 Calendar Wise</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R18.3 My Cases</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0029">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0029" href="#collapseR0029" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 19 - History of Complaints</button>
+                                    </div>
+                                    <div id="collapseR0029" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R19.1 Transfer Cases Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R19.2 History of Case Hearing Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R19.3 Re-Open Cases Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R19.4 Change of Counsel/ Representative Reports</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0030">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0030" href="#collapseR0030" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 20 - Order and Judgments</button>
+                                    </div>
+                                    <div id="collapseR0030" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R20.1 Form-M (Bench/ Date of Decision Wise)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R20.2 Form-N (Bench/ Date of Decision Wise)</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="col-md-4 col-xs-12">
+                                <div class="panel-group" id="accordionR0031">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0031" href="#collapseR0031" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 21 - Annual Reports : Complaints</button>
+                                    </div>
+                                    <div id="collapseR0031" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R21.1 Form-M Summary Sheet</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R21.2 Form-M Detailed Report</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R21.3 Form-N Summary Sheet</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R21.4 Form-N Detailed Report</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0032">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0032" href="#collapseR0032" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 22 - Daily Reports/ Alerts : Complaints</button>
+                                    </div>
+                                    <div id="collapseR0032" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R22.1 Applications Pending Against Officer</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R22.2 Shortfall Complaints More Than One Month</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R22.3 Pending Complaint Cases</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R22.4 Notices for Complaints</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0033">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0033" href="#collapseR0033" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 23 - Offline Registered Complaints : Complaints</button>
+                                    </div>
+                                    <div id="collapseR0033" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R23.1 Offline Form-M Complaints</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R23.2 Offline Form-N Complaints</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R23.3 Pending Form-M Complaints</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R23.4 Pending Form-N Complaints</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0034">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0034" href="#collapseR0034" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 24 - General Reports : Misc Complaints</button>
+                                    </div>
+                                    <div id="collapseR0034" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R24.1 Misc Complaints Filling Report</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R24.2 Notices under Section 59</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R24.3 Status of Complaint Cases</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionR0035">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionR0035" href="#collapseR0035" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">R 25 - Portal/ Technical Reports</button>
+                                    </div>
+                                    <div id="collapseR0035" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 1px;" class="current">R25.1 Incident Tracker Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R25.2 Web counter Reports</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ReportsDashboardDefaultInfo", "DataAnalysisPanel")" style="margin-bottom: 0px; margin-top: 1px">R25.3 User Log Reports</a>
+                                            </li>                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script> 
+    
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+}

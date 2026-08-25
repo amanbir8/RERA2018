@@ -1,0 +1,263 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormM_DiaryNumber
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 50,
+            "lengthMenu": [[50, 100, 150, 200, 250], [50, 100, 150, 200, 250]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [8, 9]
+            }]
+        });
+
+        $(document).on('click', 'a#modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var FormM_Id = $.trim($(parentRow).find('input.hdnAgentID').val());
+            FormM_Id = parseInt(FormM_Id);
+            $.ajax({
+                url: BASE_URL + 'HelpdeskComplaint/FormMInfoEventLog',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'FormM_Id': FormM_Id },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.agent-diary-number').attr('data-diary-no'));
+            var agentName = $.trim($(parentRow).find('td.agent-name').attr('data-agent-name'));
+            $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + agentName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover({
+                title: false,
+                content: setData,
+                html: true,
+                placement: 'right'
+            });
+
+            function setData(id) {
+                var set_data = '';
+                var element = $(this);
+                var parentRow = $(element).parents('tr');
+
+                var popRelatedType = $.trim($(parentRow).find('input.hdnRelatedType').val());
+                var popRelatedName = $.trim($(parentRow).find('input.hdnRelatedName').val());
+                var popRelatedRERA = $.trim($(parentRow).find('input.hdnRelatedRERA').val());
+
+                set_data = '<div class="row" style="line-height:23px; margin-top:10px;">' +
+                                '<div class="col-lg-12">' +
+                                    '<div><span style="font-weight:bold;">RERA No:</span>  ' + popRelatedRERA + '</div>' +
+                                    '<div><span style="font-weight:bold;">Complaint Against:</span>  ' + popRelatedType + '</div>' +
+                                    '<div><span style="font-weight:bold;">Project/Agent:</span>  ' + popRelatedName + '</div>' +
+                                '</div>' +
+                            '</div>';
+                return set_data;
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var BASExn_URL = $('body').attr('data-base-url');
+        $(document).on('click', 'a.modalDownloadExcelButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            window.location = BASExn_URL + 'HelpdeskComplaint/ReSubmittedComplaintsFormM_TransferCaseMN_ExportToExcel';
+            $('input[type=text]').each(function () {
+                $(this).val('');
+            });
+        });
+        $(document).on("click", "a.info-help-details", infohelpHandlerComplaintFormMtransferdetails);
+    });
+    function infohelpHandlerComplaintFormMtransferdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Color Code</b><br/> <i class="fa fa-check-square" style="color:#fff"></i> Complaint Form-N (resubmitted complaints) regarding real-estate project/ agent/ allottee(s).<br/> <i class="fa fa-check-square" style="color:#fff"></i> For any additional questions or the feedback regarding web-portal, please contact IT team.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .nav-tabs > li.active > a {
+        border-top: 2px solid #ff0000;
+    }
+
+    .nav-tabs > li > a {
+        background-color: #eee;
+        color: #000;
+    }
+</style>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Form-N Complaint(s)</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+
+    <div class="row" style="margin-bottom:5px;">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="home-tab" href="@Url.Action("FormN_InfoDeskReSubmitted", "HelpdeskComplaint")" role="tab" aria-controls="home" aria-selected="true">Re-Submitted Complaints</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link active" id="profile-tab" href="@Url.Action("FormM_InfoDeskReSubmittedTransferCaseMN", "HelpdeskComplaint")" role="tab" aria-controls="profile" aria-selected="false">Transfer Case (Re-Submitted) Complaints</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="bifurcate-tab" href="@Url.Action("FormN_InfoDeskReSubmittedBifurcateCase", "HelpdeskComplaint")" role="tab" aria-controls="bifurcate" aria-selected="false">Bifurcate Case (Re-Submitted) Complaints</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    List of Form-N Complaints (Case of Transfer : Form-M to Form-N) : Re-Submitted Complaint(s) Details
+                    <span class="pull-right">
+                        <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.DisplayName("SNo")</th>
+                                            <th>@Html.DisplayNameFor(model => model.ComplaintRegDiaryNumber_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Complainant_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Respondent_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.RelatesComplaint_ComplaintAgainstType)</th>
+                                            <th>@Html.DisplayName("Last Application Status")</th>                                            
+                                            <th>@Html.DisplayName("Application Date")</th>
+                                            <th>@Html.DisplayName("Last Modified Date")</th>
+                                            <th>@Html.DisplayName("View Status")</th>
+                                            <th>@Html.DisplayName("View Details")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                        int sno = 0;
+                                        }
+                                        @foreach (var item in Model.prpongoing)
+                                {
+                                    {
+                                        sno = sno + 1;
+                                    }
+                                            <tr class="odd gradeX">
+                                                <td>@Html.DisplayName(sno.ToString())</td>
+                                                <td class="agent-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.ComplaintRegDiaryNumber_Name)">@Html.DisplayFor(modelItem => item.ComplaintRegDiaryNumber_Name)</td>
+                                                <td class="agent-name" data-agent-name="@Html.DisplayFor(modelItem => item.Complainant_Name)">@Html.DisplayFor(modelItem => item.Complainant_Name)</td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Respondent_Name)
+                                                    @Html.HiddenFor(modelItem => item.FormM_RelatedComplaint_ID, new { @class = "hdnAgentID" })
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:void(0);" data-toggle="popover" data-trigger="hover" id="@Html.DisplayFor(modelItem => item.A_column)">@Html.DisplayFor(modelItem => item.A_column)</a>
+                                                    @Html.HiddenFor(modelItem => item.RelatesComplaint_ComplaintAgainstType, new { @class = "hdnRelatedType" })
+                                                    @Html.HiddenFor(modelItem => item.B_column, new { @class = "hdnRelatedName" })
+                                                    @Html.HiddenFor(modelItem => item.A_column, new { @class = "hdnRelatedRERA" })
+                                                </td>                                                
+                                                @if (item.EventAction_Type.ToString() == "330011")
+                                                {
+                                                    <td class="success">@Html.DisplayFor(modelItem => item.EventAction_Aggregate)</td>
+                                                    <td class="info">@Html.DisplayFor(modelItem => item.CreatedOn)</td>
+                                                }
+                                                else if (item.EventAction_Type.ToString() == "330007")
+                                                {
+                                                    <td class="danger">@Html.DisplayFor(modelItem => item.EventAction_Aggregate)</td>
+                                                    <td class="info">@Html.DisplayFor(modelItem => item.CreatedOn)</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@Html.DisplayFor(modelItem => item.EventAction_Aggregate)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CreatedOn)</td>
+                                                }
+                                                <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+                                                <td class="center">                                                    
+                                                    <a id="modalOpenerButton" href="javascript:void(0);"><i class="fa fa-eye"></i></a>
+                                                </td>
+                                                <td class="center">                                                   
+                                                    @Html.ActionLink("View", "FormMInfoEventInsertAction", new { FormMDiaryNumber = item.ComplaintRegDiaryNumber_Name, FormMComplainantName = item.Complainant_Name, FormMRespondantName = item.Complainant_Name, ComplainantRERAnumber = 0, ComplaintFormM_ID = item.FormM_RelatedComplaint_ID, LastModifiedOn = item.EventAction_IdentifiedOn })
+                                                </td>
+                                            </tr>
+                                }
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet" /> 
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script> 
+    
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>  
+}

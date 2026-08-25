@@ -1,0 +1,761 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_Email_ComplaintFormM
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/dist/css/rera-toggleshow.css")" rel="stylesheet" />
+<!-- DataTables JavaScript -->
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+<!-- Custom Theme JavaScript -->
+<script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        var getUrlCPvalue;        
+
+        @if (TempData["returnUrlCPvalue"].ToString() != "")
+        {
+            <text>
+                getUrlCPvalue = '@TempData["returnUrlCPvalue"]';
+            </text>
+        }
+
+        $(document).on('click', 'a.controlpanelHomeButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + getUrlCPvalue;
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Additional E-mail(s)</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Add additional E-mail Address details with reference to Registration Number/ RERA Number.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> IT Manager can intialize the additional E-mail Address details.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Enter Search Option as Diary Number with first twelve characters only (e.g GCNoXXXXXXXX instead of GCNo00012016/ GCNo00012016UR/ GCNo00012016TR/ GCNo00012016-AO00012016 etc.)',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+
+    .border-left-danger {
+        border-left: .15rem solid #FF4961 !important;
+    }
+
+    .border-left-warning {
+        border-left: .25rem solid #f6c23e !important;
+    }
+
+    .bg-exclamation-triangle-warning {
+        color: #FF4961 !important;
+        display: inline-block !important;
+    }
+
+    .bg-exclamation-triangle-none {
+        display: none !important;
+    }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        
+        $("#RERAnumberRegistration_Input").inputmask({ mask: function () { return ["AAAa99999999"]; } });
+        $('#AE_ReferenceDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+	});
+</script>
+<script>
+    $(document).ready(function () {
+        $("#btnListEmailAddress").click(function (e) {
+            e.preventDefault();
+            var isAllvalueValid = false;
+            if ($('#RERAnumberRegistration_Input').val() != '') {
+                var input_RegistrationNumber = $("#RERAnumberRegistration_Input").val();
+                var n = input_RegistrationNumber.length;
+
+                if (parseInt(n) >= parseInt(12)) {
+                    isAllvalueValid = true;
+                }
+                else {
+                    alert('Invalid! Diary Number!');
+                    isAllvalueValid = false;
+                }
+            }
+            else {
+                alert('The mandatory (*) fields are required.');
+                isAllvalueValid = false;
+            }
+
+            if (isAllvalueValid) {
+                var var_RegistrationNumber = $("#RERAnumberRegistration_Input").val();
+                var projectnumber = { 'strRERAnumber': var_RegistrationNumber };
+                var baseURLn = $('body').attr('data-base-url');
+
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: baseURLn + 'HelpdeskControlPanel/GetExistingEmailComplaintMFormAddressByID',
+                    data: projectnumber,
+                    beforeSend: function () {
+                        startPreloader();
+                    },
+                    success: function (data, xhr, settings) {
+                        stopPreloader();
+                        $("#dnoPCC").addClass('hide').removeClass('show');
+                        $("#detailsPCC").addClass('hide').removeClass('show');
+                        $("#othersPCC").addClass('hide').removeClass('show');
+                        $("#submitPCC").addClass('hide').removeClass('show');
+                        $('#viewComplaintEmailsList').html(data);
+                    },
+                    error: function (xhr, textStatus, error) {
+                        stopPreloader();
+                        $('#viewComplaintEmailsList').html(textStatus);
+                    }
+                });
+            };
+        });
+
+        $("#btnRequestOptionsEmailAddress").click(function (e) {
+            e.preventDefault();
+            var isAllValid = false;
+            if ($('#RERAnumberRegistration_Input').val() != '') {
+                var xpRelated_RegistrationNumber = $("#RERAnumberRegistration_Input").val();
+                var n = xpRelated_RegistrationNumber.length;
+
+                if (parseInt(n) >= parseInt(12)) {
+                    isAllValid = true;
+                }
+                else {
+                    alert('Invalid! Diary Number!');
+                    isAllValid = false;
+                }
+            }
+            else {
+                alert('The mandatory (*) fields are required.');
+                isAllValid = false;
+            }
+
+            if (isAllValid) {
+                var pRelated_RegistrationNumber = $("#RERAnumberRegistration_Input").val();
+
+                Date.prototype.toShortFormat = function () {
+                    let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    let day = this.getDate();
+                    let day1 = (day < 10 ? '0' : '') + day;
+                    let monthIndex = this.getMonth();
+                    let monthName = monthNames[monthIndex];
+                    let year = this.getFullYear();
+                    return `${day1}-${monthName}-${year}`;
+                };
+
+                var BASE_URLn = $('body').attr('data-base-url');
+                $.ajax({
+                    type: "POST",
+                    url: BASE_URLn + 'HelpdeskControlPanel/GetExistingRegisteredComplaintFormMForEmailAddressByID',
+                    datatype: "Json",
+                    data: { "mDiaryNumber": pRelated_RegistrationNumber },
+                    beforeSend: function () {
+                        startPreloader();
+                    },
+                    success: function (data) {
+                        stopPreloader();
+                        if (data) {
+                            if (data.status == true) {
+                                $("#dnoPCC").addClass('show').removeClass('hide');
+                                $("#detailsPCC").addClass('show').removeClass('hide');
+                                $("#othersPCC").addClass('show').removeClass('hide');
+                                $("#submitPCC").addClass('show').removeClass('hide');
+
+                                $.each(data, function () {
+                                    $(this).each(function () {
+                                        $('#ComplaintFormM_ID').val(this.ComplaintFormM_ID);
+                                        $('#ComplaintFormM_Code').val(this.ComplaintFormM_Code);
+                                        $('#Profile_ID').val(this.Profile_ID);
+                                        $('#User_ID').val(this.User_ID);
+                                        $('#Complaint_DiaryNumber_Name').val(this.Complaint_DiaryNumber_Name);
+                                        $('#ComplaintType_MN').val(this.ComplaintType_MN);
+                                        $('#Complainant_Name').val(this.Complainant_Name);
+                                        $('#AuthorizedRepresentativeCounsel_Name').val(this.AuthorizedRepresentativeCounsel_Name);
+                                        $('#OfficeResComplainant_AddressLine1').val(this.OfficeResComplainant_AddressLine1);
+                                        $('#OfficeResComplainant_AddressLine2').val(this.OfficeResComplainant_AddressLine2);
+                                        $('#OfficeResComplainant_AddressStateCode').val(this.OfficeResComplainant_AddressStateCode);
+                                        $('#OfficeResComplainant_AddressDistrictCode').val(this.OfficeResComplainant_AddressDistrictCode);
+                                        $('#OfficeResComplainant_AddressPIN').val(this.OfficeResComplainant_AddressPIN);
+                                        $('#RelatesComplaint_ComplaintAgainstType').val(this.RelatesComplaint_ComplaintAgainstType);
+                                        $('#RelatesComplaint_ProjectAgent_RERA_RegNumber').val(this.RelatesComplaint_ProjectAgent_RERA_RegNumber);
+                                        $('#RelatesComplaint_ProjectAgent_Name').val(this.RelatesComplaint_ProjectAgent_Name);
+                                        $('#Respondent_Name').val(this.Respondent_Name);
+                                        $('#IsComplaintTransferFromTo').val(this.IsComplaintTransferFromTo);
+                                        $("input[name='IsComplaintTransferFromTo'][value=" + this.IsComplaintTransferFromTo + "]").attr('checked', 'checked');
+                                        if (this.IsComplaintTransferFromTo != "NA") {
+                                            $('#Complaint_TransferDiaryNumber_Name').val(this.Complaint_TransferDiaryNumber_Name);
+                                            $("#rowTrCaseColH").addClass('show').removeClass('hide');
+                                            $("#rowTrCaseCol01").addClass('show').removeClass('hide');
+                                            $("#rowTrCaseCol02").addClass('show').removeClass('hide');
+                                        }
+                                        else {
+                                            $("#rowTrCaseColH").addClass('hide').removeClass('show');
+                                            $("#rowTrCaseCol01").addClass('hide').removeClass('show');
+                                            $("#rowTrCaseCol02").addClass('hide').removeClass('show');
+                                        }
+                                    });
+                                });
+                            }
+                            else {
+                                alert('Invalid! Diary Number!');
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert("oops! Something went wrong")
+                    }
+                });
+            };
+        });
+
+        $("#RERAnumberRegistration_Input").change(function (e) {
+            e.preventDefault();
+            $("#dnoPCC").addClass('hide').removeClass('show');
+        });
+
+        var vcheckvalueregdextndate = $("input[name='IsComplaintTransferFromTo']:checked").val();
+        if (vcheckvalueregdextndate != 'NA') {
+            $("#rowTrCaseColH").addClass('show').removeClass('hide');
+            $("#rowTrCaseCol01").addClass('show').removeClass('hide');
+            $("#rowTrCaseCol02").addClass('show').removeClass('hide');
+        }
+        else {
+            $("#rowTrCaseColH").addClass('hide').removeClass('show');
+            $("#rowTrCaseCol01").addClass('hide').removeClass('show');
+            $("#rowTrCaseCol02").addClass('hide').removeClass('show');
+        }
+
+        $(document).on('click', '.radio-casetrvalue', function (e) {
+            if (this.value != 'NA') {
+                $("#rowTrCaseColH").addClass('show').removeClass('hide');
+                $("#rowTrCaseCol01").addClass('show').removeClass('hide');
+                $("#rowTrCaseCol02").addClass('show').removeClass('hide');
+            }
+            else {
+                $("#rowTrCaseColH").addClass('hide').removeClass('show');
+                $("#rowTrCaseCol01").addClass('hide').removeClass('show');
+                $("#rowTrCaseCol02").addClass('hide').removeClass('show');
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        var baseUrl = $('body').attr('data-base-url');
+        $.ajax({
+
+            type: "GET",
+            url: baseUrl + "/HelpdeskControlPanel/GetState",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#OfficeResComplainant_AddressStateCode').append('<option value="' + value.StateId + '">' + value.StateName + '</option>');
+                    $("#OfficeResComplainant_AddressStateCode option:contains(undefined)").remove();
+                });
+            }
+        });
+
+        $('#OfficeResComplainant_AddressStateCode').change(function () {
+            $('#OfficeResComplainant_AddressDistrictCode').empty();
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "/HelpdeskControlPanel/GetDistrictByStateId",
+                datatype: "Json",
+                data: { StateId: $('#OfficeResComplainant_AddressStateCode').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#OfficeResComplainant_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                    });
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    @if (TempData["MessageEmailAddress"].ToString() != "")
+    {
+        <text >
+            $(document).ready(function () {
+                swal({
+                    title: "Message",
+                    text: "@TempData["MessageEmailAddress"]",
+                    type: "success"
+                });
+            });
+        </text>
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Control Panel</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Control Panel : CP 27.4 Additional E-mail Address(s) for Registered Complaint Form-M Details
+                    <span class="pull-right">
+                        <a class="controlpanelHomeButton" href="javascript:void(0);" title="Home"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-home" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id = "frmEmailAddressSearchOptions" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Options</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label">Registration Number</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.RERAnumberRegistration_Input, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.RERAnumberRegistration_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" id="btnRequestOptionsEmailAddress" value="Proceed" class="btn btn-outline btn-primary" />
+                                                <input type="Submit" id="btnListEmailAddress" value="View All Number(s)" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+
+                            @using (Html.BeginForm("Email_ComplaintMEmailAddressDetail", "HelpdeskControlPanel", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmRegisterEmailAddress" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.ComplaintFormM_ID)
+                                @Html.HiddenFor(m => m.ComplaintFormM_Code)
+                                @Html.HiddenFor(m => m.Profile_ID)
+                                @Html.HiddenFor(m => m.User_ID)
+
+                                <div class="row hide" id="dnoPCC">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Registration Number Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Complaint_DiaryNumber_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Reference RERA Diary Number of Complaint with the authority.">
+                                                            @Html.EditorFor(model => model.Complaint_DiaryNumber_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Complaint_DiaryNumber_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ComplaintType_MN, htmlAttributes: new { @class = "control-label mand" })
+                                                            @{
+                                                                var listItemsComplaintType = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "Form-M" , Value="FormTypeM"  },
+                                                                    new SelectListItem {  Text = "Form-N" , Value="FormTypeN"  },
+                                                                    new SelectListItem {  Text = "Form-Misc" , Value="FormTypeMisc"  },
+                                                                };
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.ComplaintType_MN, new SelectList(listItemsComplaintType, "Value", "Text"), new { @class = "form-control", @autocomplete = "off" })
+                                                            @Html.ValidationMessageFor(model => model.ComplaintType_MN, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Transfer Case (Type of Transfer)</label>
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsComplaintTransferFromTo, "NA", new { id = "chkTransferToNA", @class = "radio-casetrvalue", @checked = "checked" }) Not Applicable
+                                                                @Html.RadioButtonFor(model => model.IsComplaintTransferFromTo, "TransferToAO", new { id = "chkTransferToAO", @class = "radio-casetrvalue" }) Transfer To AO
+                                                                @Html.RadioButtonFor(model => model.IsComplaintTransferFromTo, "TransferToAUTH", new { id = "chkTransferToAUTH", @class = "radio-casetrvalue" }) Transfer To Authority
+                                                                @Html.RadioButtonFor(model => model.IsComplaintTransferFromTo, "TransferToREGD", new { id = "chkTransferToREGD", @class = "radio-casetrvalue" }) Transfer To Registered Project
+                                                                @Html.RadioButtonFor(model => model.IsComplaintTransferFromTo, "TransferToOTH", new { id = "chkTransferToOTH", @class = "radio-casetrvalue" }) Any Other Case
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsComplaintTransferFromTo, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row hide" id="rowTrCaseColH">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3 hide" id="rowTrCaseCol01">
+                                                            @Html.LabelFor(model => model.Complaint_TransferDiaryNumber_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3 hide" id="rowTrCaseCol02">
+                                                            @Html.EditorFor(model => model.Complaint_TransferDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Complaint_TransferDiaryNumber_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Complainant_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Complainant_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Complainant_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AuthorizedRepresentativeCounsel_Name, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.AuthorizedRepresentativeCounsel_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.AuthorizedRepresentativeCounsel_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.OfficeResComplainant_AddressLine1, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.OfficeResComplainant_AddressLine1, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressLine1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.OfficeResComplainant_AddressLine2, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.OfficeResComplainant_AddressLine2, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressLine2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.OfficeResComplainant_AddressStateCode, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if (Model.stateMaster != null)
+                                                            {
+                                                                @Html.DropDownListFor(model => model.OfficeResComplainant_AddressStateCode, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressStateCode, "", new { @class = "text-danger" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownListFor(model => model.OfficeResComplainant_AddressStateCode, new SelectList(" "), "Select State", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressStateCode, "", new { @class = "text-danger" })
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.OfficeResComplainant_AddressDistrictCode, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if (Model.prpdistrictMaster != null)
+                                                            {
+                                                                @Html.DropDownListFor(model => model.OfficeResComplainant_AddressDistrictCode, new SelectList(Model.prpdistrictMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownListFor(model => model.OfficeResComplainant_AddressDistrictCode, new SelectList(" "), "Select District", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.OfficeResComplainant_AddressPIN, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.OfficeResComplainant_AddressPIN, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.OfficeResComplainant_AddressPIN, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Respondent_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Respondent_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Respondent_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RelatesComplaint_ProjectAgent_RERA_RegNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RelatesComplaint_ProjectAgent_RERA_RegNumber, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.RelatesComplaint_ProjectAgent_RERA_RegNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RelatesComplaint_ComplaintAgainstType, htmlAttributes: new { @class = "control-label mand" })
+                                                            @{
+                                                                var listItemsComplaintAgainstType = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "Promoter" , Value="Promoter"  },
+                                                                    new SelectListItem {  Text = "Real-estate Agent" , Value="Agent"  },
+                                                                    new SelectListItem {  Text = "Allottee" , Value="Allottee"  },
+                                                                };
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.RelatesComplaint_ComplaintAgainstType, new SelectList(listItemsComplaintAgainstType, "Value", "Text"), new { @class = "form-control", @autocomplete = "off" })
+                                                            @Html.ValidationMessageFor(model => model.RelatesComplaint_ComplaintAgainstType, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RelatesComplaint_ProjectAgent_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RelatesComplaint_ProjectAgent_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.RelatesComplaint_ProjectAgent_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="detailsPCC">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Additional E-mail Address(s)</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AE_ContactName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Name of additinal contact person or complaintant information.">
+                                                            @Html.EditorFor(model => model.AE_ContactName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.AE_ContactName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AE_Designation, htmlAttributes: new { @class = "control-label mand" })
+                                                            @{
+                                                                var listItemsDesignationType = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "Complainant" , Value="Complainant"  },
+                                                                    new SelectListItem {  Text = "Respondant" , Value="Respondant"  },
+                                                                    new SelectListItem {  Text = "Other" , Value="Other"  },
+                                                                };
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Specify additinal contact person to which the relates or information, if any.">
+                                                            @Html.DropDownListFor(model => model.AE_Designation, new SelectList(listItemsDesignationType, "Value", "Text"), new { @class = "form-control", @autocomplete = "off" })
+                                                            @Html.ValidationMessageFor(model => model.AE_Designation, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AE_ReferenceName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Specify reference number of additional Email Address.">
+                                                            @Html.EditorFor(model => model.AE_ReferenceName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Number", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.AE_ReferenceName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AE_ReferenceDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.AE_ReferenceDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.AE_ReferenceDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AE_EmailAddress, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Specify additional E-mail Address.">
+                                                            @Html.EditorFor(model => model.AE_EmailAddress, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.AE_EmailAddress, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AE_EmailType, htmlAttributes: new { @class = "control-label mand" })
+                                                            @{
+                                                                var listItemsEmailType = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "Company Email" , Value="Company Email"  },
+                                                                    new SelectListItem {  Text = "Employee Email" , Value="Employee Email"  },
+                                                                    new SelectListItem {  Text = "Authorized Person" , Value="Authorized Person"  },
+                                                                    new SelectListItem {  Text = "Other" , Value="Other"  },
+                                                                };
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.AE_EmailType, new SelectList(listItemsEmailType, "Value", "Text"), new { @class = "form-control", @autocomplete = "off" })
+                                                            @Html.ValidationMessageFor(model => model.AE_EmailType, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RemarksIfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RemarksIfAny, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.RemarksIfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="othersPCC">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Others</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">a.) Is valid for public view?</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "1", new { id = "chkIsPublicViewY", @class = "radio-publicviewvalue", @checked = "checked" }) Yes
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "0", new { id = "chkIsPublicViewN", @class = "radio-publicviewvalue" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsPublicView, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">b.) Is Verified?</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsVerified, "1", new { id = "chkIsVerifiedY", @class = "radio-IsVerifiedvalue", @checked = "checked" }) Yes
+                                                                @Html.RadioButtonFor(model => model.IsVerified, "0", new { id = "chkIsVerifiedN", @class = "radio-IsVerifiedvalue" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsVerified, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="submitPCC">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @if (Model.RoleAccessFlag == "SA")
+                                            {
+                                                <input type="submit" value="@TempData["EmailAddressSubmitValue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                            }
+                                            else
+                                            {
+                                                if (Model.IsDraft == 1)
+                                                {
+                                                    <input type="submit" value="@TempData["EmailAddressSubmitValue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="submit" value="@TempData["EmailAddressSubmitValue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                }
+                                            }
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "Email_ComplaintMEmailAddressDetail", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div id="viewComplaintEmailsList">
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}

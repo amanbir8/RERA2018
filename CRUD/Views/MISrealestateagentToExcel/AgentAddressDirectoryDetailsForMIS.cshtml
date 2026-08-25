@@ -1,0 +1,277 @@
+﻿@model CRUD.Models.MISrealestateagentToExcel.Clsprp_MIS_AgentAddressDirectoryDetails
+
+@{
+    Layout = null;
+}
+
+<script type="text/javascript">
+    $(function () {
+        if ($('#Agent_Type').val() == "1") {
+            $('#idAgent_PermanentAddress').show();
+            $('#idAgent_RegisteredOfficeAddress').hide();
+            
+            $('#idAgent_AuthorizedSignatoryInd').show();
+            $('#idAgent_AuthorizedSignatoryOTInd').hide();
+        }
+        else {
+            $('#idAgent_PermanentAddress').hide();
+            $('#idAgent_RegisteredOfficeAddress').show();
+            
+            $('#idAgent_AuthorizedSignatoryInd').hide();
+            $('#idAgent_AuthorizedSignatoryOTInd').show();
+        }
+    });
+</script>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="row" id="idAgent_PermanentAddress" style="display:none">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Permanent Address</legend>                        
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.P_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.Agent_ID, new { @class = "hdnAgentID" })
+                                    @Html.HiddenFor(model => model.Agent_Type, new { @class = "hdnAgentType" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.P_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.P_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.P_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.P_AddressDistrictCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.P_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.P_AddressStateCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.P_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">                                
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.P_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.P_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                        
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="idAgent_RegisteredOfficeAddress" style="display:none">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Registered Office Address</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RegOffice_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RegOffice_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RegOffice_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RegOffice_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RegOffice_AddressDistrictCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RegOffice_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RegOffice_AddressStateCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RegOffice_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RegOffice_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RegOffice_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Place of Bussiness Address Details</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressDistrictCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressStateCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                        
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Authorized Person/ Communication Address Details</legend> 
+                        <div class="row" id="idAgent_AuthorizedSignatoryOTInd" style="display:none">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.DisplayName("Authorized Person Name")
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.AuthorizedSignatory_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayFor(model => model.AuthorizedSignatory_MiddleName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayFor(model => model.AuthorizedSignatory_LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="idAgent_AuthorizedSignatoryInd" style="display:none">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.DisplayName("Authorized Person Name")
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Agent_Organization_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                                                                      
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BComm_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BComm_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BComm_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BComm_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BComm_AddressDistrictCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BComm_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BComm_AddressStateCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BComm_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BComm_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BComm_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>       
+
+    </div>
+</div>

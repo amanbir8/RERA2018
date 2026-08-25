@@ -1,0 +1,1073 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_QUpdateProject_ConstructionStatusPhotographs
+
+<!--file upload Content-->
+<script src="@Url.Content("~/Scripts/jquery.form.js")"></script>
+<link href="@Url.Content("~/css/jquery-ui-fileupload.css")" rel="stylesheet" />
+<!--calander display Content-->
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<style>
+    .progress {
+        position: relative;
+        width: 400px;
+        border: 1px solid #ddd;
+        padding: 1px;
+    }
+
+    .progress-bar {
+        width: 0px;
+        height: 20px;
+        background-color: #57be65;
+    }
+
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+</style>
+<style>
+    .quborder-info {
+        border-color: #00cfd5 !important;
+    }
+
+    .quborder-disabled {
+        background-color: #eff3f9 !important;
+    }
+</style>
+
+<script type="text/javascript">        
+    function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                $('#user_Photo').attr('src', e.target.result);
+            }
+            filerdr.readAsDataURL(input.files[0]);
+            //$(':input[type="submit"]').prop('disabled', false);
+            //$('#Create').prop('disabled', false);
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var drpYearText = $(document).find("select#drpQYear").val();
+        var drpQuarterText = $(document).find("select#drpQName").val();
+
+        $("#hdnQYear").val(drpYearText);
+        $("#hdnQName").val(drpQuarterText);
+
+        $(document).on('click', '#BtnDrp', function (e) {
+            e.preventDefault();
+            var proceedButton = $(this);
+            var drpProjectText = $(document).find("select#ProjectPhotographsRelated_Project_ID").val();
+            var drpYearPrjText = $(document).find("select#drpQYear").val();
+            var drpQuarterPrjText = $(document).find("select#drpQName").val();
+
+            if ($.trim(drpProjectText) == "" || $.trim(drpYearPrjText) == "" || $.trim(drpQuarterPrjText) == "NA") {
+                alert("Invalid Project/ Year/ Quarter! Please select the Project or Year or Quarter Name.")
+            }
+            else {
+                $("#idMainForm").show();
+                $(proceedButton).parents('form').submit();
+            }
+        });
+
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            var drpProjectText = $(document).find("select#ProjectPhotographsRelated_Project_ID").val();
+            var drpYearPrjText = $(document).find("select#drpQYear").val();
+            var drpQuarterPrjText = $(document).find("select#drpQName").val();
+
+            if ($.trim(drpProjectText) == "" || $.trim(drpYearPrjText) == "" || $.trim(drpQuarterPrjText) == "NA") {
+                alert("Invalid Project/ Year/ Quarter! Please select the Project or Year or Quarter Name.")
+                drpText = "";
+                return false;
+            }
+            else {
+                $(submitButton).parents('form').submit();
+                // $("#idMainForm").show();
+            }
+
+
+        });
+    });
+</script>
+
+<script>
+    $(
+    function () {
+        $('#Photographs_ClickDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(
+        function () {
+
+            if ($('input[name=BuildingTowerBlock_ComArea_ConStatusCode]:checked').val() === "2") {
+                $('#getBTBconstructionInfo').show();
+            }
+            else {               
+                $('#getBTBconstructionInfo').hide();
+            }
+            
+            $('input[name=BuildingTowerBlock_ComArea_ConStatusCode]').click(function () {
+
+                if ($('input[name=BuildingTowerBlock_ComArea_ConStatusCode]:checked').val() == "2") {                    
+                    $('#getFileTypeSizeBInfo').show();
+                    $('#getFileTypeSizeCInfo').hide();
+                }
+                if ($('input[name=BuildingTowerBlock_ComArea_ConStatusCode]:checked').val() == "3") {                   
+                    $('#getFileTypeSizeBInfo').hide();
+                    $('#getFileTypeSizeCInfo').show();
+                }
+
+                if ($('input[name=BuildingTowerBlock_ComArea_ConStatusCode]:checked').val() == "2") {
+                    $('#getBTBconstructionInfo').show();
+                    $("#getIFconstructionNAInfo").hide();
+                    $('#BuildingTowerBlock_InfoCode').attr('disabled', false);
+                    $('#BuildingTowerBlock_FloorsNumber').attr('disabled', false);
+                    $('#BuildingTowerBlock_PhotographType').attr('disabled', false);
+                    $('#drpInventoryList').attr('disabled', false);
+
+                    $('#BuildingTowerBlock_InfoCode').empty();
+
+                    var baseUrl = $('body').attr('data-base-url');
+                    $.ajax({
+                        type: "POST",
+                        url: baseUrl + "Project/GetBuildingTowerBlockByProjectId",
+                        datatype: "Json",
+                        data: { projectid: $('#ProjectPhotographsRelated_Project_ID').val() },
+                        success: function (data) {
+                            if (data.length > 0) {
+                                $('#getBTBconstructionNAInfo').hide();
+                                $('#BuildingTowerBlock_InfoCode').append('<option value="0">--Select--</option>');
+                                $.each(data, function (index, value) {
+                                    $('#BuildingTowerBlock_InfoCode').append('<option value="' + value.ProjectConstruction_ID + '">' + value.BuildingTowerBlock_Name + '</option>');
+                                });
+                            } else {
+                                $('#getBTBconstructionInfo').show();
+                                $("#showFileInfo").hide();
+                                $('#BuildingTowerBlock_InfoCode').attr('disabled', true);
+                                $('#BuildingTowerBlock_FloorsNumber').attr('disabled', true);
+                                $('#BuildingTowerBlock_PhotographType').attr('disabled', true);
+                                $('#drpInventoryList').attr('disabled', true);
+
+                                $('#getBTBconstructionNAInfo').show();
+                            };                            
+                        }
+                    });
+                }
+                else {
+                    $('#getBTBconstructionInfo').hide();
+                    $('#getBTBconstructionNAInfo').hide();
+                }
+            });
+
+            $('input[name=BuildingTowerBlock_ComArea_ConStatusCode]').change(function () {
+                $("#showFileInfo").show();
+                $('#BuildingTowerBlock_ComArea_ConStatusName').empty();                
+                if ($("#chktwo").is(":checked")) {
+                    $("input[name='BuildingTowerBlock_ComArea_ConStatusName']").val('Building/ Tower/ Block (Status of Construction)');
+                    $("#getIFconstructionNAInfo").hide();
+                }
+                if ($("#chkthree").is(":checked")) {
+                    $("input[name='BuildingTowerBlock_ComArea_ConStatusName']").val('Internal Infrastructure and Common Areas');
+                    $("#getIFconstructionNAInfo").show();
+                }
+            });
+
+            var valFNselected = $('#BuildingTowerBlock_FloorsNumber').val();            
+            if (valFNselected == 0 || valFNselected == '') {
+                $("#getBTBfloorNumberInfo").hide();
+            }
+            else {
+                $("#getBTBfloorNumberInfo").show();
+            };
+
+            $('#drpInventoryList').change(function () {
+                var valselected = $("#drpInventoryList option:selected").val();
+                if (valselected == 1010 || valselected == 1001) {                    
+                    $("#getBTBfloorNumberInfo").show();
+                }
+                else {
+                    $("#getBTBfloorNumberInfo").hide();
+                };                
+                $("#hdnBuildingTowerBlockType").val(valselected);                                
+            });
+
+            $('#drpInventoryICommList').change(function () {
+                var valicselected = $("#drpInventoryICommList option:selected").val();
+                $("#hdnBuildingTowerBlockType").val(valicselected);                
+            });
+        });
+</script>
+<script>
+    $(function () {
+        $('#PhotoGeoPoint_Latitude').on("change", function () {
+            var vlat = $(this).val();
+
+            var convertLat = Math.abs(vlat);
+            var LatDeg = Math.floor(convertLat);
+            var LatMin = (Math.floor((convertLat - LatDeg) * 60));
+            var convertLatMin = (Math.abs((convertLat - LatDeg) * 60));
+            var LatSec = (Math.floor((convertLatMin - LatMin) * 60));
+            var LatCardinal = ((vlat > 0) ? "N" : "S");
+
+            if (parseInt(LatDeg) < 29 || parseInt(LatDeg) > 32) {
+                alert("Invalid! The Latitude of location should be between 29.30N to 32.32N (in degree).");
+                $("#PhotoGeoPoint_Latitude").val('');
+                $("#PhotoGeoPoint_LatitudeX").val('');
+            }
+            else {
+                $("#PhotoGeoPoint_LatitudeX").val(LatDeg + 'degree ' + LatMin + 'min ' + LatSec + 'sec ' + LatCardinal);
+            };
+        });
+
+        $('#PhotoGeoPoint_Longitude').on("change", function () {
+            var vlng = $(this).val();
+
+            var convertLng = Math.abs(vlng);
+            var LngDeg = Math.floor(convertLng);
+            var LngMin = (Math.floor((convertLng - LngDeg) * 60));
+            var convertLngMin = (Math.abs((convertLng - LngDeg) * 60));
+            var LngSec = (Math.floor((convertLngMin - LngMin) * 60));
+            var LngCardinal = ((vlng > 0) ? "E" : "W");
+
+            if (parseInt(LngDeg) < 73 || parseInt(LngDeg) > 76) {
+                alert("Invalid! The Longitude of location should be between 73.55E to 76.50E (in degree).");
+                $("#PhotoGeoPoint_Longitude").val('');
+                $("#PhotoGeoPoint_LongitudeX").val('');
+            }
+            else {
+                $("#PhotoGeoPoint_LongitudeX").val(LngDeg + 'degree ' + LngMin + 'min ' + LngSec + 'sec ' + LngCardinal);
+            };            
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');        
+
+        var vcheckphotostatusvalue = $("input[name='Photographs_Status']:checked").val();
+        if (vcheckphotostatusvalue == 'Completed') {
+            $("#rowStatusofconstructionremarks").attr("style", "display:none");            
+        }
+        else {
+            $("#rowStatusofconstructionremarks").attr("style", "display:block");            
+        }
+
+        $(document).on('click', '.radio-constructionstatusvalue', function (e) {
+            if (this.value == 'Completed') {
+                $("#rowStatusofconstructionremarks").attr("style", "display:none");
+            }
+            else {
+                $("#rowStatusofconstructionremarks").attr("style", "display:block");
+            }
+        });
+    });
+</script>
+<script>
+    function singleFileSelected() {
+        //var selectedFile = evt.target.files can use this  or select input file element
+        //and access it's files object
+        //debugger;
+        var baseUrl = $('body').attr('data-base-url');
+        $(".InfoContainer").fadeIn();
+        var selectedFile = ($("#UploadedFile"))[0].files[0];//FileControl.files[0];
+        if (selectedFile) {
+            var FileSize = 0;
+            var imageType = /image.*/;
+            if (selectedFile.size > 1048576) {
+                FileSize = Math.round(selectedFile.size * 100 / 1048576) / 100 + " MB";
+            }
+            else if (selectedFile.size > 1024) {
+                FileSize = Math.round(selectedFile.size * 100 / 1024) / 100 + " KB";
+            }
+            else {
+                FileSize = selectedFile.size + " Bytes";
+            }
+            // here we will add the code of thumbnail preview of upload images
+
+            $("#showFileInfoGrid").show();
+            $("#FileName").text("Name : " + selectedFile.name);
+            $("#FileType").text("Type : " + selectedFile.type);
+            $("#FileSize").text("Size : " + FileSize);
+
+            $("#showSaveFileUploadMessage").hide();
+
+
+            if (selectedFile.type.match(imageType)) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = reader.result;
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "100";
+                    img.width = "100";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(100);
+                    $("#Imagecontainer").width(100);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+            if (selectedFile.type.match('application/pdf')) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = baseUrl + 'images/pdf.png';
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "35";
+                    img.width = "35";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(35);
+                    $("#Imagecontainer").width(35);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+
+    $(function () {
+        $("#FormUpload").submit(function (event) {
+            //debugger;
+            var form = $('#FormUpload')[0];
+
+                //var dataString = new FormData(form);
+                var baseUrl = $('body').attr('data-base-url');
+                var files = ($("#UploadedFile"))[0].files[0];//FileControl.files[0];
+
+                if (typeof files === 'undefined') {
+                    $("#showSaveFileUploadMessage").show();
+                    $("#saveFileUploadMessageName").text("Note : Please Add files... to Upload!");
+                    //alert('Please Add file(s) to Upload!');
+                    return false;
+                }
+                //var files = $("#FileUpload1")[0].files;
+                if (files.size > 0) {
+                    var formData = new FormData(form);
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append(files[i].name, files[i]);
+                    }
+
+                    var progressbarLabel = $('#progressBar-label');
+                    var progressbarDiv = $('#progressbar');
+
+                    $.ajax({
+                        url: baseUrl + 'Project/FormQUpdatePhotographUpload',
+                        method: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            //alert(data.status);
+                            if (data.statusCode == 101)
+                            {
+                                progressbarLabel.text('COMPLETE');
+                                progressbarDiv.fadeOut(2000);
+                                $(".InfoContainer").fadeOut(2000);
+                                $("#showFileInfo").fadeOut(2500);
+                                //unfill controls
+                                $("#BuildingTowerBlock_FloorsNumber").val('0');
+                                $("#PhotoGeoPoint_Longitude").val('0');
+                                $("#PhotoGeoPoint_Latitude").val('0');
+                                $("#Remarks_IfAny").val('');
+                            }
+                            else
+                            {
+                                progressbarLabel.text('Bad Request! Upload Failed');
+                                progressbarDiv.fadeOut(2000);
+
+                                $("#showSaveFileUploadMessage").show();
+                                $("#saveFileUploadMessageName").text("Note : " + data.status);
+                            }
+
+                        },
+                        failure: function(data) {
+                            alert('Bad Request! Upload Failed');
+                        },
+                        error: function (err) {
+                            //alert(err.message);
+                            alert('Bad Request! Upload Failed');
+                            //alert(err.statusText);
+                        }
+                    });
+
+                    progressbarLabel.text('UPLOADING ...');
+                    progressbarDiv.progressbar({
+                        value: false
+                    }).fadeIn(500);
+
+
+                    $("#showSaveFileUploadMessage").hide();
+                }
+
+                return false;
+        });        
+
+        $('#BuildingTowerBlock_InfoCode').change(function () {
+            $('#BuildingTowerBlock_InfoName').empty();
+            $("input[name='BuildingTowerBlock_InfoName']").val($("#BuildingTowerBlock_InfoCode option:selected").text());
+        });
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [6]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    });
+</script>
+<style>
+    .samplecopy-image img {
+        width: 100%;
+        height: 230px;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var baseUrl = $('body').attr('data-base-url');
+
+        $('[data-toggle="popover"]').popover({
+            placement: 'top',
+            trigger: 'hover',
+            html: true,
+            content: function () {
+                return '<div class="media samplecopy-image"><img src=' + baseUrl + 'images/QUPsamplecopy.jpg' + '><div class="media-body"><h4 class="media-heading">Note</h4><p>The promoters has to upload the project photo with RERA Number and Photo Click Date in the prescribed format.</p></div></div>';
+            }            
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Quarterly Updates: Status of Construction with Photograph(s) of Registered Project</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Quarterly Update Details :- Status of Construction with Photograph(s) of Building/ Tower/ Block/ Floor/ Internal Infrastructure/Common Areas (Registered Project) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm("DropdownlistProjectQUpdate_QUPhotographsDetails", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Project and Quarterly Update Option(s)</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Select Project</label>
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="For quarterly updates details of registered project, Registered project of quarterly updates are required.">
+                                                @Html.DropDownListFor(m => m.ProjectPhotographsRelated_Project_ID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "--Select--", new { @class = "form-control" })
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Select Year</label>
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="For quarterly updates details of registered project, Year of quarterly updates are required.">
+                                                @if (@TempData["QUpdatesSelectedYears"] != null)
+                                                {
+                                                    @Html.DropDownListFor(model => model.QUpdatePhotographs_Year, new SelectList(ViewBag.Years, "Text", "Value", TempData["QUpdatesSelectedYears"]), "--Select--", new { @id = "drpQYear", @class = "form-control" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.DropDownListFor(model => model.QUpdatePhotographs_Year, new SelectList(ViewBag.Years, "Text", "Value"), "--Select--", new { @id = "drpQYear", @class = "form-control" })
+                                                }
+                                                @Html.ValidationMessageFor(model => model.QUpdatePhotographs_Year, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Select Quarter</label>
+                                                @{
+                                                    var listItems1 = new List<SelectListItem>
+                                                        {
+                                                            new SelectListItem {  Text = "--Select--" , Value="NA"  },
+                                                            new SelectListItem {  Text = "First Quarter (January-March)" , Value="FirstQTR"  },
+                                                            new SelectListItem {  Text = "Second Quarter (April-June)" , Value="SecondQTR"  },
+                                                            new SelectListItem {  Text = "Third Quarter (July-September)" , Value="ThirdQTR"  },
+                                                            new SelectListItem {  Text = "Fourth Quarter (October-December)" , Value="FourthQTR"  },
+                                                        };
+                                                }
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="For quarterly updates details of registered project, Quarter Name of quarterly updates are required.">
+                                                @Html.DropDownListFor(model => model.QUpdatePhotographs_QuarterName, new SelectList(listItems1, "Value", "Text"), new { @id = "drpQName", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.QUpdatePhotographs_QuarterName, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            <div @if (Session["Project_id"] != null) { @Html.Raw("style=''")         } else { @Html.Raw("style='display: none;'")         }>
+                                @using (Html.BeginForm("FormQUpdatePhotographUpload", "Project", FormMethod.Post, new { enctype = "multipart/form-data", @id = "FormUpload" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(model => model.QUpdateProjectPhotographs_IndexID)
+                                    @Html.HiddenFor(model => model.QUpdateProjectPhotographs_ID)
+                                    @Html.HiddenFor(model => model.Related_ProjectPhotographsIndexID)
+                                    @Html.HiddenFor(model => model.Related_ProjectPhotographsID)
+                                    @Html.HiddenFor(model => model.ProjectPhotographsRelated_Project_ID)
+                                    @Html.HiddenFor(model => model.Related_Promoter_ID)
+
+                                    @Html.HiddenFor(model => model.IsQuarterlyData)
+                                    @Html.HiddenFor(model => model.IsQuarterlyDataValid)
+                                    @Html.HiddenFor(model => model.QUpdatePhotographs_Year)
+                                    @Html.HiddenFor(model => model.QUpdatePhotographs_QuarterName)
+                                    @Html.HiddenFor(model => model.BuildingTowerBlock_Type, new { @id = "hdnBuildingTowerBlockType" })                                    
+
+                                    if (Model.prpongoing != null)
+                                    {
+                                        if (Model.IsRegisteredDiaryNumberLock != 9)
+                                        {
+                                            if (Model.IsRegisteredDiaryNumberLock != 1)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Description of Photograph</legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.BuildingTowerBlock_ComArea_ConStatusCode, htmlAttributes: new { @class = "control-label mand" })
+                                                                            @Html.HiddenFor(model => model.BuildingTowerBlock_ComArea_ConStatusName, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-9">
+                                                                            <label class="form-group">                                                                    
+                                                                                @Html.RadioButtonFor(model => model.BuildingTowerBlock_ComArea_ConStatusCode, "2", htmlAttributes: new { @id = "chktwo" }) Building/ Tower/ Block (Status of Construction)
+                                                                                @Html.RadioButtonFor(model => model.BuildingTowerBlock_ComArea_ConStatusCode, "3", htmlAttributes: new { @id = "chkthree" }) Internal Infrastructure and Common Areas
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="getFileTypeSizeBInfo" style="display:none">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="help-block col-md-offset-3 col-md-9">
+                                                                                (i) File Type : .JPG/.JPEG  , (ii) File Size : 300KB.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="getFileTypeSizeCInfo" style="display:none">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="help-block col-md-offset-3 col-md-9">
+                                                                                (i) File Type : .JPG/.JPEG  , (ii) File Size : 350KB.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="getBTBconstructionNAInfo" style="display:none">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="help-block col-md-offset-3 col-md-9">
+                                                                                No record(s) found. Please add Building/Tower/Block construction details.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="getIFconstructionNAInfo" style="display:none">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.Label("Type of Internal Infrastructure and Common Areas", htmlAttributes: new { @class = "control-label mand" })                                                                    
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @if (Model.MasterProjectInventoryICommonList != null)
+                                                                                {
+                                                                                    @Html.DropDownListFor(model => model.BuildingTowerBlock_Type, new SelectList(Model.MasterProjectInventoryICommonList, "InventoryList_ID", "InventoryListName"), "--Select--", new { @class = "form-control", @id= "drpInventoryICommList" })
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @Html.DropDownListFor(model => model.BuildingTowerBlock_Type, new SelectList(" "), "--Select--", new { @class = "form-control", @id = "drpBInventoryICommList" })
+                                                                                }
+                                                                                @Html.ValidationMessageFor(model => model.BuildingTowerBlock_Type, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="help-block col-md-offset-3 col-md-9">                                                                    
+                                                                                In case of Group Housing or Building/ Tower Development – photographs of construction status of common areas like Gym/ Club House/ Swimming Pool/ Play Area/ Parks is to be provided. In case of Plotted development photographs of construction status of common areas like – parks/ internal roads is to be provided.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="getBTBconstructionInfo" style="display:none">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(model => model.BuildingTowerBlock_InfoCode, htmlAttributes: new { @class = "control-label mand" })
+                                                                                @Html.HiddenFor(model => model.BuildingTowerBlock_InfoName, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @if (Model.MasterBuilding != null)
+                                                                                {
+                                                                                    @Html.DropDownListFor(model => model.BuildingTowerBlock_InfoCode, new SelectList(Model.MasterBuilding, "ProjectConstruction_ID", "BuildingTowerBlock_Name"), "--Select--", new { @class = "form-control" })                                                                        
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @Html.DropDownListFor(model => model.BuildingTowerBlock_InfoCode, new SelectList(" "), "--Select--", new { @class = "form-control" })
+                                                                                }                                                                    
+                                                                                @Html.ValidationMessageFor(model => model.BuildingTowerBlock_InfoCode, "", new { @class = "text-danger" })
+                                                                            </div>
+
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(model => model.BuildingTowerBlock_Type, htmlAttributes: new { @class = "control-label mand" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @if (Model.MasterProjectInventoryList != null)
+                                                                                {
+                                                                                    @Html.DropDownListFor(model => model.BuildingTowerBlock_Type, new SelectList(Model.MasterProjectInventoryList, "InventoryList_ID", "InventoryListName"), "--Select--", new { @class = "form-control", @id = "drpInventoryList" })
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @Html.DropDownListFor(model => model.BuildingTowerBlock_Type, new SelectList(" "), "--Select--", new { @class = "form-control", @id = "drpBInventoryList" })
+                                                                                }
+                                                                                @Html.ValidationMessageFor(model => model.BuildingTowerBlock_Type, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div id="getBTBfloorNumberInfo" style="display:none">                                                                    
+                                                                                <div class="col-md-3">
+                                                                                    @Html.LabelFor(model => model.BuildingTowerBlock_FloorsNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                                                </div>
+                                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="In case of Group Housing or Building/ Tower Development – Floors Number with regard to any photographs of construction status of Building/ Tower/ Block is to be provided. In case of Plotted development photographs of construction status (fill floor number as '0') is to be provided.">
+                                                                                    @Html.EditorFor(model => model.BuildingTowerBlock_FloorsNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    @Html.ValidationMessageFor(model => model.BuildingTowerBlock_FloorsNumber, "", new { @class = "text-danger" })
+                                                                                </div>                                                                    
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(model => model.BuildingTowerBlock_PhotographType, htmlAttributes: new { @class = "control-label mand" })
+                                                                                @{
+                                                                                    var listItemsPhotographType = new List<SelectListItem>
+                                                                                {
+                                                                                    new SelectListItem {  Text = "--Select--" , Value=""  },
+                                                                                    new SelectListItem {  Text = "Floor Plan" , Value="Floor Plan"  },
+                                                                                    new SelectListItem {  Text = "Floor Constructed" , Value="Floor Constructed"  },
+                                                                                    new SelectListItem {  Text = "Plots" , Value="Plots"  },
+                                                                                    new SelectListItem {  Text = "Others" , Value="Others"  },
+                                                                                };
+                                                                                }
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DropDownListFor(model => model.BuildingTowerBlock_PhotographType, new SelectList(listItemsPhotographType, "Value", "Text"), new { @class = "form-control" })
+                                                                                @Html.ValidationMessageFor(model => model.BuildingTowerBlock_PhotographType, "", new { @class = "text-danger" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                                                                                                                           
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Geo-location Points of Photograph</legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.PhotoGeoPoint_Latitude, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Latitude of photograph (Geo-Tagging Points) are to be provided in decimal units - Latitude with 6 decimal places pinpoints (negative/positive value). Eg. - DDD.DDDDDD">
+                                                                            @Html.EditorFor(model => model.PhotoGeoPoint_Latitude, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.ValidationMessageFor(model => model.PhotoGeoPoint_Latitude, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.PhotoGeoPoint_LatitudeX, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.PhotoGeoPoint_LatitudeX, new { htmlAttributes = new { @class = "form-control quborder-disabled" } })
+                                                                            @Html.ValidationMessageFor(model => model.PhotoGeoPoint_LatitudeX, "", new { @class = "text-danger" })
+                                                                        </div>                                                            
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.PhotoGeoPoint_Longitude, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Longitude of photograph (Geo-Tagging Points) are to be provided in decimal units - Longitude with 6 decimal places pinpoints (negative/positive value). Eg. - DDD.DDDDDD">
+                                                                            @Html.EditorFor(model => model.PhotoGeoPoint_Longitude, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.ValidationMessageFor(model => model.PhotoGeoPoint_Longitude, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.PhotoGeoPoint_LongitudeX, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.PhotoGeoPoint_LongitudeX, new { htmlAttributes = new { @class = "form-control quborder-disabled" } })
+                                                                            @Html.ValidationMessageFor(model => model.PhotoGeoPoint_LongitudeX, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Construction Status Details</legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.Photographs_Title, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @if (Model.MasterProjectPhotographStatusList != null)
+                                                                            {
+                                                                                @Html.DropDownListFor(model => model.Photographs_Title, new SelectList(Model.MasterProjectPhotographStatusList, "StatusTitleList_ID", "StatusTitleListName"), "--Select--", new { @class = "form-control" })
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @Html.DropDownListFor(model => model.Photographs_Title, new SelectList(" "), "--Select--", new { @class = "form-control" })
+                                                                            }
+                                                                            @Html.ValidationMessageFor(model => model.Photographs_Title, "", new { @class = "text-danger" })
+                                                                        </div>                                                                                                                                                                               
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>                                                    
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.Photographs_Status, htmlAttributes: new { @class = "control-label mand" })                                                               
+                                                                        </div>
+                                                                        <div class="col-md-9">
+                                                                            <label class="form-group">
+                                                                                @Html.RadioButtonFor(model => model.Photographs_Status, "Completed", htmlAttributes: new { @class = "radio-constructionstatusvalue", @checked = "checked" }) Completed
+                                                                                @Html.RadioButtonFor(model => model.Photographs_Status, "UnderConstruction", htmlAttributes: new { @class = "radio-constructionstatusvalue" }) Under Construction
+                                                                                @Html.RadioButtonFor(model => model.Photographs_Status, "Other", htmlAttributes: new { @class = "radio-constructionstatusvalue" }) Any Other Status
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                                                                     
+                                                                <div class="row" id="rowStatusofconstructionremarks" style="display:none;">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Remarks (Status of Construction)</label>                                                                
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="In case of Group Housing or Building/ Tower Development photographs of construction status as front view, side view or floor wise view of Building/ Tower/ Block is to be provided. In case of Plotted development photographs of construction status as roads etc. is to be provided.">
+                                                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                    
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="showFileInfo" style="display:none">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Upload Photograph(s) of Construction Status Details <a rel="popover" data-toggle="popover" href="javascript:void(0);" title="Sample Copy"><i class="fa fa-question-circle" aria-hidden="true"></i></a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3"></div>
+                                                                        <div class="col-md-9" id="FormContent">
+                                                                            <span class="btn btn-success fileinput-button">
+                                                                                <i class="glyphicon glyphicon-plus"></i>
+                                                                                <span>Add files...</span>
+                                                                                <input type="file" name="UploadedFile" id="UploadedFile" onchange="singleFileSelected()" />
+                                                                            </span>
+                                                                            @if (Convert.ToInt32(TempData["QUpdatesIsRegisteredDiaryNumberLock"]) == 1 || Convert.ToInt32(TempData["QUpdatesIsRegisteredDiaryNumberLock"]) == 9)
+                                                                            {
+                                                                                <input type="submit" value="Start upload" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <button class="btn btn-outline btn-primary" type="submit" value="submit" id="Submit_btn">
+                                                                                    <i class="glyphicon glyphicon-upload"></i>
+                                                                                    <span>Start upload</span>
+                                                                                </button>
+                                                                            }                                                                
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" id="showFileInfoGrid" style="display:none">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3"></div>
+                                                                        <div class="col-md-9">
+                                                                            <div class="InfoContainer">
+                                                                                <div id="Imagecontainer" style="height:100px;width:100px"></div>
+                                                                                <div id="FileName" class="info"></div>
+                                                                                <div id="FileType" class="info"></div>
+                                                                                <div id="FileSize" class="info"></div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3"></div>
+                                                                        <div class="col-md-6">
+                                                                            <div id="progressbar" style="position: relative; display: none">
+                                                                                <span style="position: absolute; left: 35%; top: 20%" id="progressBar-label">
+                                                                                    UPLOADING ...
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" id="showSaveFileUploadMessage" style="display: none">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-offset-3 col-md-6 alert alert-warning">
+                                                                            <div id="saveFileUploadMessageName" class="info">HH</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @Html.ActionLink("Back to List (View Documents)", "QUpdate_QUPhotographDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                            &nbsp;
+                                                            @Html.ActionLink("Reset", "QUpdate_QUPhotographDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <fieldset class="col-md-12">
+                                                            <legend class="my">Not Applicable</legend>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-2">
+                                                                        @Html.Label("Quarterly Updates Status", htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-9 alert alert-warning">
+                                                                        Invalid! The registration of selected quarterly update details has been closed. Try Again.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                }                                
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                        <thead>
+                                            <tr>                                                
+                                                <th>@Html.DisplayName("Select")</th>
+                                                <th>
+                                                    @Html.DisplayName("Description of Photograph")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.Photographs_Title)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Status of Construction")
+                                                </th>                                                
+                                                <th>
+                                                    @Html.DisplayName("Other Descriptions")
+                                                </th>                                                 
+                                                <th>
+                                                    @Html.DisplayName("Date of Upload")
+                                                </th>
+                                                <th>@Html.DisplayName("View")</th>                                               
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.prpongoing)
+                                            {
+                                                <tr>                                                
+                                                    <td align="center">
+                                                        @if (item.IsRegisteredDiaryNumberLock == 1 || item.IsRegisteredDiaryNumberLock == 9)
+                                                        {
+                                                            <span class="disabledlockunlock" title="Geo-location Points"><i class="fa fa-map-pin" aria-hidden="true"></i></span>
+                                                            <span>&nbsp;</span>
+                                                            <span class="disabledlockunlock" title="Delete Quarterly Updates"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Model.IsLock == 1 || Model.IsLock == 2)
+                                                            {
+                                                                <span class="disabledlockunlock" title="Geo-location Points"><i class="fa fa-map-pin" aria-hidden="true"></i></span>
+                                                                <span>&nbsp;</span>
+                                                                <span class="disabledlockunlock" title="Delete Quarterly Updates"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3 || item.IsQuarterlyData == 0)
+                                                                {
+                                                                    <span class="disabledlockunlock" title="Geo-location Points"><i class="fa fa-map-pin" aria-hidden="true"></i></span>
+                                                                    <span>&nbsp;</span>
+                                                                    <span class="disabledlockunlock" title="Delete Quarterly Updates"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                                    {
+                                                                        <span class="disabledlockunlock" title="Geo-location Points"><i class="fa fa-map-pin" aria-hidden="true"></i></span>
+                                                                        <span>&nbsp;</span>
+                                                                        <span class="disabledlockunlock" title="Delete Quarterly Updates"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="disabledlockunlock" title="Geo-location Points"><i class="fa fa-map-pin" aria-hidden="true"></i></span>
+                                                                        <span>&nbsp;</span>                                                            
+                                                                        @Html.ActionLink(" ", "Delete_QUPhotographDetails", new { inPQUPhotographsIndexID = item.QUpdateProjectPhotographs_IndexID, inPQUPhotographsID = item.QUpdateProjectPhotographs_ID, inProjectID = item.ProjectPhotographsRelated_Project_ID }, new { onclick = "return confirm('Do you want to delete?');", @class = "fa fa-trash", @title = "Delete Quarterly Updates" })
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.BuildingTowerBlock_ComArea_ConStatusName)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Photographs_Title)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Photographs_Status)
+                                                        @if (item.Photographs_Status.ToString() != "Completed")
+                                                        {
+                                                            @Html.DisplayName(" (")
+                                                            @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                                            @Html.DisplayName(")")
+                                                        }                                                    
+                                                    </td>                                                
+                                                    <td>
+                                                        @if (item.BuildingTowerBlock_PhotographType != String.Empty)
+                                                        {
+                                                            if (item.BuildingTowerBlock_ComArea_ConStatusCode == 2)
+                                                            {
+                                                                if (item.BuildingTowerBlock_InfoName != String.Empty)
+                                                                {
+                                                                    @Html.DisplayFor(modelItem => item.BuildingTowerBlock_InfoName)
+                                                                    @Html.DisplayName(", ")
+                                                                }
+                                                                @Html.DisplayFor(modelItem => item.BuildingTowerBlock_Type)
+                                                                @Html.DisplayName(", ")
+                                                                @Html.DisplayName("Floor: ")
+                                                                @Html.DisplayFor(modelItem => item.BuildingTowerBlock_FloorsNumber)
+                                                                @Html.DisplayName(", ")
+                                                                @Html.DisplayFor(modelItem => item.BuildingTowerBlock_PhotographType)
+                                                                @Html.DisplayName(" (lat:")
+                                                                @Html.DisplayFor(modelItem => item.PhotoGeoPoint_Latitude)
+                                                                @Html.DisplayName(", long:")
+                                                                @Html.DisplayFor(modelItem => item.PhotoGeoPoint_Longitude)
+                                                                @Html.DisplayName(")")
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DisplayFor(modelItem => item.BuildingTowerBlock_Type)
+                                                                @Html.DisplayName(" (lat:")
+                                                                @Html.DisplayFor(modelItem => item.PhotoGeoPoint_Latitude)
+                                                                @Html.DisplayName(", long:")
+                                                                @Html.DisplayFor(modelItem => item.PhotoGeoPoint_Longitude)
+                                                                @Html.DisplayName(")")
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayName("NA")
+                                                        }
+                                                    </td>                                                
+                                                    <td align="center">
+                                                        @Html.DisplayFor(modelItem => item.Photographs_ClickDate)
+                                                    </td>
+                                                    <td align="center">
+                                                        <a href="~/@Html.DisplayFor(modelItem => item.Photographs_FilePath)" target="_blank" title="View"><i class="fa fa-external-link-square"></i></a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                <!-- /.panel-body -->
+                </div>
+            <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+}

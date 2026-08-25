@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Confirm Email";
+}
+
+@*<h2>@ViewBag.Title.</h2>*@
+
+
+
+<div class="contianer-fluid" style="padding-right: 15px;    padding-left: 15px;    margin-right: auto;    margin-left: auto;">
+    <div class="row" style="margin-right: -15px;    margin-left: -15px;">
+        <div class="col-md-12">&nbsp;</div>
+        <div class="col-md-12">&nbsp;</div>
+        <div class="col-md-5"></div>
+        <div class="col-md-2 text-center">
+            <a href="index.html">
+                <img src="@Url.Content("~/images/Rera_Design3b_03.png")" alt="RERA logo" class="logo" title="REAL ESTATE REGULATORY AUTHORITY, PUNJAB">
+            </a>
+        </div>
+        <div class="col-md-5"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="">&nbsp;</div>
+        <div class="col-md-3"></div>
+        <div class="col-md-6 text-center" style="color: #fff; font-size: 15px;"> REAL ESTATE REGULATORY AUTHORITY, PUNJAB </div>
+        <div class="col-md-3"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="">&nbsp;</div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4 text-center main-login main-center" style="background-color: #fff; ">
+            <div class="" style="padding: 0px;">
+                <div class="row">
+                    <div class="col-md-12  text-center" style="background-color: #7bb73f; height: 54px; color: #fff; padding: 14px 0px 0px 0px;">Session Expire</div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <!--email id INPUT-->
+                        <div class="col-md-12">
+                            <div class="login-form-1">
+                                <div class="form-group">
+                                    <p>
+                                        Session Expire. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--OTHER LINK-->
+                       
+                        <div class="col-md-12 text-center" style="margin-top: 10px;">
+                            <ul class="list-inline copyright">
+                                <li class="list-inline-item">
+                                    @(Html.ActionLink("New Registration", "Register", new { id = 1 }, new { @style = "color: #c86c49;" }))
+                                    @*<a href="forgot-password.html" style="color: #c86c49;">Forgot Password</a>*@
+                                </li>
+                                <li class="list-inline-item">|</li>
+                                <li class="list-inline-item">
+                                    @(Html.ActionLink("Sign in", "Login", new { id = 1 }, new { @style = "color: #c86c49;" }))
+                                    @*<a href="register.html" style="color: #c86c49;">New Registration</a>*@
+                                </li>
+                            </ul>
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+    <div class="row " style="margin-top: 10px;">
+        <div class="text-md-center col-md-12">
+            <ul class="list-inline copyright" style="color: #fff; font-size: 11px;">
+                <li class="list-inline-item">&copy; @DateTime.Now.Year RERA Punjab. All Rights Reserved</li>
+                <li class="list-inline-item">|</li>
+                <li class="list-inline-item">Designed and Developed by C-DAC Mohali</li>
+            </ul>
+        </div>
+    </div>
+</div>

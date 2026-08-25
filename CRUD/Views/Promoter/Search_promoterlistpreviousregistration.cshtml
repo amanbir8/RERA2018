@@ -1,0 +1,510 @@
+﻿@model CRUD.Models.Promoter.ClsPrp_JointPromoter_SearchOptionDetails
+
+@{
+    Layout = null;
+}
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/css-validator/style.css")" />
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+
+<style>
+    *.txtdisabled:hover {
+        cursor: not-allowed;
+    }
+
+    *.bgdisabled-color {
+        background-color: #F0F0F0;
+    }
+
+    *.bgdisplay-color {
+        background-color: #8fcedd;
+    }
+
+    .disclaimer-text {
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
+    .ui-autocomplete {
+        z-index: 1050 !important; /* Ensure the autocomplete is above the modal */
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        var baseUrl = $('body').attr('data-base-url');
+
+        function searchOrder(data) {
+            //if (!$.fn.dataTable.isDataTable('#myTableReferencePromoter')) {
+            //    $('#myTableReferencePromoter').DataTable().clear().destroy();
+            //};
+
+            $('#myTableReferencePromoter').DataTable().clear().destroy();
+            var table = $('#myTableReferencePromoter').DataTable({
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [0, 5]
+                }]
+            });
+            $('#myTableReferencePromoter').show();
+
+            return $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'POST',
+                url: baseUrl + "Promoter/Display_SearchRegisteredPromoterList",
+                data: data,
+                success: function (d) {
+                    if (d.status == true) {
+                        //console.log(d);
+                        d.statusObjRet.forEach(function (item, index) {
+                            table.row.add([
+                                index + 1,
+                                item.Link_RegDiaryNumber_Name, //diaryNumber
+                                item.JointPromoter_Name, //promoterName                                
+                                item.JointPromoter_District, //district
+                                item.mLinkTo_Project_RegistrationNumber, //registrationNumber
+                                '<a href="javascript:void(0)">View</a>' +
+                                '<input id="hiddenPrmType" type="hidden" value="' + item.CoPromoterType_Flag + '">' +
+                                '<input id="hiddenDNoID" type="hidden" value="' + item.Link_RegDiaryNumber_ID + '">' +
+                                '<input id="hiddenDNoYr" type="hidden" value="' + item.Link_RegDiaryNumber_NameYear + '">' +
+                                '<input id="hiddenPrmID" type="hidden" value="' + item.Column_B + '">' +
+
+                                '<input id="hiddenOrgName" type="hidden" value="' + item.Org_Name + '">' +
+                                '<input id="hiddenOrgType" type="hidden" value="' + item.Org_Type + '">' +
+                                '<input id="hiddenOrgAim" type="hidden" value="' + item.OTI_Org_Objects + '">' +
+                                '<input id="hiddenPfName" type="hidden" value="' + item.First_Name + '">' +
+                                '<input id="hiddenPmName" type="hidden" value="' + item.Middle_Name + '">' +
+                                '<input id="hiddenPlName" type="hidden" value="' + item.Last_Name + '">' +
+                                '<input id="hiddenPFfName" type="hidden" value="' + item.Fath_First_Name + '">' +
+                                '<input id="hiddenPFmName" type="hidden" value="' + item.Fath_Middle_Name + '">' +
+                                '<input id="hiddenPFlName" type="hidden" value="' + item.Fath_Last_Name + '">' +                                
+                                '<input id="hiddenIndAim" type="hidden" value="' + item.Ind_Org_Objects + '">' +
+                                '<input id="hiddenWebLink" type="hidden" value="' + item.CoPromoter_WebLink + '">' +
+                                '<input id="hiddenPAN" type="hidden" value="' + item.CoPromoter_PAN_Number + '">' +
+
+                                '<input id="hiddenPrmALine1" type="hidden" value="' + item.Permanent_Address_Prm_Line1 + '">' +
+                                '<input id="hiddenPrmALine2" type="hidden" value="' + item.Permanent_Address_Prm_Line2 + '">' +
+                                '<input id="hiddenPrmAState" type="hidden" value="' + item.Permanent_Address_Prm_State + '">' +
+                                '<input id="hiddenPrmADistrict" type="hidden" value="' + item.Permanent_Address_Prm_District + '">' +
+                                '<input id="hiddenPrmAPIN" type="hidden" value="' + item.Permanent_Address_Prm_Pin_Code + '">' +
+
+                                '<input id="hiddenRegALine1" type="hidden" value="' + item.Registered_Address_Org_Line1 + '">' +
+                                '<input id="hiddenRegALine2" type="hidden" value="' + item.Registered_Address_Org_Line2 + '">' +
+                                '<input id="hiddenRegAState" type="hidden" value="' + item.Registered_Address_Org_State + '">' +
+                                '<input id="hiddenRegADistrict" type="hidden" value="' + item.Registered_Address_Org_District + '">' +
+                                '<input id="hiddenRegAPIN" type="hidden" value="' + item.Registered_Address_Org_Pin_Code + '">' +
+
+                                '<input id="hiddenCommALine1" type="hidden" value="' + item.Communication_AddressLine1 + '">' +
+                                '<input id="hiddenCommALine2" type="hidden" value="' + item.Communication_AddressLine2 + '">' +
+                                '<input id="hiddenCommAState" type="hidden" value="' + item.Communication_AddressStateCode + '">' +
+                                '<input id="hiddenCommADistrict" type="hidden" value="' + item.Communication_AddressDistrictCode + '">' +
+                                '<input id="hiddenCommAPIN" type="hidden" value="' + item.Communication_AddressPIN + '">'
+                            ]).draw();
+                        });
+                    }
+                    else {
+                        alert('Promoter Profile (Search Options) Failed! Something went wrong');
+                    }
+                },
+                error: function () {
+                    alert("oops! Something went wrong")
+                }
+            });
+        };
+
+        $("#searchOrder").click(function (e) {
+            e.preventDefault();
+
+            var orderArr = [];
+            orderArr.length = 0;
+            var isAllValid = false;
+
+            if ($('#SearchOption_RelatedPromoterName').val() != '' && $('#SearchOption_RelatedProjectName').val() != '') {
+                //&& $('#SearchOption_RelatedRegistrationNumber').val() != ''
+
+                var xpSearchOption_RelatedPromoterName = $("#SearchOption_RelatedPromoterName").val(),
+                    xpSearchOption_RelatedProjectName = $("#SearchOption_RelatedProjectName").val(),
+                    xpSearchOption_RelatedRegistrationNumber = $("#SearchOption_RelatedRegistrationNumber").val();
+
+                if (parseInt(xpSearchOption_RelatedPromoterName.length) >= 10 && parseInt(xpSearchOption_RelatedProjectName.length) >= 10) {
+                    isAllValid = true;
+                }
+                else {
+                    alert('Invalid! Promoter Name or Project Name (*) fields are invalid.');
+                    isAllValid = false;
+                }
+            }
+            else {
+                alert('The mandatory (*) fields are required.');
+                isAllValid = false;
+            }
+
+            if (isAllValid) {
+                $("#rowSearchRecordsA").attr("style", "display:block");
+                $("#rowSearchRecordsB").attr("style", "display:none");
+
+                var pSearchOption_RelatedDistrictID = $("#SearchOption_RelatedDistrictID").val(),
+                    pSearchOption_RelatedDistrictText = $('#SearchOption_RelatedDistrictID option:selected').text(),
+                    pSearchOption_RelatedPromoterName = $("#SearchOption_RelatedPromoterName").val(),
+                    pSearchOption_RelatedProjectName = $("#SearchOption_RelatedProjectName").val(),
+                    pSearchOption_RelatedRegistrationNumber = $("#SearchOption_RelatedRegistrationNumber").val();
+
+                orderArr.push({
+                    SearchOption_RelatedDistrictID: pSearchOption_RelatedDistrictID,
+                    SearchOption_RelatedDistrictName: pSearchOption_RelatedDistrictText,
+                    SearchOption_RelatedPromoterName: pSearchOption_RelatedPromoterName,
+                    SearchOption_RelatedProjectName: pSearchOption_RelatedProjectName,
+                    SearchOption_RelatedRegistrationNumber: pSearchOption_RelatedRegistrationNumber
+                });
+
+                var data = JSON.stringify({
+                    order: orderArr
+                });
+
+                $.when(searchOrder(data)).then(function (response) {
+                    console.log(response);
+                }).fail(function (err) {
+                    console.log(err);
+                });
+            }
+        });
+
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var promoterDetailsModal = $(document).find('#myModal');
+            $(promoterDetailsModal).fadeOut(1000, function () {
+                $(promoterDetailsModal).modal('hide');
+            });
+        });
+
+        $(document).on('click', 'a#notifyOpenerRegisteredProjectZoneInfo', function (e) {
+            e.preventDefault();
+
+            new PNotify({
+                title: 'Information',
+                text: '(Zone 1) - Master Plan Area of S.A.S. Nagar, New Chandigarh and Zirakpur. \<br>(Zone 2) - Master Plan Area of Kharar, Dera Bassi and Banur. \<br>(Zone 3) - Ludhiana (within and outside municipal limits upto 10 Kms.) \<br>(Zone 4) - Jalandhar (within and outside municipal limits upto 10 Kms.) \<br>(Zone 5) - Amritsar, Patiala, Khanna, Rajpura, Mandi Gobindgarh, Sirhind and Phagwara within and outside municipal limits upto 7 Kms and NH-1 upto 2 Kms on both sides, outside the potential zone. \<br>(Zone 6) – Bathinda, Moga, Batala, Pathankot, Barnala, Malerkotla, Morinda, Hoshiarpur, within and outside municipal limits upto 5 Kms. \<br>(Zone 7) – Sangrur, Sunam Udham Singh Wala, Nabha, Faridkot, Kotkapura, Ferozepur, Malout, Abohar, Sri Muktsar Sahib, Kapurthala, Nawanshahr, Rupnagar, Taran Taran, Gurdaspur, Samana, Jagraon, Mansa, Lalru, Kurali within and outside municipal limits upto 3 Kms and all other NH (except NH 1)/SH/Scheduled Roads upto 1 Kms both sides, outside the potential zone. \<br>(Zone 8) – Rest of Punjab.',
+                type: 'info',
+                hide: false
+            });
+
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-spzoom]').spzoom();
+
+        $("#SearchOption_RelatedRegistrationNumber").inputmask({ mask: function () { return ["AAAAAA-AAA99-AA9999"]; } });
+	});
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        $(".input-projectName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: BASE_URL + 'Promoter/Get_Autocomplete_ProjectName',
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.SearchOption_RelatedProjectName, value: item.SearchOption_RelatedProjectName };
+                        }))
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+
+        $(".input-promoterName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: BASE_URL + 'Promoter/Get_Autocomplete_PromoterName',
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.SearchOption_RelatedPromoterName, value: item.SearchOption_RelatedPromoterName };
+                        }))
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#myTableReferencePromoter tbody').on('click', 'tr', function () {
+
+            var table = $('#myTableReferencePromoter').DataTable();
+            var rowData = table.row(this).data();
+
+            var hiddenValPrmType = $(this).find('td:eq(5)').find('input#hiddenPrmType').val();
+            var hiddenValDNoID = $(this).find('td:eq(5)').find('input#hiddenDNoID').val();
+            var hiddenValDNoYr = $(this).find('td:eq(5)').find('input#hiddenDNoYr').val();
+            var hiddenValPrmID = $(this).find('td:eq(5)').find('input#hiddenPrmID').val();
+
+            var hiddenValPrmALine1 = $(this).find('td:eq(5)').find('input#hiddenPrmALine1').val();
+            var hiddenValPrmALine2 = $(this).find('td:eq(5)').find('input#hiddenPrmALine2').val();
+            var hiddenValPrmAState = $(this).find('td:eq(5)').find('input#hiddenPrmAState').val();
+            var hiddenValPrmADistrict = $(this).find('td:eq(5)').find('input#hiddenPrmADistrict').val();
+            var hiddenValPrmAPIN = $(this).find('td:eq(5)').find('input#hiddenPrmAPIN').val();
+
+            var hiddenValRegALine1 = $(this).find('td:eq(5)').find('input#hiddenRegALine1').val();
+            var hiddenValRegALine2 = $(this).find('td:eq(5)').find('input#hiddenRegALine2').val();
+            var hiddenValRegAState = $(this).find('td:eq(5)').find('input#hiddenRegAState').val();
+            var hiddenValRegADistrict = $(this).find('td:eq(5)').find('input#hiddenRegADistrict').val();
+            var hiddenValRegAPIN = $(this).find('td:eq(5)').find('input#hiddenRegAPIN').val();
+
+            var hiddenValCommALine1 = $(this).find('td:eq(5)').find('input#hiddenCommALine1').val();
+            var hiddenValCommALine2 = $(this).find('td:eq(5)').find('input#hiddenCommALine2').val();
+            var hiddenValCommAState = $(this).find('td:eq(5)').find('input#hiddenCommAState').val();
+            var hiddenValCommADistrict = $(this).find('td:eq(5)').find('input#hiddenCommADistrict').val();
+            var hiddenValCommAPIN = $(this).find('td:eq(5)').find('input#hiddenCommAPIN').val();
+
+            // Transfer data from modal to the view section
+            $('input[name="CoPromoterType_Flag"][value="' + hiddenValPrmType + '"]').prop('checked', true).trigger('change');
+            if (hiddenValPrmType == '1') {
+                $("#rowINDpromoterR1").attr("style", "display:block");
+                $("#rowINDpromoterR2").attr("style", "display:block");
+                $("#rowINDpromoterR4").attr("style", "display:block");
+                $("#rowINDpromoterR5").attr("style", "display:block");
+                $("#rowOTIpromoterR1").attr("style", "display:none");
+                $("#rowOTIpromoterR2").attr("style", "display:none");
+                $("#rowpromoterPAddress").attr("style", "display:block");
+                $("#rowpromoterPhotograph").attr("style", "display:block");
+                $("#rowpromoterRAddress").attr("style", "display:none");
+            }
+            else if (hiddenValPrmType == '2') {
+                $("#rowINDpromoterR1").attr("style", "display:none");
+                $("#rowINDpromoterR2").attr("style", "display:none");
+                $("#rowINDpromoterR4").attr("style", "display:none");
+                $("#rowINDpromoterR5").attr("style", "display:none");
+                $("#rowOTIpromoterR1").attr("style", "display:block");
+                $("#rowOTIpromoterR2").attr("style", "display:block");
+                $("#rowpromoterPAddress").attr("style", "display:none");
+                $("#rowpromoterPhotograph").attr("style", "display:none");
+                $("#rowpromoterRAddress").attr("style", "display:block");
+            };
+
+            if (hiddenValPrmType == '1') {
+                $('#First_Name').val($(this).find('td:eq(5)').find('input#hiddenPfName').val());
+                $('#Middle_Name').val($(this).find('td:eq(5)').find('input#hiddenPmName').val());
+                $('#Last_Name').val($(this).find('td:eq(5)').find('input#hiddenPlName').val());
+                $('#Fath_First_Name').val($(this).find('td:eq(5)').find('input#hiddenPFfName').val());
+                $('#Fath_Middle_Name').val($(this).find('td:eq(5)').find('input#hiddenPFmName').val());
+                $('#Fath_Last_Name').val($(this).find('td:eq(5)').find('input#hiddenPFlName').val());
+                $('#Ind_Org_Objects').val($(this).find('td:eq(5)').find('input#hiddenIndAim').val());
+
+                $('#Permanent_Address_Prm_Line1').val(hiddenValPrmALine1);
+                $('#Permanent_Address_Prm_Line2').val(hiddenValPrmALine2);
+                $('#Permanent_Address_Prm_State').val(hiddenValPrmAState).change();
+                $('#Permanent_Address_Prm_District').val(hiddenValPrmADistrict).change();
+                $('#Permanent_Address_Prm_Pin_Code').val(hiddenValPrmAPIN);
+            }
+            else if (hiddenValPrmType == '2') {
+                $('#Org_Name').val($(this).find('td:eq(5)').find('input#hiddenOrgName').val());
+                $('#Org_Type').val($(this).find('td:eq(5)').find('input#hiddenOrgType').val()).change();
+                $('#OTI_Org_Objects').val($(this).find('td:eq(5)').find('input#hiddenOrgAim').val());                
+
+                $('#Registered_Address_Org_Line1').val(hiddenValRegALine1);
+                $('#Registered_Address_Org_Line2').val(hiddenValRegALine2);
+                $('#Registered_Address_Org_State').val(hiddenValRegAState).change();
+                $('#Registered_Address_Org_District').val(hiddenValRegADistrict).change();
+                $('#Registered_Address_Org_Pin_Code').val(hiddenValRegAPIN);
+            };
+
+            $('#CoPromoter_PAN_Number').val($(this).find('td:eq(5)').find('input#hiddenPAN').val());
+            $('#CoPromoter_WebLink').val($(this).find('td:eq(5)').find('input#hiddenWebLink').val());
+
+            $('#Communication_AddressLine1').val(hiddenValCommALine1);
+            $('#Communication_AddressLine2').val(hiddenValCommALine2);
+            $('#Communication_AddressStateCode').val(hiddenValCommAState).change();
+            $('#Communication_AddressDistrictCode').val(hiddenValCommADistrict).change();
+            $('#Communication_AddressPIN').val(hiddenValCommAPIN);
+
+            $("#Link_RegDiaryNumber_ID").val(hiddenValDNoID).trigger('change');
+            $("#Link_RegDiaryNumber_Name").val(rowData[1]).trigger('change');
+            $("#Link_RegDiaryNumber_NameYear").val(hiddenValDNoYr).trigger('change');
+            $("#Column_B").val(hiddenValPrmID).trigger('change');
+
+            var promoterDetailsModal = $(document).find('#myModal');
+            $(promoterDetailsModal).fadeOut(1000, function () {
+                $(promoterDetailsModal).modal('hide');
+            });
+        });    
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id = "myform_SearchJointPromoter" }))
+                            {
+                                if (Convert.ToInt32(TempData["PromoterIsdraftValue"]) == 1 || Convert.ToInt32(TempData["PromoterIsdraftValue"]) == 5 || Convert.ToInt32(TempData["PromoterIsdraftValue"]) == 6)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Not Applicable</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-2">
+                                                                @Html.Label("Joint Promoter Status", htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-9 alert alert-warning">
+                                                                Not Applicable, As per the detail of promoter's profile and joint-promoter's profile(s).
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            <label class="control-label">(A.)</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.LabelFor(model => model.SearchOption_RelatedDistrictName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.DropDownListFor(model => model.SearchOption_RelatedDistrictID, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select", new { @class = "form-control bgdisabled-color" })
+                                                            @Html.ValidationMessageFor(model => model.SearchOption_RelatedDistrictID, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            <label class="control-label">(B.)</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <label class="control-label mand">Promoter Name</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.EditorFor(model => model.SearchOption_RelatedPromoterName, new { htmlAttributes = new { @class = "form-control bgdisabled-color input-promoterName" } })
+                                                            @Html.ValidationMessageFor(model => model.SearchOption_RelatedPromoterName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            <label class="control-label">(C.)</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.LabelFor(model => model.SearchOption_RelatedProjectName, htmlAttributes: new { @class = "control-label mand" })
+                                                            <a id="notifyOpenerRegisteredProjectZoneInfo" href="javascript:void(0);" title="View Project Zone Info"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.EditorFor(model => model.SearchOption_RelatedProjectName, new { htmlAttributes = new { @class = "form-control bgdisabled-color input-projectName" } })
+                                                            @Html.ValidationMessageFor(model => model.SearchOption_RelatedProjectName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            <label class="control-label">(D.)</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <label class="control-label">RERA Registration Number</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.EditorFor(model => model.SearchOption_RelatedRegistrationNumber, new { htmlAttributes = new { @class = "form-control bgdisabled-color" } })
+                                                            @Html.ValidationMessageFor(model => model.SearchOption_RelatedRegistrationNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-lg-12 text-right">
+                                                <button type="button" id="searchOrder" class="btn btn-primary"><i class="fa fa-search-plus"></i> Search</button>
+                                                <button type="button" id="cancelOrder" class="btn btn-primary"><i class="fa fa-refresh"></i> Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr />
+                                    <div class="row" id="rowSearchRecordsA" style="display:none;">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <div class="table-responsive">
+                                                    <table id="myTableReferencePromoter" class="table table-striped display" style="width:100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>S.No</th>
+                                                                <th>Diary Number</th>
+                                                                <th>Promoter Name</th>
+                                                                <th>District Name</th>
+                                                                <th>Registration Number</th>
+                                                                <th>View</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <!-- Data by jQuery -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" id="rowSearchRecordsB">
+                                        <div class="form-group">
+                                            <div class="col-md-12 disclaimer-text">
+                                                Disclaimer: Punjab RERA has provided this mapping/searching feature for your convenience only. While every effort has been made to ensure the accuracy and reliability of the information on the Punjab RERA web-portal. Users are advised to verify any information before making decisions based on the search results. Punjab RERA shall not be held liable for any errors, omissions, or actions taken based on the use of this feature from the Authority's website.
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

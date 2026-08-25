@@ -1,0 +1,830 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_FileRearrangementAgentDocumentDetails
+
+<!--file upload Content-->
+<script src="@Url.Content("~/Scripts/jquery.form.js")"></script>
+<link href="@Url.Content("~/css/jquery-ui-fileupload.css")" rel="stylesheet" />
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/dist/css/rera-toggleshow.css")" rel="stylesheet" />
+<!-- DataTables JavaScript -->
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+<!-- Custom Theme JavaScript -->
+<script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        var getUrlCPvalue;        
+
+        @if (TempData["returnUrlCPvalue"].ToString() != "")
+        {
+            <text>
+                getUrlCPvalue = '@TempData["returnUrlCPvalue"]';
+            </text>
+        }
+
+        $(document).on('click', 'a.controlpanelHomeButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + getUrlCPvalue;
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>File Rearragement System</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Search Real-estate Agent document details with reference to Diary Number/ Registration Number/ RERA Number.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> IT Manager can intialize the file rearrangement application details.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+
+    .border-left-danger {
+        border-left: .15rem solid #FF4961 !important;
+    }
+
+    .border-left-warning {
+        border-left: .25rem solid #f6c23e !important;
+    }
+
+    .bg-exclamation-triangle-warning {
+        color: #FF4961 !important;
+        display: inline-block !important;
+    }
+
+    .bg-exclamation-triangle-none {
+        display: none !important;
+    }
+
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+
+    .bg-plus-square-glow-show {
+        color: green;
+    }
+
+    a.add-upload-disabled:hover {
+        cursor: not-allowed;
+    }
+
+    .progress {
+        position: relative;
+        width: 400px;
+        border: 1px solid #ddd;
+        padding: 1px;
+    }
+
+    .progress-bar {
+        width: 0px;
+        height: 20px;
+        background-color: #57be65;
+    }
+
+    .pending-list-documents {
+        max-height: 360px;
+        overflow-y: scroll;
+    }
+
+    .pending-list-documents::-webkit-scrollbar {
+        width: 3px;
+    }
+ 
+    .pending-list-documents::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+ 
+    .pending-list-documents::-webkit-scrollbar-thumb {
+      background-color: darkgrey;
+      outline: 1px solid slategrey;
+    }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $("#RERAnumberRegistration_Input").inputmask({ mask: function () { return ["AAAAAA-AAA99-AAA9999"]; } });
+        $("#AgentDiaryNumber_Input").inputmask({ mask: function () { return ["AAA99999999"]; } });
+
+        $('#RERAnumberIssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#RERAnumberRegUptoDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        $('#AgentDoc_IssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+	});
+</script>
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        var vchecksearchtypevaluedatemode = $("input[name='Application_SearchTypeFlag']:checked").val();
+        if (vchecksearchtypevaluedatemode == '21') {
+            $("#rowRegistrationFilter").addClass("show").removeClass("hide");
+            $("#rowDiaryFilter").addClass("hide").removeClass("show");
+        }
+        else if (vchecksearchtypevaluedatemode == '22') {
+            $("#rowRegistrationFilter").addClass("hide").removeClass("show");
+            $("#rowDiaryFilter").addClass("show").removeClass("hide");
+        };
+
+        $(document).on('click', '.radio-applicationformvalue', function (e) {
+            if (this.value == '21') {
+                $("#rowRegistrationFilter").addClass("show").removeClass("hide");
+                $("#rowDiaryFilter").addClass("hide").removeClass("show");
+            }
+            else if (this.value == '22') {
+                $("#rowRegistrationFilter").addClass("hide").removeClass("show");
+                $("#rowDiaryFilter").addClass("show").removeClass("hide");
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(".submit-agentdoc-options").click(function (e) {
+            e.preventDefault();
+            var isAllValid = false;
+            var vartyperegistrationmode = $("input[name='Application_SearchTypeFlag']:checked").val();
+            if (vartyperegistrationmode == '21') {
+                if ($('#RERAnumberRegistration_Input').val() != '') {
+                    var xpRelated_RegistrationNumber = $("#RERAnumberRegistration_Input").val();
+                    var n = xpRelated_RegistrationNumber.length;
+
+                    if (parseInt(n) >= parseInt(20)) {
+                        isAllValid = true;
+                    }
+                    else {
+                        alert('Invalid! Registration Number.');
+                        isAllValid = false;
+                    }
+                }
+                else {
+                    alert('The mandatory (*) fields are required.');
+                    isAllValid = false;
+                }
+            }
+            else if (vartyperegistrationmode == '22') {
+                if ($('#AgentDiaryNumber_Input').val() != '') {
+                    var xpRelated_DiaryNumber = $("#AgentDiaryNumber_Input").val();
+                    var n = xpRelated_DiaryNumber.length;
+
+                    if (parseInt(n) >= parseInt(11)) {
+                        isAllValid = true;
+                    }
+                    else {
+                        alert('Invalid! Diary Number.');
+                        isAllValid = false;
+                    }
+                }
+                else {
+                    alert('The mandatory (*) fields are required.');
+                    isAllValid = false;
+                }
+            };            
+
+            if (isAllValid) {
+                var pRelated_typeregistrationmode = $("input[name='Application_SearchTypeFlag']:checked").val();
+                var pRelated_ReferenceNumber = '0';
+                if (pRelated_typeregistrationmode == '21') {                    
+                    pRelated_ReferenceNumber = $("#RERAnumberRegistration_Input").val();
+                }
+                else if (vartyperegistrationmode == '22') {                    
+                    pRelated_ReferenceNumber = $("#AgentDiaryNumber_Input").val();
+                };
+
+                Date.prototype.toShortFormat = function () {
+                    let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    let day = this.getDate();
+                    let day1 = (day < 10 ? '0' : '') + day;
+                    let monthIndex = this.getMonth();
+                    let monthName = monthNames[monthIndex];
+                    let year = this.getFullYear();
+                    return `${day1}-${monthName}-${year}`;
+                };
+
+                var BASE_URLn = $('body').attr('data-base-url');
+                $.ajax({
+                    type: "POST",
+                    url: BASE_URLn + 'HelpdeskControlPanel/GetExistingAgentDocumentFileRearrangementByID',
+                    datatype: "Json",
+                    data: { "mRegFlag": pRelated_typeregistrationmode, "mRefNumber": pRelated_ReferenceNumber },
+                    beforeSend: function () {
+                        startPreloader();
+                    },
+                    success: function (data) {
+                        stopPreloader();
+                        if (data) {
+                            if (data.status == true) {
+                                $("#dnoFileReArrangement").addClass('show').removeClass('hide');
+                                $("#showFileReArrangement").css("display", "block");
+                                $("#showFileInfo").css("display", "none");
+                                $("#submitFileInfo").addClass('show').removeClass('hide');
+
+                                $.each(data, function () {
+                                    $(this).each(function () {
+                                        $('#Agent_ID').val(this.Agent_ID);
+                                        $('#AgentRenewal_ID').val(this.AgentRenewal_ID);
+                                        $('#RERA_RegistrationNumber').val(this.RERA_RegistrationNumber);
+                                        $('#Agent_DiaryNumber').val(this.Agent_DiaryNumber);
+                                        $('#Agent_Name').val(this.Agent_Name);
+                                        $('#Type_of_Agent').val(this.Type_of_Agent);
+                                        $('#AgentAddressDistrict').val(this.AgentAddressDistrict);
+                                        if (this.RERA_RegistrationNumber != 'NA') {
+                                            $("#rowRegdDateRow01").addClass('show').removeClass('hide');
+                                            var getIssueDate = String(this.RERAnumberIssueDate);
+                                            var getUptoDate = String(this.RERAnumberRegUptoDate);
+                                            var dateIssueDate = new Date(parseInt(getIssueDate.substr(6)));
+                                            var dateUptoDate = new Date(parseInt(getUptoDate.substr(6)));
+                                            $('#RERAnumberIssueDate').val(dateIssueDate.toShortFormat());
+                                            $('#RERAnumberRegUptoDate').val(dateUptoDate.toShortFormat());
+                                        }
+                                        else
+                                        {
+                                            $("#rowRegdDateRow01").addClass('hide').removeClass('show');
+                                        }
+                                    });
+                                });
+                            }
+                            else {
+                                alert('Invalid! Registration/Diary Number!');
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert("oops! Something went wrong")
+                    }
+                });
+            };
+        });
+
+        $("#RERAnumberRegistration_Input").change(function (e) {
+            e.preventDefault();
+            $("#dnoFileReArrangement").addClass('hide').removeClass('show');
+            $("#showFileReArrangement").css("display", "none");
+            $("#showFileInfo").css("display", "none");
+            $("#submitFileInfo").addClass('hide').removeClass('show');
+        });
+
+        $("#AgentDiaryNumber_Input").change(function (e) {
+            e.preventDefault();
+            $("#dnoFileReArrangement").addClass('hide').removeClass('show');
+            $("#showFileReArrangement").css("display", "none");
+            $("#showFileInfo").css("display", "none");
+            $("#submitFileInfo").addClass('hide').removeClass('show');
+        });
+
+        $(".radio-applicationformvalue").change(function (e) {
+            e.preventDefault();
+            $("#dnoFileReArrangement").addClass('hide').removeClass('show');
+            $("#showFileReArrangement").css("display", "none");
+            $("#showFileInfo").css("display", "none");
+            $("#submitFileInfo").addClass('hide').removeClass('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    @if (TempData["MessageAgentDocReAgntAdd"].ToString() != "")
+    {
+        <text >
+            $(document).ready(function () {
+                swal({
+                    title: "Message",
+                    text: "@TempData["MessageAgentDocReAgntAdd"]",
+                    type: "success"
+                });
+            });
+        </text>
+    }
+</script>
+
+<script>
+    function singleFileSelected() {
+        var baseUrl = $('body').attr('data-base-url');
+        $(".InfoContainer").fadeIn();
+        var selectedFile = ($("#UploadedFile"))[0].files[0];
+        if (selectedFile) {
+            var FileSize = 0;
+            var imageType = /image.*/;
+            if (selectedFile.size > 1048576) {
+                FileSize = Math.round(selectedFile.size * 100 / 1048576) / 100 + " MB";
+            }
+            else if (selectedFile.size > 1024) {
+                FileSize = Math.round(selectedFile.size * 100 / 1024) / 100 + " KB";
+            }
+            else {
+                FileSize = selectedFile.size + " Bytes";
+            }
+            // here we will add the code of thumbnail preview of upload images
+
+            $("#showFileInfoGrid").show();
+            $("#FileName").text("Name : " + selectedFile.name);
+            $("#FileType").text("Type : " + selectedFile.type);
+            $("#FileSize").text("Size : " + FileSize);
+
+            $("#showSaveFileUploadMessage").hide();
+
+            if (selectedFile.type.match(imageType)) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = reader.result;
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "100";
+                    img.width = "100";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(100);
+                    $("#Imagecontainer").width(100);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+            if (selectedFile.type.match('application/pdf')) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = baseUrl + 'images/pdf.png';
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "35";
+                    img.width = "35";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(35);
+                    $("#Imagecontainer").width(35);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#frmRegisterMoreAgentDocs").submit(function (event) {
+            var form = $('#frmRegisterMoreAgentDocs')[0];
+            var baseUrl = $('body').attr('data-base-url');
+            var files = ($("#UploadedFile"))[0].files[0];
+
+            if (typeof files === 'undefined') {
+                $("#showSaveFileUploadMessage").show();
+                $("#saveFileUploadMessageName").text("Note : Please Add files... to Upload!");
+                return false;
+            }
+            if (files.size > 0) {
+                var formData = new FormData(form);
+                for (var i = 0; i < files.length; i++) {
+                    formData.append(files[i].name, files[i]);
+                }
+                var progressbarLabel = $('#progressBar-label');
+                var progressbarDiv = $('#progressbar');
+
+                $.ajax({
+                    url: baseUrl + 'HelpdeskControlPanel/AgentDocumentFileRearrangementAddUploads',
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        if (data.statusCode == 101) {
+                            progressbarLabel.text('COMPLETE');
+                            progressbarDiv.fadeOut(2000);
+                            $(".InfoContainer").fadeOut(2000);
+                            $("#showFileInfo").fadeOut(2500);
+                        }
+                        else {
+                            progressbarLabel.text('Bad Request! Upload Failed');
+                            progressbarDiv.fadeOut(2000);
+
+                            $("#showSaveFileUploadMessage").show();
+                            $("#saveFileUploadMessageName").text("Note : " + data.status);
+                        }
+                    },
+                    failure: function (data) {
+                        alert('Bad Request! Upload Failed');
+                    },
+                    error: function (err) {
+                        //alert(err.message);
+                        alert('Bad Request! Upload Failed');
+                        //alert(err.statusText);
+                    }
+                });
+
+                progressbarLabel.text('UPLOADING ...');
+                progressbarDiv.progressbar({
+                    value: false
+                }).fadeIn(500);
+
+                $("#showSaveFileUploadMessage").hide();
+            }
+            return false;
+        });
+
+        $('#AgentDoc_InfoCode').change(function () {
+            $("#showFileInfo").show();
+
+            var baseUrl = $('body').attr('data-base-url');
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "HelpdeskControlPanel/GetAgentDocumentMasterByDocId",
+                datatype: "Json",
+                data: { DocId: $('#AgentDoc_InfoCode').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#getDocFileInfo').show();
+                        $('#DocFileFormat').text("File Format : " + value.AgentDoc_SetFileFormat);
+
+                        var ofilesize = 0;
+                        if (value.AgentDoc_SetFileSize > 1048576) {
+                            ofilesize = Math.round(value.AgentDoc_SetFileSize * 100 / 1048576) / 100 + " MB";
+                        }
+                        else if (value.AgentDoc_SetFileSize > 1024) {
+                            ofilesize = Math.round(value.AgentDoc_SetFileSize * 100 / 1024) / 100 + " KB";
+                        }
+                        else {
+                            ofilesize = value.AgentDoc_SetFileSize + " Bytes";
+                        }
+
+                        $('#DocFileSize').text("File Size : " + ofilesize);
+                        if (value.IsMandatory == 1) {
+                            $('#DocFileMandatoryStatus').text("File Status : This document is mandatory file for agent registration/upload.");
+                        }
+                        else {
+                            $('#DocFileMandatoryStatus').text("File Status : This document is optional file to upload.");
+                        }
+                        $('#DocFileDiscription').text("Description : " + value.A_column);
+                    });
+                }
+            });
+
+            $('#AgentDoc_InfoName').empty();
+            $("input[name='AgentDoc_InfoName']").val($("#AgentDoc_InfoCode option:selected").text());
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Control Panel</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Control Panel : CP 8.5 File/Document Rearrangement Panel of Agent Applications/Registrations
+                    <span class="pull-right">
+                        <a href="@Url.Action("AgentDocumentFileRearrangementDetails", "HelpdeskControlPanel")" title="Add/Upload Document"><span class="btn btn-primary btn-xs"><i class="fa fa-upload" aria-hidden="true"></i></span></a>
+                        <a href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs disabledlockunlock"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>                        
+                        <a class="controlpanelHomeButton" href="javascript:void(0);" title="Home"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-home" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>                        
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">                            
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id = "frmAgentDocSearchOptions" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Search Options</legend>                                    
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Search By</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.Application_SearchTypeFlag, "21", new { id = "chkRegistrationNumber", @class = "radio-applicationformvalue", @checked = "checked" }) Registration Number
+                                                    @Html.RadioButtonFor(model => model.Application_SearchTypeFlag, "22", new { id = "chkDiaryNumber", @class = "radio-applicationformvalue" }) Diary Number
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.Application_SearchTypeFlag, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="rowRegistrationFilter">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Registration Number</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.RERAnumberRegistration_Input, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.RERAnumberRegistration_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-7">
+                                                <input type="Submit" id="ViewRegistrationFilter" value="Proceed" class="btn btn-outline btn-primary submit-agentdoc-options" />
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "AgentDocumentFileRearrangementDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row hide" id="rowDiaryFilter">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Diary Number</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.AgentDiaryNumber_Input, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.AgentDiaryNumber_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-7">
+                                                <input type="Submit" id="ViewDiaryFilter" value="Proceed" class="btn btn-outline btn-primary submit-agentdoc-options" />
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "AgentDocumentFileRearrangementDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            <div class="row">
+                                <br />
+                            </div>
+                            @using (Html.BeginForm("AgentDocumentFileRearrangementAddDetails", "HelpdeskControlPanel", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmRegisterMoreAgentDocs" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(m => m.Agent_ID)
+                                @Html.HiddenFor(m => m.AgentRenewal_ID)                                
+
+                                <div class="row hide" id="dnoFileReArrangement">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Reference/ Registration Number Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Agent_DiaryNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Reference Diary Number of Agent Application with the authority.">
+                                                            @Html.EditorFor(model => model.Agent_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Agent_DiaryNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RERA_RegistrationNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Reference RERA Registration Number of Agent with the authority.">
+                                                            @Html.EditorFor(model => model.RERA_RegistrationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RERA_RegistrationNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row hide" id="rowRegdDateRow01">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RERAnumberIssueDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAnumberIssueDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAnumberRegUptoDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Agent_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Real-estate Agent Name registered with the Authority.">
+                                                            @Html.EditorFor(model => model.Agent_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Agent_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Type_of_Agent, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Type of Real-estate Agent registered with the Authority.">
+                                                            @Html.EditorFor(model => model.Type_of_Agent, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Type_of_Agent, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AgentAddressDistrict, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        @if (Model.prpdistrictMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.AgentAddressDistrict, new SelectList(Model.prpdistrictMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.AgentAddressDistrict, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.AgentAddressDistrict, new SelectList(" "), "Select District", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.AgentAddressDistrict, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="showFileReArrangement" style="display:none;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Agent Document/Approval(s) Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(m => m.AgentDoc_InfoCode, htmlAttributes: new { @class = "control-label mand" })
+                                                            @Html.HiddenFor(model => model.AgentDoc_InfoName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.AgentDoc_InfoCode, new SelectList(Model.prpMasterDocs, "AgentDocMaster_InfoCode", "AgentDocMaster_InfoName"), "Select Document", new { @class = "form-control" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="getDocFileInfo" style="display:none">
+                                                    <div class="help-block col-md-offset-3 col-md-9">
+                                                        <div id="DocFileDiscription" class="info"></div>
+                                                        <div id="DocFileFormat" class="info"></div>
+                                                        <div id="DocFileSize" class="info"></div>
+                                                        <div id="DocFileGroupSize" class="info"></div>
+                                                        <div id="DocFileMandatoryStatus" class="info"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(m => m.AgentDoc_ReferenceNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(m => m.AgentDoc_ReferenceNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Number", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(m => m.AgentDoc_ReferenceNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(m => m.AgentDoc_IssueDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(m => m.AgentDoc_IssueDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Date", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(m => m.AgentDoc_IssueDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(m => m.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(m => m.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(m => m.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="showFileInfo" style="display:none;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Upload Agent Document/Approval(s)</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3"></div>
+                                                        <div class="col-md-9" id="FormContent">
+                                                            <span class="btn btn-success fileinput-button">
+                                                                <i class="glyphicon glyphicon-plus"></i>
+                                                                <span>Add files...</span>
+                                                                <input type="file" name="UploadedFile" id="UploadedFile" onchange="singleFileSelected()" />
+                                                            </span>
+                                                            @if (Convert.ToString(Model.RoleAccessFlag) == "PR" || Convert.ToString(Model.RoleAccessFlag) == "SA")
+                                                            {
+                                                                <button class="btn btn-outline btn-primary" type="submit" value="submit" id="Submit_btn">
+                                                                    <i class="glyphicon glyphicon-upload"></i>
+                                                                    <span>Start upload</span>
+                                                                </button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="Start upload" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                            }                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="showFileInfoGrid" style="display:none">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3"></div>
+                                                        <div class="col-md-9">
+                                                            <div class="InfoContainer">
+                                                                <div id="Imagecontainer" style="height:100px;width:100px"></div>
+                                                                <div id="FileName" class="info"></div>
+                                                                <div id="FileType" class="info"></div>
+                                                                <div id="FileSize" class="info"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3"></div>
+                                                        <div class="col-md-8">
+                                                            <div id="progressbar" style="position: relative; display: none">
+                                                                <span style="position: absolute; left: 35%; top: 20%" id="progressBar-label">
+                                                                    UPLOADING ...
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="showSaveFileUploadMessage" style="display: none">
+                                                    <div class="form-group">
+                                                        <div class="col-md-offset-3 col-md-8 alert alert-warning">
+                                                            <div id="saveFileUploadMessageName" class="info">HH</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide" id="submitFileInfo">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.ActionLink("Back To List", "AgentDocumentFileRearrangementDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "AgentDocumentFileRearrangementAddDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}

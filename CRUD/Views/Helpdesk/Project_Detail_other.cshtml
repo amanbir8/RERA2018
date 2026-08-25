@@ -1,0 +1,775 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_Helpdesk
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Project_Detail_other</title>
+</head>
+<body>
+    <div class="form-horizontal col-md-10" style="position:relative;margin-left:5%;">
+        
+        
+@foreach (var item in Model.List_Project)
+{
+    <center><h2 style="color:maroon">PROJECT DETAILS</h2><hr /></center>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Authorized Person Mobile Number</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_MobileNumber.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">IsProForma AOS RERA format Annexure A</div>
+            <div class="col-md-3">@Html.Label(item.IsProForma_AOS_RERAformat_AnnexureA, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+
+        <h4 style="color:maroon">Project Name and Address</h4><hr />
+    
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Registration ID</div>
+                <div class="col-md-3">@Html.Label(item.ProjectRegistration_ID.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Project Name</div>
+                <div class="col-md-3">@Html.Label(item.Project_Name, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Address</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Address Line 1</div>
+                <div class="col-md-3">@Html.Label(item.Project_AddressLine1, htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Project Address Line 2</div>
+                <div class="col-md-3">@Html.Label(item.Project_AddressLine2, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">State Code</div>
+                <div class="col-md-3">@Html.Label(item.Project_AddressStateCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">District Code</div>
+                <div class="col-md-3">@Html.Label(item.Project_AddressDistrictCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Sub Division Code</div>
+                <div class="col-md-3">@Html.Label(item.Project_AddressSubDivisionCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">PIN Code</div>
+                <div class="col-md-3">@Html.Label(item.Project_AddressPIN, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Project Potential Zone Code</div>
+                <div class="col-md-3">@Html.Label(item.Project_PotentialZoneCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Website</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Project Website</div>
+                <div class="col-md-3">@Html.Label(item.ProjectWebsite_WebLink, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Communication Details of Authorised Person</h4>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Authorized Person FirstName</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_FirstName, htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Authorized Person MiddleName</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_MiddleName, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Authorized Person LastName</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_LastName, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Address</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Authorized Person Address Line1</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressLine1, htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Address Line2</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressLine2, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">State Code</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressStateCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">District Code</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressDistrictCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">PIN Code</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressPIN, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <h4 style="color:maroon">Email and Phone no.</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Authorized Person Email Address</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_EmailAddress, htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Authorized Person Mobile Number</div>
+                <div class="col-md-3">@Html.Label(item.AuthorizedPerson_MobileNumber.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Project Amenities</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Project Amenities</div>
+                <div class="col-md-9">@Html.Label(item.Project_Amenities, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Project Specifications</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Proposed Structure</div>
+                <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_Structure, htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Proposed Flooring</div>
+                <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_Flooring, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Proposed Wall Finishing</div>
+                <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_WallFinishing, htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Proposed Sanitary Fittings</div>
+                <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_SanitaryFittings, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Proposed Electrical Fittings</div>
+                <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_ElectricalFittings, htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Proposed Project Detail Kitchen</div>
+                <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_Kitchen, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Is Proposed Project Detail Others If Any</div>
+                <div class="col-md-3">@Html.Label(item.IsProposedProjectDetail_OthersIfAny, htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Proposed Project Detail Others If Any Name</div>
+                <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_OthersIfAnyName, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Proposed Project Detail Others If Any</div>
+                <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_OthersIfAny, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Project Facts</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Project Status</div>
+                <div class="col-md-3">@Html.Label(item.Project_Status, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Project Start Date</div>
+                <div class="col-md-3">@Html.Label(item.ProjectStart_Date.Value.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Project Completion Proposed Date</div>
+                <div class="col-md-3">@Html.Label(item.ProjectCompletion_ProposedDate.Value.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Project Completion Original Date</div>
+                <div class="col-md-3">@Html.Label(item.ProjectCompletion_OriginalDate.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                <div class="col-md-3">Project Registration Provided Duration</div>
+                <div class="col-md-3">@Html.Label(item.ProjectRegistrationProvided_Duration, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Project Delay Reason IfAny</div>
+                <div class="col-md-3">@Html.Label(item.ProjectDelayReason_IfAny, htmlAttributes: new { @class = "control-label" }) </div>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Registration Fee</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <table class="table">
+                    <tr>
+                        <th>Title Name</th>
+                        <th>Registration Fee</th>
+                        <th>Other Fee</th>
+                        <th>Payment Mode</th>
+                        <th>Bank Charges</th>
+                        <th>Bank Name</th>
+                        <th>DD/Cheque Amount</th>
+                        <th>Path</th>
+                    </tr>
+
+                    @foreach (var itemP in Model.List_Project_Payment)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => itemP.ProjectPayment_TitleName)</td>
+                            <td>@Html.DisplayFor(modelItem => itemP.Registration_Fee)</td>
+                            <td>@Html.DisplayFor(modelItem => itemP.Other_Fee)</td>
+                            <td>@Html.DisplayFor(modelItem => itemP.Payment_Mode)</td>
+                            <td>@Html.DisplayFor(modelItem => itemP.Bank_Charges)</td>
+                            <td>@Html.DisplayFor(modelItem => itemP.Bank_Name)</td>
+                            <td>@Html.DisplayFor(modelItem => itemP.DD_BankersCheque_Amount)</td>
+                            <td>@Html.DisplayFor(modelItem => itemP.ImageDDorBankersCheque_FilePath)</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Plan for Development works in the project</h4>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">Detail Plan for Development works in the project</div>
+                <div class="col-md-9"></div>
+            </div>
+        </div>
+
+
+        <h4 style="color:maroon">Litigation Details</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <table class="table">
+                    <tr>
+                        <th>Case_Title</th>
+                        <th>Case_Number</th>
+                        <th>Name of Authority/Forum</th>
+                    </tr>
+
+                    @foreach (var items in Model.List_Project_Litigations)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => items.Case_Title)</td>
+                            <td>@Html.DisplayFor(modelItem => items.Case_Number)</td>
+                            <td>@Html.DisplayFor(modelItem => items.AuthorityForumName_CasePendingResolved)</td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+
+        <h4 style="color:maroon">Document to be signed with allotted</h4><hr />
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">a) Proforma agreement for sale as prescribed in the rules</div>
+                <div class="col-md-3">@Html.Label(item.IsProForma_AOS_RERAformat_AnnexureA, htmlAttributes: new { @class = "control-label" })</div>
+                <div class="col-md-3">b) Proforma of allotment Letter</div>
+                <div class="col-md-3"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+
+                <div class="col-md-3">c) Proforma for Conveyance deed</div>
+                <div class="col-md-3"></div>
+            </div>
+        </div>
+}
+
+
+    </div>
+</body>
+</html>
+
+
+@*<div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Is Litigation Related Project</div>
+            <div class="col-md-3">@Html.Label(item.IsLitigation_RelatedProject, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Remarks If Any</div>
+            <div class="col-md-3">@Html.Label(item.Remarks_IfAny, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Index ID</div>
+            <div class="col-md-3">@Html.Label(item.ProjectRegistration_IndexID.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Registration ID</div>
+            <div class="col-md-3">@Html.Label(item.ProjectRegistration_ID.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Project Name</div>
+            <div class="col-md-3">@Html.Label(item.Project_Name, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Project Amenities</div>
+            <div class="col-md-3">@Html.Label(item.Project_Amenities, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">IsAlready RERA Number</div>
+            <div class="col-md-3">@Html.Label(item.IsAlready_RERANumber, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Existing RERANumber</div>
+            <div class="col-md-3">@Html.Label(item.Existing_RERANumber, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Proposed Structure</div>
+            <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_Structure, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Proposed Flooring</div>
+            <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_Flooring, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Proposed Wall Finishing</div>
+            <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_WallFinishing, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Proposed Sanitary Fittings</div>
+            <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_SanitaryFittings, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Proposed Electrical Fittings</div>
+            <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_ElectricalFittings, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Proposed Project Detail Kitchen</div>
+            <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_Kitchen, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Is Proposed Project Detail Others If Any</div>
+            <div class="col-md-3">@Html.Label(item.IsProposedProjectDetail_OthersIfAny, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Proposed Project Detail Others If Any Name</div>
+            <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_OthersIfAnyName, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Proposed Project Detail Others If Any</div>
+            <div class="col-md-3">@Html.Label(item.ProposedProjectDetail_OthersIfAny, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Project Status</div>
+            <div class="col-md-3">@Html.Label(item.Project_Status, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Project Start Date</div>
+            <div class="col-md-3">@Html.Label(item.ProjectStart_Date.ToShortDateString(), htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Project Completion Proposed Date</div>
+            <div class="col-md-3">@Html.Label(item.ProjectCompletion_ProposedDate.ToShortDateString(), htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Project Completion Original Date</div>
+            <div class="col-md-3">@Html.Label(item.ProjectCompletion_OriginalDate.ToShortDateString(), htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Project Registration Provided Duration</div>
+            <div class="col-md-3">@Html.Label(item.ProjectRegistrationProvided_Duration, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Project Delay Reason IfAny</div>
+            <div class="col-md-3">@Html.Label(item.ProjectDelayReason_IfAny, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Address Line 1</div>
+            <div class="col-md-3">@Html.Label(item.Project_AddressLine1, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Project Address Line 2</div>
+            <div class="col-md-3">@Html.Label(item.Project_AddressLine2, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">State Code</div>
+            <div class="col-md-3">@Html.Label(item.Project_AddressStateCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">District Code</div>
+            <div class="col-md-3">@Html.Label(item.Project_AddressDistrictCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Sub Division Code</div>
+            <div class="col-md-3">@Html.Label(item.Project_AddressSubDivisionCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">PIN Code</div>
+            <div class="col-md-3">@Html.Label(item.Project_AddressPIN, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Project Potential Zone Code</div>
+            <div class="col-md-3">@Html.Label(item.Project_PotentialZoneCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Project Website</div>
+            <div class="col-md-3">@Html.Label(item.ProjectWebsite_WebLink, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Authorized Person FirstName</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_FirstName, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Authorized Person MiddleName</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_MiddleName, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Authorized Person LastName</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_LastName, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Authorized Person Address Line1</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressLine1, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Address Line2</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressLine2, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">State Code</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressStateCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">District Code</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressDistrictCode.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">PIN Code</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_AddressPIN, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Authorized Person Email Address</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_EmailAddress, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Authorized Person Mobile Number</div>
+            <div class="col-md-3">@Html.Label(item.AuthorizedPerson_MobileNumber.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">IsProForma AOS RERA format Annexure A</div>
+            <div class="col-md-3">@Html.Label(item.IsProForma_AOS_RERAformat_AnnexureA, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Is ProForma AOS RERA format No Is Approved</div>
+            <div class="col-md-3">@Html.Label(item.IsProForma_AOS_RERAformat_No_IsApproved, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">IsProject Mega Project Category</div>
+            <div class="col-md-3">@Html.Label(item.IsProject_MegaProjectCategory, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">Is Litigation Related Project</div>
+            <div class="col-md-3">@Html.Label(item.IsLitigation_RelatedProject, htmlAttributes: new { @class = "control-label" }) </div>
+            <div class="col-md-3">Remarks If Any</div>
+            <div class="col-md-3">@Html.Label(item.Remarks_IfAny, htmlAttributes: new { @class = "control-label" }) </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group">
+            <div class="col-md-3">@Html.Label(item.ModifyOn, htmlAttributes: new { @class = "control-label" }) </div> <div class="col-md-3">@Html.DisplayFor(model => model.List_Project.ModifyOn)</div>
+                <div class="col-md-3">@Html.Label(item.Promoter_ID, htmlAttributes: new { @class = "control-label" }) </div> <div class="col-md-3">@Html.DisplayFor(model => model.List_Project.Promoter_ID)</div>
+
+                <div class="col-md-3">@Html.Label(item.Used_ID, htmlAttributes: new { @class = "control-label" }) </div> <div class="col-md-3">@Html.DisplayFor(model => model.List_Project.Used_ID)</div>
+        </div>
+    </div>
+
+
+
+
+
+            <table class="table">
+            <tr>
+                <th>
+                   ProjectRegistration_IndexID
+                </th>
+                <th>
+                   ProjectRegistration_ID
+                </th>
+                <th>
+                   Project_Name
+                </th>
+                <th>
+                   Project_Amenities
+                </th>
+                <th>
+                   IsAlready_RERANumber
+                </th>
+                <th>
+                   Existing_RERANumber
+                </th>
+                <th>
+                   ProposedProjectDetail_Structure
+                </th>
+                <th>
+                   ProposedProjectDetail_Flooring
+                </th>
+                <th>
+                   ProposedProjectDetail_WallFinishing
+                </th>
+                <th>
+                   ProposedProjectDetail_SanitaryFittings
+                </th>
+                <th>
+                   ProposedProjectDetail_ElectricalFittings
+                </th>
+                <th>
+                   ProposedProjectDetail_Kitchen
+                </th>
+                <th>
+                   IsProposedProjectDetail_OthersIfAny
+                </th>
+                <th>
+                   ProposedProjectDetail_OthersIfAnyName
+                </th>
+                <th>
+                   ProposedProjectDetail_OthersIfAny
+                </th>
+                <th>
+                   Project_Status
+                </th>
+                <th>
+                   ProjectStart_Date
+                </th>
+                <th>
+                   ProjectCompletion_ProposedDate
+                </th>
+                <th>
+                   ProjectCompletion_OriginalDate
+                </th>
+                <th>
+                   ProjectRegistrationProvided_Duration
+                </th>
+                <th>
+                   ProjectDelayReason_IfAny
+                </th>
+                <th>
+                   Project_AddressLine1
+                </th>
+                <th>
+                   Project_AddressLine2
+                </th>
+                <th>
+                   Project_AddressStateCode
+                </th>
+                <th>
+                   Project_AddressDistrictCode
+                </th>
+                <th>
+                   Project_AddressSubDivisionCode
+                </th>
+                <th>
+                   Project_AddressPIN
+                </th>
+                <th>
+                   Project_PotentialZoneCode
+                </th>
+                <th>
+                   ProjectWebsite_WebLink
+                </th>
+                <th>
+                   AuthorizedPerson_FirstName
+                </th>
+                <th>
+                   AuthorizedPerson_MiddleName
+                </th>
+                <th>
+                   AuthorizedPerson_LastName
+                </th>
+                <th>
+                   AuthorizedPerson_AddressLine1
+                </th>
+                <th>
+                   AuthorizedPerson_AddressLine2
+                </th>
+                <th>
+                   AuthorizedPerson_AddressStateCode
+                </th>
+                <th>
+                   AuthorizedPerson_AddressDistrictCode
+                </th>
+                <th>
+                   AuthorizedPerson_AddressPIN
+                </th>
+                <th>
+                   AuthorizedPerson_EmailAddress
+                </th>
+                <th>
+                   AuthorizedPerson_MobileNumber
+                </th>
+                <th>
+                   IsProForma_AOS_RERAformat_AnnexureA
+                </th>
+                <th>
+                   IsProForma_AOS_RERAformat_No_IsApproved
+                </th>
+                <th>
+                   IsProject_MegaProjectCategory
+                </th>
+                <th>
+                   IsLitigation_RelatedProject
+                </th>
+                <th>
+                   Remarks_IfAny
+                </th>
+
+            </tr>
+
+            @foreach (var item in Model.List_Project)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectRegistration_IndexID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectRegistration_ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_Amenities)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsAlready_RERANumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Existing_RERANumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProposedProjectDetail_Structure)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProposedProjectDetail_Flooring)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProposedProjectDetail_WallFinishing)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProposedProjectDetail_SanitaryFittings)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProposedProjectDetail_ElectricalFittings)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProposedProjectDetail_Kitchen)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsProposedProjectDetail_OthersIfAny)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProposedProjectDetail_OthersIfAnyName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProposedProjectDetail_OthersIfAny)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_Status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectStart_Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectCompletion_ProposedDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectCompletion_OriginalDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectRegistrationProvided_Duration)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectDelayReason_IfAny)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_AddressLine1)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_AddressLine2)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_AddressStateCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_AddressDistrictCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_AddressSubDivisionCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_AddressPIN)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project_PotentialZoneCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProjectWebsite_WebLink)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_MiddleName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_AddressLine1)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_AddressLine2)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_AddressStateCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_AddressDistrictCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_AddressPIN)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_EmailAddress)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AuthorizedPerson_MobileNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsProForma_AOS_RERAformat_AnnexureA)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsProForma_AOS_RERAformat_No_IsApproved)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsProject_MegaProjectCategory)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsLitigation_RelatedProject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                    </td>
+                </tr>
+            }
+
+        </table>
+*@

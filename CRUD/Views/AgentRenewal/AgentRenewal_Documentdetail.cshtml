@@ -1,0 +1,723 @@
+﻿@model CRUD.Models.AgentRenewal.Clsprp_AgentRenewal_Documents
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<!--file upload Content-->
+<script src="@Url.Content("~/Scripts/jquery.form.js")"></script>
+<link href="@Url.Content("~/css/jquery-ui-fileupload.css")" rel="stylesheet" />
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<script>
+    $(function () {
+        $('[data-spzoom]').spzoom();
+        $('[data-toggle="tooltip"]').tooltip();        
+
+        $('table#renewal-agent-documents-list').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [4, 5]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    
+        $('#AgentDoc_IssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#RenewalAgentFormUpload").submit(function (event) {
+            var form = $('#RenewalAgentFormUpload')[0];
+                var baseUrl = $('body').attr('data-base-url');
+                var files = ($("#UploadedFile"))[0].files[0];
+
+                if (typeof files === 'undefined') {
+                    $("#showSaveFileUploadMessage").show();
+                    $("#saveFileUploadMessageName").text("Note : Please Add files... to Upload!");
+                    return false;
+                }
+
+                if (files.size > 0) {
+                    var formData = new FormData(form);
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append(files[i].name, files[i]);
+                    }
+                    var progressbarLabel = $('#progressBar-label');
+                    var progressbarDiv = $('#progressbar');
+                    $.ajax({
+                        url: baseUrl + 'AgentRenewalDocument/AgentRenewal_FormUpload',
+                        method: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            if (data.statusCode == 101)
+                            {
+                                progressbarLabel.text('COMPLETE');
+                                progressbarDiv.fadeOut(2000);
+                                $(".InfoContainer").fadeOut(2000);
+                                $("#showFileInfo").fadeOut(2500);
+                            }
+                            else
+                            {
+                                progressbarLabel.text('Bad Request! Upload Failed');
+                                progressbarDiv.fadeOut(2000);
+                                $("#showSaveFileUploadMessage").show();
+                                $("#saveFileUploadMessageName").text("Note : " + data.status);
+                            }
+                        },
+                        failure: function(data) {
+                            alert('Bad Request! Upload Failed');
+                        },
+                        error: function (err) {
+                            alert('Bad Request! Upload Failed');
+                        }
+                    });
+
+                    progressbarLabel.text('UPLOADING ...');
+                    progressbarDiv.progressbar({
+                        value: false
+                    }).fadeIn(500);
+                    $("#showSaveFileUploadMessage").hide();
+                }
+                return false;
+        });
+
+        $("#AgentDoc_InfoCode").change(function () {
+            $("#showFileInfo").show();
+        });
+
+        $('#AgentDoc_InfoCode').change(function () {
+            var baseUrl = $('body').attr('data-base-url');
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "AgentRenewalDocument/GetAgentDocumentMasterByDocId",
+                datatype: "Json",
+                data: { DocId: $('#AgentDoc_InfoCode').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#getDocFileInfo').show();
+                        $('#DocFileFormat').text("File Format : " + value.AgentDoc_SetFileFormat);
+                        var ofilesize = 0;
+                        if (value.AgentDoc_SetFileSize > 1048576) {
+                            ofilesize = Math.round(value.AgentDoc_SetFileSize * 100 / 1048576) / 100 + " MB";
+                        }
+                        else if (value.AgentDoc_SetFileSize > 1024) {
+                            ofilesize = Math.round(value.AgentDoc_SetFileSize * 100 / 1024) / 100 + " KB";
+                        }
+                        else {
+                            ofilesize = value.AgentDoc_SetFileSize + " Bytes";
+                        }
+
+                        $('#DocFileSize').text("File Size : " + ofilesize);
+                        if (value.IsMandatory == 1)
+                        {
+                            $('#DocFileMandatoryStatus').text("File Status : This document is mandatory file for renewal of registration/upload.");
+                        }
+                        else
+                        {
+                            $('#DocFileMandatoryStatus').text("File Status : This document is optional file to upload.");
+                        }
+                        $('#DocFileDiscription').text("Description : " + value.A_column);
+                    });
+                }
+            });
+        });
+
+        $('#AgentDoc_InfoCode').change(function () {
+            $('#AgentDoc_InfoName').empty();
+            $("input[name='AgentDoc_InfoName']").val($("#AgentDoc_InfoCode option:selected").text());
+        });
+    });
+</script>
+<script>
+    function singleFileSelected() {
+        //var selectedFile = evt.target.files can use this  or select input file element
+        //and access it's files object
+        //debugger;
+        var baseUrl = $('body').attr('data-base-url');
+        $(".InfoContainer").fadeIn();
+        var selectedFile = ($("#UploadedFile"))[0].files[0];//FileControl.files[0];
+        if (selectedFile) {
+            var FileSize = 0;
+            var imageType = /image.*/;
+            if (selectedFile.size > 1048576) {
+                FileSize = Math.round(selectedFile.size * 100 / 1048576) / 100 + " MB";
+            }
+            else if (selectedFile.size > 1024) {
+                FileSize = Math.round(selectedFile.size * 100 / 1024) / 100 + " KB";
+            }
+            else {
+                FileSize = selectedFile.size + " Bytes";
+            }
+            // here we will add the code of thumbnail preview of upload images
+
+            $("#showFileInfoGrid").show();
+            $("#FileName").text("Name : " + selectedFile.name);
+            $("#FileType").text("Type : " + selectedFile.type);
+            $("#FileSize").text("Size : " + FileSize);
+
+            $("#showSaveFileUploadMessage").hide();
+
+
+            if (selectedFile.type.match(imageType)) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = reader.result;
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "100";
+                    img.width = "100";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(100);
+                    $("#Imagecontainer").width(100);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+            if (selectedFile.type.match('application/pdf')) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = baseUrl + 'images/pdf.png';
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "35";
+                    img.width = "35";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(35);
+                    $("#Imagecontainer").width(35);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .quborder-info {
+        border-color: #00cfd5 !important;
+        /*padding: 1rem !important;*/
+        /*margin-bottom: 1rem !important;*/
+        /*border: 1px solid #e3e6ec !important;*/
+        /*background-color: #eff3f9 !important;*/
+    }
+
+    .quborder-disabled {
+        background-color: #eff3f9 !important;
+        cursor: not-allowed;
+    }
+
+    .qulinkaction-icon {
+        position: relative;
+    }
+
+        .qulinkaction-icon:before {
+            content: "\f040";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;
+        }
+
+    .qulinkaction-lock {
+        position: relative;
+    }
+
+        .qulinkaction-lock:before {
+            content: "\f09c";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;
+        }
+
+    .qulinkaction-trash {
+        position: relative;
+    }
+
+        .qulinkaction-trash:before {
+            content: "\f1f8";
+            font-family: FontAwesome;
+            position: absolute;
+            margin-left: 1.5em;
+        }
+
+    .display-btnlock {
+        display: none;
+        width: auto;
+    }
+
+    .display-btnunlock {
+        display: block;
+        width: auto;
+    }
+</style>
+<style>
+    .progress {
+        position: relative;
+        width: 400px;
+        border: 1px solid #ddd;
+        padding: 1px;
+    }
+
+    .progress-bar {
+        width: 0px;
+        height: 20px;
+        background-color: #57be65;
+    }
+
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var displayBASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a#modalRegistrationStatusOpenerButton', function (e) {
+            e.preventDefault();
+            var RenewalAgentDetailsModal = $(document).find('#myModal');
+            $(RenewalAgentDetailsModal).find('.modal-body').html('');
+            var qagentid = $('#RefAgentID').val();
+            var ptypeagent = $('#RefAgentType').val();
+            var prenewalagentid = $('#RefRenewalAgentID').val();
+            var prenewalagentseq = $('#RefRenewalOrderSequence').val();
+            var prenewalagentyr = $('#RefRenewalAgentYear').val();
+            var pkeyflag = 214;
+            qagentid = parseInt(qagentid);
+            ptypeagent = parseInt(ptypeagent);
+            prenewalagentid = parseInt(prenewalagentid);
+            prenewalagentseq = parseInt(prenewalagentseq);
+            prenewalagentyr = parseInt(prenewalagentyr);
+            pkeyflag = parseInt(pkeyflag);
+            var pkeysubflag = 'OtherRera';
+
+            $.ajax({
+                url: displayBASE_URL + 'AgentRenewal/AgentRenewal_ListPreviousRegistration',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'qagentid': qagentid, 'ptypeagent': ptypeagent, 'prenewalagentid': prenewalagentid, 'prenewalagentseq': prenewalagentseq, 'prenewalagentyr': prenewalagentyr, 'pkeyflag': pkeyflag, 'pkeysubflag': pkeysubflag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(RenewalAgentDetailsModal).find('.modal-body').html(response);
+                    $(RenewalAgentDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = 'Real Estate Agent (No record founds)';
+            if ($('#RefRegistrationNumber').val() != '') {
+                var diaryNo = $('#RefRegistrationNumber').val();
+            };
+            //var realestateagentName = $('#ProjectName').val();
+            $(RenewalAgentDetailsModal).find('h4.modal-title').html('Registration Details - <a href="javascript:void(0);"></a>');
+            //$(RenewalAgentDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + realestateagentName + ')');
+            $(RenewalAgentDetailsModal).find('h4.modal-title a').html(diaryNo);
+            $(RenewalAgentDetailsModal).modal('show');
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Renewal of Registration</b><br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-I: Agent Profile.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-II: Organization Member Details (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-III: Upload Document(s).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-IV: Other State/UT Registration Number Detail (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-V: Application Fee.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-VI: Review and Confirm Application Form.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Note down Diary Number for your future reference.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Renewal of Registration : Real Estate Agent Document(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Renewal of Registration (Form-J) : Upload Document(s) or Real Estate Agent Document(s) Details
+                    <span class="pull-right">
+                        <a id="modalRegistrationStatusOpenerButton" href="javascript:void(0);" title="View Registration Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-list-ul" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("AgentRenewal_FormUpload", "AgentRenewalDocument", FormMethod.Post, new { enctype = "multipart/form-data", @id = "RenewalAgentFormUpload" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                @Html.HiddenFor(model => model.RenewalAgent_Document_IndexID, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.RenewalAgent_Document_ID, htmlAttributes: new { @class = "control-label" })
+
+                                @Html.HiddenFor(model => model.Related_RERAnumberRegistration, htmlAttributes: new { @class = "control-label", @id = "RefRegistrationNumber" })
+                                @Html.HiddenFor(model => model.Related_Agent_ID, htmlAttributes: new { @class = "control-label", @id = "RefAgentID" })
+                                @Html.HiddenFor(model => model.Related_Agent_Type, htmlAttributes: new { @class = "control-label", @id = "RefAgentType" })
+                                @Html.HiddenFor(model => model.Related_RenewalAgent_ID, htmlAttributes: new { @class = "control-label", @id = "RefRenewalAgentID" })
+                                @Html.HiddenFor(model => model.Related_RelatedRenewalAgent_Year, htmlAttributes: new { @class = "control-label", @id = "RefRenewalAgentYear" })
+                                @Html.HiddenFor(model => model.Related_RenewalOrderSequence, htmlAttributes: new { @class = "control-label", @id = "RefRenewalOrderSequence" })
+                                @Html.HiddenFor(model => model.Related_UserID, htmlAttributes: new { @class = "control-label", @id = "RefPublicView" })
+
+                                @Html.HiddenFor(model => model.IsActive, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.IsActiveProvider, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.IsDraft, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.IsLock, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.IsPublicView, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.IsConditional, htmlAttributes: new { @class = "control-label" })
+                                
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Agent Document Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(m => m.AgentDoc_InfoCode, htmlAttributes: new { @class = "control-label mand" })
+                                                            @Html.HiddenFor(model => model.AgentDoc_InfoName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if (Model.MasterDocs != null)
+                                                            {
+                                                                @Html.DropDownListFor(m => m.AgentDoc_InfoCode, new SelectList(Model.MasterDocs, "AgentDocMaster_InfoCode", "AgentDocMaster_InfoName"), "Select Document", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(m => m.AgentDoc_InfoCode, "", new { @class = "text-danger" })
+                                                            }
+                                                            else
+                                                            {                                                                
+                                                                @Html.DropDownListFor(model => model.AgentDoc_InfoCode, new SelectList(" "), "Select Document", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.AgentDoc_InfoCode, "", new { @class = "text-danger" })
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="getDocFileInfo" style="display:none">
+                                                    <div class="help-block col-md-offset-3 col-md-9">
+                                                        <div id="DocFileDiscription" class="info"></div>
+                                                        @*<div id="DocName" class="info"></div>*@
+                                                        <div id="DocFileFormat" class="info"></div>
+                                                        <div id="DocFileSize" class="info"></div>
+                                                        <div id="DocFileGroupSize" class="info"></div>
+                                                        <div id="DocFileMandatoryStatus" class="info"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(m => m.AgentDoc_ReferenceNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(m => m.AgentDoc_ReferenceNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(m => m.AgentDoc_ReferenceNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(m => m.AgentDoc_IssueDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(m => m.AgentDoc_IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(m => m.AgentDoc_IssueDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(m => m.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(m => m.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(m => m.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="showFileInfo" style="display:none">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Upload Agent Document</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3"></div>
+                                                        <div class="col-md-9" id="FormContent">
+                                                            <span class="btn btn-success fileinput-button">
+                                                                <i class="glyphicon glyphicon-plus"></i>
+                                                                <span>Add files...</span>
+                                                                <input type="file" name="UploadedFile" id="UploadedFile" onchange="singleFileSelected()" />
+                                                            </span>
+                                                            @if (Model.IsLock == 1)
+                                                            {
+                                                                <input type="submit" value="Start upload" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                            }
+                                                            else if (Model.IsLock == 0)
+                                                            {
+                                                                if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                {
+                                                                    <input type="submit" value="Start upload" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button class="btn btn-outline btn-primary" type="submit" value="submit" id="Submit_btn">
+                                                                        <i class="glyphicon glyphicon-upload"></i>
+                                                                        <span>Start upload</span>
+                                                                    </button>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="Start upload" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="showFileInfoGrid" style="display:none">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3"></div>
+                                                        <div class="col-md-9">
+                                                            <div class="InfoContainer">
+                                                                <div id="Imagecontainer" style="height:100px;width:100px"></div>
+                                                                <div id="FileName" class="info"></div>
+                                                                <div id="FileType" class="info"></div>
+                                                                <div id="FileSize" class="info"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3"></div>
+                                                        <div class="col-md-6">
+                                                            <div id="progressbar" style="position: relative; display: none">
+                                                                <span style="position: absolute; left: 35%; top: 20%" id="progressBar-label">
+                                                                    UPLOADING ...
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="showSaveFileUploadMessage" style="display: none">
+                                                    <div class="form-group">
+                                                        <div class="col-md-offset-3 col-md-6 alert alert-warning">
+                                                            <div id="saveFileUploadMessageName" class="info">HH</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        @Html.ActionLink("Back to List (View Documents)", "AgentRenewal_Documentdetail", "AgentRenewalDocument", null, new { @class = "btn btn-outline btn-primary" })
+                                        &nbsp;
+                                        @Html.ActionLink("Reset", "AgentRenewal_Documentdetail", "AgentRenewalDocument", null, new { @class = "btn btn-outline btn-primary" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered" id="renewal-agent-documents-list">
+                                    <thead>
+                                        <tr>                                            
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.AgentDoc_InfoCode)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.AgentDoc_ReferenceNumber)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.AgentDoc_IssueDate)
+                                            </th>                                            
+                                            <th>
+                                                @Html.DisplayNameFor(model => model.Remarks_IfAny)
+                                            </th>
+                                            <th>
+                                                @Html.Label("View")
+                                            </th>
+                                            <th>
+                                                @Html.Label("Delete")
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.AgentRenewal_Document)
+                                        {
+                                            <tr>                                                
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.AgentDoc_InfoName)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.AgentDoc_ReferenceNumber)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.AgentDoc_IssueDate)
+                                                </td>                                                
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                                </td>
+
+                                                <td>
+                                                    <a href="~/@Html.DisplayFor(modelItem => item.AgentDoc_FilePath)" target="_blank" title="View"><i class="fa fa-external-link-square"></i></a>                                                    
+                                                </td>
+                                                <td>
+                                                    @if (item.IsLock == 1)
+                                                    {
+                                                        @("--")
+                                                    }
+                                                    else if (item.IsLock == 0)
+                                                    {
+                                                        if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                        {
+                                                            @("--")
+                                                        }
+                                                        else
+                                                        {
+                                                            if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                            {
+                                                                @("--")
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.ActionLink(" ", "AgentRenewal_DeleteDocumentdetail", new { inDocIndexID = item.RenewalAgent_Document_IndexID, inDocID = item.RenewalAgent_Document_ID, inAgentID = item.Related_Agent_ID, inRenewalAgentID = item.Related_RenewalAgent_ID }, new { onclick = "return confirm('Do you want to delete?');", @class = "fa fa-remove", @title = "Delete" })
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        @("--")
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

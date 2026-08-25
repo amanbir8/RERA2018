@@ -1,0 +1,514 @@
+﻿@using Microsoft.AspNet.Identity
+<style>
+    .zip-progress-floating {
+        display: none;
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 360px;
+        z-index: 999999 !important;
+        pointer-events: none;
+    }
+
+    .zip-progress-box {
+        background: #fff;
+        padding: 22px 25px;
+        border-radius: 6px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.35);
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .zip-progress-label {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .zip-progress {
+        height: 22px;
+        margin-bottom: 0;
+    }
+
+    #zipProgressBar {
+        line-height: 22px;
+        font-weight: bold;
+    }
+</style>
+
+
+@if (Request.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-md-12">
+            <div class="pull-left">
+                <a href="javascript:void(0);" class="btn btn-outline tab-btns btn-primary projectDocsModalOpener">PDF</a>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet"></link>
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+
+    <link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+}
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        //$(document).on('click', 'a.projectDocsModalOpener', function (e) {
+        //    e.preventDefault();
+        //    var projectDocsModal = $(document).find('#projectDocsModal');
+        //    //var varProjectName = $.trim($(document).find("div.project-name").text());
+        //    var diaryNo = $.trim($(document).find("#Project_DiaryNumber").val());
+        //    var projectName = $.trim($(document).find("div.project-name").text());
+
+        //    $(projectDocsModal).find('.modal-body').html('');
+        //    $(projectDocsModal).find('.modal-title').find('.title-project-details').html('');
+        //    $.ajax({
+        //        url: BASE_URL + 'ProjectPrintForm/GetProjectDocumentSelection',
+        //        dataType: 'HTML',
+        //        type: 'GET',
+        //        beforeSend: function () {
+        //            startPreloader();
+        //        },
+        //        success: function (response) {
+        //            stopPreloader();
+        //            $(projectDocsModal).find('.modal-body').html(response);
+        //        }
+        //    });
+        //    //$(projectDocsModal).find('.modal-title a').html(' (' + varProjectName + ')');
+
+
+        //    $(projectDocsModal).find('.modal-title a').html(projectName + ' (' + diaryNo + ')');
+        //    $(projectDocsModal).modal('show');
+        //});
+        $(document).on('click', 'a.projectDocsModalOpener', function (e) {
+            e.preventDefault();
+            var projectDocsModal = $(document).find('#projectDocsModal');
+            $(projectDocsModal).find('.modal-body').html('');
+            $(projectDocsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'ProjectPrintForm/GetProjectDocumentSelection',
+                dataType: 'HTML',
+                type: 'GET',
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDocsModal).find('.modal-body').html(response);
+                    var wrapper = $(projectDocsModal).find('#projectDocSelectionWrapper');
+                    var diaryNo = $.trim(wrapper.data('diary-number'));
+                    var projectName = $.trim(wrapper.data('project-name'));
+                    $(projectDocsModal).find('.modal-title').find('.title-project-details')
+                        .html(projectName + ' (' + diaryNo + ')');
+                }
+            });
+            $(projectDocsModal).modal('show');
+        });
+
+        function downloadZipWithProgress(docType, files) {
+
+            if (!files || files.length === 0) {
+                alert('No documents available.');
+                return;
+            }
+
+            var $modal = $('#zipProgressModal');
+            var $bar = $('#zipProgressBar');
+            var $label = $('#zipProgressLabel');
+
+            $bar.css('width', '0%').text('0%');
+            $label.text('Preparing ZIP...');
+
+            //$modal.modal({
+            //    backdrop: 'static',
+            //    keyboard: false
+            //});
+
+            $modal.css('display', 'block');
+
+            var body = new URLSearchParams();
+
+            body.append('docType', docType);
+
+            files.forEach(function (f) {
+                body.append('files', f);
+            });
+
+            // STEP 1: Start ZIP creation
+            fetch(
+                BASE_URL + 'ProjectPrintForm/StartZipDownload',
+                {
+                    method: 'POST',
+                    body: body
+                }
+            )
+                .then(function (response) {
+
+                    if (!response.ok) {
+                        throw new Error(
+                            'Unable to start ZIP creation.'
+                        );
+                    }
+
+                    return response.json();
+                })
+                .then(function (result) {
+
+                    if (!result.success) {
+                        throw new Error(
+                            result.message ||
+                            'Unable to start download.'
+                        );
+                    }
+
+                    var jobId = result.jobId;
+
+                    // STEP 2: Poll progress
+                    var progressTimer =
+                        setInterval(function () {
+
+                            $.ajax({
+                                url:
+                                    BASE_URL +
+                                    'ProjectPrintForm/GetZipDownloadProgress',
+
+                                type: 'GET',
+
+                                data: {
+                                    jobId: jobId
+                                },
+
+                                dataType: 'json',
+
+                                success: function (progress) {
+
+                                    if (!progress.success) {
+                                        clearInterval(progressTimer);
+
+                                        //$modal.modal('hide');
+                                        closeZipProgressModal();
+
+                                        alert(
+                                            progress.message ||
+                                            'Progress not available.'
+                                        );
+
+                                        return;
+                                    }
+
+                                    var percent =
+                                        progress.percent || 0;
+
+                                    $bar
+                                        .css(
+                                            'width',
+                                            percent + '%'
+                                        )
+                                        .text(
+                                            percent + '%'
+                                        );
+
+                                    $label.text(
+                                        progress.status ||
+                                        'Creating ZIP...'
+                                    );
+
+                                    // STEP 3: ZIP finished
+                                    if (progress.completed) {
+
+                                        clearInterval(
+                                            progressTimer
+                                        );
+
+                                        if (progress.error) {
+
+                                            $modal.modal(
+                                                'hide'
+                                            );
+
+                                            alert(
+                                                'ZIP creation failed.'
+                                            );
+
+                                            return;
+                                        }
+
+                                        $bar
+                                            .css(
+                                                'width',
+                                                '100%'
+                                            )
+                                            .text('100%');
+
+                                        $label.text(
+                                            'ZIP ready. Starting download...'
+                                        );
+
+                                        setTimeout(function () {
+
+                                            // Start the ZIP download
+                                            window.location.href =
+                                                BASE_URL +
+                                                'ProjectPrintForm/DownloadCompletedZip?jobId=' +
+                                                encodeURIComponent(jobId);
+
+                                            // Close progress modal and restore PDF modal scrolling
+                                            setTimeout(function () {
+                                                closeZipProgressModal();
+                                            }, 1000);
+
+                                        }, 500);
+                                    }
+                                },
+
+                                error: function () {
+                                    clearInterval(
+                                        progressTimer
+                                    );
+                                    closeZipProgressModal();
+                                    alert(
+                                        'Unable to check ZIP progress.'
+                                    );
+                                }
+                            });
+
+                        }, 500);
+                })
+                .catch(function (error) {
+                    closeZipProgressModal();
+                    alert(
+                        'Unable to start ZIP download.'
+                    );
+                });
+        }
+ 
+
+        //$(document).on('click', '#btnDownloadProjectZip', function () {
+        //    var projectFiles = $('.project-file-url').map(function () { return $(this).data('url'); }).get();
+        //    downloadZipWithProgress('Project', projectFiles);
+        //});
+        //$(document).on('click', '#btnDownloadTrashProjectZip', function () {
+        //    var projecttrashFiles = $('.projecttrash-file-url').map(function () { return $(this).data('url'); }).get();
+        //    downloadZipWithProgress('ProjectTrash', projecttrashFiles);
+        //});
+
+        //$(document).on('click', '#btnDownloadPromoterZip', function () {
+        //    var promoterFiles = $('.promoter-file-url').map(function () { return $(this).data('url'); }).get();
+        //    downloadZipWithProgress('Promoter', promoterFiles);
+        //});
+
+        //$(document).on('click', '#btnDownloadApprovalZip', function () {
+        //    var approvalFiles = $('.approval-file-url').map(function () {
+        //        var url = $(this).data('url');
+        //        var name = $(this).data('name');
+        //        return name + '||' + url;
+        //    }).get();
+        //    downloadZipWithProgress('Approval', approvalFiles);
+        //});
+
+        //$(document).on('click', '#btnDownloadProjectZip', function () {
+        //    var files = $('.project-file-url').map(function () {
+        //        return $(this).data('url');
+        //    }).get();
+
+        //    confirmZipDownload(
+        //        'Project',
+        //        files,
+        //        'Are you sure you want to download the Project documents as a ZIP?'
+        //    );
+        //});
+
+        //$(document).on('click', '#btnDownloadTrashProjectZip', function () {
+        //    var files = $('.projecttrash-file-url').map(function () {
+        //        return $(this).data('url');
+        //    }).get();
+
+        //    confirmZipDownload(
+        //        'ProjectTrash',
+        //        files,
+        //        'Are you sure you want to download the deleted Project documents as a ZIP?'
+        //    );
+        //});
+
+        //$(document).on('click', '#btnDownloadPromoterZip', function () {
+        //    var files = $('.promoter-file-url').map(function () {
+        //        return $(this).data('url');
+        //    }).get();
+
+        //    confirmZipDownload(
+        //        'Promoter',
+        //        files,
+        //        'Are you sure you want to download the Promoter documents as a ZIP?'
+        //    );
+        //});
+
+        //$(document).on('click', '#btnDownloadApprovalZip', function () {
+        //    var files = $('.approval-file-url').map(function () {
+        //        var url = $(this).data('url');
+        //        var name = $(this).data('name');
+
+        //        return name + '||' + url;
+
+        //    }).get();
+
+        //    confirmZipDownload(
+        //        'Approval',
+        //        files,
+        //        'Are you sure you want to download the NOC/Approval documents as a ZIP?'
+        //    );
+        //});
+
+
+        //function confirmZipDownload(docType, files, message) {
+        //    if (!files || files.length === 0) {
+        //        alert('No documents available.');
+        //        return;
+        //    }
+        //    swal({
+        //        title: "Download ZIP?",
+        //        text: message,
+        //        type: "warning",
+        //        showCancelButton: true,
+        //        confirmButtonText: "Yes",
+        //        cancelButtonText: "No",
+        //        closeOnConfirm: true,
+        //        closeOnCancel: true
+        //    }, function (isConfirm) {
+        //        if (isConfirm) {
+        //            downloadZipWithProgress(docType, files);
+        //        }
+        //    });
+        //}
+
+        $(document).on('click', '#btnDownloadProjectZip', function () {
+            var files = $('.project-file-url').map(function () {
+                return $(this).data('url');
+            }).get();
+
+            confirmZipDownload(
+                'Project',
+                files,
+                'Are you sure you want to download the Project documents as a ZIP?'
+            );
+        });
+
+        $(document).on('click', '#btnDownloadTrashProjectZip', function () {
+            var files = $('.projecttrash-file-url').map(function () {
+                return $(this).data('url');
+            }).get();
+
+            confirmZipDownload(
+                'ProjectTrash',
+                files,
+                'Are you sure you want to download the deleted Project documents as a ZIP?'
+            );
+        });
+
+        $(document).on('click', '#btnDownloadPromoterZip', function () {
+            var files = $('.promoter-file-url').map(function () {
+                return $(this).data('url');
+            }).get();
+
+            confirmZipDownload(
+                'Promoter',
+                files,
+                'Are you sure you want to download the Promoter documents as a ZIP?'
+            );
+        });
+
+        $(document).on('click', '#btnDownloadApprovalZip', function () {
+            var files = $('.approval-file-url').map(function () {
+                var url = $(this).data('url');
+                var name = $(this).data('name');
+
+                return name + '||' + url;
+            }).get();
+
+            confirmZipDownload(
+                'Approval',
+                files,
+                'Are you sure you want to download the NOC/Approval documents as a ZIP?'
+            );
+        });
+
+
+        function confirmZipDownload(docType, files, message) {
+
+            if (!files || files.length === 0) {
+                alert('No documents available.');
+                return;
+            }
+
+            // Browser Yes/No confirmation
+            var confirmed = confirm(message);
+            if (!confirmed) {
+                return;
+            }
+            downloadZipWithProgress(docType, files);
+        }
+
+        function closeZipProgressModal() {
+
+            $('#zipProgressModal').css('display', 'none');
+
+        }
+
+    });
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="projectDocsModal" tabindex="-1" role="dialog" aria-labelledby="projectDocsModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <a href="@Url.Action("Print_ProjectConsolidatedReport", "ProjectPrintForm", new { reportType = "All" })" target="_blank" title="View Single Consolidated PDF"
+                   style="float:right !important; margin-right:15px; margin-top:2px;color:#074c75;text-decoration:none;font-size:18px;line-height:20px;"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                <h4 class="modal-title" id="projectDocsModalLabel">
+                    Document(s)
+                    <a href="javascript:void(0);" class="title-project-details"></a>
+                </h4>
+
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ZIP Download Progress Overlay -->
+<div id="zipProgressModal" class="zip-progress-floating">
+    <div class="zip-progress-box">
+        <div id="zipProgressLabel" class="zip-progress-label">
+            Preparing ZIP...
+        </div>
+        <div class="progress zip-progress">
+            <div id="zipProgressBar" class="progress-bar progress-bar-striped active" role="progressbar" style="width:0%;">
+                0%
+            </div>
+        </div>
+    </div>
+</div>

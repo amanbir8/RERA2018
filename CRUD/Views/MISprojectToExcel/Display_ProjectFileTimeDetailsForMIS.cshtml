@@ -1,0 +1,480 @@
+﻿@model CRUD.Models.MISprojectToExcel.Clsprp_MIS_ProjectAverageFileTimeDetails
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/js-highcharts/highcharts.js")"></script>
+<script src="@Url.Content("~/js-highcharts/data.js")"></script>
+<script src="@Url.Content("~/js-highcharts/drilldown.js")"></script>
+<script src="@Url.Content("~/js-highcharts/variable-pie.js")"></script>
+<script src="@Url.Content("~/js-highcharts/highcharts-more.js")"></script>
+<script src="@Url.Content("~/js-highcharts/accessibility.js")"></script>
+
+<link href="@Url.Content("~/dist/css/fixed-plugin.css")" rel="stylesheet" />
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 50,
+            "lengthMenu": [[50, 100, 150, 200, 250], [50, 100, 150, 200, 250]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [2]
+            }]
+        });
+       
+        $('#btnElementaryExportToExcel').click(function () {
+            window.location = BASE_URL + 'MISprojectToExcel/ExportwithElementaryFileTimeToExcel';
+            $('input[type=text]').each(function () {
+                $(this).val('');
+            });
+        });
+
+        $(document).on('click', 'a#modalOpenerAddressButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectpromoterDetailsModal = $(document).find('#myModal');
+            $(projectpromoterDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var projectId = $.trim($(parentRow).find('input.hdnProjectID').val());
+            var promoterId = $.trim($(parentRow).find('input.hdnPromoterID').val());
+            projectId = parseInt(projectId);
+            promoterId = parseInt(promoterId);
+            $.ajax({
+                url: BASE_URL + 'MISprojectToExcel/ProjectQRcodeCertificateDetailsForRegisteredProjectsMIS',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'ProjectId': projectId, 'PromoterId': promoterId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectpromoterDetailsModal).find('.modal-body').html(response);
+                    $(projectpromoterDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.project-diary-number').attr('data-diary-no'));
+            var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            $(projectpromoterDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectpromoterDetailsModal).modal('show');
+        });
+
+    });
+</script>
+<script>
+    $(function () {
+
+        $("#InputEntry_FromDate").datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+
+            onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate() + 1);
+                $("#InputEntry_ToDate").datepicker("option", "minDate", dt);
+            }
+        });
+
+        $("#InputEntry_ToDate").datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+                var projStartDate = $("#InputEntry_FromDate").val();
+                if (projStartDate == '') {
+                    alert('Please select From Date first!');
+                    $("#InputEntry_ToDate").val('');
+                    return false;
+                }
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate());
+                $("#InputEntry_FromDate").datepicker("option", "maxDate", dt);
+            }
+        });
+    });
+</script>
+
+<script>
+    $(function () {
+        var baseUrl = $('body').attr('data-base-url');        
+
+        var vcheckapplicationmode = $("input[name='IsApplicationModeFlag']:checked").val();
+        vcheckapplicationmode = parseInt(vcheckapplicationmode);
+
+        $.ajax({
+            type: "POST",
+            url: baseUrl + "MISprojectToExcel/GetSpiderChartProjectActivityIndexLiveReportsData",
+            datatype: "Json",
+            data: { IndexId: "0", ApplicationModeCode: vcheckapplicationmode },
+            success: function (data) {               
+                var series = {
+                    arrTitle: new Array(),
+                    arrCollection: new Array(),
+                    arrProcessed: new Array()
+                };                
+                $.each(data.LiveReportProjectIndexSpiderChartsTitleData, function (key, val) {
+                    series.arrTitle.push(val.name);
+                });
+                $.each(data.LiveReportProjectIndexSpiderChartsCollectionData, function (key, val) {
+                    series.arrCollection.push(val.collectionvalue);
+                });
+                $.each(data.LiveReportProjectIndexSpiderChartsProcessedData, function (key, val) {
+                    series.arrProcessed.push(val.processedvalue);
+                });                
+                drawSpiderWebChartProjectAnalysisRecrods(series);
+            },
+            error: function (data) {
+                alert('Bad Request! Invalid Data Details.');
+            }
+        });
+    });
+
+    function drawSpiderWebChartProjectAnalysisRecrods(series) {
+        var myPieChart = Highcharts.chart('elementryindex-spiderweb-chart-container', {
+            chart: {
+                polar: true,
+                type: 'line'
+            },
+
+            title: {
+                text: 'Application Collection vs Processed',
+                x: -80
+            },
+
+            pane: {
+                size: '90%'
+            },
+
+            xAxis: {
+                categories: series.arrTitle,
+                tickmarkPlacement: 'on',
+                lineWidth: 0
+            },
+
+            yAxis: {
+                gridLineInterpolation: 'polygon',
+                lineWidth: 0,
+                min: 0
+            },
+
+            tooltip: {
+                shared: true,
+                pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}</b><br/>'
+            },
+
+            legend: {
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+
+            series: [{
+                name: 'Application Collected',
+                data: series.arrCollection,
+                pointPlacement: 'on'
+            }, {
+                name: 'Actual Processed',
+                data: series.arrProcessed,
+                pointPlacement: 'on'
+            }],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        },
+                        pane: {
+                            size: '70%'
+                        }
+                    }
+                }]
+            }
+
+        });
+
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project Report : File Prepared Activity Record Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    
+    <style>
+        .nav-gridshow-tabs > li.active > a {
+            border-top: 2px solid #7bb73f;
+        }
+
+        .nav-gridshow-tabs > li > a {
+            background-color: #eee;
+            color: #333;
+        }
+
+        .display-griddata-tabs > li.active > a {
+            border-top: 2px solid #064576;
+            color: #064576;
+        }
+
+        .display-griddata-tabs > li > a {
+            background-color: #d9edf7;
+            color: #064576;
+        }
+
+        .main_content {
+            width: auto;
+        }
+    </style>
+
+    <div class="row" style="margin-bottom:5px;">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs nav-gridshow-tabs" id="myTab" role="tablist">
+                <li class="nav-item active">
+                    <a class="nav-link active" id="profile-tab" href="@Url.Action("Display_ProjectFileTimeDetailsForMIS", "MISprojectToExcel")" role="tab" aria-controls="profile" aria-selected="true">Elementary Records</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="home-tab" href="@Url.Action("Display_ProjectFileTimeRecordsDetailsForMIS", "MISprojectToExcel")" role="tab" aria-controls="home" aria-selected="false">Detailed Records</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="home-tab" href="@Url.Action("Display_ProjectFileTimeAverageRecordsDetailsForMIS", "MISprojectToExcel")" role="tab" aria-controls="home" aria-selected="false">Average Records</a>
+                </li>                
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    List of Activities/ Elementary Records [File Prepared Index/ Analysis] Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("Display_ProjectFileTimeDetailsForMIS", "MISprojectToExcel", FormMethod.Post, new { enctype = "multipart/form-data", @id = "ProjectFilePreparedRecord" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Options</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Search For</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "51", new { id = "chkProjectRegistration", @class = "radio-projectregistration", @checked = "checked" }) Project Registration
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "52", new { id = "chkExtensionRegistration", @class = "radio-extensionregistration" }) Extension of Registration
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "53", new { id = "chkProjectCompletion", @class = "radio-projectcompletion" }) Project Completion
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsApplicationModeFlag, "", new { @class = "text-danger" })
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Date Range Option</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsApplicationDateFlag, "21", new { id = "chkApplicationDate", @class = "radio-applicationdate", @checked = "checked" }) Application Date                                                     
+                                                    @Html.RadioButtonFor(model => model.IsApplicationDateFlag, "22", new { id = "chkActionDate", @class = "radio-actiondate" }) Last action by RERA 
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsApplicationDateFlag, "", new { @class = "text-danger" })
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                @Html.LabelFor(model => model.InputEntry_FromDate, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.InputEntry_FromDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @onfocus = "this.value=''" } })
+                                                @Html.ValidationMessageFor(model => model.InputEntry_FromDate, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                @Html.LabelFor(model => model.InputEntry_ToDate, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.InputEntry_ToDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @onfocus = "this.value=''" } })
+                                                @Html.ValidationMessageFor(model => model.InputEntry_ToDate, "", new { @class = "text-danger" })
+                                            </div>                                           
+                                            <div class="col-md-2">
+                                                <input type="submit" id="ViewDetail" value="View Details" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </fieldset>
+                            }
+                            <div class="row">
+                                <br />
+                            </div>                            
+                            @using (Html.BeginForm("ExportwithElementaryFileTimeToExcel", "MISprojectToExcel"))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <span class="btn btn-outline btn-primary" id="btnElementaryExportToExcel">
+                                                <i class="fa fa-download"></i>
+                                                <span>Export To Excel</span>                                                
+                                            </span>
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "Display_ProjectFileTimeDetailsForMIS", "MISprojectToExcel", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                <div class="col-md-12">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div>
+                                        <div class="main_content" id="main-content">
+                                            <ul class="nav nav-tabs display-griddata-tabs">
+                                                <li class="nav-item active">
+                                                    <a class="nav-link active" data-toggle="tab" href="#Data-info">Data</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#Graph-info">Graph</a>
+                                                </li>
+                                            </ul>
+
+                                            <!-- Tab panes -->
+                                            <div class="tab-content">
+                                                <!--   Data-info   -->
+                                                <div class="tab-pane active" id="Data-info">
+                                                    <div id="main-content">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="table-responsive">
+                                                                    <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>@Html.DisplayName("SNo")</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.EventAction_Aggregate)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.NumberOfApplications)</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @{
+                                                                                int sno = 0;
+                                                                            }
+                                                                            @foreach (var item in Model.prpongoing)
+                                                                            {
+                                                                                {
+                                                                                    sno = sno + 1;
+                                                                                }
+                                                                                <tr class="odd gradeX">
+                                                                                    <td>@Html.DisplayName(sno.ToString())</td>
+                                                                                    <td class="project-eventactiontype" data-eventactiontype-number="@Html.DisplayFor(modelItem => item.EventAction_Type)">
+                                                                                        @Html.DisplayFor(modelItem => item.EventAction_Aggregate)
+                                                                                        @Html.HiddenFor(modelItem => item.EventAction_Type, new { @class = "hdnEventActionType" })
+                                                                                    </td>
+                                                                                    <td class="project-eventactiontypename" data-project-eventactiontypename="@Html.DisplayFor(modelItem => item.EventAction_Aggregate)">
+                                                                                        @Html.DisplayFor(modelItem => item.NumberOfApplications)
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--   Graph-info   -->
+                                                <div class="tab-pane fade" id="Graph-info">
+                                                    <div id="main-content">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="flot-chart dashboard-piecharts-frame">
+                                                                    <div id="elementryindex-spiderweb-chart-container"></div>
+                                                                </div>
+                                                            </div>                                                           
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div> 
+
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Project's QR Code Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet"></link> 
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script> 
+    
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>  
+}

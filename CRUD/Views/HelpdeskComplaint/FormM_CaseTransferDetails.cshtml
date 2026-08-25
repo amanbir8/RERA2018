@@ -1,0 +1,657 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormM_CaseTransferDetails
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+
+    table#promoter-documents-list-table tr td a.button {
+        display: none;
+    }
+    table#promoter-documents-list-table tr:hover td a.button {
+        display: inline-block;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+    .bg-plus-square-glow-show {
+        /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
+        /*box-shadow: 0 0 10px #FF4961;*/
+        color: green;
+    }
+    .bg-pdf-glow-show {
+        /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
+        /*box-shadow: 0 0 10px #FF4961;*/
+        color: #7bb73f;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>
+    $(function () {
+        var baseUrl = $('body').attr('data-base-url');      
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [8]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers",
+
+            responsive: true
+        });
+
+        if ($('#CaseTransfer_RegDiaryNumber_Name').val() === "0" || $('#CaseTransfer_RegDiaryNumber_Name').val() === "" || $('#CaseTransfer_RegDiaryNumber_Name').val() === " " || $('#CaseTransfer_RegDiaryNumber_Name').val() === "NA") {
+            $('#dnocasetransfer').css("display", "none");
+            $("input[name='TransferTypeOption']").attr('readonly', false);
+        }
+        else {
+            $('#dnocasetransfer').css("display", "block");
+            $("input[name='TransferTypeOption']").attr('readonly', true);
+        }
+
+        $(document).on('click', 'a#modalOpenerViewInterimOrderButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var FormM_Id = $.trim($(parentRow).find('input.hdnComplaintID').val());
+            var HearingFormM_Id = $.trim($(parentRow).find('input.hdnHearingID').val());
+            FormM_Id = parseInt(FormM_Id);
+            HearingFormM_Id = parseInt(HearingFormM_Id);
+            $.ajax({
+                url: baseUrl + 'HelpdeskComplaint/FormMInfoInterimOrderDetails',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'FormM_Id': FormM_Id, 'HearingFormM_Id': HearingFormM_Id },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.complaint-diary-number').attr('data-diary-no'));
+            var agentName = $.trim($(parentRow).find('td.bench-name').attr('data-bench-name'));
+            $(projectDetailsModal).find('h4.modal-title').html('Details of Interim Order(s) - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (Bench: ' + agentName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            $(submitButton).parents('form').submit();
+        });
+
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script>
+    $(function () {
+        $('#TransferDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+    });
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        var vchecktrorder = $("input[name='IsTransferOrder']:checked").val();
+        if (vchecktrorder == '1') {
+            $("#rowTrOrderRefFilter").attr("style", "display:block");
+        }
+        else {
+            $("#rowTrOrderRefFilter").attr("style", "display:none");
+        }
+
+        var vcheckpublicview = $("input[name='IsPublicView']:checked").val();
+        if (vcheckpublicview == '1') {
+            $("#rowPVFilter").attr("style", "display:block");
+        }
+        else {
+            $("#rowPVFilter").attr("style", "display:none");
+        }
+
+        var vcheckcasetransfer = $("input[name='TransferTypeOption']:checked").val();
+        if (vcheckcasetransfer == 'TransferToREGD') {
+            $("#rowreranumberFilter").attr("style", "display:block");
+        }
+        else {
+            $("#rowreranumberFilter").attr("style", "display:none");
+        }
+
+        $(document).on('click', '.radio-publicviewvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowPVFilter").attr("style", "display:block");                
+            }
+            else {
+                $("#rowPVFilter").attr("style", "display:none");
+            }
+        });
+
+        $(document).on('click', '.radio-trordervalue', function (e) {
+            if (this.value == '1') {
+                $("#rowTrOrderRefFilter").attr("style", "display:block");
+            }
+            else {
+                $("#rowTrOrderRefFilter").attr("style", "display:none");
+            }
+        });        
+
+        $(document).on('click', '.radio-casetrvalue', function (e) {            
+            if (this.value == 'TransferToREGD') {
+                $("#rowreranumberFilter").attr("style", "display:block");                
+            }
+            else {
+                $("#rowreranumberFilter").attr("style", "display:none");
+            }
+
+            var vcheckTrNumber = $('#CaseTransfer_RegDiaryNumber_Name').val();
+            if (vcheckTrNumber === "0" || vcheckTrNumber === "" || vcheckTrNumber === " " || vcheckTrNumber === "NA") {
+                return true;
+            }
+            else {
+                alert('Oops! Invalid Transfer Type/ Option.');
+                return false;
+            }
+        });   
+    });
+</script>
+
+<script type="text/javascript">
+		$(function() {
+		    $("#TransferOrderStatusRemark").inputmask({ mask: function () { return ["AAAAAA-AAA99-AAA9999", "AAAAAA-AAA99-AA9999"]; } });
+
+		    $('#Transfer_FromBench').change(function () {
+		        $('#Transfer_FromBenchName').empty();
+		        $("input[name='Transfer_FromBenchName']").val($("#Transfer_FromBench option:selected").text());
+		    });
+
+		    $('#Transfer_ToBench').change(function () {
+		        $('#Transfer_ToBenchName').empty();
+		        $("input[name='Transfer_ToBenchName']").val($("#Transfer_ToBench option:selected").text());
+		    });
+		});
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Complaint (Form-M) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Complaint (Form-M) : Case Transfer (Between Form-M and Form-N) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Complaint Form-M - ( @Html.DisplayFor(model => model.zapRelated_RegDiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zapComplainantName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5 project-name">
+                                                        @Html.DisplayFor(model => model.zapComplainantName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zapComplaintFormLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zapComplaintFormLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskComplaintNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;"><a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Add Case Transfer between Bench/ Court/ Form-M and Form-N</h4>
+                                </div>
+                            </div>
+
+                            @using (Html.BeginForm("FormM_CaseTransferDetails", "HelpdeskComplaint", FormMethod.Post, new { enctype = "multipart/form-data", id="myfrmMCaseTransfer" }))
+                            {
+                                @Html.AntiForgeryToken()                                
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                @Html.HiddenFor(model => model.CaseTransfer_IndexID)
+                                @Html.HiddenFor(model => model.CaseTransfer_ID)
+                                @Html.HiddenFor(model => model.CaseTransfer_RegDiaryNumber_IndexName)
+                                @Html.HiddenFor(model => model.CaseTransfer_RegDiaryNumber_NameYear)
+                                @Html.HiddenFor(model => model.CaseTransfer_RegDiaryNumber_Name)
+                                @Html.HiddenFor(model => model.ComplainantApplicant_RelatedComplaint_ID)
+                                @Html.HiddenFor(model => model.ComplainantApplicant_RelatedComplaint_Code)
+                                @Html.HiddenFor(model => model.ComplaintType_MN)
+                                @Html.HiddenFor(model => model.Transfer_FromBenchName)
+                                @Html.HiddenFor(model => model.Transfer_ToBenchName)                                
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Case Transfer Details</legend>
+                                                <div class="row" id="dnocasetransfer" style="display:none;">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CaseTransfer_RegDiaryNumber_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Reference Diary Number of Case Transfer between Bench/ Courts/ Form-M and Form-N">
+                                                            @Html.DisplayFor(model => model.CaseTransfer_RegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.CaseTransfer_RegDiaryNumber_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.TransferTypeOption, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>                                                        
+                                                        <div class="col-md-9">
+                                                            <label class="form-group">                                                                
+                                                                @Html.RadioButtonFor(model => model.TransferTypeOption, "TransferToAO", new { id = "chkTransferToAO", @class = "radio-casetrvalue", @checked = "checked" }) Transfer To AO
+                                                                @Html.RadioButtonFor(model => model.TransferTypeOption, "TransferToAUTH", new { id = "chkTransferToAUTH", @class = "radio-casetrvalue" }) Transfer To Authority
+                                                                @Html.RadioButtonFor(model => model.TransferTypeOption, "TransferToREGD", new { id = "chkTransferToREGD", @class = "radio-casetrvalue" }) Transfer To Registered Project
+                                                                @Html.RadioButtonFor(model => model.TransferTypeOption, "TransferToOTH", new { id = "chkTransferToOTH", @class = "radio-casetrvalue" }) Any Other Case 
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.TransferTypeOption, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.TransferDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Date of Case Transfer between Bench/ Courts as sent/provided by PS of the respective bench.">
+                                                            @Html.EditorFor(model => model.TransferDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.TransferDate, "", new { @class = "text-danger" })
+                                                        </div>                                                    
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Transfer_FromBench, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Respective Bench of existing Preliminary-Hearing/ Hearing.">
+                                                            @Html.DropDownListFor(m => m.Transfer_FromBench, new SelectList(Model.PreHearingBenchMaster, "PreHearingBenchCode", "PreHearingBenchName"), "Select", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Transfer_FromBench, "", new { @class = "text-danger" })                                                            
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Transfer_ToBench, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.Transfer_ToBench, new SelectList(Model.PreHearingBenchMaster, "PreHearingBenchCode", "PreHearingBenchName"), "Select", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Transfer_ToBench, "", new { @class = "text-danger" })                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="rowreranumberFilter" style="display:none;">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">RERA Registration Number</label>
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="In case of case transfer to registered project, please specify the RERA registration number of the real-estate project/ real-estate agent.">
+                                                            @Html.EditorFor(model => model.TransferOrderStatusRemark, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.TransferOrderStatusRemark, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                                                    
+                                                <div class="row">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Remarks and status of complaint, if any.">
+                                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other Details</legend>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Please check (Yes/No), If any?</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">a.) Is any transfer order issued?</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsTransferOrder, "1", new { id = "chkTransferOrderY", @class = "radio-trordervalue" }) Yes
+                                                                @Html.RadioButtonFor(model => model.IsTransferOrder, "0", new { id = "chkTransferOrderN", @class = "radio-trordervalue", @checked = "checked" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsTransferOrder, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="rowTrOrderRefFilter" style="display:none;">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-offset-3 col-md-3" data-toggle="tooltip" data-placement="right" title="Specify transfer order reference number and date of order as remarks, if any.">
+                                                            @Html.EditorFor(model => model.TransferOrderStatusRemark, new { htmlAttributes = new { @class = "form-control", @placeholder = "Ref Number and Date of Order", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.TransferOrderStatusRemark, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-offset-3 col-md-3">
+                                                            <label class="control-label">b.) Is continue with the same reference number/ diary number?</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.C_column, "1", new { id = "chkIsSameDiaryNumberY", @class = "radio-samediarynumbervalue", @checked = "checked" }) Yes
+                                                                @Html.RadioButtonFor(model => model.C_column, "0", new { id = "chkIsSameDiaryNumberN", @class = "radio-samediarynumbervalue" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.C_column, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-offset-3 col-md-3">
+                                                            <label class="control-label">c.) Is valid for public view?</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "1", new { id = "chkIsPublicViewY", @class = "radio-publicviewvalue", @checked = "checked" }) Yes
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "0", new { id = "chkIsPublicViewN", @class = "radio-publicviewvalue" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsPublicView, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="rowPVFilter" style="display:none;">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.Label("Status (Public View), If Any", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Public view remarks as complaint status of case transfer, if any.">
+                                                            @Html.EditorFor(model => model.PublicViewStatus, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PublicViewStatus, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>                                                                                               
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">                                            
+                                            @if (Model.IsCaseTransferlockUnlockFlag == 1)
+                                            {
+                                                <input type="submit" value="@TempData["CaseTransferMsubmitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                            }
+                                            else
+                                            {
+                                                if (Model.IsDraft == 1)
+                                                {
+                                                    <input type="submit" value="@TempData["CaseTransferMsubmitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="submit" value="@TempData["CaseTransferMsubmitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                }
+                                            }
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "FormM_CaseTransferDetails", "HelpdeskComplaint", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                    <div class="form-group">                                            
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                @Html.DisplayName("SNo")
+                                                            </th>                                                                
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.CaseTransfer_RegDiaryNumber_Name)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayName("Type of Case Transfer")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.TransferDate)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.ComplainantApplicant_RelatedComplaint_Code)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.Transfer_FromBenchName)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.Transfer_ToBenchName)
+                                                            </th>                                                                                                                            
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.Remarks_IfAny)
+                                                            </th>                                                                
+                                                            @*<th>
+                                                                @Html.DisplayNameFor(model => model.IsPublicView)
+                                                            </th>*@                                                               
+                                                            <th>@Html.DisplayName("Edit| Delete")</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            int srnumber = 0;
+                                                        }
+                                                        @foreach (var item in Model.prpongoing)
+                                                        {
+                                                            {
+                                                                srnumber = srnumber + 1;
+                                                            }
+                                                            <tr> 
+                                                                <td>                                                                        
+                                                                    @Html.DisplayName(srnumber.ToString())                                                                        
+                                                                </td>                                                                   
+                                                                <td class="complaint-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.CaseTransfer_RegDiaryNumber_Name)">
+                                                                    @Html.DisplayFor(modelItem => item.CaseTransfer_RegDiaryNumber_Name)
+                                                                    @Html.HiddenFor(modelItem => item.ComplainantApplicant_RelatedComplaint_ID, new { @class = "hdnComplaintID" })
+                                                                    @Html.HiddenFor(modelItem => item.CaseTransfer_ID, new { @class = "hdnHearingID" })
+                                                                </td>
+                                                                <td class="bench-name" data-bench-name="@Html.DisplayFor(modelItem => item.TransferTypeOption)">
+                                                                    @if (item.TransferTypeOption == "TransferToAO")
+                                                                    {
+                                                                        @Html.DisplayName("Transfer To AO")
+                                                                    }
+                                                                    else if (item.TransferTypeOption == "TransferToAUTH")
+                                                                    {
+                                                                        @Html.DisplayName("Transfer To Authority")
+                                                                    }
+                                                                    else if (item.TransferTypeOption == "TransferToREGD")
+                                                                    {
+                                                                        @Html.DisplayName("Transfer To Registered Project")                                                                        
+                                                                        @Html.DisplayName(" (")
+                                                                        @Html.DisplayFor(modelItem => item.TransferOrderStatusRemark) 
+                                                                        @Html.DisplayName(")")
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("Transfer Case (Others)")
+                                                                    }                                                                    
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.TransferDate)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.ComplainantApplicant_RelatedComplaint_Code)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Transfer_FromBenchName)
+                                                                </td>
+                                                                <td>                                                                        
+                                                                    @Html.DisplayFor(modelItem => item.Transfer_ToBenchName)
+                                                                </td>                                                                                                                                    
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                                                </td>                                                                    
+                                                                @*<td>
+                                                                    @if (item.IsPublicView == 1)
+                                                                    {
+                                                                        @Html.DisplayName("Yes")
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("No")
+                                                                    }                                                                    
+                                                                </td>*@
+                                                                <td>
+                                                                    @if (Model.IsCaseTransferlockUnlockFlag == 1)
+                                                                    {
+                                                                        @Html.ActionLink("View", "Edit_FormM_CaseTransferDetails", new { FormMCaseTrIndexID = item.CaseTransfer_IndexID, FormMCaseTrID = item.CaseTransfer_ID, ComplaintFmMID = item.ComplainantApplicant_RelatedComplaint_ID })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (item.IsDraft != 1)
+                                                                        {
+                                                                            @Html.ActionLink("Edit", "Edit_FormM_CaseTransferDetails", new { FormMCaseTrIndexID = item.CaseTransfer_IndexID, FormMCaseTrID = item.CaseTransfer_ID, ComplaintFmMID = item.ComplainantApplicant_RelatedComplaint_ID }) @("| ")
+                                                                            @Html.ActionLink("Delete", "Delete_FormM_CaseTransferDetails", new { FormMCaseTrIndexID = item.CaseTransfer_IndexID, FormMCaseTrID = item.CaseTransfer_ID, ComplaintFmMID = item.ComplainantApplicant_RelatedComplaint_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Html.ActionLink("View", "Edit_FormM_CaseTransferDetails", new { FormMCaseTrIndexID = item.CaseTransfer_IndexID, FormMCaseTrID = item.CaseTransfer_ID, ComplaintFmMID = item.ComplainantApplicant_RelatedComplaint_ID })
+                                                                        }
+                                                                    }                                                                    
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                         
+                            <!-- /.col-lg-12 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

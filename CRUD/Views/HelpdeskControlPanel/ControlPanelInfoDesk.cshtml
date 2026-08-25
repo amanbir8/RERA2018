@@ -1,0 +1,735 @@
+﻿<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Control Panel</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Application Change Request(s)/ Modification Request(s)/ Administrator Control Panel.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> IT Manager Desk Admin Panel.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .collapsible {
+        background-color: #999999; /*#7bb73f  #d9edf7;*/
+        border-color: #bce8f1;
+        color: white;
+        cursor: pointer;
+        padding: 10px;
+        width: 95%;
+        border: none;
+        border-radius: .35rem;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+    }
+
+    .active, .collapsible:hover, .collapsible:active {
+        background-color: #31708f;
+    }
+
+    .collapsible:after {
+        content: '\002B'; /*'\2212'*/
+        color: white;
+        font-weight: bold;
+        float: right;
+        margin-left: 5px;
+    }
+
+    .border-left-primary {
+        border-left: .25rem solid #4e73df !important;
+    }
+
+    .sub-items a {
+        border-left: .5rem solid #7bb73f;
+    }
+
+    .sub-items a:hover {
+        border-left: .5rem solid #31708f;
+        font-weight: bold;
+    }
+
+    li {
+        margin: 0px;
+        list-style: none;
+        color: #999999;
+    }
+
+    .sub-items a {
+        position: relative;
+        display: block;
+        margin: 0 auto;
+        width: 92.9%;
+        text-indent: 24px;
+        line-height: 39px;
+        background: #f5f5f5;
+        margin-bottom: 1px;
+        text-align: left;
+        margin-top: 2px;
+        padding-top: 0px;
+    }
+
+    .sub-items {
+        display: none;
+        background: #fff;
+        margin: 0px;
+        width: 100%;
+    }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Control Panel</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Control Panel : Application Change Request(s)/ Modification Request(s)/ Administrator Control Panel
+                    <span class="pull-right">                        
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12" style="margin-top: 15px;">
+                            <div class="col-md-4 col-xs-12">
+
+                                <div class="panel-group" id="accordionCP0011">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0011" href="#collapseCP0011" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 1 - User Management</button>
+                                    </div>
+                                    <div id="collapseCP0011" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("UserManagementAuthorityInfoDesk", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP1.1 List of Authority Users</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("UserManagementListInfoDesk", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP1.2 List of Users</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("UserManagementPasswordListInfoDesk", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP1.3 Reset Password (Users)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("UserManagementLockUnlockListInfoDesk", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP1.4 Lock/ Unlock Users</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("UserManagementEmailPhoneListInfoDesk", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP1.5 Reset Email and Mobile Number</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("UserManagementRegisterAuthorityDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP1.6 Register New User</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0012">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0012" href="#collapseCP0012" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 2 - Master Details</button>
+                                    </div>
+                                    <div id="collapseCP0012" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("Master_ProjectRegistrationAreaZone", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP2.1 Project Area Zone Master</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP2.2 District Master</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP2.3 State Master</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP2.4 Sub-division Master</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP2.5 Type of Apartment Master</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP2.6 Status of Construction Master</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP2.7 Hearing Bench Master</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP2.8 Status of Section 59 Master</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0013">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0013" href="#collapseCP0013" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 3 - Special Number Details</button>
+                                    </div>
+                                    <div id="collapseCP0013" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP3.1 Project Registration</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP3.2 Real-Estate Agent Registration</a>
+                                            </li>                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0014">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0014" href="#collapseCP0014" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 4 - Incident Management</button>
+                                    </div>
+                                    <div id="collapseCP0014" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP4.1 Register Technical Issues</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP4.2 Status of Technical Issues</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0015">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0015" href="#collapseCP0015" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 5 - Quarterly Updates Management</button>
+                                    </div>
+                                    <div id="collapseCP0015" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("QuarterlyUpdateManagementLockUnlockListInfoDesk", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP5.1 Lock/Unlock Validity of Updates</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("QuarterlyUpdateManagementRegAccessStatusDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP5.2 Status of Quarterly Updates</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0016">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0016" href="#collapseCP0016" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 6 - Project Edit Management</button>
+                                    </div>
+                                    <div id="collapseCP0016" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ProjectEditManagementSuperLockUnlockListInfoDesk", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP6.1 Project's Super Lock/Unlock</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ProjectEditManagementRegAccessSuperLockUnlockStatusDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP6.2 Status of Edit Mode</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0017">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0017" href="#collapseCP0017" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 7 - RealEstate Agent Edit Management</button>
+                                    </div>
+                                    <div id="collapseCP0017" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP7.1 Agent's Super Lock/Unlock</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP7.2 Status of Edit Mode</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0018">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0018" href="#collapseCP0018" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 8 - File Rearrangement System</button>
+                                    </div>
+                                    <div id="collapseCP0018" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ProjectDocumentFileRearrangementDetails", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP8.1 Project Documents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP8.2 NOCs related to Project</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP8.3 Extension of Registration File</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP8.4 Promoter Documents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("AgentDocumentFileRearrangementDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP8.5 Real-Estate Agent Documents</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP8.6 Renewal of Registration File</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP8.7 Complaint Form Documents</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0019">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0019" href="#collapseCP0019" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 9 - Payment Reconciliation Details</button>
+                                    </div>
+                                    <div id="collapseCP0019" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP9.1 Project Payment</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP9.2 Extension of Registration Payment</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP9.3 Real-Estate Payment</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP9.4 Renewal of Registration Payment</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP9.5 Complaint Form-M Payment</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP9.6 Complaint Form-N Payment</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0020">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0020" href="#collapseCP0020" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 10 - Withdrawal Last History Records</button>
+                                    </div>
+                                    <div id="collapseCP0020" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP10.1 Project Registration</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP10.2 Extension of Registration</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP10.3 Realestate Agent Registration</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP10.4 Renewal of Registration</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP10.5 Complaint Form-M History</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP10.6 Complaint Form-N History</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP10.7 Miscellaneous Complaint</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>                                
+                            </div>                           
+                            <div class="col-md-4 col-xs-12">
+                                <div class="panel-group" id="accordionCP0021">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0021" href="#collapseCP0021" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 11 - PUC Details</button>
+                                    </div>
+                                    <div id="collapseCP0021" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ProjectPaperUnderConsiderationRegistration", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP11.1 Register PUC (Project)</a>
+                                            </li>                                            
+                                            <li>
+                                                <a href="@Url.Action("ProjectPaperUnderConsiderationStatusDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP11.2 Status PUC (Project)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP11.3 Register PUC (RealEstate Agent)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP11.4 Status PUC (RealEstate Agent)</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0022">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0022" href="#collapseCP0022" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 12 - ACR: Type of Registrations</button>
+                                    </div>
+                                    <div id="collapseCP0022" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP12.1 Promoter Change (Ind vs OTI)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP12.2 Agent Change (Ind vs OTI)</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0023">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0023" href="#collapseCP0023" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 13 - ACR: Special Bank Account</button>
+                                    </div>
+                                    <div id="collapseCP0023" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectSpecialBankAccountDetails", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP13.1 Change of Special Bank Account</a>
+                                            </li>                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0024">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0024" href="#collapseCP0024" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 14 - ACR: Change of Project Name</button>
+                                    </div>
+                                    <div id="collapseCP0024" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectCorrectionPName", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP14.1 Change of Project Name</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectCorrectionPromoterName", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP14.2 Change of Promoter Name</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0025">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0025" href="#collapseCP0025" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 15 - ACR: Project Land Details</button>
+                                    </div>
+                                    <div id="collapseCP0025" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectCorrectionProjectLandDetails", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP15.1 Change of Project Land Details</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0026">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0026" href="#collapseCP0026" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 16 - ACR: Authorised Person Details</button>
+                                    </div>
+                                    <div id="collapseCP0026" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectAuthorisedPrjPersonDetails", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP16.1 Project's Contact Person</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectAuthorisedPrmtrPersonDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP16.2 Promoter's Authorised Person</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0027">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0027" href="#collapseCP0027" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 17 - ACR: Correction of Address</button>
+                                    </div>
+                                    <div id="collapseCP0027" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectCorrectionProjectAddressDetails", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP17.1 Correction of Project Address</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectCorrectionPromoterAddressDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP17.2 Correction of Promoter Address</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0028">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0028" href="#collapseCP0028" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 18 - ACR: Change of Project Facts</button>
+                                    </div>
+                                    <div id="collapseCP0028" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectCorrectionFormBdatesDetails", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP18.1 Correction of Dates (Form-B)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ACR_ProjectCorrectionProjectFactsDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP18.2 Correction of Project Facts</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0029">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0029" href="#collapseCP0029" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 19 - ACR: Promoter's Members</button>
+                                    </div>
+                                    <div id="collapseCP0029" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP19.1 Addition of Organization Member</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP19.2 Correction of Organization Member</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0030">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0030" href="#collapseCP0030" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 20 - ACR: Correction of Inventory</button>
+                                    </div>
+                                    <div id="collapseCP0030" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP20.1 Correction of Construction</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP20.2 Correction of Inventory</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="col-md-4 col-xs-12">
+                                <div class="panel-group" id="accordionCP0031">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0031" href="#collapseCP0031" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 21 - Completion Certitficate</button>
+                                    </div>
+                                    <div id="collapseCP0031" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ProjectCompletionCertificateRegistration", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP21.1 Register Completion Certificate</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ProjectCompletionCertificateStatusDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP21.2 Status of Completion Certificate</a>
+                                            </li> 
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0032">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0032" href="#collapseCP0032" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 22 - Revocation of Registration</button>
+                                    </div>
+                                    <div id="collapseCP0032" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ProjectRevocationCancellationRegistrationDetails", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP22.1 Project Revoke</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("AgentRevocationCancellationRegistrationDetails", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP22.2 Real-estate Agent Revoke</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0033">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0033" href="#collapseCP0033" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 23 - Change of Realestate Agent Name</button>
+                                    </div>
+                                    <div id="collapseCP0033" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP23.1 Change of Real-estate Agent Name</a>
+                                            </li>                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0034">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0034" href="#collapseCP0034" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 24 - Change of Address</button>
+                                    </div>
+                                    <div id="collapseCP0034" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP24.1 Change in Registered Address</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP24.2 Change in Place of Bussiness Address</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0035">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0035" href="#collapseCP0035" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 25 - Change of Realestate Agent Details</button>
+                                    </div>
+                                    <div id="collapseCP0035" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP25.1 Change of Authorised Person</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP25.2 Additional Organisation Member</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP25.3 Correction of Organisation Member</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0036">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0036" href="#collapseCP0036" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 26 - Additional e-Mail(s) Details</button>
+                                    </div>
+                                    <div id="collapseCP0036" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("Email_PromoterEmailAddressDetail", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP26.1 Registered Promoter(s)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Email_ProjectEmailAddressDetail", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP26.2 Registered Project(s)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Email_AgentEmailAddressDetail", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP26.3 Registered Realestate Agent(s)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Email_ComplaintMEmailAddressDetail", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP26.4 Form-M Complaint(s)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Email_ComplaintNEmailAddressDetail", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP26.5 Form-N Complaint(s)</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0037">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0037" href="#collapseCP0037" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 27 - Additional Phone Number Details</button>
+                                    </div>
+                                    <div id="collapseCP0037" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("Mobile_PromoterPhoneNumberDetail", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP27.1 Registered Promoter(s)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Mobile_ProjectPhoneNumberDetail", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP27.2 Registered Project(s)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Mobile_AgentPhoneNumberDetail", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP27.3 Registered Realestate Agent(s)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Mobile_ComplaintMPhoneNumberDetail", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP27.4 Form-M Complaint(s)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Mobile_ComplaintNPhoneNumberDetail", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP27.5 Form-N Complaint(s)</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0038">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0038" href="#collapseCP0038" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 28 - Change of Counsel/ Representative Name</button>
+                                    </div>
+                                    <div id="collapseCP0038" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP28.1 Change Counsel Details (Form-M)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("ControlPanelDefaultInfo", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP28.2 Change Counsel Details (Form-N)</a>
+                                            </li>                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0039">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0039" href="#collapseCP0039" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 29 - Complaint: Bifurcation of Case(s)</button>
+                                    </div>
+                                    <div id="collapseCP0039" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("CPFormM_BifurcateCaseComplaints", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP29.1 Bifurcation of Case (Form-M)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("CPFormN_BifurcateCaseComplaints", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP29.2 Bifurcation of Case (Form-N)</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="panel-group" id="accordionCP0040">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0040" href="#collapseCP0040" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 30 - Complaint: Bulk Transfer of Case(s)</button>
+                                    </div>
+                                    <div id="collapseCP0040" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="@Url.Action("CPFormM_BulkTransferCaseComplaints", "HelpdeskControlPanel")" style="margin-bottom: 1px;" class="current">CP30.1 Transfer of Case (Form-M)</a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("CPFormN_BulkTransferCaseComplaints", "HelpdeskControlPanel")" style="margin-bottom: 0px; margin-top: 1px">CP30.2 Transfer of Case (Form-N)</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                @*<div class="panel-group" id="accordionCP0020">
+                                    <div class="row">
+                                        <button data-toggle="collapse" data-parent="#accordionCP0020" href="#collapseCP0020" class="panel-accordion-toggle collapsible" aria-expanded="false" title="Expand/Compress Details">CP 10 - Gateway Configurations</button>
+                                    </div>
+                                    <div id="collapseCP0020" class="panel-collapse collapse" aria-expanded="false" style="">
+                                        <ul class="sub-items" style="display: block;">
+                                            <li>
+                                                <a href="javascript:void(0);" style="margin-bottom: 1px;" target="_blank" class="current">CP10.1 Reset e-Mail Gateway Password</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0);" style="margin-bottom: 0px; margin-top: 1px" target="_blank">CP10.2 Reset SMS Gateway Password</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>*@
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script> 
+    
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+}

@@ -1,0 +1,49 @@
+﻿@model CRUD.Models.UserDetails
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Bind DropdownList Details</title>
+</head>
+<body>
+    <div>
+        @foreach (var item in Model.usersinfo)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location)
+                </td>
+         
+            </tr>
+        }
+    </div>
+  
+    <tr>
+        <td>
+            @Html.DisplayFor(m => m.UserId)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Location)
+        </td>
+
+    </tr>
+    <div>
+
+        Select User: @Html.DropDownListFor(m => m.UserId, new SelectList(Model.usersinfo, "UserId", "UserName"), "Select User")
+    </div>
+</body>
+</html>

@@ -1,0 +1,425 @@
+﻿@model CRUD.Models.Complaint.ClsPrp_ComplaintFormM_FlagStep
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script type="text/javascript">
+    @if (TempData["ComplaintMRegDiaryNumber_Name"] != null)
+    { 
+        if (TempData["ComplaintMRegDiaryNumber_Name"].ToString() != "")
+        { <text >
+            $(document).ready(function()
+            {
+                swal({
+                title: "Message",
+                    text: "@TempData["ComplaintMRegDiaryNumber_Name"]",
+                    type: "success"
+                }, function () {
+                    window.location = "../Complaint/RegComplaintVerificationM";
+                });
+            }); </text>
+        }
+    }
+</script>
+<script type="text/javascript">
+    @if (TempData["ComplaintMRegDiaryNumber_Validate"] != null)
+    {
+        if (TempData["ComplaintMRegDiaryNumber_Validate"].ToString() != "")
+        { <text >
+            $(document).ready(function()
+            {
+                swal({
+                    title: "Warning Message",
+                    text: "@TempData["ComplaintMRegDiaryNumber_Validate"]",
+                    type: "warning"
+                }, function () {
+                    window.location = "../Complaint/RegComplaintVerificationM";
+                });
+            }); </text>
+        }
+    }
+</script>
+
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script> 
+<style>
+    #customTopBtn {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    bottom: 20px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: #064576; /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 18px; /* Increase font size */
+}
+
+#customTopBtn:hover {
+    background-color: #555; /* Add a dark-grey background on hover */
+}
+</style>
+<style type="text/css">
+    .bs-wizard {
+        /*margin-top: 40px;*/
+    }
+
+    /*Form Wizard*/
+    .bs-wizard {
+        border-bottom: solid 1px #e0e0e0;
+        /*padding: 0 0 10px 0;*/
+        padding: 0;
+    }
+
+        .bs-wizard > .bs-wizard-step {
+            padding: 0;
+            position: relative;
+        }
+
+            .bs-wizard > .bs-wizard-step + .bs-wizard-step {
+            }
+
+            .bs-wizard > .bs-wizard-step.active .bs-wizard-stepnum {
+                color: #fbbd19;
+                font-size: 16px;
+                margin-bottom: 5px;
+            }
+
+            .bs-wizard > .bs-wizard-step.complete .bs-wizard-stepnum {
+                color: #3c763d;
+                font-size: 16px;
+                margin-bottom: 5px;
+            }
+
+            .bs-wizard > .bs-wizard-step .bs-wizard-stepnum {
+                color: #da524e;
+                font-size: 16px;
+                margin-bottom: 5px;
+                font-weight: 600;
+            }
+
+            .bs-wizard > .bs-wizard-step .bs-wizard-info {
+                color: #999;
+                font-size: 14px;
+            }
+
+            .bs-wizard > .bs-wizard-step > .bs-wizard-dot {
+                position: absolute;
+                width: 30px;
+                height: 30px;
+                display: block;
+                background: #064576;
+                top: 45px;
+                left: 50%;
+                margin-top: -15px;
+                margin-left: -15px;
+                border-radius: 50%;
+            }
+
+                .bs-wizard > .bs-wizard-step > .bs-wizard-dot:after {
+                    content: ' ';
+                    width: 14px;
+                    height: 14px;
+                    /*background: #fbbd19;*/
+                    background: #fff;
+                    border-radius: 50px;
+                    position: absolute;
+                    top: 8px;
+                    left: 8px;
+                }
+
+            .bs-wizard > .bs-wizard-step > .progress {
+                position: relative;
+                border-radius: 0px;
+                height: 8px;
+                box-shadow: none;
+                margin: 20px 0;
+            }
+
+                .bs-wizard > .bs-wizard-step > .progress > .progress-bar {
+                    width: 0px;
+                    box-shadow: none;
+                    background: #064576;
+                }
+
+            .bs-wizard > .bs-wizard-step.complete > .progress > .progress-bar {
+                width: 100%;
+            }
+
+            .bs-wizard > .bs-wizard-step.active > .progress > .progress-bar {
+                width: 50%;
+            }
+
+            .bs-wizard > .bs-wizard-step:first-child.active > .progress > .progress-bar {
+                width: 0%;
+            }
+
+            .bs-wizard > .bs-wizard-step:last-child.active > .progress > .progress-bar {
+                width: 100%;
+            }
+
+            .bs-wizard > .bs-wizard-step.disabled > .bs-wizard-dot {
+                background-color: #f5f5f5;
+            }
+
+                .bs-wizard > .bs-wizard-step.disabled > .bs-wizard-dot:after {
+                    opacity: 0;
+                }
+
+            .bs-wizard > .bs-wizard-step:first-child > .progress {
+                left: 50%;
+                width: 50%;
+            }
+
+            .bs-wizard > .bs-wizard-step:last-child > .progress {
+                width: 50%;
+            }
+
+            .bs-wizard > .bs-wizard-step.disabled a.bs-wizard-dot {
+                pointer-events: none;
+            }
+    /*END Form Wizard*/
+</style>
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $(document).on('click', '#BtnMainform', function (e) {
+                e.preventDefault();
+                var proceedButton = $(this);                
+                if ($('#IsVerificationComplete').is(":checked")) {                    
+                    $(proceedButton).parents('form')[0].submit();
+                }
+                else {                    
+                    alert("Please check the Verification Declaration.");
+                }
+            });
+        });
+</script>
+
+<script>
+    $(document).ready(function () {
+        var compBASE_URL = $('body').attr('data-base-url');
+        $(document).on('click', 'a.complainantdeskHomeButton', function (e) {
+            e.preventDefault();
+            window.location = compBASE_URL + 'Home/IndexComplainant';
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Complaint Form-M</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>   
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Complaint to Regulatory Authority : Form-M (Complaint under section 31 of the Act) [See rule 36(1)]
+                    <span class="pull-right">
+                        <a class="complainantdeskHomeButton" href="javascript:void(0);" title="Home"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-home" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">                    
+                    <div class="row">
+                        <div class="col-md-12 bs-wizard" style="border-bottom:0;">
+
+                            <div class="col-xs-3 bs-wizard-step complete">
+                                <div class="text-center bs-wizard-stepnum">Step 1</div>
+                                <div class="progress"><div class="progress-bar"></div></div>
+                                <a href="@Url.Action("RegComplaintFormM", "Complaint")" class="bs-wizard-dot"></a>
+                                @*<div class="bs-wizard-info text-center">Form - M Details</div>*@
+                            </div>
+
+                            <div class="col-xs-3 bs-wizard-step complete">
+                                <!-- complete -->
+                                <div class="text-center bs-wizard-stepnum">Step 2</div>
+                                <div class="progress"><div class="progress-bar"></div></div>
+                                <a href="@Url.Action("RegComplaintEncldocM", "Complaint")" class="bs-wizard-dot"></a>
+                                @*<div class="bs-wizard-info text-center">List of Encl./Document(s)</div>*@
+                            </div>
+
+                            <div class="col-xs-3 bs-wizard-step complete">
+                                <!-- complete -->
+                                <div class="text-center bs-wizard-stepnum">Step 3</div>
+                                <div class="progress"><div class="progress-bar"></div></div>
+                                <a href="@Url.Action("RequestPaymentFormM", "ComplaintPayment")" class="bs-wizard-dot"></a>
+                                @*<div class="bs-wizard-info text-center">Additional Details</div>*@
+                            </div>
+                            @if (Model.IsDraft == 1)
+                            {
+                                <div class="col-xs-3 bs-wizard-step complete">
+                                    <!-- active -->
+                                    <div class="text-center bs-wizard-stepnum">Step 4</div>
+                                    <div class="progress"><div class="progress-bar"></div></div>
+                                    <a href="@Url.Action("RegComplaintVerificationM", "Complaint")" class="bs-wizard-dot"></a>
+                                    @*<div class="bs-wizard-info text-center">Application Fee</div>*@
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-xs-3 bs-wizard-step active">
+                                    <!-- active -->
+                                    <div class="text-center bs-wizard-stepnum">Step 4</div>
+                                    <div class="progress"><div class="progress-bar"></div></div>
+                                    <a href="@Url.Action("RegComplaintVerificationM", "Complaint")" class="bs-wizard-dot"></a>
+                                    @*<div class="bs-wizard-info text-center">Application Fee</div>*@
+                                </div>
+                            }
+                        </div>
+                    </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    @using (Html.BeginForm("RegComplaintVerificationM", "Complaint", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        @Html.HiddenFor(model => model.ComplaintFormM_IndexID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.HiddenFor(model => model.ComplaintFormM_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.HiddenFor(model => model.ComplaintFormM_Code, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.HiddenFor(model => model.Profile_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.HiddenFor(model => model.User_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.HiddenFor(model => model.ComplaintType_MN, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                                        @Html.HiddenFor(model => model.IsComplaintComplete, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.HiddenFor(model => model.IsPaymentComplete, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @Html.HiddenFor(model => model.IsDocumentsComplete, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        @*@Html.HiddenFor(model => model.IsVerificationComplete, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                                        @Html.HiddenFor(model => model.ComplaintVerificationDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my">Verification</legend>                                                        
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-offset-1 col-md-11">
+                                                                    <label class="control-label">
+                                                                         @Html.CheckBox("IsVerificationComplete", Model.IsVerificationComplete==0 ? false : true, new { htmlAttributes = new { @class = "align-left" } })
+                                                                    </label>                                                                                                                                
+                                                                    I/we, the complainant(s), do hereby verify that the contents of paragraphs [1 to 9] of the complaint are true to my/our personal knowledge and belief and that I/we have not suppressed any material fact(s).
+                                                                </div>
+                                                            </div>
+                                                        </div>                                                                                                              
+                                                        <hr />
+                                                        <div class="row">
+                                                            <div class="form-group">                                                                                                                              
+                                                                <div class="col-md-12" style="text-align:right;">
+                                                                    <label class="control-label">Complaint File Date :</label>
+                                                                    <b> @Html.DisplayFor(model => model.ComplaintVerificationDate, new { htmlAttributes = new { @class = "form-control" } })</b>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>                                                                              
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    @if (TempData["ComplaintMRegDiaryNumber_Name"] != null)
+                                                    {
+                                                        <b>@TempData["ComplaintMRegDiaryNumber_Name"].ToString()</b>
+                                                    }
+                                                </div>
+                                                <div class="col-md-12">
+                                                    @if (Model.IsLock == 1)
+                                                    {
+                                                        if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                        {
+                                                            <input type="submit" value="Submit" id="BtnMainform" class="btn btn-primary" disabled="disabled" />
+                                                            @Html.ActionLink("Print Form 'M'", "Print_ComplaintFormMcodeDetails", "ComplaintPrintForm", null, new { @class = "btn btn-outline btn-primary", @target = "_blank" })
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="submit" value="Submit" id="BtnMainform" class="btn btn-danger" />
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="submit" value="Submit" id="BtnMainform" class="btn btn-danger" />
+                                                    }                                                    
+                                                    @Html.ActionLink("Reset", "RegComplaintVerificationM", "Complaint", null, new { @class = "btn btn-outline btn-primary" })
+                                                </div>                                                
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my">Please Note</legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-offset-1 col-md-11">
+                                                                    <p>
+                                                                        i)	Complainant is required to note down the complaint reference number generated on-line on successful submission (Step-4 of complaint), for any future references with the Authority.
+                                                                    </p>
+                                                                    <p>
+                                                                        ii)	After successful submission of complaint by user type as “Complainant”. The complainant is required to submit a hardcopy of the complaint and documents uploaded/ submitted on-line along with additional
+                                                                        copies thereof, equal in number to the number of respondents, with the Authority.
+                                                                    </p>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <!-- /.row (nested) -->
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+            <!-- /.row -->
+            </div>
+    </div>
+    <!-- /.wrapper -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    }

@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNet.Identity
+
+<script>
+    $(document).ready(function () {
+        
+        var currentLoc = window.location.pathname;
+        var currentLocName = window.location.pathname.split('/');
+        var currentLink = currentLocName[3];
+        $(document).find('a.tab-btns[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff' });
+        $(document).find('a.btn-drpmenuitem[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff', 'background-color': '#064576' });
+        switch (currentLink) {            
+            case 'Display_LDRnumberRegisteredProjectDetails':
+            case 'Display_LDRnumberExtensionFormProjectDetails':
+            case 'Display_LDRnumberProjectRegistrationDocuments':
+                $("#drpMenuButton_ProjectRegistrationDetails").addClass('active').css({ 'color': '#fff' });
+                break;            
+            default:
+                $(document).find('a.tab-btns[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff' });
+                break;
+        }
+    });
+</script>
+
+@if (Request.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <fieldset class="col-md-12">
+                    <legend class="my">Registered Project (Completion Certificate) Details</legend>
+                    <div class="row" id="mygroupmenutabbtns">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="dropdown pull-left" style="padding: 0 3px 0 0;">
+                                    <button class="btn tab-btns btn-outline btn-primary dropdown-toggle" type="button" id="drpMenuButton_ProjectRegistrationDetails" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Registered Project Details <i class="fa fa-caret-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="drpMenuButton_ProjectRegistrationDetails">
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_LDRnumberRegisteredProjectDetails", "Helpdesk")">Project Registration Details</a></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_LDRnumberExtensionFormProjectDetails", "Helpdesk")">Extension of Registration (Project) Details</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_LDRnumberProjectRegistrationDocuments", "Helpdesk")">Project Registration Certificate(s)</a></li>
+                                    </ul>
+                                </div>                                                                
+                                <div class="pull-left" style="padding: 0 3px 0 0;">
+                                    @Html.ActionLink("Completion Certificate Details ", "Display_CompletionRegisteredProjectDetails", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })                                                                        
+                                </div>                                
+                                <div class="pull-left">
+                                    @Html.ActionLink("Action", "ProjectCompletionInfoEventInsert", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+}
+

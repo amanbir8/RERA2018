@@ -1,0 +1,16 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+
+    function disableBackButton() {
+        window.history.forward(-1);
+    }
+
+    setTimeout("disableBackButton()", 0);
+
+    window.onunload = function () {
+        null
+    };
+</script>

@@ -1,0 +1,107 @@
+﻿@model CRUD.Models.ProjectPrint.ClsPrp_PrmProject_Print_ProjectDocuments
+
+@{    
+    Layout = null;
+}
+
+<div id="wrapper">   
+    <div class="row">
+        <div class="col-lg-12">
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.prpProjectDiaryNumberDetails != null)
+                {
+                    foreach (var item in Model.prpProjectDiaryNumberDetails)
+                    {
+                        var varDate = System.DateTime.Now.Date;
+                        <tr>
+                            <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                            <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                        </tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Application Form (Project Document(s) Details)")</b></td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Project Diary Number")</td>
+                            <td width="35%">@Html.DisplayFor(modelitem => item.PromoterRegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.zipProjectName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("District")</td>
+                            <td>
+                                @Html.DisplayFor(modelitem => item.zipProjectDistrictName, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.zipPromoterName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.zipPromoterName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Details regarding Project Documents")</h4></td></tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+            </table>
+            @if (Model.prpongoing != null)
+            {
+                <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                    <thead>
+                        <tr>
+                            <th width="5%">@Html.Label("S No")</th>
+                            <th width="40%">@Html.Label("Document Name")</th>
+                            <th width="15%">@Html.Label("Reference Number")</th>
+                            <th>@Html.Label("Date")</th>
+                            <th width="20%">@Html.Label("Remarks, If Any")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        @foreach (var item in Model.prpongoing)
+                        {
+                            {
+                                sno = sno + 1;
+                            }
+                            <tr class="odd gradeX">
+                                <td>@Html.DisplayName(sno.ToString())</td>
+                                <td>@Html.DisplayFor(modelItem => item.ProjectDoc_InfoName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.ProjectDoc_ReferenceNumber)</td>
+                                <td>@Html.DisplayFor(modelItem => item.ProjectDoc_IssueDate)</td>
+                                <td style="text-align:justify;">@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                </table>
+            }
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic; font-size:small; border: 1px solid #ccc">Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.</td></tr>
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic; font-size:medium;">(Authorized Signatory)</td></tr>
+            </table>
+        </div>
+
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->
+
+

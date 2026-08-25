@@ -1,0 +1,524 @@
+﻿@model CRUD.Models.HelpDeskAgent.ClsPrp_AuthDesk_View_AgentPayment
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<link href="@Url.Content("~/css/jquery.spzoom.css")" rel="stylesheet" type="text/css" />
+
+<script>
+$(function() {
+    $('[data-spzoom]').spzoom();
+});
+</script>
+<script>
+    $(document).ready(function () {
+        var BASE_URLm = $('body').attr('data-base-url');
+        $(document).on('click', 'a.modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var AgentId = 0;//$.trim($(parentRow).find('input.hdnProjectID').val());
+            AgentId = parseInt(AgentId);
+            //var rowIndex = $(this).parent().index();
+            var checklistcriteriacode = $(this).attr('data-criteria-code'); //$(this).closest('tr').find('.checklist-criteria-code').attr('data-criteria-code');
+            //var checklistcriteriacode = $(this).parent('td.checklist-criteria-code').attr('data-criteria-code');
+            //var checklistcriteriacode = $.trim($(parentRow).find('td.checklist-criteria-code').attr('data-criteria-code'));
+            var criteriaCode = parseInt(checklistcriteriacode);
+            $.ajax({
+                url: BASE_URLm + 'HelpdeskAgent/AgentInfoCheckListInsert',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'AgentId': AgentId, 'criteriaCode': criteriaCode },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    //alert(1);
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                }
+            });
+
+            //var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            $(projectDetailsModal).find('h4.modal-title').html('Checklist Criteria Details <a href="javascript:void(0);"></a>');
+            //$(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 25,
+            "lengthMenu": [[25, 50, 75, 100], [25, 50, 75, 100]]
+        });
+
+    });
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButtonExpandChecklist', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var AgentDetailsModal = $(document).find('#myModal');
+            $(AgentDetailsModal).find('.modal-body').html('');
+
+            var parmAgentId = $.trim($(document).find('#zapRelated_Agent_ID').val());           
+            var parmCriteriaID = $(this).attr('data-criteria-code');
+            var parmCriteriaSubID = $(this).attr('data-subcriteria-code');
+            var parmCriteriaFlag = $(this).attr('data-criteria-flag');
+
+            parmAgentId = parseInt(parmAgentId);
+            parmCriteriaID = parseInt(parmCriteriaID);
+            parmCriteriaSubID = parseInt(parmCriteriaSubID);
+            parmCriteriaFlag = parseInt(parmCriteriaFlag);
+
+            var varDNumber = $("#zapAgent_DiaryNumber").val();
+            var varAgentName = $("#zapAgentName").val();
+
+            $.ajax({
+                url: BASE_URL + 'HelpdeskAgent/AgentInfoCheckListDisplayLogByFlag',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'parmAgentId': parmAgentId, 'parmCriteriaID': parmCriteriaID, 'parmCriteriaSubID': parmCriteriaSubID, 'parmCriteriaFlag': parmCriteriaFlag },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(AgentDetailsModal).find('.modal-body').html(response);
+                    $(AgentDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(AgentDetailsModal).find('h4.modal-title').html('Checklist History Details - <a href="javascript:void(0);"></a>');
+            $(AgentDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varAgentName + ')');
+            $(AgentDetailsModal).modal('show');
+        });
+
+        $(document).on("click", "a.lock-agent-payment-details", lockUnlockHandlerAgentFeeDetails);
+
+        //Lock-Unlock-Loader-Handler (Agent Fee Details)
+        var parmLockUnlockagentfee = $.trim($(document).find('#IsDraftAgentPayment').val());
+        if (parmLockUnlockagentfee == 1) { //L
+            $("#btnLockAgentFeeDetails").prop('disabled', false);
+            $("#btnLockAgentFeeDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockAgentFeeDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockAgentFeeDetails").attr("title", "Unlock Details");
+            $("#btnLockAgentFeeDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockagentfee == 5) { //UL
+            $("#btnLockAgentFeeDetails").prop('disabled', false);
+            $("#btnLockAgentFeeDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockAgentFeeDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockAgentFeeDetails").attr("title", "Lock Details");
+            $("#btnLockAgentFeeDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockagentfee == 6) { //PL
+            $("#btnLockAgentFeeDetails").prop('disabled', true);
+            $("#btnLockAgentFeeDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockAgentFeeDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockAgentFeeDetails").attr("title", "Unlock Details");
+            $("#btnLockAgentFeeDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockAgentFeeDetails").prop('disabled', true);
+            $("#btnLockAgentFeeDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockAgentFeeDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockAgentFeeDetails").attr("title", "Lock Details");
+            $("#btnLockAgentFeeDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+    });
+
+    function lockUnlockHandlerAgentFeeDetails() {
+
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmAgentId = $.trim($(document).find('#zapRelated_Agent_ID').val());            
+            var parmLockUnlock = $.trim($(document).find('#IsDraftAgentPayment').val());
+            var parmIndexID = $.trim($(document).find('#AgentPayment_IndexID').val());
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'HelpdeskAgent/LockUnlockHandler_Agent_RegistrationPayment',
+                data: { 'parmAgentId': parmAgentId, 'parmLockUnlock': parmLockUnlock, 'parmIndexID': parmIndexID },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockAgentFeeDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockAgentFeeDetails").attr("title", "Unlock Details");
+                        $("#btnLockAgentFeeDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockAgentFeeDetails").prop('disabled', true);
+                        $("#btnLockAgentFeeDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockAgentFeeDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockAgentFeeDetails").attr("title", "Lock Details");
+                        $("#btnLockAgentFeeDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockAgentFeeDetails").prop('disabled', true);
+                        $("#btnLockAgentFeeDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Real Estate Agent Application Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Payment for Registration Fees
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Real Estate Agent Application - ( @Html.DisplayFor(model => model.zapAgent_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zapAgentName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.DisplayFor(model => model.zapAgentName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zapAgentLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zapAgentLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.HiddenFor(model => model.AgentPayment_IndexID)
+                                                        @Html.HiddenFor(model => model.zapAgent_DiaryNumber)
+                                                        @Html.HiddenFor(model => model.zapAgentName)
+                                                        @Html.HiddenFor(model => model.zapRelated_Agent_ID)                                                        
+                                                        @Html.HiddenFor(model => model.IsDraftAgentPayment)
+                                                        @Html.HiddenFor(model => model.IsDraft)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskAgentNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a data-criteria-code="512" class="modalOpenerButton" href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Registration Payment Details
+                                        <span class="pull-right">
+                                            <a class="modalOpenerButtonExpandChecklist" data-criteria-code="512" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                            <a class="a lock-agent-payment-details" id="btnLockAgentFeeDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                        </span>
+                                    </h4>
+                                </div>
+                            </div>
+                            @if(Model.AgentPayment != null)
+                            {
+                                int spayno = 0;
+                                foreach (var item in Model.AgentPayment)
+                                {
+                                    spayno = spayno + 1;
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my"><a data-criteria-code="512" class="modalOpenerButton" href="javascript:void(0);">@Html.DisplayName("(" + spayno.ToString() + ")") Payment Details</a></legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">                                                            
+                                                                @Html.LabelFor(modelItem => item.AgentPayment_TitleCode, htmlAttributes: new { @class = "control-label" })                                                                
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(modelItem => item.AgentPayment_TitleName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            </div>
+                                                            <div class="col-md-3">                                                               
+                                                                @Html.LabelFor(modelItem => item.Payment_Mode, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(modelItem => item.Payment_Mode, new { htmlAttributes = new { @class = "form-control" } })
+                                                            </div>                                                        
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(modelItem => item.Registration_Fee, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(modelItem => item.Registration_Fee, new { htmlAttributes = new { @class = "form-control" } })                                                                
+                                                            </div>
+                                                            <div class="col-md-3"> 
+                                                                @Html.LabelFor(modelItem => item.Other_Fee, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(modelItem => item.Other_Fee, new { htmlAttributes = new { @class = "form-control" } })                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if (item.Payment_Mode != "Online Payment")
+                                                    {
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(modelItem => item.Bank_Charges, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Bank_Charges, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(modelItem => item.Date_of_Payment_RegistrationFee, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Date_of_Payment_RegistrationFee, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(modelItem => item.Bank_Name, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Bank_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(modelItem => item.Branch_Name, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Branch_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(modelItem => item.DD_BankersCheque_Number, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.DD_BankersCheque_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(modelItem => item.DD_BankersCheque_Amount, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.DD_BankersCheque_Amount, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>  
+                                                    }                                                                                                  
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    if (item.Payment_Mode != "Online Payment")
+                                    {
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my"><a data-criteria-code="512" class="modalOpenerButton" href="javascript:void(0);"> Scan copy of DD/ Bankers Cheque</a></legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(modelItem => item.ImageDDorBankersCheque_FileName, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <a href="~/@Html.DisplayFor(modelItem => item.ImageDDorBankersCheque_FilePath)@Html.DisplayFor(modelItem => item.ImageDDorBankersCheque_FileName)" data-spzoom>
+                                                                        <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/@Html.DisplayFor(modelItem => item.ImageDDorBankersCheque_FilePath)@Html.DisplayFor(modelItem => item.ImageDDorBankersCheque_FileName)" alt="No Image" />
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        if (Model.AgentPaymentWithTranasactions != null)
+                                        {
+                                            foreach (var itemTrn in Model.AgentPaymentWithTranasactions)
+                                            {
+                                                if (item.AgentPayment_ID == itemTrn.RelatedPayment_ID)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <fieldset class="col-md-12">
+                                                                    <legend class="my"><a data-criteria-code="512" class="modalOpenerButton" href="javascript:void(0);"> Particulars of Online Payment (in rupees) Details</a></legend>
+                                                                    
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(modelItem => itemTrn.PG_Product_Info, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(modelItem => itemTrn.PG_Product_Info, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(modelItem => itemTrn.PG_Amount, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(modelItem => itemTrn.PG_Amount, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(modelItem => itemTrn.PG_Date, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(modelItem => itemTrn.PG_Date, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(modelItem => itemTrn.Agent_BriefSummary, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(modelItem => itemTrn.Agent_BriefSummary, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>  
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(modelItem => itemTrn.PG_Transaction_ID, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(modelItem => itemTrn.PG_Transaction_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(modelItem => itemTrn.PG_PayU_ID, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(modelItem => itemTrn.PG_PayU_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(modelItem => itemTrn.PG_Payment_Type, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(modelItem => itemTrn.PG_Payment_Type, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(modelItem => itemTrn.PG_Bank_Reference_No, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(modelItem => itemTrn.PG_Bank_Reference_No, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>                                                                                                                                      
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(modelItem => itemTrn.PG_Payment_Gateway, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(modelItem => itemTrn.PG_Payment_Gateway, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>                                                                            
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet" />
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+}

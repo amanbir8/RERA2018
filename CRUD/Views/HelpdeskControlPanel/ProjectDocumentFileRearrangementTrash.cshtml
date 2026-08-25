@@ -1,0 +1,328 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_FileRearrangementProjectDocumentDetails
+
+@{
+    Layout = null;
+}
+
+<script>
+    jQuery.validator.addMethod("cusalphanumeric", function (value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9 ,-.()/]*$/.test($.trim(value));
+    }, "Special characters are not allowed.");
+
+    $("#myform_CPprojectdoctrash").validate({
+        rules: {
+            IsUpdateModifyFlag_ProjectDocument: {
+                required: true
+            }
+        },
+        messages: {
+            IsUpdateModifyFlag_ProjectDocument: {
+                required: "this field is required"
+            }
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var baseUrl = $('body').attr('data-base-url');
+
+        function deleteOrder(data) {
+            return $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'POST',
+                url: baseUrl + "HelpdeskControlPanel/DeleteFileRearrangementProjectDocsDetail",
+                data: data,
+                success: function (d) {
+                    if (d.status == true) {
+                        alert(d.statusMessage);
+                        var managerprojectdocsModal = $(document).find('#myModal');
+                        $(managerprojectdocsModal).fadeOut(1000, function () {
+                            $(managerprojectdocsModal).modal('hide');
+                        });
+                    }
+                    else {
+                        if (d.remarks == 'Error') {
+                            alert(d.statusMessage);
+                        }
+                        else {
+                            alert('Failed! Something went wrong');
+                        }
+                    }
+                },
+                error: function () {
+                    alert("Oops! Something went wrong")
+                }
+            });
+        }
+
+        $("#deleteOrder").click(function (e) {
+            e.preventDefault();
+            var orderArr = [];
+            orderArr.length = 0;
+            var isAllValid = false;
+
+            if ($("input[name='IsUpdateModifyFlag_ProjectDocument']:checked").val() != '') {
+                if ($("input[name='IsUpdateModifyFlag_ProjectDocument']:checked").val() >= 0) {
+                    var xpRegistrationNumber = $("#RERAnumberRegistration_Input").val(),
+                        xpDiaryNumber = $("#ProjectDiaryNumber_Input").val(),
+                        xpPreviousDocInfoCode = $("#ProjectDoc_InfoCode").val(),                        
+                        xpFlagProjectDocument = $("input[name='IsUpdateModifyFlag_ProjectDocument']:checked").val();
+
+                    if (xpFlagProjectDocument >= 0) {
+                        isAllValid = true;                        
+                    }
+                    else {
+                        alert('Invalid! The options (trash/delete/modify) (*) fields are invalid.');
+                        isAllValid = false;
+                    }
+                }
+                else {
+                    alert('The mandatory (*) fields are required.');
+                    isAllValid = false;
+                }
+            }
+            else {
+                isAllValid = false;
+            }
+
+            if (isAllValid) {
+                var r = confirm("Are you sure you want to trash/delete these document details?");
+                if (r == true) {
+                    var pProjectDocIndexID = $("#ProjectDoc_IndexID").val(),
+                        pProjectDocID = $("#ProjectDoc_ID").val(),
+                        pPromoterID = $("#Promoter_ID").val(),
+                        pProjectID = $("#Project_ID").val(),
+                        pProject_DiaryNumber = $("#Project_DiaryNumber").val(),
+                        pProjectDocInfoCode = $("#ProjectDoc_InfoCode").val(),
+                        pApplicationSearchFlag = $("#Application_SearchTypeFlag").val(),
+                        pUpdateModifyFlag = $("input[name='IsUpdateModifyFlag_ProjectDocument']:checked").val(),
+                        pRegistrationNumber = $("#RERAnumberRegistration_Input").val(),
+                        pDiaryNumber = $("#ProjectDiaryNumber_Input").val(),
+                        pExtra01_column = $("#Extra01_column").val(),
+                        pExtra02_column = $("#Extra02_column").val(),
+                        pRoleAccessFlag = $("#RoleAccessFlag").val();
+
+                    orderArr.push({
+                        ProjectDoc_IndexID: pProjectDocIndexID,
+                        ProjectDoc_ID: pProjectDocID,
+                        Promoter_ID: pPromoterID,
+                        Project_ID: pProjectID,
+                        Project_DiaryNumber: pProject_DiaryNumber,
+                        ProjectDoc_InfoCode: pProjectDocInfoCode,
+                        Application_SearchTypeFlag: pApplicationSearchFlag,
+                        IsUpdateModifyFlag_ProjectDocument: pUpdateModifyFlag,
+                        RERAnumberRegistration_Input: pRegistrationNumber,
+                        ProjectDiaryNumber_Input: pDiaryNumber,                        
+                        Extra01_column: pExtra01_column,
+                        Extra02_column: pExtra02_column,
+                        RoleAccessFlag: pRoleAccessFlag,
+                    });
+
+                    var data = JSON.stringify({
+                        requestobj: orderArr
+                    });
+
+                    $.when(deleteOrder(data)).then(function (response) {
+                        console.log(response);
+                    }).fail(function (err) {
+                        console.log(err);
+                    });
+                }
+            }
+        });
+
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var projectdocmodifymanagerModal = $(document).find('#myModal');
+            $(projectdocmodifymanagerModal).fadeOut(1000, function () {
+                $(projectdocmodifymanagerModal).modal('hide');
+            });
+        });
+    });
+</script>
+<style>
+    *.bgdisabled-color {
+        background-color: #F0F0F0;
+    }
+
+    *.bgdisplay-color {
+        background-color: #8fcedd;
+    }
+
+    .disclaimer-text {
+        text-align: justify;
+        text-justify: inter-word;
+    }
+</style>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id = "myform_CPprojectdoctrash" }))
+                            {
+                                @Html.HiddenFor(model => model.ProjectDoc_IndexID)
+                                @Html.HiddenFor(model => model.ProjectDoc_ID)
+                                @Html.HiddenFor(model => model.Promoter_ID)
+                                @Html.HiddenFor(model => model.Project_ID)
+                                @Html.HiddenFor(model => model.Application_SearchTypeFlag)
+                                @Html.HiddenFor(model => model.Project_DiaryNumber)
+                                @Html.HiddenFor(model => model.ProjectName)
+                                @Html.HiddenFor(model => model.ProjectAddressDistrict, htmlAttributes: new { @id = "pmPrjAddDist" })
+                                @Html.HiddenFor(model => model.ProjectDoc_InfoCode)
+                                @Html.HiddenFor(model => model.ProjectDoc_ReferenceNumber)
+                                @Html.HiddenFor(model => model.Remarks_IfAny)
+                                @Html.HiddenFor(model => model.Extra01_column)
+                                @Html.HiddenFor(model => model.Extra02_column)
+                                @Html.HiddenFor(model => model.RoleAccessFlag)
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <label class="control-label">(A.) Selected Document Details</label>
+                                                    </div>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(i.) Diary Number (Project)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.Project_DiaryNumber, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.Project_DiaryNumber, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(ii.) Project Name</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(iii.) Project Address District Name</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.ProjectAddressDistrict, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.ProjectAddressDistrict, "", new { @class = "text-danger" })                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(iv.) Document Name (Selected)</label>                                                        
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.DropDownListFor(model => model.ProjectDoc_InfoCode, new SelectList(Model.prpMasterDocs, "ProjectDocMaster_InfoCode", "ProjectDocMaster_InfoName"), "Select", new { @class = "form-control bgdisabled-color", @disabled = "disabled" })
+                                                        @Html.ValidationMessageFor(model => model.ProjectDoc_InfoCode, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(v.) Reference Number (Selected)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.ProjectDoc_ReferenceNumber, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.ProjectDoc_ReferenceNumber, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(vi.) Remarks, If Any (Selected)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                            <hr/>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <label class="control-label">(B.) Trash/ Delete or Modify Document Details?</label>                                                    
+                                                    </div>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(i.) Select Options?</label>                                                        
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.IsUpdateModifyFlag_ProjectDocument, "2", new { @id = "chkmodifyflagoptionsTRH", @class = "radio-trahflagoptions", @checked = "checked" }) Trash
+                                                            @Html.RadioButtonFor(model => model.IsUpdateModifyFlag_ProjectDocument, "3", new { @id = "chkmodifyflagoptionsDEL", @class = "radio-trahflagoptions" }) Delete
+                                                            @Html.RadioButtonFor(model => model.IsUpdateModifyFlag_ProjectDocument, "4", new { @id = "chkmodifyflagoptionsNPV", @class = "radio-trahflagoptions" }) Other (Not Applicable for Public View)
+                                                        </label>
+                                                        @Html.ValidationMessageFor(model => model.IsUpdateModifyFlag_ProjectDocument, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-lg-12 text-right">
+                                            <button type="button" id="deleteOrder" class="btn btn-primary"><i class="fa fa-refresh"></i> Submit</button>
+                                            <button type="button" id="cancelOrder" class="btn btn-primary"><i class="fa fa-times"></i> Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                           }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

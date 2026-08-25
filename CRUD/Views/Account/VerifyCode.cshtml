@@ -1,0 +1,84 @@
+﻿@model CRUD.Models.VerifyCodeViewModel
+@{
+    ViewBag.Title = "Verify";
+}
+
+@*<h2>@ViewBag.Title.</h2>*@
+
+@using (Html.BeginForm("VerifyCode", "Account", new { ReturnUrl = Model.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("provider", @Model.Provider)
+    @Html.Hidden("rememberMe", @Model.RememberMe)
+    <div class="contianer-fluid" style="padding-right: 15px;    padding-left: 15px;    margin-right: auto;    margin-left: auto;">
+        <div class="row" style="margin-right: -15px;    margin-left: -15px;">
+            <div class="col-md-12">&nbsp;</div>
+            <div class="col-md-12">&nbsp;</div>
+            <div class="col-md-5"></div>
+            <div class="col-md-2 text-center">
+                <a href="index.html">
+                    <img src="@Url.Content("~/images/Rera_Design3b_03.png")" alt="RERA logo" class="logo" title="REAL ESTATE REGULATORY AUTHORITY, PUNJAB">
+                </a>
+            </div>
+            <div class="col-md-5"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="">&nbsp;</div>
+            <div class="col-md-3"></div>
+            <div class="col-md-6 text-center" style="color: #fff; font-size: 15px;"> REAL ESTATE REGULATORY AUTHORITY, PUNJAB </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="">&nbsp;</div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4 text-center main-login main-center" style="background-color: #fff; ">
+                <div class="" style="padding: 0px;">
+                    <div class="row">
+                        <div class="col-md-12  text-center" style="background-color: #7bb73f; height: 54px; color: #fff; padding: 14px 0px 0px 0px;">Enter verification code</div>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <!--email id INPUT-->
+                            <div class="col-md-12">
+                                @Html.ValidationSummary("", new { @class = "text-danger" })
+                                <div class="form-group">
+                                    @*@Html.LabelFor(m => m.Code, new { @class = "col-md-2 control-label" })*@
+                                    <div class="col-md-12">
+                                        @Html.TextBoxFor(m => m.Code, new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Code) })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="checkbox">
+                                            @Html.CheckBoxFor(m => m.RememberBrowser)
+                                            @Html.LabelFor(m => m.RememberBrowser)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="submit" class="btn btn-lg btn-block button_custom" value="Submit" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row " style="margin-top: 10px;">
+            <div class="text-md-center col-md-12">
+                <ul class="list-inline copyright" style="color: #fff; font-size: 11px;">
+                    <li class="list-inline-item">&copy; @DateTime.Now.Year RERA Punjab. All Rights Reserved</li>
+                    <li class="list-inline-item">|</li>
+                    <li class="list-inline-item">Designed and Developed by C-DAC Mohali</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,44 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_Helpdesk
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Project_Detail_Approval</title>
+</head>
+<body>
+    <div class="form-horizontal col-md-10" style="position:relative;margin-left:5%;">
+        <center><h2 style="color:maroon">PROJECT APPROVAL DETAILS</h2><hr /></center>
+        @foreach (var item in Model.List_Project_ApprovalDetails)
+        {
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">Name</div>
+                    <div class="col-md-3">@Html.Label(item.DocumentType_Name.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                    <div class="col-md-3"><br /> Category Name</div>
+                    <div class="col-md-3">@Html.Label(item.DocumentType_CategoryName, htmlAttributes: new { @class = "control-label" }) </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3"><br />Status</div>
+                    <div class="col-md-3">@Html.Label(item.DocumentType_Status.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                    <div class="col-md-3"><br />Date Application Planned or Expected Receipt</div>
+                    <div class="col-md-3">@Html.Label(item.Date_ApplicationPlannedorExpectedReceipt.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                </div>
+            </div>
+        }
+        </div>
+</body>
+</html>

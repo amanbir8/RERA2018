@@ -1,0 +1,51 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_QUpdatesProjectStatusRecords
+
+@{
+    Layout = null;
+}
+
+<style>
+    .icon-file-color {
+        color: #4CAF50;
+        font-size: x-large;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" style="width: 100%;">
+                <thead>
+                    <tr>                        
+                        <th>@Html.DisplayName("Quarter Year")</th>                        
+                        <th>@Html.DisplayName("Quarter Name")</th>                        
+                        <th>@Html.DisplayName("Quarterly Diary Number")</th>
+                        <th>@Html.DisplayName("Date of Submission")</th> 
+                        <th>@Html.DisplayName("Status/Document (PDF)")</th>              
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.prpongoing)
+                    {
+                        <tr>                            
+                            <td>@Html.DisplayFor(modelItem => item.setQuarterValue_Year)</td>
+                            <td>@Html.DisplayFor(modelItem => item.setQuarterValue_Name)</td>                             
+                            <td>@Html.DisplayFor(modelItem => item.QUpdateProject_RegDiaryNumber_Name)</td>                            
+                            @if (Convert.ToString(item.QuarterlySubmittedDate) != "0001-01-01")
+                            {
+                                <td align="center">@Html.DisplayFor(modelItem => item.QuarterlySubmittedDate)</td>
+                            }
+                            else
+                            {
+                                <td align="center">@Html.DisplayName(" ")</td>
+                            } 
+                            <td align="center">                                
+                                @Html.ActionLink(" ", "PrintPDF_ProjectQUpdatesStatusOfConstructionPhotographs", new { QTRp = item.ProjectID, QTRy = item.QUpdateProject_Year, QTRn = item.QUpdateProject_QuarterName }, new { @target = "_blank", @title = "PDF Document", @class= "fa fa-file-pdf-o fa-1x icon-file-color" })                          
+                            </td>                                                       
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

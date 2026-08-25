@@ -1,0 +1,100 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormM_PreHearingNotice
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12 text-center font-weight-bold">
+                    <label class="control-label"><strong>NOTICE FOR APPEARANCE /</strong></label>
+                    <strong>@Html.DisplayFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } })</strong>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12 text-center">
+                    <label class="control-label">REAL ESTATE REGULATORY AUTHORITY, PUNJAB</label><br />
+                    <label class="control-label">First Floor, Block-B, Plot Number-3, (Near Govt. Press UT), Madhya Marg, Sector-18A, Chandigarh - 160018</label><br /><br />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-4">
+                    @Html.DisplayFor(model => model.Complainant_Name, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-md-4 text-center">
+                    <label class="control-label"><strong>Versus</strong></label>
+                </div>
+                <div class="col-md-4">
+                    @Html.DisplayFor(model => model.Respondent_Name, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12 text-center font-weight-bold">
+                    <label class="control-label"><strong>NOTICE TO COMPLAINANT/s</strong></label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="control-label">To</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-offset-1 col-md-11">
+                    @Html.DisplayFor(model => model.Complainant_Name, new { htmlAttributes = new { @class = "form-control" } })<br />
+                    @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })<br />
+                    @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressDistrictCodeName, new { htmlAttributes = new { @class = "form-control" } })<br />
+                    @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressStateCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <br />
+                    <label class="control-label">Whereas you have submitted above titled complaint (Complaint No. - @Html.DisplayFor(model => model.ComplainantApplicant_RelatedComplaint_Code, new { htmlAttributes = new { @class = "form-control" } }))  alleging certain contravention(s) of the Real Estate (Regulation & Development) Act, 2016 and The Punjab State Real Estate (Regulation and Development) Rules, 2017 & Regulations thereof against the respondent(s).</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="control-label">
+                        For the purpose, you are herby directed to appear either personally or through Counsel/Authorized person before <strong>@Html.DisplayFor(model => model.B_column, new { htmlAttributes = new { @class = "form-control" } })</strong>, the Real Estate Regulatory Authority, Punjab for @Html.DisplayFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } }) and to proceed further in the complaint on <strong>@Html.DisplayFor(model => model.PreHearingDate, new { htmlAttributes = new { @class = "form-control" } })</strong> at <strong>@Html.DisplayFor(model => model.PreHearingTime, new { htmlAttributes = new { @class = "form-control" } })</strong>, at his office situated at First Floor, Block-B, Plot Number-3, (Near Govt. Press UT), Madhya Marg, Sector-18A, Chandigarh - 160018, <strong><i>herein fail not</i></strong>.
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="control-label">
+                        You are also required to submit a hard copy of the complaint along with complete documents uploaded. <b>(Additional sets thereof equal to number of respondents also need to be submitted)</b>,
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="control-label">
+                        It is made clear that in case you fail to attend the proceedings on the above mentioned date fixed, in that case the matter will be decided in your absence and in accordance with law.
+                    </label>
+                </div>
+            </div>
+        </div>         
+    </div>
+</div>

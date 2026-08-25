@@ -1,0 +1,99 @@
+﻿@model CRUD.Models.PromoterPrint.Clsprp_PrmPromoter_Print_PromoterOtherThanIndPrintForm
+
+@{    
+    Layout = null;
+}
+
+<div id="wrapper">   
+    <div class="row">
+        <div class="col-lg-12">
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.zipPromoter_DiaryNumber != null)
+                {
+                    var varDate = System.DateTime.Now.Date;
+                    <tr>
+                        <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                        <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                    </tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Application Form (Promoter Litigations related to Projects(If Any) Details)")</b></td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Promoter Diary Number")</td>
+                            <td width="35%">@Html.DisplayFor(model => model.zipPromoter_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.zipPromoterName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(model => model.zipPromoterName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.LabelFor(model => model.zipPromoterLastModifiedOn, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>
+                                @Html.DisplayFor(model => model.zipPromoterLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Promoter Litigations related to Projects(If Any) Details")</h4></td></tr>
+
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+            </table>
+
+            @if (Model.prpLitigations != null)
+            {
+                <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                    <thead>
+                        <tr>
+                            <th width="5%">@Html.Label("S No")</th>
+                            <th>@Html.Label("Case Title")</th>
+                            <th width="15%">@Html.Label("Case Number")</th>
+                            <th>@Html.Label("Authority forum name where case pending or resolved")</th>                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        @foreach (var item in Model.prpLitigations)
+                        {
+                            {
+                                sno = sno + 1;
+                            }
+                            <tr class="odd gradeX">
+                                <td>@Html.DisplayName(sno.ToString())</td>
+                                <td>@Html.DisplayFor(modelItem => item.Case_Title)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Case_Number)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Authority_ForumName_CasePendingResolved)</td>                                
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>                    
+                </table>
+            }
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic; font-size:small; border: 1px solid #ccc">Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.</td></tr>
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic; font-size:medium;">(Authorized Signatory)</td></tr>
+            </table>
+        </div>
+
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->
+
+

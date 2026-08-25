@@ -1,0 +1,388 @@
+﻿@model CRUD.Models.classProjectPmPayment.ClsPrp_ProjectPmApplication_PaymentIntegration
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Payment Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Payment for Registration Fees  [ @TempData["APIerrorstatus"].ToString() ]
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("getprojectpmapplicationpaymenttxn", "ProjectPmPayment", FormMethod.Post, new { enctype = "multipart/form-data", @id = "FormCheckStatus" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(model => model.PaymentRefNumberProjectPm_IndexID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PaymentRefNumberProjectPm_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.RelatedProject_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.RelatedPromoter_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.RelatedProject_Code, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.RelatedPromoter_Code, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @Html.HiddenFor(model => model.RelatedPayment_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.RelatedPayment_IndexID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.ProjectPmZoneType, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PromoterType_IO, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @Html.HiddenFor(model => model.ProjectPm_BriefSummary, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.IsPaymentSuccessComplete, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PaymentSuccessDate, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.FailureSuccessSummary, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @Html.HiddenFor(model => model.PG_Transaction_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Date, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_PayU_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Amount, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Status, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Product_Info, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @Html.HiddenFor(model => model.PG_Address_Line1, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Address_Line2, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_City, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_State, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Country, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_ZipCode, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @Html.HiddenFor(model => model.PG_Shipping_Firstname, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Shipping_Lastname, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Shipping_Phone, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Shipping_Address1, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Shipping_Address2, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Shipping_City, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Shipping_State, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Shipping_Country, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Shipping_Zipcode, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @Html.HiddenFor(model => model.PG_Customer_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Last_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Customer_Email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Customer_Phone, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Customer_IP_Address, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Merchant_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Bank_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Payment_Gateway, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Bank_Reference_No, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @Html.HiddenFor(model => model.PG_International_Domestic, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Payment_Type, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Error_Code, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Error_Message, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Name_on_Card, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Card_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Transaction_Fee, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Discount, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Additional_Charges, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @Html.HiddenFor(model => model.PG_Amount_INR, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_UDF_1, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_UDF_2, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_UDF_3, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_UDF_4, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_UDF_5, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_Device_Info, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_HashKey, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.PG_ServiceProvider, new { htmlAttributes = new { @class = "form-control" } })
+
+                                @Html.HiddenFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.B_column, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.C_column, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Particulars of Online Payment (in rupees) Details</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">A/c Holder's Name</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Customer_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Customer_Name, "", new { @class = "text-danger" })
+                                                            @Html.DisplayFor(model => model.PG_Last_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Last_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Mobile Number</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Customer_Phone, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Customer_Phone, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">E-Mail ID</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Customer_Email, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Customer_Email, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                                @*<br />
+                                                    <b>Particulars of Online Payment (in rupees) Details</b>*@
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Fee Info/ Online Payment Related To </label>
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <b>@Html.DisplayFor(model => model.PG_Product_Info, new { htmlAttributes = new { @class = "form-control" } })</b>
+                                                            @Html.ValidationMessageFor(model => model.PG_Product_Info, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Fee Amount (INR)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <b>@Html.DisplayFor(model => model.PG_Amount, new { htmlAttributes = new { @class = "form-control" } })</b>
+                                                            @Html.ValidationMessageFor(model => model.PG_Amount, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Payment Ref Number (PRN)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if (Model.PaymentRefNumberProjectPm_ID == 0)
+                                                            {
+                                                                <b>
+                                                                    <span>[Pending PRN]</span>
+                                                                    <span>[</span>
+                                                                    @Html.DisplayFor(model => model.PaymentRefNumberProjectPm_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    <span>]</span>
+                                                                </b>
+                                                                @Html.ValidationMessageFor(model => model.PaymentRefNumberProjectPm_ID, "", new { @class = "text-danger" })
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <b>
+                                                                    <span>PRN-PRJ</span>
+                                                                    @Html.DisplayFor(model => model.PaymentRefNumberProjectPm_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </b>
+                                                                @Html.ValidationMessageFor(model => model.PaymentRefNumberProjectPm_ID, "", new { @class = "text-danger" })
+                                                            }                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Additional Charges (INR)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Additional_Charges, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Additional_Charges, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Transaction Fee (INR)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Transaction_Fee, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Transaction_Fee, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PG_Product_Info, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Product_Info, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Product_Info, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PG_Amount, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Amount, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Amount, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PG_Transaction_ID, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Transaction_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Transaction_ID, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PG_PayU_ID, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_PayU_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_PayU_ID, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PG_Date, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Date, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Date, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectPm_BriefSummary, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.ProjectPm_BriefSummary, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectPm_BriefSummary, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Address for Communication in respect of the fee</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Name</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Shipping_Firstname, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Shipping_Firstname, "", new { @class = "text-danger" })
+                                                            @Html.DisplayFor(model => model.PG_Shipping_Lastname, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Shipping_Lastname, "", new { @class = "text-danger" })
+                                                        </div>  
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Mobile Number</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Shipping_Phone, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Shipping_Phone, "", new { @class = "text-danger" })
+                                                        </div>                                                      
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Address Line 1</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Shipping_Address1, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Shipping_Address1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Address Line 2</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Shipping_Address2, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Shipping_Address2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">District/ City</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Shipping_City, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Shipping_City, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">State</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Shipping_State, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Shipping_State, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Country</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Shipping_Country, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Shipping_Country, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">PIN Code</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(model => model.PG_Shipping_Zipcode, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PG_Shipping_Zipcode, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @if (Model.IsDraft == 1)
+                                        {
+                                            <input type="submit" value="@TempData["submitvalueGetProjectPmPaymentGateway"]" class="btn btn-outline btn-primary" disabled="disabled" />
+                                        }
+                                        else
+                                        {
+                                            <input type="submit" value="@TempData["submitvalueGetProjectPmPaymentGateway"]" class="btn btn-danger" />
+                                        }
+                                        &nbsp;
+                                        @Html.ActionLink("Back", "Create_PaymentDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                        &nbsp;
+                                        @Html.ActionLink("Reset", "getprojectpmapplicationpayment", "ProjectPmPayment", null, new { @class = "btn btn-outline btn-primary" })
+                                    </div>
+                                </div>
+                                @*<input type="submit" value="Get Payment Info" id="clickcheckstatuspayment" class="btn btn-danger" />*@
+                            }
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+    <!-- /.wrapper -->
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}
+
+
+
+
+
+

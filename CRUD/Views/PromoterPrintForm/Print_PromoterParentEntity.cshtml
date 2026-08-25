@@ -1,0 +1,157 @@
+﻿@model CRUD.Models.PromoterPrint.Clsprp_PrmPromoter_Print_PromoterOtherThanIndPrintForm
+
+@{
+    Layout = null;
+}
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.zipPromoter_DiaryNumber != null)
+                {
+                    var varDate = System.DateTime.Now.Date;
+                    <tr>
+                        <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                        <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                    </tr>
+                    <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Application Form (Parent Entity (If Any) Details)")</b></td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr>
+                        <td width="25%">@Html.DisplayName("Promoter Diary Number")</td>
+                        <td width="35%">@Html.DisplayFor(model => model.zipPromoter_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(model => model.zipPromoterName, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.zipPromoterName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td>@Html.LabelFor(model => model.zipPromoterLastModifiedOn, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>
+                            @Html.DisplayFor(model => model.zipPromoterLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                    </tr>
+
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+            </table>
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @{
+                    int sno = 0;
+                }
+                @if (Model.Prpparententity != null && Model.Prpparententity.Count > 0)
+                {
+                    foreach (var item in Model.Prpparententity)
+                    {
+                        {
+                            sno = sno + 1;
+                        }
+
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("(" + sno.ToString() + ") Parent Entity Details")</h4></td></tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.Name_of_Parent_Entity, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.Name_of_Parent_Entity, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.Type_of_Enterprise, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>
+                                @if (item.Type_of_Enterprise.ToString() == "1")
+                                {
+                                    @Html.DisplayName("Private Limited Company")
+                                }
+                                @if (item.Type_of_Enterprise.ToString() == "2")
+                                {
+                                    @Html.DisplayName("Public Limited Company")
+                                }
+                                @if (item.Type_of_Enterprise.ToString() == "3")
+                                {
+                                    @Html.DisplayName("Undivided Hindu Family")
+                                }
+                                @if (item.Type_of_Enterprise.ToString() == "4")
+                                {
+                                    @Html.DisplayName("Partnerships")
+                                }
+                                @if (item.Type_of_Enterprise.ToString() == "5")
+                                {
+                                    @Html.DisplayName("Co-operative Societies")
+                                }
+                                @if (item.Type_of_Enterprise.ToString() == "6")
+                                {
+                                    @Html.DisplayName("Limited Liabilities Partnership")
+                                }
+                                @if (item.Type_of_Enterprise.ToString() == "7")
+                                {
+                                    @Html.DisplayName("Development Authorities")
+                                }
+                                @if (item.Type_of_Enterprise.ToString() == "8")
+                                {
+                                    @Html.DisplayName("Others")
+                                }
+
+                                @*@Html.DisplayFor(modelitem => item.Type_of_Enterprise, new { htmlAttributes = new { @class = "form-control" } })*@
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.Main_Objects_of_Parent_Entity, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.Main_Objects_of_Parent_Entity, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.Number_of_years_of_experience_of_the_Parent_Entity_in_real_estate_Punjab, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>
+                                @Html.DisplayFor(modelitem => item.Number_of_years_of_experience_of_the_Parent_Entity_in_real_estate_Punjab, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName("years")
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.Number_of_years_of_experience_of_the_Parent_Entity_in_real_estate_UT_State, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>
+                                @Html.DisplayFor(modelitem => item.Number_of_years_of_experience_of_the_Parent_Entity_in_real_estate_UT_State, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName("years")
+                            </td>
+                        </tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.RegisteredAddress, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">@Html.DisplayFor(modelitem => item.RegisteredAddress, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.Address_Line2, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">@Html.DisplayFor(modelitem => item.Address_Line2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        @*<tr>
+                                <td>@Html.DisplayName("District and State")</td>
+                                <td>
+                                    @Html.DisplayFor(modelitem => item.State, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayFor(modelitem => item.District, new { htmlAttributes = new { @class = "form-control" } })
+                                </td>
+                                <td>@Html.LabelFor(modelitem => item.Pin_Code, htmlAttributes: new { @class = "control-label" })</td>
+                                <td>@Html.DisplayFor(modelitem => item.Pin_Code, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            </tr>*@
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+            </table>
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic; font-size:small; border: 1px solid #ccc">Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.</td></tr>
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic; font-size:medium;">(Authorized Signatory)</td></tr>
+            </table>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->

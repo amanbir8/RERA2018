@@ -1,0 +1,451 @@
+﻿@model CRUD.Models.HelpdeskAdmin.ClsPrp_AdminDesk_CauseListForWeeklyCalender
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            $(submitButton).parents('form').submit();
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+    });    
+</script>
+
+<script>
+    $(function () {
+        $('[data-spzoom]').spzoom();
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [4]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    
+        //$('#CauseListOneDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, })
+        //$('#CauseListTwoDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, })
+        //$('#CauseListThreeDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, })
+        //$('#CauseListFourDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, })
+        //$('#CauseListFiveDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, })
+
+        $('#CauseListTwoDate').datepicker({ dateFormat: 'dd-M-yy', onSelect: function (selectedDate) { changeDayByDate(selectedDate, this); } })
+        $('#CauseListThreeDate').datepicker({ dateFormat: 'dd-M-yy', onSelect: function (selectedDate) { changeDayByDate(selectedDate, this); } })
+        $('#CauseListFourDate').datepicker({ dateFormat: 'dd-M-yy', onSelect: function (selectedDate) { changeDayByDate(selectedDate, this); } })
+        $('#CauseListFiveDate').datepicker({ dateFormat: 'dd-M-yy', onSelect: function (selectedDate) { changeDayByDate(selectedDate, this); } })
+
+        $('#CauseListOneDate').datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            onSelect: function (selected) {
+                changeDayByDate(selected, this);
+
+                var dt1 = new Date(selected);
+                dt1.setDate(dt1.getDate() + 1);
+                day1 = getDayName(dt1.getDay());
+
+                var dt2 = new Date(selected);
+                dt2.setDate(dt2.getDate() + 2);
+                day2 = getDayName(dt2.getDay());
+
+                var dt3 = new Date(selected);
+                dt3.setDate(dt3.getDate() + 3);
+                day3 = getDayName(dt3.getDay());
+
+                var dt4 = new Date(selected);
+                dt4.setDate(dt4.getDate() + 4);
+                day4 = getDayName(dt4.getDay());
+
+                $('#CauseListTwoDate').datepicker("setDate", dt1);
+                $('#CauseListThreeDate').datepicker("setDate", dt2);
+                $('#CauseListFourDate').datepicker("setDate", dt3);
+                $('#CauseListFiveDate').datepicker("setDate", dt4);
+
+                $('#CauseListTwoDay').find('option[value="' + day1 + '"]').prop('selected', 'selected');
+                $('#CauseListThreeDay').find('option[value="' + day2 + '"]').prop('selected', 'selected');
+                $('#CauseListFourDay').find('option[value="' + day3 + '"]').prop('selected', 'selected');
+                $('#CauseListFiveDay').find('option[value="' + day4 + '"]').prop('selected', 'selected');
+            }
+        });
+
+    });
+
+    /*  function to get full name of the day from javascript dayNumber */
+    function getDayName(dayNo) {        
+        var daysArray = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        var dayName = "Sunday";
+        if (dayNo > 0)
+        {
+            dayName = daysArray[dayNo - 1];
+        }
+        return dayName;
+    }
+
+    /* select day corresponding to date selected */
+    function changeDayByDate(selectedDate, dateElem) {
+        var selectedDate = new Date(selectedDate);
+        var dayName = getDayName(selectedDate.getDay());
+        $(dateElem).closest('.row').next('.row').find('select').find('option[value="' + dayName + '"]').prop('selected', 'selected');
+    }
+</script> 
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Cause List - Complaints under Section 31 and Notices under Section 59 Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Cause List - Complaints under Section 31 and Notices under Section 59 (Weekly Calender Information) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.CauseListWeeklyCalender_IndexID, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.CauseListWeeklyCalender_ID, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.IsDraft, htmlAttributes: new { @class = "control-label" })
+                                    
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Cause List - Weekly Calender Details</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CauseListOneDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.EditorFor(model => model.CauseListOneDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.CauseListOneDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">                                                    
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @{var listItemsWeekDay = new List<SelectListItem>
+                                                            {
+                                                                new SelectListItem {  Text = "..." , Value=""  },
+                                                                new SelectListItem {  Text = "Monday" , Value="Monday"  },
+                                                                new SelectListItem {  Text = "Tuesday" , Value="Tuesday"  },
+                                                                new SelectListItem {  Text = "Wednesday" , Value="Wednesday"  },
+                                                                new SelectListItem {  Text = "Thursday" , Value="Thursday"  },
+                                                                new SelectListItem {  Text = "Friday" , Value="Friday"  },
+                                                                new SelectListItem {  Text = "Saturday" , Value="Saturday"  },
+                                                                new SelectListItem {  Text = "Sunday" , Value="Sunday"  },
+                                                            };
+                                                            }
+                                                            @Html.LabelFor(model => model.CauseListOneDay, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.DropDownListFor(model => model.CauseListOneDay, new SelectList(listItemsWeekDay, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.CauseListOneDay, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Is valid for public view? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.CasueListOneFlag, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.CasueListOneFlag, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.CasueListOneFlag, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CauseListTwoDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.EditorFor(model => model.CauseListTwoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.CauseListTwoDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CauseListTwoDay, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.DropDownListFor(model => model.CauseListTwoDay, new SelectList(listItemsWeekDay, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.CauseListTwoDay, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Is valid for public view? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.CasueListTwoFlag, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.CasueListTwoFlag, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.CasueListTwoFlag, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CauseListThreeDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.EditorFor(model => model.CauseListThreeDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.CauseListThreeDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CauseListThreeDay, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.DropDownListFor(model => model.CauseListThreeDay, new SelectList(listItemsWeekDay, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.CauseListThreeDay, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Is valid for public view? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.CasueListThreeFlag, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.CasueListThreeFlag, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.CasueListThreeFlag, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CauseListFourDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.EditorFor(model => model.CauseListFourDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.CauseListFourDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CauseListFourDay, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.DropDownListFor(model => model.CauseListFourDay, new SelectList(listItemsWeekDay, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.CauseListFourDay, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Is valid for public view? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.CasueListFourFlag, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.CasueListFourFlag, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.CasueListFourFlag, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CauseListFiveDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.EditorFor(model => model.CauseListFiveDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.CauseListFiveDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CauseListFiveDay, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Cause List Date or Day Information.">
+                                                            @Html.DropDownListFor(model => model.CauseListFiveDay, new SelectList(listItemsWeekDay, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.CauseListFiveDay, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Is valid for public view? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.CasueListFiveFlag, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.CasueListFiveFlag, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.CasueListFiveFlag, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RemarksIfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RemarksIfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RemarksIfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other Option(s)</legend>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Is valid cause list week days (weekly calender) for public view? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsPublicView, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <input type="submit" value="@TempData["submitvalueCauseListForWeeklyCalender"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "WebindexCauseListForWeeklyContentDetails", "HelpdeskAdmin", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                <div class="form-group">                                        
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            @Html.DisplayName("From Date")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("To Date")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.IsPublicView)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RemarksIfAny)
+                                                        </th>                                                        
+                                                        <th>@Html.DisplayName("Edit| Delete")</th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.prpCauseListForWeeklyCalender)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.CauseListOneDate)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.CauseListFiveDate)
+                                                            </td>
+                                                            <td>
+                                                                @if (item.IsPublicView == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RemarksIfAny)
+                                                            </td>                                                            
+                                                            <td>
+                                                                @Html.ActionLink("Edit", "Edit_windexCauseListForWeeklyContentDetails", new { pIndexID = item.CauseListWeeklyCalender_IndexID, pKeyID = item.CauseListWeeklyCalender_ID }) @("| ")
+                                                                @Html.ActionLink("Delete", "Delete_windexCauseListForWeeklyContentDetails", new { pIndexID = item.CauseListWeeklyCalender_IndexID, pKeyID = item.CauseListWeeklyCalender_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })                                                                
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

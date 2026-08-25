@@ -1,0 +1,545 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_Helpdesk
+
+@*@{
+        Layout = null;
+    }
+
+    <!DOCTYPE html>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>Helpdesk_Promoter_Detail</title>
+    </head>
+    <body>*@
+@*<script>
+    $(document).ready(function () {
+        $(document).on('click', 'a#modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var modal = $(document).find('#myModalA');
+            $(modal).modal('show');
+        });
+    });
+</script>*@
+
+<script>
+    $(document).ready(function () {
+
+        var BASE_URLm = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var projectId = 0;//$.trim($(parentRow).find('input.hdnProjectID').val());
+            projectId = parseInt(projectId);
+            var criteriaCode = $(this).attr('data-criteria-code');
+            criteriaCode = parseInt(criteriaCode);
+            $.ajax({
+                url: BASE_URLm + 'Helpdesk/ProjectInfoCheckListInsert',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'criteriaCode': criteriaCode },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    //alert(1);
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            //var diaryNo = $.trim($(parentRow).find('td.project-diary-number').attr('data-diary-no'));
+            //var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            //$(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">List of Projects : New Application(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Promoter Profile Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <div class="form-horizontal" style="position:relative;margin-left:5%;">
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.ActionLink("Promoter Profile", "Promoter_Detail_other", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })
+                                            @Html.ActionLink("Project Details", "Promoter_Detail_other", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })
+                                            @Html.ActionLink("Project Land", "Promoter_Detail_other", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })
+                                            @Html.ActionLink("Project Approval", "Promoter_Detail_other", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })
+                                            @Html.ActionLink("Special Bank A/C", "Promoter_Detail_other", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })
+                                            @Html.ActionLink("Project Updates", "Promoter_Detail_other", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })
+                                            @Html.ActionLink("Check List Sheet", "ProjectInfoCheckListDisplay", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })
+                                            @Html.ActionLink("Action", "ProjectInfoEventInsert", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h4 style="color:maroon"><a data-criteria-code="118" class="modalOpenerButton" href="javascript:void(0);">Promoter Profile Section A</a></h4>
+                                </div>
+                                @*<i class="fa fa-eye"></i>*@
+
+                                @*<div class="modal fade" id="myModalA" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">Apply Event Details</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group col-md-12">
+                                                            <label>Selects</label>
+                                                            <select class="form-control">
+                                                                <option>1</option>
+                                                                <option>2</option>
+                                                                <option>3</option>
+                                                                <option>4</option>
+                                                                <option>5</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label>Text area</label>
+                                                            <textarea class="form-control" rows="3"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                <hr />
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_Name, htmlAttributes: new { @class = "control-label" }) </div>
+                                        <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_Name)</div>
+
+                                        <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_Type, htmlAttributes: new { @class = "control-label" }) </div>
+                                        <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_Type)</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_Objects, htmlAttributes: new { @class = "control-label" }) </div>
+                                        <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_Objects)</div>
+
+                                        <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_Address_Line1, htmlAttributes: new { @class = "control-label" }) </div>
+                                        <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_Address_Line1)</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_Address_Line2, htmlAttributes: new { @class = "control-label" }) </div>
+                                        <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_Address_Line2)</div>
+
+                                        <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_Address_Line1, htmlAttributes: new { @class = "control-label" }) </div>
+                                        <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_Address_Line1)</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_District, htmlAttributes: new { @class = "control-label" }) </div>
+                                        <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_District)</div>
+
+                                        <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_State, htmlAttributes: new { @class = "control-label" }) </div>
+                                        <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_State)</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_Pin_Code, htmlAttributes: new { @class = "control-label" }) </div>
+                                        <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_Pin_Code)</div>
+                                    </div>
+                                </div>
+                                    <div class="row">
+                                        <h4 style="color:maroon"><a data-criteria-code="120" class="modalOpenerButton" href="javascript:void(0);">DETAILS OF AUTHORISED SIGNATORY, WHO WILL SIGN FORM B</a></h4>
+                                    </div>
+                                    <hr />
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.First_Name, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.First_Name)</div>
+
+                                            <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Mobile_no, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Mobile_no)</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Phone_No_STD, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Phone_No_STD)</div>
+
+                                            <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Phone_No, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Phone_No)</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.WebLink_Promoter_website, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.WebLink_Promoter_website)</div>
+
+                                            <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Email, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Email)</div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <h4 style="color:maroon">Registration Certificate Section B</h4>
+                                    </div>
+                                    <hr />
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">@Html.LabelFor(model => model.Prp_OrgExp.Org_Reg_Certificate, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_OrgExp.Org_Reg_Certificate)</div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <h4 style="color:maroon">Detail of Parent Entity / Entities </h4>
+                                    </div>
+                                    <hr />
+
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <table class="table">
+                                                <tr>
+                                                    @*<th>ID</th>
+                            <th>Application_ID</th>
+                            <th>PromoterParentEntity_ID</th>
+                            <th>Promoter_IsPastExperience</th>*@
+                                                    <th>Name</th>
+                                                    <th>Type</th>
+                                                    <th>Main Objects</th>
+                                                    <th>Registered Address</th>
+                                                    <th>Address Line 2</th>
+                                                    <th>State</th>
+                                                    <th>District</th>
+                                                    <th>Pin_Code</th>
+                                                    <th>Years of exp. in Punjab</th>
+                                                    <th>Years of exp. in State</th>
+                                                    @*<th>Upload_Company_Registration_Certificate_of_Parent_Entity</th>
+                            <th>CompanyRegCert_Image_FileName</th>*@
+                                                </tr>
+
+                                                @foreach (var item in Model.List_ParentEntityDetail)
+                                                {
+                                                    <tr>
+                                                        @*<td>@Html.DisplayFor(modelItem => item.ID)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Application_ID)</td>
+                                <td>@Html.DisplayFor(modelItem => item.PromoterParentEntity_ID)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Promoter_IsPastExperience)</td>*@
+                                                        <td>@Html.DisplayFor(modelItem => item.Name_of_Parent_Entity)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Type_of_Enterprise)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Main_Objects_of_Parent_Entity)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.RegisteredAddress)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Address_Line2)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.State)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.District)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Pin_Code)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Number_of_years_of_experience_of_the_Parent_Entity_in_real_estate_Punjab)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Number_of_years_of_experience_of_the_Parent_Entity_in_real_estate_UT_State)</td>
+                                                        @*<td>@Html.DisplayFor(modelItem => item.Upload_Company_Registration_Certificate_of_Parent_Entity)</td>
+                                <td>@Html.DisplayFor(modelItem => item.CompanyRegCert_Image_FileName)</td>*@
+                                                    </tr>
+                                                }
+
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <h4 style="color:maroon">Chairman/Partner/Director or other authorized Signatory Details</h4>
+                                    </div>
+                                    <hr />
+
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <table class="table">
+                                                <tr>
+                                                    @*<th>ID</th>
+                            <th>Application_id</th>
+                            <th>Promoter_OtherMemberDetails_ID</th>*@
+                                                    <th>Designation</th>
+                                                    <th>Member Names</th>
+                                                    <th>PAN No</th>
+                                                    <th>Aadhar No</th>
+                                                    <th>Address Line1</th>
+                                                    <th>Address Line2</th>
+                                                    <th>State</th>
+                                                    <th>District</th>
+                                                    <th>Pin_Code</th>
+                                                    <th>Mobile no</th>
+                                                    <th>Phone No</th>
+                                                    <th>Email</th>
+                                                    <th>Photo</th>
+
+                                                </tr>
+
+                                                @foreach (var item in Model.List_OrgMemDetail)
+                                                {
+                                                    <tr>
+                                                        @*<td>@Html.DisplayFor(modelItem => item.Id)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Promoter_OtherMemberDetails_ID)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Application_id)</td>*@
+                                                        <td>@Html.DisplayFor(modelItem => item.Designation)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Member_Names)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.PAN_No)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Aadhar_No)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Address_Line1)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Address_Line2)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.State)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.District)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Pin_Code)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Mobile_no)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Phone_No)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Photo_Address)</td>
+                                                    </tr>
+                                                }
+
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <h4 style="color:maroon">Uploaded Documents</h4><hr />
+                                    </div>
+                                    ////
+                                    <div class="row">
+                                        <h4 style="color:maroon">Financial Details</h4><hr />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <table class="table">
+                                                <tr>
+                                                    @*
+                                                    <th>PromoterDoc_IndexID</th>
+                                                    <th>PromoterDoc_ID</th>
+                                                    <th>Promoter_ID</th>
+                                                    <th>PromoterDoc_InfoCode</th>*@
+                                                    <th>Doc Name</th>
+                                                    <th>Doc Ref.#</th>
+                                                    <th>Issue Date</th>
+                                                    @*
+                                                    <th>PromoterDoc_FileSize</th>
+                                                    <th>PromoterDoc_FileFormat</th>*@
+                                                    <th>File Path</th>
+                                                    @*
+                                                    <th>File Name</th>
+                                                    <th>PromoterDoc_IsGroup</th>*@
+                                                    <th>Remarks</th>
+
+                                                </tr>
+
+                                                @foreach (var item in Model.List_Promoter_Documents)
+                                                {
+                                                <tr>
+                                                    @*
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_IndexID)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_ID)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.Promoter_ID)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_InfoCode)</td>*@
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_InfoName)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_ReferenceNumber)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_IssueDate)</td>
+                                                    @*
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_FileSize)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_FileFormat)</td>*@
+                                                    <td>View Image</td>@*@Html.DisplayFor(modelItem => item.PromoterDoc_FilePath)*@
+                                                    @*
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_FileName)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.PromoterDoc_IsGroup)</td>*@
+                                                    <td>@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                                                </tr>
+                                                }
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <h4 style="color:maroon">Track record Promoter</h4>
+                                    <hr />
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-9">@Html.LabelFor(model => model.Prp_Promoter.Past_Exp_Punjab, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_Promoter.Past_Exp_Punjab)</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-9">@Html.LabelFor(model => model.Prp_Promoter.Past_Exp_Other_States, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_Promoter.Past_Exp_Other_States)</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-9">@Html.LabelFor(model => model.Prp_Promoter.Ind_Org_CompltdProj_FiveYrs, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_Promoter.Ind_Org_CompltdProj_FiveYrs)</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-9">@Html.LabelFor(model => model.Prp_Promoter.Ind_Org_OngoingProjects, htmlAttributes: new { @class = "control-label" }) </div>
+                                            <div class="col-md-3">@Html.DisplayFor(model => model.Prp_Promoter.Ind_Org_OngoingProjects)</div>
+                                        </div>
+                                    </div>
+
+                                    <h4 style="color:maroon">Project launched in the last 5 years (if any)</h4><hr />
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <table class="table">
+                                                <tr>
+                                                    @*
+                                                    <th>Id</th>
+                                                    <th>Application_id</th>
+                                                    <th>Promoter_Experience_ID</th>*@
+                                                    <th>Project Name</th>
+                                                    <th>Project Type</th>
+                                                    <th>Project Status</th>
+                                                    <th>Area ConStructed</th>
+                                                    <th>Project Start Date</th>
+                                                    <th>OC Date Project</th>
+                                                    <th>ACD Project</th>
+                                                    <th>Reason Extent of Delay Project</th>
+                                                    <th>Type Land of Project</th>
+                                                    <th>Litg To Project</th>
+                                                    <th>Case Title</th>
+                                                    <th>Case Number</th>
+                                                    <th>Name of Authority Forum where Casis Pending resolved</th>
+                                                    <th>Detail Payment Pending Project</th>
+
+                                                </tr>
+
+                                                @foreach (var item in Model.List_Promoter_FiveYr)
+                                                {
+                                                <tr>
+                                                    @*
+                                                    <td>@Html.DisplayFor(modelItem => item.Promoter_Experience_ID)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.Application_id)</td>*@
+                                                    <td>@Html.DisplayFor(modelItem => item.Projectname)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.ProjectType)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.ProjectStatus)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.AreaConUProject)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.ProjectStartDate)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.OCDateProject)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.ACDProject)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.RExtentofDelayProject)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.TypeLandofProject)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.LitgToProject)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CaseTitle)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CaseNumber)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.NameofAuthorityForumwhereCasisPendingresolved)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.DetailPaymentPendingProject)</td>
+                                                </tr>
+                                                }
+
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <br />
+                                </div>
+
+
+                            @*</body>
+                                </html>*@
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                @*<h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>*@
+                <h4 class="modal-title" id="myModalLabel">Apply Event Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+}

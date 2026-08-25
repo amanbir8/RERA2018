@@ -1,0 +1,735 @@
+﻿@model CRUD.Models.AgentRenewal.Clsprp_AgentRenewal_VerifyPreviousRegistration
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).on('click', '#btnSearchformDetails', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            if (confirm('Are you sure you want to view registration number details ?')) {
+                $(submitButton).parents('form').submit();
+            }
+            else {
+                return false;
+            }
+        });
+
+        var HBASE_URL = $('body').attr('data-base-url');
+        $(document).on('click', '#BtnSaveform_IAgree', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            if ($(form).valid()) {
+                if (confirm('Are you sure you want to submit for renewal of registration ?')) {
+                    $.ajax({
+                        url: HBASE_URL + 'AgentRenewal/AgentRenewal_AddSearchPreviousRegistration',
+                        type: "POST",
+                        //contentType: 'application/json; charset=utf-8',
+                        datatype: "JSON",
+                        data: $("#renewalagentsearchform").serialize(),
+                        success: function (response) {
+                            if (response.result == 'RedirectErr') {
+                                swal({
+                                    title: "Are you sure?",
+                                    text: "Error! Something went wrong.",
+                                    type: "warning"
+                                }, function () {
+                                    if (response.result == 'RedirectErr') {
+                                        window.location.href = response.redirectToUrl;
+                                    };
+                                    return true;
+                                });
+                            }
+                            else {
+                                swal({
+                                    title: "Message",
+                                    text: "Successfully submitted the request.",
+                                    type: "success"
+                                }, function () {
+                                    if (response.result == 'Redirect') {
+                                        window.location.href = response.redirectToUrl;
+                                    };
+                                    return true;
+                                });
+                            };
+                        },
+                    });
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        });
+
+        $('#Is_YesNo_AgentRenewalPermission_Flag').click(function () {
+            $('#BtnSaveform_IAgree').prop("disabled", !$("#Is_YesNo_AgentRenewalPermission_Flag").prop("checked"));
+        });
+    });
+</script>
+
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<script>
+    $(function () {
+        $('[data-spzoom]').spzoom();
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('table#fivenine-hearing-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [4]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+
+        $("#RERAnumberRegistration").inputmask({ mask: function () { return ["AAAAAA-AAA99-AAA9999"]; } });
+        $('#RERAnumberIssueDate').datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate());
+                $("#RERAnumberRegUptoDate").datepicker("option", "minDate", dt);
+            }          
+        });
+        $('#RERAnumberRegUptoDate').datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+                var IssueDate = $("#RERAnumberIssueDate").val();
+                if (IssueDate == '') {
+                    alert('Please select Registration Issued Date first!');
+                    $("#RERAnumberRegUptoDate").val('');
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        });
+    });
+</script> 
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .quborder-info {
+        border-color: #00cfd5 !important;
+        /*padding: 1rem !important;*/
+        /*margin-bottom: 1rem !important;*/
+        /*border: 1px solid #e3e6ec !important;*/
+        /*background-color: #eff3f9 !important;*/
+    }
+
+    .quborder-disabled {
+        background-color: #eff3f9 !important;
+        cursor: not-allowed;
+    }
+
+    .qulinkaction-icon {
+        position: relative;
+    }
+
+        .qulinkaction-icon:before {
+            content: "\f040";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;
+        }
+
+    .qulinkaction-lock {
+        position: relative;
+    }
+
+        .qulinkaction-lock:before {
+            content: "\f09c";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;
+        }
+
+    .qulinkaction-trash {
+        position: relative;
+    }
+
+        .qulinkaction-trash:before {
+            content: "\f1f8";
+            font-family: FontAwesome;
+            position: absolute;
+            margin-left: 1.5em;
+        }
+
+    .display-btnlock {
+        display: none;
+        width: auto;
+    }
+
+    .display-btnunlock {
+        display: block;
+        width: auto;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var displayBASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a#modalRegistrationStatusOpenerButton', function (e) {
+            e.preventDefault();
+            var RenewalAgentDetailsModal = $(document).find('#myModal');
+            $(RenewalAgentDetailsModal).find('.modal-body').html('');
+            var qagentid = $('#RefAgentID').val();
+            var ptypeagent = $('#RefAgentType').val();
+            var prenewalagentid = $('#RefRenewalAgentID').val();
+            var prenewalagentseq = $('#RefRenewalOrderSequence').val();
+            var prenewalagentyr = $('#RefRenewalAgentYear').val();
+            var pkeyflag = 211;
+            qagentid = parseInt(qagentid);
+            ptypeagent = parseInt(ptypeagent);
+            prenewalagentid = parseInt(prenewalagentid);
+            prenewalagentseq = parseInt(prenewalagentseq);
+            prenewalagentyr = parseInt(prenewalagentyr);
+            pkeyflag = parseInt(pkeyflag);
+            var pkeysubflag = 'Profile';
+
+            $.ajax({
+                url: displayBASE_URL + 'AgentRenewal/AgentRenewal_ListPreviousRegistration',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'qagentid': qagentid, 'ptypeagent': ptypeagent, 'prenewalagentid': prenewalagentid, 'prenewalagentseq': prenewalagentseq, 'prenewalagentyr': prenewalagentyr, 'pkeyflag': pkeyflag, 'pkeysubflag': pkeysubflag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(RenewalAgentDetailsModal).find('.modal-body').html(response);
+                    $(RenewalAgentDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = 'Real Estate Agent (No record founds)';
+            if ($('#RefRegistrationNumber').val() != '') {
+                var diaryNo = $('#RefRegistrationNumber').val();
+            };
+            //var realestateagentName = $('#ProjectName').val();
+            $(RenewalAgentDetailsModal).find('h4.modal-title').html('Registration Details - <a href="javascript:void(0);"></a>');
+            //$(RenewalAgentDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + realestateagentName + ')');
+            $(RenewalAgentDetailsModal).find('h4.modal-title a').html(diaryNo);
+            $(RenewalAgentDetailsModal).modal('show');
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Renewal of Registration</b><br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-I: Agent Profile.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-II: Organization Member Details (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-III: Upload Document(s).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-IV: Other State/UT Registration Number Detail (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-V: Application Fee.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-VI: Review and Confirm Application Form.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Note down Diary Number for your future reference.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Renewal of Registration : Agent Profile Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Renewal of Registration (Form-J) : Agent Profile Details
+                    <span class="pull-right">
+                        <a id="modalRegistrationStatusOpenerButton" href="javascript:void(0);" title="View Registration Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-list-ul" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "renewalagentsearchform" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                @Html.HiddenFor(model => model.RenewalAgentRegistrationNumber, htmlAttributes: new { @class = "control-label", @id = "RefRegistrationNumber" })
+                                @Html.HiddenFor(model => model.Agent_RegDiaryNumber_Name, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.Agent_ID, htmlAttributes: new { @class = "control-label", @id = "RefAgentID" })
+                                @Html.HiddenFor(model => model.IsDraft, htmlAttributes: new { @class = "control-label", @id = "RefAgentType" })
+                                @Html.HiddenFor(model => model.Related_RenewalAgent_ID, htmlAttributes: new { @class = "control-label", @id = "RefRenewalAgentID" })
+                                @Html.HiddenFor(model => model.Related_RenewalAgent_Year, htmlAttributes: new { @class = "control-label", @id = "RefRenewalAgentYear" })
+                                @Html.HiddenFor(model => model.Renewal_OrderSequence, htmlAttributes: new { @class = "control-label", @id = "RefRenewalOrderSequence" })
+                                @Html.HiddenFor(model => model.IsPublicView, htmlAttributes: new { @class = "control-label", @id = "RefPublicView" })
+
+                                if (Model.AgentRenewal != null)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Registration Number Details</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                The registration number of Real Estate Agent, in accordance with the provisions of The Real Estate (Regulation and Development) Act, 2016 and Rules under by the Govt. of Punjab.
+                                                            </div>                                                        
+                                                        </div>
+                                                    </div>
+                                                    <br />
+                                                    <b>Search Previous Registration Number Details</b>
+                                                    <hr />
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.RERAnumberRegistration, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="The Registration Number of Real Estate Agent issued by the Authority (Punjab RERA).">
+                                                                @Html.EditorFor(model => model.RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control quborder-info", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(model => model.RERAnumberRegistration, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.RERAnumberIssueDate, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control quborder-info", @autocomplete = "off", @placeholder = "Issued Date" } })
+                                                                @Html.ValidationMessageFor(model => model.RERAnumberIssueDate, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control quborder-info", @autocomplete = "off", @placeholder = "Valid Upto Date" } })
+                                                                @Html.ValidationMessageFor(model => model.RERAnumberRegUptoDate, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <a id="btnSearchformDetails" href="javascript:void(0);"><span class="btn btn-outline btn-primary"><i class="fa fa-search" aria-hidden="true"></i> Search</span></a>                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    if (Model.AgentRenewal.Count != 0)
+                                    {
+                                        foreach (var item in Model.AgentRenewal)
+                                        {
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <fieldset class="col-md-12">
+                                                            <legend class="my">Real Estate Agent Details</legend>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(model => model.RERAnumberRegistration, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.DisplayFor(model => model.RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(model => model.RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.DisplayFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(model => model.Agent_Name, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.DisplayFor(model => model.Agent_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(model => model.Agent_AddressDistrictName, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.DisplayFor(model => model.Agent_AddressDistrictName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>
+                                                                </div>
+                                                            </div>                                                
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        <label class="control-label">Contact Detail</label>
+                                                                    </div>
+                                                                    <div class="col-md-9">
+                                                                        @Html.DisplayFor(model => model.Agent_PlaceOfBussiness_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>                                                        
+                                                                </div>
+                                                            </div>
+                                                            <br />
+                                                            <b>Place of Bussiness Address Details</b>
+                                                            <hr />
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        <label class="control-label">Place of Bussiness Address</label>
+                                                                    </div>
+                                                                    <div class="col-md-9">
+                                                                        @Html.DisplayFor(model => model.Agent_PlaceOfBussiness_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>                                                        
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            if (item.Is_YesNo_ValidforAgentRenewal_Flag == 21)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Result Status</legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-2">
+                                                                            @Html.Label("Registration Status", htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-9 alert alert-success">
+                                                                            <i>"Eligible"</i> for renewal of registration with reference to the information provided directly by the sign-in user or the Agent, and also as per the <i>'Registered Real-Estate Agent'</i> and <i>'Agent's Profile'</i> details.
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                if (item.Is_YesNo_ProfileNewCreated_Flag == 21)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <fieldset class="col-md-12">
+                                                                    <legend class="my">Confirmation</legend>
+                                                                    <b>I Agree</b>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-9">
+                                                                                <label class="control-label">                                                                                    
+                                                                                    @Html.CheckBox("Is_YesNo_AgentRenewalPermission_Flag", false)                                                                                    
+                                                                                </label>
+                                                                                <label for="Is_YesNo_AgentRenewalPermission_Flag" class="control-label">[I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief.</label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <div class="btn-toolbar">
+                                                                    <input type="submit" value="Submit" id="BtnSaveform_IAgree" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                    @Html.ActionLink("Cancel", "AgentRenewal_SearchPreviousRegistration", "AgentRenewal", null, new { @class = "btn btn-outline btn-primary" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                if (item.Is_YesNo_ProfileNewCreated_Flag == 0)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <fieldset class="col-md-12">
+                                                                    <legend class="my">Note</legend>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="help-block col-md-12 justify">
+                                                                                If you don’t already have a my-profile account for the renewal of registration of real-estate agent, click the “Create New MyProfile” button. After creating or signing up with my-profile, then you’ll only start the renewal of registration by online service of the authority's web-portal.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <div class="btn-toolbar">
+                                                                    @Html.ActionLink("Create New MyProfile", "OptionViewAgent", "Agent", null, new { @class = "btn btn-outline btn-primary" })
+                                                                    @Html.ActionLink("Cancel", "AgentRenewal_SearchPreviousRegistration", "AgentRenewal", null, new { @class = "btn btn-outline btn-primary" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                            if (item.Is_YesNo_ValidforAgentRenewal_Flag == 0)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Result Status</legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-2">
+                                                                            @Html.Label("Registration Status", htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-9 alert alert-danger">
+                                                                            <i>"Not Eligible"</i> for renewal of registration with reference to the information provided directly by the sign-in user or the Agent, and also as per the <i>'Registered Real-Estate Agent'</i> and <i>'Agent's Profile'</i> details.
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                if (item.Is_YesNo_ProfileNewCreated_Flag == 21)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <fieldset class="col-md-12">
+                                                                    <legend class="my">Note</legend>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="help-block col-md-12 justify">
+                                                                                The real-estate agent was registered before the online system of the Authority became functional. Further, in case of online system for renewal of registration, the information of <i>'Agent's Profile'</i> has been uploaded directly by the Agent, and is yet to be verified by the Authority.Till such verification, the information supplied to the Authority at the time of manual registration shall be the authentic record.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <div class="btn-toolbar">
+                                                                    @Html.ActionLink("Cancel", "AgentRenewal_SearchPreviousRegistration", "AgentRenewal", null, new { @class = "btn btn-outline btn-primary" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                if (item.Is_YesNo_ProfileNewCreated_Flag == 0)
+                                                {
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <fieldset class="col-md-12">
+                                                                    <legend class="my">Note</legend>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="help-block col-md-12 justify">
+                                                                                If you don’t already have a my-profile account for the renewal of registration of real-estate agent, click the “Create New MyProfile” button. After creating or signing up with my-profile, then you’ll only start the renewal of registration by online service of the authority's web-portal.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <div class="btn-toolbar">
+                                                                    @Html.ActionLink("Create New MyProfile", "OptionViewAgent", "Agent", null, new { @class = "btn btn-outline btn-primary" })
+                                                                    @Html.ActionLink("Cancel", "AgentRenewal_SearchPreviousRegistration", "AgentRenewal", null, new { @class = "btn btn-outline btn-primary" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my">Result Status</legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-2">
+                                                                    @Html.Label("Registration Status", htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-9 alert alert-warning">
+                                                                    "No Records Found", for renewal of registration with reference to the information provided directly by the sign-in user or the Agent, and also as per the <i>'Registered Real-Estate Agent'</i> and <i>'Agent's Profile'</i> details.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="btn-toolbar">
+                                                        @Html.ActionLink("Cancel", "IndexAgent", "Home", null, new { @class = "btn btn-outline btn-primary" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Result Status</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-2">
+                                                                @Html.Label("Registration Status", htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-9 alert alert-warning">
+                                                                "No Records Found", for renewal of registration with reference to the information provided directly by the sign-in user or the Agent, and also as per the <i>'Registered Real-Estate Agent'</i> and <i>'Agent's Profile'</i> details.
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <div class="btn-toolbar">
+                                                    @Html.ActionLink("Cancel", "IndexAgent", "Home", null, new { @class = "btn btn-outline btn-primary" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

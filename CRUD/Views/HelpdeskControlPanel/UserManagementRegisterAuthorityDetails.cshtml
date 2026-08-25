@@ -1,0 +1,473 @@
+﻿@using CaptchaMvc.HtmlHelpers
+@using CaptchaMvc;
+
+@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_UserManagerRegistration
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/dist/css/rera-toggleshow.css")" rel="stylesheet" />
+<!-- DataTables JavaScript -->
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+<!-- Custom Theme JavaScript -->
+<script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        var BASE_URL = $('body').attr('data-base-url');
+        var getUrlCPvalue;
+
+        @if (TempData["returnUrlCPvalue"].ToString() != "")
+        {
+            <text>
+                getUrlCPvalue = '@TempData["returnUrlCPvalue"]';
+            </text>
+        }
+
+        $(document).on('click', 'a.controlpanelHomeButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + getUrlCPvalue;
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Authority Users</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Only User can add /confirm /refuse Phone Number/Two-Factor Authentification.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> IT Manager can add authority user or confirm/disconfirm email.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+
+    .border-left-danger {
+        border-left: .15rem solid #FF4961 !important;
+    }
+
+    .border-left-warning {
+        border-left: .25rem solid #f6c23e !important;
+    }
+
+    .bg-exclamation-triangle-warning {
+        color: #FF4961 !important;
+        display: inline-block !important;
+    }
+
+    .bg-exclamation-triangle-none {
+        display: none !important;
+    }
+
+        #password-strength-status {
+        padding: 5px 10px;
+        color: #FFFFFF;
+        border-radius: 4px;
+        margin-top: 5px;
+    }
+
+    #password-match-status {
+        padding: 5px 10px;
+        color: #FFFFFF;
+        border-radius: 4px;
+        margin-top: 5px;
+    }
+
+    .medium-password {
+        background-color: #b7d60a;
+        border: #BBB418 1px solid;
+    }
+
+    .weak-password {
+        background-color: #ce1d14;
+        border: #AA4502 1px solid;
+    }
+
+    .strong-password {
+        background-color: #12CC1A;
+        border: #0FA015 1px solid;
+    }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script>
+    function checkPasswordStrength() {
+        var number = /([0-9])/;
+        var alphabets = /([a-zA-Z])/;
+        var special_characters = /([~,!,#,$,%,^,&,*,-,_,+,=,?,>,<])/;
+        if ($('#Input_Password').val().length < 6) {
+            $('#password-strength-status').removeClass();
+            $('#password-strength-status').addClass('weak-password');
+            $('#password-strength-status').html("Weak (should be atleast 6 characters.)");
+        } else {
+            if ($('#Input_Password').val().match(number) && $('#Input_Password').val().match(alphabets) && $('#Input_Password').val().match(special_characters)) {
+                $('#password-strength-status').removeClass();
+                $('#password-strength-status').addClass('strong-password');
+                $('#password-strength-status').html("Strong");
+            } else {
+                $('#password-strength-status').removeClass();
+                $('#password-strength-status').addClass('medium-password');
+                $('#password-strength-status').html("Medium (should include alphabets, numbers and special characters.)");
+            }
+        }
+    };
+    function checkPasswordMatch() {
+        var password = $("#Input_Password").val();
+        var confirmPassword = $("#Input_ConfirmPassword").val();
+        if (password != confirmPassword){
+            $('#password-match-status').removeClass();
+            $('#password-match-status').addClass('weak-password');
+            $('#password-match-status').html("Passwords does not match!");
+        }
+        else {
+            $('#password-match-status').removeClass();
+            $('#password-match-status').addClass('strong-password');
+            $('#password-match-status').html("Passwords match");
+        }
+    };
+</script>
+<script>
+    $(document).ready(function () {
+        var vcheckoptionvalue = $("input[name='IsApplicationModeFlag']:checked").val();
+        if (vcheckoptionvalue == '31') {            
+            $("#rowEmpNumber").addClass('hide').removeClass('show');
+            $("#rowEmpName").addClass('hide').removeClass('show');            
+            $("#rowEmpRole").addClass('hide').removeClass('show');
+            $("#rowEmpOther").addClass('show').removeClass('hide');
+        }
+        else {
+            $("#rowEmpNumber").addClass('show').removeClass('hide');
+            $("#rowEmpName").addClass('show').removeClass('hide');
+            $("#rowEmpRole").addClass('show').removeClass('hide');
+            $("#rowEmpOther").addClass('hide').removeClass('show');
+        };
+
+        $(document).on('click', '.radio-typeuservalue', function (e) {
+            if (this.value == '31') {
+                $("#rowEmpNumber").addClass('hide').removeClass('show');
+                $("#rowEmpName").addClass('hide').removeClass('show');
+                $("#rowEmpRole").addClass('hide').removeClass('show');
+                $("#rowEmpOther").addClass('show').removeClass('hide');
+            }
+            else {
+                $("#rowEmpNumber").addClass('show').removeClass('hide');
+                $("#rowEmpName").addClass('show').removeClass('hide');
+                $("#rowEmpRole").addClass('show').removeClass('hide');
+                $("#rowEmpOther").addClass('hide').removeClass('show');
+            };
+        });
+
+        $(document).on('click', '#btnEraserText', function (e) {
+            $("#Input_UserName").val('');
+            $("#usersEmail").val('');
+            $("#Input_Password").val('');
+            $("#Input_ConfirmPassword").val('');
+            $('#password-strength-status').removeClass();
+            $('#password-strength-status').html("");
+            $('#password-match-status').removeClass();
+            $('#password-match-status').html("");
+        });
+    });
+</script>
+<script type="text/javascript">
+    @if (TempData["returnSubmitMessage"].ToString() != "NA")
+    {
+        if (TempData["returnSubmitMessageFlag"].ToString() != "FlagNO")
+        {
+            <text>
+                $(document).ready(function () {
+                    var baseURL = $('body').attr('data-base-url');
+                    var baseUrlCPvalue;
+
+                    @if (TempData["returnUrlCPvalue"].ToString() != "")
+                    {
+                        <text>
+                            baseUrlCPvalue = '@TempData["returnUrlCPvalue"]';
+                        </text>
+                    }
+
+                    swal({
+                        title: "Message",
+                        text: "@TempData["returnSubmitMessage"]",
+                        type: "success"
+                    }, function () {
+                        window.location = baseURL + baseUrlCPvalue;            
+                    });
+                });
+            </text>
+        }
+        else
+        {
+            <text>
+                $(document).ready(function () {
+                    swal({
+                        title: "Message",
+                        text: "@TempData["returnSubmitMessage"]",
+                        type: "warning",
+                    }, function () {
+                        return true;
+                    });
+                });
+            </text>
+        }
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Control Panel</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Control Panel : CP 1.6 User Management: Register New User (Authority) Details
+                    <span class="pull-right">                        
+                        <a class="controlpanelHomeButton" href="javascript:void(0);" title="Home"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-home" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>                        
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("UserManagementRegisterAuthorityDetails", "HelpdeskControlPanel", FormMethod.Post, new { enctype = "multipart/form-data", id = "frmRegisterNewAuthUser" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">User Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Type of User</label>
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "31", new { @class = "radio-typeuservalue", @checked = "checked" }) Web-Portal User
+                                                                @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "32", new { @class = "radio-typeuservalue" }) Desk User/ Authority User                                                             
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsApplicationModeFlag, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row show" id="rowEmpOther">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.rolesName, htmlAttributes: new { @class = "control-label mand" })
+                                                            @{
+                                                                var listItemsRoleDescription = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "Select" , Value=""  },                                                                    
+                                                                    new SelectListItem {  Text = "Complainant" , Value="Complainant"  },
+                                                                    new SelectListItem {  Text = "Promoter" , Value="Promoter"  },
+                                                                    new SelectListItem {  Text = "Real Estate Agent" , Value="RealEstateAgent"  },                                                                    
+                                                                };
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Role Description of User with reference to Web-Portal.">
+                                                            @Html.DropDownListFor(model => model.rolesName, new SelectList(listItemsRoleDescription, "Value", "Text"), new { @class = "form-control", @autocomplete = "off" })
+                                                            @Html.ValidationMessageFor(model => model.rolesName, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row hide" id="rowEmpNumber">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Input_EmployeeProfileID, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Employee ID (web-portal reference profile number) for the registration of user with the authority (web-portal).">
+                                                            @Html.EditorFor(model => model.Input_EmployeeProfileID, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Input_EmployeeProfileID, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row hide" id="rowEmpName">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Input_EmployeeName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Employee Name for the registration of user with the authority (web-portal).">
+                                                            @Html.EditorFor(model => model.Input_EmployeeName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Input_EmployeeName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row hide" id="rowEmpRole">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Role Description (Authority Users)</label>
+                                                            @{
+                                                                var listItemsRoleAuthority = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "Select" , Value=""  },
+                                                                    new SelectListItem {  Text = "Authority RERA" , Value="Authority"  },
+                                                                    new SelectListItem {  Text = "Evaluation Team RERA" , Value="HelpDesk"  },
+                                                                    new SelectListItem {  Text = "IT Manager RERA" , Value="ManagerDesk"  },
+                                                                    new SelectListItem {  Text = "Legal Advisor RERA" , Value="LegalAdvisorDesk"  },
+                                                                    new SelectListItem {  Text = "Programmer RERA" , Value="Programmer"  },
+                                                                    new SelectListItem {  Text = "PS to Members RERA" , Value="PStoMembers"  },
+                                                                    new SelectListItem {  Text = "Secretary RERA" , Value="SecretaryRERA"  },
+                                                                };
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Role Description of User (Authority Users) with reference to Web-Portal.">
+                                                            @Html.DropDownListFor(model => model.userrolesRoleId, new SelectList(listItemsRoleAuthority, "Value", "Text"), new { @class = "form-control", @autocomplete = "off" })
+                                                            @Html.ValidationMessageFor(model => model.userrolesRoleId, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Input_UserName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Login user name for web-portal of the authority.">
+                                                            @Html.EditorFor(model => model.Input_UserName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })                                                            
+                                                            @Html.ValidationMessageFor(model => model.Input_UserName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div>
+                                                            <a id="btnEraserText" href="javascript:void(0);" title="Erase Text"><span class="btn btn-outline btn-primary btn-circle btn-xs"><i class="fa fa-eraser" aria-hidden="true"></i></span></a>
+                                                            @*<button id="btnEraserText" class="btn btn-outline btn-primary btn-xs" title="Erase Text"><i class="fa fa-eraser" aria-hidden="true"></i></button>*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.usersEmail, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Authenticated Email ID for the registration of user with web-portal of the authority.">
+                                                            @Html.EditorFor(model => model.usersEmail, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.usersEmail, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Input_Password, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div>
+                                                                @Html.EditorFor(model => model.Input_Password, new { htmlAttributes = new { @class = "form-control", @onKeyUp = "checkPasswordStrength();", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(model => model.Input_Password, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div id="password-strength-status"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Input_ConfirmPassword, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div>
+                                                                @Html.EditorFor(model => model.Input_ConfirmPassword, new { htmlAttributes = new { @class = "form-control", @onKeyUp = "checkPasswordMatch();", @autocomplete = "off" } })
+                                                                @Html.ValidationMessageFor(model => model.Input_ConfirmPassword, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div id="password-match-status"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Capcha Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12 text-left">
+                                                            @Html.Captcha("Refresh?", "", 4, "The Captcha field is required.", true)
+                                                            <br />
+                                                        </div>
+                                                    </div>
+                                                </div>                                                                                             
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @if (Model.RoleAccessFlag == "SA")
+                                            {
+                                                <input type="submit" value="@TempData["usersubmitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                            }
+                                            else
+                                            {
+                                                <input type="submit" value="@TempData["usersubmitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                            }
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "UserManagementRegisterAuthorityDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                         }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}

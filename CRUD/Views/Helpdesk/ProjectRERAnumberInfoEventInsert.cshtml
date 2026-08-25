@@ -1,0 +1,373 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_ProjectEventLog
+
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script type="text/javascript">
+
+    @if (TempData["EventSubmitMessage"].ToString() != "")
+    { <text >
+            $(document).ready(function()
+                {
+                swal({
+                title: "Message",
+                    text: "@TempData["EventSubmitMessage"]",
+                    type: "success"
+                }, function () {
+                    window.location = "../Helpdesk/ProjectInfoDeskIssueRERAid";
+                });
+            }); </text>
+    }
+
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#EventAction_Type').change(function () {
+
+            var BASE_URLn = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: "POST",
+                url: BASE_URLn + 'Helpdesk/GetEventDescriptionMasterForRERAnumberByCode',
+                datatype: "Json",
+                data: { EventCode: $('#EventAction_Type').val() },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (data) {
+                    stopPreloader();
+                    $.each(data, function (index, value) {
+
+                        $('#getEventDescFileInfo').show();
+                        $('#EventDescDiscription').text("Description : " + value.EventAction_Description);
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        var BASE_URLm = $('body').attr('data-base-url');
+
+        $('#dataTables-example').DataTable({
+            responsive: true
+        });
+
+        $(document).on('click', 'a.modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var projectId = 0;//$.trim($(parentRow).find('input.hdnProjectID').val());
+            //debugger;
+            projectId = parseInt(projectId);
+            //var rowIndex = $(this).parent().index();
+            var checklistcriteriacode = $(this).closest('tr').find('.checklist-criteria-code').attr('data-criteria-code');
+            //var checklistcriteriacode = $(this).parent('td.checklist-criteria-code').attr('data-criteria-code');
+            //var checklistcriteriacode = $.trim($(parentRow).find('td.checklist-criteria-code').attr('data-criteria-code'));
+            var criteriaCode = parseInt(checklistcriteriacode);
+            var varDNumber = $("#Project_DiaryNumber").val();
+            var varProjectName = $.trim($(document).find("div.project-name").text());
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URLm + 'Helpdesk/ProjectInfoCheckListNoAcceptDisplay',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'criteriaCode': criteriaCode },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    //alert(1);
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('h4.modal-title').html('Checklist Criteria Details - <a href="javascript:void(0);"></a>');
+                    $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+                    $(projectDetailsModal).find('table.checklist-details-table').DataTable({
+                        responsive: true,
+                        /* columns: [
+                            { width: '20%' },
+                            { width: '20%' },
+                            { width: '25%' },
+                            { width: '5%' },
+                            { width: '10%' },
+                            { width: '10%' },
+                            { width: '5%' }
+                        ] */
+                    });
+                }
+            });
+
+            //var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            //$(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#chkYesSameChecklist').on("click", function () {
+            if ($(this).is(':checked')) {
+
+                var BASE_URLn = $('body').attr('data-base-url');
+
+                $.ajax({
+                    type: "POST",
+                    url: BASE_URLn + 'Helpdesk/GetCriteriaDescription_NotAccepted_ByProjectID',
+                    datatype: "Json",
+                    data: { projectId: $('#Related_Project_ID').val() },
+                    beforeSend: function () {
+                        startPreloader();
+                    },
+                    success: function (data) {
+                        stopPreloader();
+                        $('#getChecklistDescFileInfo').show();
+                        $('#ChecklistDescDiscription').text("Checklist Criteria Description : " + data);
+                        $('#Remarks_IfAny').text("Remarks as " + data);
+                    }
+                });
+
+            } else {
+                $('#getChecklistDescFileInfo').hide();
+                $('#Remarks_IfAny').text('');
+            }
+        });
+
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButtonCode', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var projectId = $('#Related_Project_ID').val();
+            projectId = parseInt(projectId);
+            var varDNumber = $("#Project_DiaryNumber").val();
+            var varProjectName = $.trim($(document).find("div.project-name").text());
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectInfoEventLog',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('File History Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">List of Projects : RERA Number Registration(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Application Action Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("ProjectRERAnumberInfoEventInsert", "Helpdesk", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                @*<div class="form-horizontal col-md-10" style="position:relative;margin-left:5%;text-align:left;">*@
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.PromoterEventAction_ID, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.Related_Project_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.Project_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.HiddenFor(model => model.Related_Promoter_ID, new { htmlAttributes = new { @class = "form-control" } })
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Project /Application - ( @Html.DisplayFor(model => model.Project_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-5 project-name">
+                                                            @Html.DisplayFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @Html.LabelFor(model => model.ProjectLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @Html.DisplayFor(model => model.ProjectLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                @Html.Partial("_AuthorityDeskProjectRERAnumberNavMenuPartial")
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h4 class="page-header" style="margin-top: 15px;"><a class="modalOpenerButtonCode" href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Application Action Details</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Application Action Operations</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.EventAction_Type, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        @if (Model.EventMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @*@Html.EditorFor(model => model.ProjectPayment_TitleCode, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                                @Html.DropDownListFor(model => model.EventAction_Type, new SelectList(Model.EventMaster, "EventAction_Code", "EventAction_Aggregate"), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.EventAction_Type, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.EventAction_Type, new SelectList(" "), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.EventAction_Type, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="getEventDescFileInfo" style="display:none">
+                                                    <div class="help-block col-md-offset-3 col-md-9">
+                                                        <div id="EventDescDiscription" class="info"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <a class="modalOpenerButton" href="javascript:void(0);"> <i class="fa fa-list-ul fa-fw"></i>Check List</a>
+                                                            <br />
+                                                            <label class="control-label">
+                                                                &nbsp;<input type="checkbox" id="chkYesSameChecklist" /> Is same checklist criteria (Not accepted Cases)?
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="getChecklistDescFileInfo" style="display:none">
+                                                    <div class="help-block col-md-offset-3 col-md-9">
+                                                        <div id="ChecklistDescDiscription" class="info"></div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "ProjectRERAnumberInfoEventInsert", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                       </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                @*<h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>*@
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details <a href="javascript:void(0);" class="title-project-details"></a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet"></link>
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>  
+}

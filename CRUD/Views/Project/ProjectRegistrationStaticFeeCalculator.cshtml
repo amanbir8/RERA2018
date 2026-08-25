@@ -1,0 +1,484 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_Project_PaymentFeeCalculator
+
+@{
+    Layout = null;
+}
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/css-validator/style.css")" />
+
+<script>
+    jQuery.validator.addMethod("alphanumericcc", function (value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9 ,-.()/]*$/.test($.trim(value));
+    }, "Special characters are not allowed.");
+
+    $("#myform_FeeCalculator").validate({
+        rules: {
+            calcProjectPayment_TitleCode: {
+                required: true
+            },
+            calcFeeCalculator_ZoneType: {
+                required: true
+            },
+            calcProposedLand_TobeDeveloped_Area_Total: {
+                number: true,
+                maxlength: 18,
+                minlength: 3
+            },
+            calcProposedLand_Area_ResidentialGroupHousing: {
+                number: true,
+                maxlength: 18,
+                minlength: 3
+            },
+            calcProposedLand_Area_ResidentialPlotted: {
+                number: true,
+                maxlength: 18,
+                minlength: 3
+            },
+            calcProposedLand_Area_Commercial: {
+                number: true,
+                maxlength: 18,
+                minlength: 3
+            },
+            calcProposedLand_Area_Industrial: {
+                number: true,
+                maxlength: 18,
+                minlength: 3
+            },
+            calcProposedLand_Area_CommonAmenties: {
+                number: true,
+                maxlength: 18,
+                minlength: 3
+            },
+            calcProposedLand_Area_OtherCommonAmenties: {
+                number: true,
+                maxlength: 18,
+                minlength: 3
+            },
+            calcProposedLand_Area_EWSdevelopment: {
+                number: true,
+                maxlength: 18,
+                minlength: 3
+            }
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        var baseUrl = $('body').attr('data-base-url');
+        
+        function saveOrder(data) {
+            return $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'POST',
+                url: baseUrl + "Project/SearchApplicationFeeCalculatorDetail",
+                data: data,
+                success: function (d) {
+                    if (d.status == true) {
+                        //console.log(d);
+                        //alert(d.statusPaymentFee);
+
+                        var numPaymentFee = d.statusPaymentFee;
+                        var numConvenienceFee = d.statusConvenienceFee;
+                        var numOtherFee = d.statusOtherFee;
+                        var numFeeAmount = d.statusFeeAmount;
+
+                        $('#setRegistration_Fee').val(numPaymentFee.toFixed(2));
+                        $('#setOther_Fee').val(numConvenienceFee.toFixed(2));
+                        $('#setBank_Charges').val(numOtherFee.toFixed(2));
+                        $('#setDD_BankersCheque_Amount').val(numFeeAmount.toFixed(2));
+                    }
+                    else {
+                        alert('Fee Calculator Failed! Something went wrong');
+                    }
+                },
+                error: function () {
+                    alert("oops! Something went wrong")
+                }
+            });
+        }
+
+        $("#saveOrder").click(function (e) {
+            e.preventDefault();           
+
+            var orderArr = [];
+            orderArr.length = 0;            
+            var isAllValid = false;
+
+            if ($('#calcProposedLand_TobeDeveloped_Area_Total').val() != '' && $('#calcProposedLand_Area_ResidentialGroupHousing').val() != '' && $('#calcProposedLand_Area_ResidentialPlotted').val() != '' && $('#calcProposedLand_Area_Commercial').val() != '' && $('#calcProposedLand_Area_Industrial').val() != '' && $('#calcProposedLand_Area_CommonAmenties').val() != '' && $('#calcProposedLand_Area_OtherCommonAmenties').val() != '' && $('#calcProposedLand_Area_EWSdevelopment').val() != '') {
+
+                var xpProposedLand_TobeDeveloped_Area_Total = $("#calcProposedLand_TobeDeveloped_Area_Total").val(),
+                    xpProposedLand_Area_ResidentialGroupHousing = $("#calcProposedLand_Area_ResidentialGroupHousing").val(),
+
+                    xpProposedLand_Area_ResidentialPlotted = $("#calcProposedLand_Area_ResidentialPlotted").val(),
+                    xpProposedLand_Area_Commercial = $("#calcProposedLand_Area_Commercial").val(),
+                    xpProposedLand_Area_Industrial = $("#calcProposedLand_Area_Industrial").val(),
+                    xpProposedLand_Area_CommonAmenties = $("#calcProposedLand_Area_CommonAmenties").val(),
+                    xpProposedLand_Area_OtherCommonAmenties = $("#calcProposedLand_Area_OtherCommonAmenties").val(),
+                    xpProposedLand_Area_EWSdevelopment = $("#calcProposedLand_Area_EWSdevelopment").val();
+
+                var sumTOTAL = parseInt(xpProposedLand_Area_ResidentialGroupHousing) + parseInt(xpProposedLand_Area_ResidentialPlotted) + parseInt(xpProposedLand_Area_Commercial) + parseInt(xpProposedLand_Area_Industrial) + parseInt(xpProposedLand_Area_CommonAmenties) + parseInt(xpProposedLand_Area_OtherCommonAmenties) + parseInt(xpProposedLand_Area_EWSdevelopment);
+                if (sumTOTAL <= xpProposedLand_TobeDeveloped_Area_Total)
+                {
+                    isAllValid = true;
+                }
+                else
+                {
+                    alert('Invalid! Total Area under Proposed Land To be Developed (*) fields are invalid.');
+                    isAllValid = false;
+                }                
+            }
+            else {
+                alert('The mandatory (*) fields are required.');
+                isAllValid = false;
+            }
+
+            if (isAllValid) {
+
+                $("#rowCalA").attr("style", "display:block");
+                $("#rowCalB").attr("style", "display:block");
+                $("#rowCalC").attr("style", "display:block");
+                $("#rowCalD").attr("style", "display:block");
+                $("#rowCalE").attr("style", "display:none");
+
+                var pFeeCalculator_ZoneType = $("#calcFeeCalculator_ZoneType").val(),
+                    pProjectPayment_TitleCode = $("#calcProjectPayment_TitleCode").val(),
+                    pProposedLand_TobeDeveloped_Area_Total = $("#calcProposedLand_TobeDeveloped_Area_Total").val(),
+                    pProposedLand_Area_ResidentialGroupHousing = $("#calcProposedLand_Area_ResidentialGroupHousing").val(),
+
+                    pProposedLand_Area_ResidentialPlotted = $("#calcProposedLand_Area_ResidentialPlotted").val(),
+                    pProposedLand_Area_Commercial = $("#calcProposedLand_Area_Commercial").val(),
+                    pProposedLand_Area_Industrial = $("#calcProposedLand_Area_Industrial").val(),
+                    pProposedLand_Area_CommonAmenties = $("#calcProposedLand_Area_CommonAmenties").val(),
+                    pProposedLand_Area_OtherCommonAmenties = $("#calcProposedLand_Area_OtherCommonAmenties").val(),
+                    pProposedLand_Area_EWSdevelopment = $("#calcProposedLand_Area_EWSdevelopment").val();
+
+
+                orderArr.push({
+                    calcFeeCalculator_ZoneType: pFeeCalculator_ZoneType,
+                    calcProjectPayment_TitleCode: pProjectPayment_TitleCode,
+                    calcProposedLand_TobeDeveloped_Area_Total: pProposedLand_TobeDeveloped_Area_Total,
+                    calcProposedLand_Area_ResidentialGroupHousing: pProposedLand_Area_ResidentialGroupHousing,
+
+                    calcProposedLand_Area_ResidentialPlotted: pProposedLand_Area_ResidentialPlotted,
+                    calcProposedLand_Area_Commercial: pProposedLand_Area_Commercial,
+                    calcProposedLand_Area_Industrial: pProposedLand_Area_Industrial,
+                    calcProposedLand_Area_CommonAmenties: pProposedLand_Area_CommonAmenties,
+                    calcProposedLand_Area_OtherCommonAmenties: pProposedLand_Area_OtherCommonAmenties,
+                    calcProposedLand_Area_EWSdevelopment: pProposedLand_Area_EWSdevelopment
+                });
+
+                var data = JSON.stringify({
+                    order: orderArr
+                });
+
+                $.when(saveOrder(data)).then(function (response) {
+                    console.log(response);
+                }).fail(function (err) {
+                    console.log(err);
+                });
+
+            }
+
+        });
+
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).fadeOut(1000, function () {
+                $(projectDetailsModal).modal('hide');
+            });
+        });
+
+        $(document).on('click', 'a#notifyOpenerFeeCalculatorZoneInfo', function (e) {
+            e.preventDefault();
+
+            new PNotify({
+                title: 'Information',
+                text: '(Zone 1) - Master Plan Area of S.A.S. Nagar, New Chandigarh and Zirakpur. \<br>(Zone 2) - Master Plan Area of Kharar, Dera Bassi and Banur. \<br>(Zone 3) - Ludhiana (within and outside municipal limits upto 10 Kms.) \<br>(Zone 4) - Jalandhar (within and outside municipal limits upto 10 Kms.) \<br>(Zone 5) - Amritsar, Patiala, Khanna, Rajpura, Mandi Gobindgarh, Sirhind and Phagwara within and outside municipal limits upto 7 Kms and NH-1 upto 2 Kms on both sides, outside the potential zone. \<br>(Zone 6) – Bathinda, Moga, Batala, Pathankot, Barnala, Malerkotla, Morinda, Hoshiarpur, within and outside municipal limits upto 5 Kms. \<br>(Zone 7) – Sangrur, Sunam Udham Singh Wala, Nabha, Faridkot, Kotkapura, Ferozepur, Malout, Abohar, Sri Muktsar Sahib, Kapurthala, Nawanshahr, Rupnagar, Taran Taran, Gurdaspur, Samana, Jagraon, Mansa, Lalru, Kurali within and outside municipal limits upto 3 Kms and all other NH (except NH 1)/SH/Scheduled Roads upto 1 Kms both sides, outside the potential zone. \<br>(Zone 8) – Rest of Punjab.',
+                type: 'info',
+                hide: false
+            });
+
+        });
+    });
+</script>
+<style>
+    *.txtdisabled:hover {
+        cursor: not-allowed;
+    }
+    *.bgdisabled-color {
+        background-color: #F0F0F0;
+    }
+    *.bgdisplay-color {
+        background-color: #8fcedd;
+    }
+    .disclaimer-text {
+        text-align: justify;
+        text-justify: inter-word;
+    }   
+</style>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id = "myform_FeeCalculator" }))
+                            {
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(A.)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                       @Html.LabelFor(model => model.calcProjectPayment_TitleCode, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DropDownListFor(model => model.calcProjectPayment_TitleCode, new SelectList(Model.PayFeeMaster, "PaymentType_Code", "PaymentType"), "Select", new { @class = "form-control bgdisabled-color" })
+                                                        @Html.ValidationMessageFor(model => model.calcProjectPayment_TitleCode, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    @{var listItemsZone = new List<SelectListItem>
+                                                        {
+
+                                                            new SelectListItem {  Text = "Select" , Value="0"  },
+                                                            new SelectListItem {Text = "Zone 1"  , Value="1"},
+                                                            new SelectListItem {Text = "Zone 2" , Value="2"},
+                                                            new SelectListItem {Text = "Zone 3" , Value="3"},
+                                                            new SelectListItem {Text = "Zone 4" , Value="4"},
+                                                            new SelectListItem {Text = "Zone 5" , Value="5"},
+                                                            new SelectListItem {Text = "Zone 6" , Value="6"},
+                                                            new SelectListItem {Text = "Zone 7" , Value="7"},
+                                                            new SelectListItem {Text = "Zone 8" , Value="8"},
+                                                        };
+                                                    }
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(B.)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.LabelFor(model => model.calcFeeCalculator_ZoneType, htmlAttributes: new { @class = "control-label mand" })
+                                                        <a id="notifyOpenerFeeCalculatorZoneInfo" href="javascript:void(0);" title="View Project Zone Info"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DropDownListFor(model => model.calcFeeCalculator_ZoneType, new SelectList(listItemsZone, "Value", "Text"), new { @class = "form-control txtdisabled bgdisabled-color", @disabled = "disabled" })
+                                                        @Html.ValidationMessageFor(model => model.calcFeeCalculator_ZoneType, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(C.)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">Total Area of Land Proposed to be developed (in sqr mtrs)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.calcProposedLand_TobeDeveloped_Area_Total, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisabled-color", @readonly = "readonly" } })
+                                                        @Html.ValidationMessageFor(model => model.calcProposedLand_TobeDeveloped_Area_Total, "", new { @class = "text-danger" })
+                                                    </div>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group"> 
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>                                                   
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(i.) Area under residential plotted development excluding common areas and ameneties (in sqr mtrs)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.calcProposedLand_Area_ResidentialPlotted, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisabled-color", @readonly = "readonly" } })
+                                                        @Html.ValidationMessageFor(model => model.calcProposedLand_Area_ResidentialPlotted, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(ii.) Area under group housing development excluding common areas and ameneties (in sqr mtrs)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.calcProposedLand_Area_ResidentialGroupHousing, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisabled-color", @readonly = "readonly" } })
+                                                        @Html.ValidationMessageFor(model => model.calcProposedLand_Area_ResidentialGroupHousing, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(iii.) Area under commercial development excluding common areas and ameneties (in sqr mtrs)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.calcProposedLand_Area_Commercial, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisabled-color", @readonly = "readonly" } })
+                                                        @Html.ValidationMessageFor(model => model.calcProposedLand_Area_Commercial, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(iv.) Area under industrial development excluding common areas and ameneties (in sqr mtrs)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.calcProposedLand_Area_Industrial, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisabled-color", @readonly = "readonly" } })
+                                                        @Html.ValidationMessageFor(model => model.calcProposedLand_Area_Industrial, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(v.) Area under Institution/ Club/ School/ Reserved area development (in sqr mtrs)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.calcProposedLand_Area_OtherCommonAmenties, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisabled-color", @readonly = "readonly" } })
+                                                        @Html.ValidationMessageFor(model => model.calcProposedLand_Area_OtherCommonAmenties, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(vi.) Area under EWS development (in sqr mtrs)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.calcProposedLand_Area_EWSdevelopment, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisabled-color", @readonly = "readonly" } })
+                                                        @Html.ValidationMessageFor(model => model.calcProposedLand_Area_EWSdevelopment, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(vii.) Area under common amenties servicing the entire project (in sqr mtrs)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.calcProposedLand_Area_CommonAmenties, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisabled-color", @readonly = "readonly" } })
+                                                        @Html.ValidationMessageFor(model => model.calcProposedLand_Area_CommonAmenties, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>                                           
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-lg-12 text-right">
+                                            <button type="button" id="saveOrder" class="btn btn-primary"><i class="fa fa-calculator"></i> Calculate Fee</button>
+                                            <button type="button" id="cancelOrder" class="btn btn-primary"><i class="fa fa-refresh"></i> Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr />
+                                <div class="row" id="rowCalA" style="display:none;">
+                                    <div class="form-group">
+                                        <div class="col-md-7">
+                                            <label class="control-label">Fee Amount (in rupees)</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.EditorFor(model => model.setRegistration_Fee, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisplay-color" } })
+                                            @Html.ValidationMessageFor(model => model.setRegistration_Fee, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowCalB" style="display:none;">
+                                    <div class="form-group">
+                                        <div class="col-md-7">
+                                            <label class="control-label">Annual web-portal Convenience Fee (in rupees)</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.EditorFor(model => model.setOther_Fee, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisplay-color" } })
+                                            @Html.ValidationMessageFor(model => model.setOther_Fee, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowCalC" style="display:none;">
+                                    <div class="form-group">
+                                        <div class="col-md-7">
+                                            <label class="control-label">Other Fee, If Any (in rupees)</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.EditorFor(model => model.setBank_Charges, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisplay-color" } })
+                                            @Html.ValidationMessageFor(model => model.setBank_Charges, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowCalD" style="display:none;">
+                                    <div class="form-group">
+                                        <div class="col-md-7">
+                                            <label class="control-label">Total Application Fee Amount (in rupees)</label>
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.EditorFor(model => model.setDD_BankersCheque_Amount, new { htmlAttributes = new { @class = "form-control txtdisabled bgdisplay-color" } })
+                                            @Html.ValidationMessageFor(model => model.setDD_BankersCheque_Amount, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowCalE">
+                                    <div class="form-group">
+                                        <div class="col-md-12 disclaimer-text">
+                                            Disclaimer: Punjab RERA  has provided this calculator for your convenience only. The calculation of the registration fee provided herein is based on the information supplied by you. Punjab RERA reserves the right to demand a different fee, should the information provided prove to be incorrect or the amount calculated differ from the fees calculated in accordance with the Schedule - 1 of the Punjab State Real Estate (Regulation and Development) Rules, 2017 & Punjab State Real Estate (Regulation and Development) (First Amendment) Rules, 2020 and circular no. RERA/ENF/09 dated 09/05/2018 available under the Circulars/ Public Notices link on the Authority's website.
+                                        </div>
+                                    </div>
+                                </div>
+                       }
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

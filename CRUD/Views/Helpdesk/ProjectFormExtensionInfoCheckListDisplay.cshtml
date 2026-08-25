@@ -1,0 +1,438 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_ExtensionAuthorityDesk_ProjectSubCheckListLog
+
+<script>
+    $(document).ready(function () {        
+
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 75,
+            "lengthMenu": [[75, 150, 225, 300], [75, 150, 225, 300]]
+        });        
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URLm = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var projectId = 0;//$.trim($(parentRow).find('input.hdnProjectID').val());
+            //debugger;
+            projectId = parseInt(projectId);
+            //var rowIndex = $(this).parent().index();
+            var checklistcriteriacode = $(this).closest('tr').find('.checklist-criteria-code').attr('data-criteria-code');
+            //var checklistcriteriacode = $(this).parent('td.checklist-criteria-code').attr('data-criteria-code');
+            //var checklistcriteriacode = $.trim($(parentRow).find('td.checklist-criteria-code').attr('data-criteria-code'));
+            var criteriaCode = parseInt(checklistcriteriacode);             
+            $.ajax({
+                url: BASE_URLm + 'Helpdesk/ProjectFormExtensionInfoCheckListInsert',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'criteriaCode': criteriaCode },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    //alert(1);
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                }
+            });            
+            $(projectDetailsModal).find('h4.modal-title').html('Checklist Criteria Details');
+            //var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            //$(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButtonExpand', function (e) {
+            e.preventDefault();
+            //debugger;
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var parmProjectId = $.trim($(parentRow).find('input.hdnRelatedProjectID').val());
+            var parmCriteriaID = $.trim($(parentRow).find('input.hdnVarCriteriaID').val());
+            var parmCriteriaSubID = $.trim($(parentRow).find('input.hdnVarCriteriaSubID').val());
+            //var projectId = $('#Related_Project_ID').val();
+            parmProjectId = parseInt(parmProjectId);
+            parmCriteriaID = parseInt(parmCriteriaID);
+            parmCriteriaSubID = parseInt(parmCriteriaSubID);
+            var varDNumber = $("#zipExtensionFormProject_DiaryNumber").val();
+            var varProjectName = $("#zipExtensionFormProjectName").val();
+            //var varProjectName = $.trim($(document).find("div.project-name").text());
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectFormExtensionInfoCheckListDisplayLog',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'parmProjectId': parmProjectId, 'parmCriteriaID': parmCriteriaID, 'parmCriteriaSubID': parmCriteriaSubID },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('File History Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Extension of Registration (Project) Application Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Extension of Registration (Project) Checklist Sheet (Prepared) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Application - ( @Html.DisplayFor(model => model.zipExtensionFormProject_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zipExtensionFormProjectName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.DisplayFor(model => model.zipExtensionFormProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.HiddenFor(model => model.zipExtensionFormProject_DiaryNumber)
+                                                        @Html.HiddenFor(model => model.zipExtensionFormRelated_Project_ID)                                                        
+                                                        @Html.HiddenFor(model => model.zipExtensionFormProjectName)
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipExtensionFormProjectLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zipExtensionFormProjectLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityExtensionFormDeskNavMenuPartial")
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">Checklist (Criteria Requirements) Details</h4>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.DisplayName("Sr No")</th>
+                                            @*<th>@Html.DisplayName("Project Diary Number")</th>*@
+                                            <th width="25%">@Html.DisplayName("Criteria Name")</th>
+                                            <th>@Html.DisplayName("Criteria Requirements")</th>
+                                            <th>@Html.DisplayNameFor(model => model.Remarks_IfAny)</th>
+                                            <th>@Html.DisplayName("Is acceptable? (Yes/No)")</th>
+                                            <th>@Html.DisplayName("Last Modified Date")</th>
+                                            <th>@Html.DisplayName("Prepared By")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                        int sno = 0;
+                                        }
+                                        @foreach (var item in Model.prpongoing)
+                                        {
+                                            {
+                                                sno = sno + 1;
+                                            }
+                                            if (item.IsChecklistValueOk == "ValueZero")
+                                            {
+                                                <tr class="odd gradeX">
+                                                    <td>@Html.DisplayName(sno.ToString())</td>
+                                                    @*<td>@Html.DisplayFor(modelItem => item.Project_DiaryNumber)</td>*@
+                                                    <td class="checklist-criteria-code" data-criteria-code="@Html.DisplayFor(modelItem => item.C_column)" width="25%">
+                                                        @Html.DisplayFor(modelItem => item.CriteriaCode)
+                                                        @Html.HiddenFor(modelItem => item.C_column)
+                                                        <a class="modalOpenerButton" href="javascript:void(0);"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                                    </td>
+                                                    <td class="warning">@Html.DisplayFor(modelItem => item.CriteriaSubCode)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                                                    <td>@Html.DisplayName("")</td>
+                                                    <td>@Html.DisplayName("")</td>
+                                                    <td>@Html.DisplayName("")</td>
+                                                </tr>
+                                            }
+                                            else if (item.IsChecklistValueOk == "Y")
+                                            {
+                                                <tr class="odd gradeX">
+                                                    <td>@Html.DisplayName(sno.ToString())</td>
+                                                    @*<td>@Html.DisplayFor(modelItem => item.Project_DiaryNumber)</td>*@
+                                                    <td class="checklist-criteria-code" data-criteria-code="@Html.DisplayFor(modelItem => item.C_column)" width="25%">
+                                                        @Html.DisplayFor(modelItem => item.CriteriaSubCodeTitle)                                                        
+                                                        @Html.HiddenFor(modelItem => item.C_column)
+                                                        <br />
+                                                        @Html.DisplayName(" [")
+                                                        @Html.DisplayFor(modelItem => item.CriteriaCode)
+                                                        @Html.DisplayName("]") 
+                                                        <br />
+                                                        <a class="modalOpenerButton" href="javascript:void(0);"><div class="btn btn-default btn-circle"><i class="fa fa-pencil" aria-hidden="true"></i></div></a>
+                                                        <a class="modalOpenerButtonExpand" href="javascript:void(0);"><div class="btn btn-info btn-circle">@Html.DisplayFor(modelItem => item.VarChecklistGroupID)</div></a>                                                       
+                                                    </td>
+                                                    <td class="success">                                                                                                            
+                                                        @Html.DisplayFor(modelItem => item.CriteriaSubCode)  
+                                                        @Html.HiddenFor(modelItem => item.VarCriteriaCode, new { @class = "hdnVarCriteriaID" })
+                                                        @Html.HiddenFor(modelItem => item.VarCriteriaSubCode, new { @class = "hdnVarCriteriaSubID" })
+                                                        @Html.HiddenFor(modelItem => item.Related_Project_ID, new { @class = "hdnRelatedProjectID" })
+                                                    </td>
+                                                    <td class="success">@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                                                    <td>
+                                                        @if (item.IsChecklistValueOk == "Y")
+                                                        {
+                                                            @Html.DisplayName("Yes")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "N")
+                                                        {
+                                                            @Html.DisplayName("No")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "O")
+                                                        {
+                                                            @Html.DisplayName("Exempted")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "P")
+                                                        {
+                                                            @Html.DisplayName("To be Provided Later")
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayName("Not Applicable")
+                                                        }
+                                                    </td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CheckList_IdentifiedOn)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CheckList_IdentifiedBy)</td>
+                                                </tr>
+                                            }
+                                            else if (item.IsChecklistValueOk == "N")
+                                            {
+                                                <tr class="odd gradeX">
+                                                    <td>@Html.DisplayName(sno.ToString())</td>
+                                                    @*<td>@Html.DisplayFor(modelItem => item.Project_DiaryNumber)</td>*@
+                                                    <td class="checklist-criteria-code" data-criteria-code="@Html.DisplayFor(modelItem => item.C_column)" width="25%">
+                                                        @Html.DisplayFor(modelItem => item.CriteriaSubCodeTitle)                                                        
+                                                        @Html.HiddenFor(modelItem => item.C_column)
+                                                        <br />
+                                                        @Html.DisplayName(" [")
+                                                        @Html.DisplayFor(modelItem => item.CriteriaCode)
+                                                        @Html.DisplayName("]") 
+                                                        <br />
+                                                        <a class="modalOpenerButton" href="javascript:void(0);"><div class="btn btn-default btn-circle"><i class="fa fa-pencil" aria-hidden="true"></i></div></a>
+                                                        <a class="modalOpenerButtonExpand" href="javascript:void(0);"><div class="btn btn-info btn-circle">@Html.DisplayFor(modelItem => item.VarChecklistGroupID)</div></a>                                                       
+                                                    </td>
+                                                    <td style="background-color:palevioletred;">                                                        
+                                                        @Html.DisplayFor(modelItem => item.CriteriaSubCode)                                                        
+                                                        @Html.HiddenFor(modelItem => item.VarCriteriaCode, new { @class = "hdnVarCriteriaID" })
+                                                        @Html.HiddenFor(modelItem => item.VarCriteriaSubCode, new { @class = "hdnVarCriteriaSubID" })
+                                                        @Html.HiddenFor(modelItem => item.Related_Project_ID, new { @class = "hdnRelatedProjectID" })
+                                                    </td>
+                                                    <td style="background-color:palevioletred;">@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                                                    <td>
+                                                        @if (item.IsChecklistValueOk == "Y")
+                                                        {
+                                                            @Html.DisplayName("Yes")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "N")
+                                                        {
+                                                            @Html.DisplayName("No")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "O")
+                                                        {
+                                                            @Html.DisplayName("Exempted")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "P")
+                                                        {
+                                                            @Html.DisplayName("To be Provided Later")
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayName("Not Applicable")
+                                                        }
+                                                    </td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CheckList_IdentifiedOn)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CheckList_IdentifiedBy)</td>
+                                                </tr>
+                                            }
+                                            else if (item.IsChecklistValueOk == "P")
+                                            {
+                                                <tr class="odd gradeX">
+                                                    <td>@Html.DisplayName(sno.ToString())</td>
+                                                    @*<td>@Html.DisplayFor(modelItem => item.Project_DiaryNumber)</td>*@
+                                                    <td class="checklist-criteria-code" data-criteria-code="@Html.DisplayFor(modelItem => item.C_column)" width="25%">
+                                                        @Html.DisplayFor(modelItem => item.CriteriaSubCodeTitle)
+                                                        @Html.HiddenFor(modelItem => item.C_column)
+                                                        <br />
+                                                        @Html.DisplayName(" [")
+                                                        @Html.DisplayFor(modelItem => item.CriteriaCode)
+                                                        @Html.DisplayName("]")
+                                                        <br />
+                                                        <a class="modalOpenerButton" href="javascript:void(0);"><div class="btn btn-default btn-circle"><i class="fa fa-pencil" aria-hidden="true"></i></div></a>
+                                                        <a class="modalOpenerButtonExpand" href="javascript:void(0);"><div class="btn btn-info btn-circle">@Html.DisplayFor(modelItem => item.VarChecklistGroupID)</div></a>
+                                                    </td>
+                                                    <td class="warning">
+                                                        @Html.DisplayFor(modelItem => item.CriteriaSubCode)
+                                                        @Html.HiddenFor(modelItem => item.VarCriteriaCode, new { @class = "hdnVarCriteriaID" })
+                                                        @Html.HiddenFor(modelItem => item.VarCriteriaSubCode, new { @class = "hdnVarCriteriaSubID" })
+                                                        @Html.HiddenFor(modelItem => item.Related_Project_ID, new { @class = "hdnRelatedProjectID" })
+                                                    </td>
+                                                    <td style="background-color:plum;">@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                                                    <td>
+                                                        @if (item.IsChecklistValueOk == "Y")
+                                                        {
+                                                            @Html.DisplayName("Yes")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "N")
+                                                        {
+                                                            @Html.DisplayName("No")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "O")
+                                                        {
+                                                            @Html.DisplayName("Exempted")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "P")
+                                                        {
+                                                            @Html.DisplayName("To be Provided Later")
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayName("Not Applicable")
+                                                        }
+                                                    </td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CheckList_IdentifiedOn)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CheckList_IdentifiedBy)</td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                <tr class="odd gradeX">
+                                                    <td>@Html.DisplayName(sno.ToString())</td>
+                                                    @*<td>@Html.DisplayFor(modelItem => item.Project_DiaryNumber)</td>*@
+                                                    <td class="checklist-criteria-code" data-criteria-code="@Html.DisplayFor(modelItem => item.C_column)" width="25%">
+                                                        @Html.DisplayFor(modelItem => item.CriteriaSubCodeTitle)                                                        
+                                                        @Html.HiddenFor(modelItem => item.C_column)
+                                                        <br />
+                                                        @Html.DisplayName(" [")
+                                                        @Html.DisplayFor(modelItem => item.CriteriaCode)
+                                                        @Html.DisplayName("]") 
+                                                        <br />
+                                                        <a class="modalOpenerButton" href="javascript:void(0);"><div class="btn btn-default btn-circle"><i class="fa fa-pencil" aria-hidden="true"></i></div></a>
+                                                        <a class="modalOpenerButtonExpand" href="javascript:void(0);"><div class="btn btn-info btn-circle">@Html.DisplayFor(modelItem => item.VarChecklistGroupID)</div></a>                                                                                                               
+                                                    </td>
+                                                    <td class="warning">                                                        
+                                                        @Html.DisplayFor(modelItem => item.CriteriaSubCode)                                                       
+                                                        @Html.HiddenFor(modelItem => item.VarCriteriaCode, new { @class = "hdnVarCriteriaID" })
+                                                        @Html.HiddenFor(modelItem => item.VarCriteriaSubCode, new { @class = "hdnVarCriteriaSubID" })
+                                                        @Html.HiddenFor(modelItem => item.Related_Project_ID, new { @class = "hdnRelatedProjectID" })
+                                                    </td>
+                                                    <td class="info">@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                                                    <td>
+                                                        @if (item.IsChecklistValueOk == "Y")
+                                                        {
+                                                            @Html.DisplayName("Yes")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "N")
+                                                        {
+                                                            @Html.DisplayName("No")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "O")
+                                                        {
+                                                            @Html.DisplayName("Exempted")
+                                                        }
+                                                        else if (item.IsChecklistValueOk == "P")
+                                                        {
+                                                            @Html.DisplayName("To be Provided Later")
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayName("Not Applicable")
+                                                        }
+                                                    </td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CheckList_IdentifiedOn)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.CheckList_IdentifiedBy)</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                @*<h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>*@
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet"></link>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+}

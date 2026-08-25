@@ -1,0 +1,792 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_ProjectSuperLockUnlockList
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/dist/css/rera-toggleshow.css")" rel="stylesheet" />
+<!-- DataTables JavaScript -->
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+<!-- Custom Theme JavaScript -->
+<script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        var getUrlCPvalue;
+
+        $(document).on('click', 'a.modalDownloadExcelButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            window.location = BASE_URL + 'HelpdeskControlPanel/ExportProjectEditManagementSuperLockUnlockToExcel';
+            $('input[type=text]').each(function () {
+                $(this).val('');
+            });
+        });
+
+        @if (TempData["returnUrlCPvalue"].ToString() != "")
+        {
+            <text>
+                getUrlCPvalue = '@TempData["returnUrlCPvalue"]';
+            </text>
+        }
+
+        $(document).on('click', 'a.controlpanelHomeButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + getUrlCPvalue;
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Lock-Unlock Management</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> IT Manager can lock/unlock details of registered project.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+
+    .border-left-danger {
+        border-left: .15rem solid #FF4961 !important;
+    }
+
+    .border-left-warning {
+        border-left: .25rem solid #f6c23e !important;
+    }
+
+    .bg-exclamation-triangle-warning {
+        color: #FF4961 !important;
+        display: inline-block !important;
+    }
+
+    .bg-exclamation-triangle-none {
+        display: none !important;
+    }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $('.btn-toggle-lockend').on('click', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+
+            var indexId = $.trim($(parentRow).find('input.hdnIndexID').val());
+            var enableId = $.trim($(parentRow).find('input.hdnID').val());
+            var promoterId = $.trim($(parentRow).find('input.hdnPrmID').val());
+            var projectId = $.trim($(parentRow).find('input.hdnPrjID').val());
+            var refId = $.trim($(parentRow).find('input.hdnRefID').val());
+
+            var pmLockoutEnabled = $(elem).hasClass('active');
+            var elemid = $(elem).attr('id');
+
+            var varcnfrm = 0;
+            var cnfrmTxt = "Do you want to modify the lock/unlock options of real-estate project?";
+            if (confirm(cnfrmTxt)) {
+                // Save it!
+                varcnfrm = 1;
+                if ($(this).attr('data-toggle') == 'button') {
+                    $.ajax({
+                        type: 'GET',
+                        url: BASE_URL + 'HelpdeskControlPanel/LockedEnabledHandler_ProjectEditManagementListById',
+                        data: { 'pmindexId': indexId, 'pmnameId': enableId, 'pmpromoterId': promoterId, 'pmprojectId': projectId, 'pmrefId': refId, 'pmLockoutEnabled': pmLockoutEnabled },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            alert(data.status);
+                            if (data.statusCode == 101 || data.statusCode == 105) {
+                                setactionlockendTogglebtnYN(data.statusCode, elemid);
+                            } else {
+                                setdefaultlockendTogglebtnYN(prmFlag, elemid);
+                            }
+                        },
+                        failure: function (data) {
+                            alert('Bad Request! Failed');
+                            setdefaultlockendTogglebtnYN(prmFlag, elemid);
+                        },
+                        error: function (err) {
+                            alert('Bad Request! Error');
+                            setdefaultlockendTogglebtnYN(prmFlag, elemid);
+                        }
+                    });
+                }
+            }
+            if (varcnfrm != 1) {
+                disablelockendTogglebtnYN(elemid);
+            }
+        });
+
+        $('.btn-toggle-prmconfirm').on('click', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+
+            var indexId = $.trim($(parentRow).find('input.hdnIndexID').val());
+            var enableId = $.trim($(parentRow).find('input.hdnID').val());
+            var promoterId = $.trim($(parentRow).find('input.hdnPrmID').val());
+            var projectId = $.trim($(parentRow).find('input.hdnPrjID').val());
+            var refId = $.trim($(parentRow).find('input.hdnRefID').val());
+
+            var pmPromoterconfirm = $(elem).hasClass('active');
+            var elemid = $(elem).attr('id');
+
+            var varcnfrm = 0;
+            var cnfrmTxt = "Do you want to modify the promoter details (lock/unlock options) of real-estate project?";
+            if (confirm(cnfrmTxt)) {
+                // Save it!
+                varcnfrm = 1;
+                if ($(this).attr('data-toggle') == 'button') {
+                    $.ajax({
+                        type: 'GET',
+                        url: BASE_URL + 'HelpdeskControlPanel/LockedPrmConfirmEnabledHandler_ProjectEditManagementListById',
+                        data: { 'pmindexId': indexId, 'pmnameId': enableId, 'pmpromoterId': promoterId, 'pmprojectId': projectId, 'pmrefId': refId, 'pmPromoterconfirm': pmPromoterconfirm },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            alert(data.status);
+                            if (data.statusCode == 101 || data.statusCode == 105) {
+                                setactionprmconfirmTogglebtnYN(data.statusCode, elemid);
+                            } else {
+                                setdefaultprmconfirmTogglebtnYN(prmFlag, elemid);
+                            }
+                        },
+                        failure: function (data) {
+                            alert('Bad Request! Failed');
+                            setdefaultprmconfirmTogglebtnYN(prmFlag, elemid);
+                        },
+                        error: function (err) {
+                            alert('Bad Request! Error');
+                            setdefaultprmconfirmTogglebtnYN(prmFlag, elemid);
+                        }
+                    });
+                }
+            }
+            if (varcnfrm != 1) {
+                disableprmconfirmTogglebtnYN(elemid);
+            }
+        });
+
+        $('.btn-toggle-prjconfirm').on('click', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+
+            var indexId = $.trim($(parentRow).find('input.hdnIndexID').val());
+            var enableId = $.trim($(parentRow).find('input.hdnID').val());
+            var promoterId = $.trim($(parentRow).find('input.hdnPrmID').val());
+            var projectId = $.trim($(parentRow).find('input.hdnPrjID').val());
+            var refId = $.trim($(parentRow).find('input.hdnRefID').val());
+
+            var pmProjectconfirm = $(elem).hasClass('active');
+            var elemid = $(elem).attr('id');
+
+            var varcnfrm = 0;
+            var cnfrmTxt = "Do you want to modify the project and quarterly details (lock/unlock options) of real-estate project?";
+            if (confirm(cnfrmTxt)) {
+                // Save it!
+                varcnfrm = 1;
+                if ($(this).attr('data-toggle') == 'button') {
+                    $.ajax({
+                        type: 'GET',
+                        url: BASE_URL + 'HelpdeskControlPanel/LockedPrjConfirmEnabledHandler_ProjectEditManagementListById',
+                        data: { 'pmindexId': indexId, 'pmnameId': enableId, 'pmpromoterId': promoterId, 'pmprojectId': projectId, 'pmrefId': refId, 'pmProjectconfirm': pmProjectconfirm },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            alert(data.status);
+                            if (data.statusCode == 101 || data.statusCode == 105) {
+                                setactionprjconfirmTogglebtnYN(data.statusCode, elemid);
+                            } else {
+                                setdefaultprjconfirmTogglebtnYN(prmFlag, elemid);
+                            }
+                        },
+                        failure: function (data) {
+                            alert('Bad Request! Failed');
+                            setdefaultprjconfirmTogglebtnYN(prmFlag, elemid);
+                        },
+                        error: function (err) {
+                            alert('Bad Request! Error');
+                            setdefaultprjconfirmTogglebtnYN(prmFlag, elemid);
+                        }
+                    });
+                }
+            }
+            if (varcnfrm != 1) {
+                disableprjconfirmTogglebtnYN(elemid);
+            }
+        });
+    });
+
+    function setdefaultlockendTogglebtnYN(dataString, srID) {
+        var dataAction = dataString;
+        var varlockendFlag = 0;
+        if (dataAction != '0') {
+            //YPV(1) NPV(0)
+            varlockendFlag = 1;
+        };
+        var srtitle = '#';
+        var vallockendShowId = srtitle.concat(srID);
+        switch (varlockendFlag) {
+            case 0:
+                $(document).find(vallockendShowId.trim()).removeClass('active');
+                break;
+            case 1:
+                $(document).find(vallockendShowId.trim()).addClass('active');
+                break;
+        }
+    }
+    function setactionlockendTogglebtnYN(dataID, srID) {
+        var dataAction = dataID;
+        var varlockendFlag = 0;
+        if (dataAction == 101) {
+            //YPV(1) NPV(0)
+            varlockendFlag = 1;
+        };
+        var srtitle = '#';
+        var vallockendShowId = srtitle.concat(srID);
+        var len = vallockendShowId.toString().trim().length;
+        var res = vallockendShowId.substring(17, len);
+        var strpvstatus = '#lockendtogglestatus';
+        var vallockendstatusShowId = strpvstatus.concat(res);
+        switch (varlockendFlag) {
+            case 0:
+                $(document).find(vallockendShowId.trim()).removeClass('active');
+                $(document).find(vallockendstatusShowId.trim()).addClass('border-left-danger warning');
+                break;
+            case 1:
+                $(document).find(vallockendShowId.trim()).addClass('active');
+                $(document).find(vallockendstatusShowId.trim()).removeClass('border-left-danger warning');
+                break;
+        }
+    }
+    function disablelockendTogglebtnYN(srID) {
+        var srtitle = '#';
+        var vallockendShowId = srtitle.concat(srID);
+        $(document).find(vallockendShowId.trim()).prop('disabled', true);
+        $(document).find(vallockendShowId.trim()).addClass("disabledlockunlock");
+    }
+
+    function setdefaultprmconfirmTogglebtnYN(dataString, srID) {
+        var dataAction = dataString;
+        var varprmconfirmFlag = 0;
+        if (dataAction != '0') {
+            //YPV(1) NPV(0)
+            varprmconfirmFlag = 1;
+        };
+        var srtitle = '#';
+        var valprmconfirmShowId = srtitle.concat(srID);
+        switch (varprmconfirmFlag) {
+            case 0:
+                $(document).find(valprmconfirmShowId.trim()).removeClass('active');
+                break;
+            case 1:
+                $(document).find(valprmconfirmShowId.trim()).addClass('active');
+                break;
+        }
+    }
+    function setactionprmconfirmTogglebtnYN(dataID, srID) {
+        var dataAction = dataID;
+        var varprmconfirmFlag = 0;
+        if (dataAction == 101) {
+            //YPV(1) NPV(0)
+            varprmconfirmFlag = 1;
+        };
+        var srtitle = '#';
+        var valprmconfirmShowId = srtitle.concat(srID);
+        var len = valprmconfirmShowId.toString().trim().length;
+        var res = valprmconfirmShowId.substring(17, len);
+        var strpvstatus = '#prmconfirmtogglestatus';
+        var valprmconfirmstatusShowId = strpvstatus.concat(res);
+        switch (varprmconfirmFlag) {
+            case 0:
+                $(document).find(valprmconfirmShowId.trim()).removeClass('active');
+                $(document).find(valprmconfirmstatusShowId.trim()).addClass('border-left-danger warning');
+                break;
+            case 1:
+                $(document).find(valprmconfirmShowId.trim()).addClass('active');
+                $(document).find(valprmconfirmstatusShowId.trim()).removeClass('border-left-danger warning');
+                break;
+        }
+    }
+    function disableprmconfirmTogglebtnYN(srID) {
+        var srtitle = '#';
+        var valprmconfirmShowId = srtitle.concat(srID);
+        $(document).find(valprmconfirmShowId.trim()).prop('disabled', true);
+        $(document).find(valprmconfirmShowId.trim()).addClass("disabledlockunlock");
+    }
+
+    function setdefaultprjconfirmTogglebtnYN(dataString, srID) {
+        var dataAction = dataString;
+        var varprjconfirmFlag = 0;
+        if (dataAction != '0') {
+            //YPV(1) NPV(0)
+            varprjconfirmFlag = 1;
+        };
+        var srtitle = '#';
+        var valprjconfirmShowId = srtitle.concat(srID);
+        switch (varprjconfirmFlag) {
+            case 0:
+                $(document).find(valprjconfirmShowId.trim()).removeClass('active');
+                break;
+            case 1:
+                $(document).find(valprjconfirmShowId.trim()).addClass('active');
+                break;
+        }
+    }
+    function setactionprjconfirmTogglebtnYN(dataID, srID) {
+        var dataAction = dataID;
+        var varprjconfirmFlag = 0;
+        if (dataAction == 101) {
+            //YPV(1) NPV(0)
+            varprjconfirmFlag = 1;
+        };
+        var srtitle = '#';
+        var valprjconfirmShowId = srtitle.concat(srID);
+        var len = valprjconfirmShowId.toString().trim().length;
+        var res = valprjconfirmShowId.substring(17, len);
+        var strpvstatus = '#prjconfirmtogglestatus';
+        var valprjconfirmstatusShowId = strpvstatus.concat(res);
+        switch (varprjconfirmFlag) {
+            case 0:
+                $(document).find(valprjconfirmShowId.trim()).removeClass('active');
+                $(document).find(valprjconfirmstatusShowId.trim()).addClass('border-left-danger warning');
+                break;
+            case 1:
+                $(document).find(valprjconfirmShowId.trim()).addClass('active');
+                $(document).find(valprjconfirmstatusShowId.trim()).removeClass('border-left-danger warning');
+                break;
+        }
+    }
+    function disableprjconfirmTogglebtnYN(srID) {
+        var srtitle = '#';
+        var valprjconfirmShowId = srtitle.concat(srID);
+        $(document).find(valprjconfirmShowId.trim()).prop('disabled', true);
+        $(document).find(valprjconfirmShowId.trim()).addClass("disabledlockunlock");
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Control Panel</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Control Panel : CP 6.1 Project Edit Management: Lock-Unlock (Web-Portal Update Options) Details
+                    <span class="pull-right">                        
+                        <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+                        <a class="controlpanelHomeButton" href="javascript:void(0);" title="Home"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-home" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("ProjectEditManagementSuperLockUnlockListInfoDesk", "HelpdeskControlPanel", FormMethod.Post, new { enctype = "multipart/form-data", @id = "PrjSpLockUnlockListInfoDesk" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Options</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Search For</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "21", new { id = "chkUnlockRegdProject", @class = "radio-lockregdproject", @checked = "checked" }) Registered Project
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "22", new { id = "chkUnlockApplication", @class = "radio-lockapplication" }) Application for Registration of Project                                                    
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsApplicationModeFlag, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Type of Files</label>
+                                                @{
+                                                    var listItemsOptionName = new List<SelectListItem>
+                                                    {
+                                                        new SelectListItem {  Text = "Working File(s)" , Value="WorkFile"  },
+                                                        new SelectListItem {  Text = "Unlocked File(s)" , Value="UnlockedFile"  },                                                        
+                                                    };
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownListFor(model => model.InputEntry_Option, new SelectList(listItemsOptionName, "Value", "Text"), "--Select--", new { @class = "form-control", @autocomplete = "off" })
+                                                @Html.ValidationMessageFor(model => model.InputEntry_Option, "", new { @class = "text-danger" })                                                
+                                            </div>                                            
+                                            <div class="col-md-7">
+                                                <input type="submit" id="ViewDetail" value="View Details" class="btn btn-outline btn-primary" />
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "ProjectEditManagementSuperLockUnlockListInfoDesk", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </fieldset>
+                            }
+                            <div class="row">
+                                <br />
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive">
+                                        <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-controlpanel">
+                                            <thead>
+                                                <tr>
+                                                    <th>@Html.DisplayName("SNo")</th>                                                    
+                                                    <th>@Html.DisplayNameFor(model => model.ProjectRegDiaryNumber_Name)</th>
+                                                    <th>@Html.DisplayNameFor(model => model.Project_Name)</th>
+                                                    <th>@Html.DisplayNameFor(model => model.RERAnumberRegistration)</th>
+                                                    <th>@Html.DisplayNameFor(model => model.RERAnumberIssueDate)</th>
+                                                    <th>@Html.DisplayNameFor(model => model.RERAnumberRegUptoDate)</th>
+                                                    <th>@Html.DisplayNameFor(model => model.EventAction_Aggregate)</th>
+                                                    <th>@Html.DisplayName("Status Date")</th> 
+                                                    <th>@Html.DisplayName("Locked Enabled (Yes/No)?")</th>
+                                                    <th>@Html.DisplayName("Promoter Master-Locked (Yes/No)?")</th>
+                                                    <th>@Html.DisplayName("Project Master-Locked (Yes/No)?")</th>                                             
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int sno = 0;
+                                                    string lockendtogglebtnID = string.Empty;
+                                                    string lockendtogglestatusID = string.Empty;
+                                                    string prmconfirmtogglebtnID = string.Empty;
+                                                    string prmconfirmtogglestatusID = string.Empty;
+                                                    string prjconfirmtogglebtnID = string.Empty;
+                                                    string prjconfirmtogglestatusID = string.Empty;
+                                                }
+                                                @foreach (var item in Model.prpongoing)
+                                                {
+                                                    {
+                                                        sno = sno + 1;
+                                                        lockendtogglebtnID = "lockendtogglebtn" + @sno.ToString();
+                                                        lockendtogglestatusID = "lockendtogglestatus" + @sno.ToString();
+                                                        prmconfirmtogglebtnID = "prmconfirmtogglebtn" + @sno.ToString();
+                                                        prmconfirmtogglestatusID = "prmconfirmtogglestatus" + @sno.ToString();
+                                                        prjconfirmtogglebtnID = "prjconfirmtogglebtn" + @sno.ToString();
+                                                        prjconfirmtogglestatusID = "prjconfirmtogglestatus" + @sno.ToString();
+                                                    }
+                                                    <tr class="odd gradeX">
+                                                        <td>@Html.DisplayName(sno.ToString())</td>                                                        
+                                                        <td class="text-center">@Html.DisplayFor(modelItem => item.ProjectRegDiaryNumber_Name)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.Project_Name)</td>
+                                                        <td class="text-center">
+                                                            @Html.DisplayFor(modelItem => item.RERAnumberRegistration)
+                                                            @Html.HiddenFor(modelItem => item.PrjSuperLockUnlock_RegDNProvider_IndexID, new { @class = "hdnIndexID" })
+                                                            @Html.HiddenFor(modelItem => item.PrjSuperLockUnlock_RegDNProvider_ID, new { @class = "hdnID" })
+                                                            @Html.HiddenFor(modelItem => item.Related_Promoter_ID, new { @class = "hdnPrmID" })
+                                                            @Html.HiddenFor(modelItem => item.Related_Project_ID, new { @class = "hdnPrjID" })
+                                                            @Html.HiddenFor(modelItem => item.Related_Reference_ID, new { @class = "hdnRefID" })
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (item.RERAnumberIssueDate != DateTime.MinValue)
+                                                            {
+                                                                @Html.DisplayFor(modelItem => item.RERAnumberIssueDate)
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DisplayName("--")
+                                                            }
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (item.RERAnumberRegUptoDate != DateTime.MinValue)
+                                                            {
+                                                                @Html.DisplayFor(modelItem => item.RERAnumberRegUptoDate)
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DisplayName("--")
+                                                            }
+                                                        </td>
+                                                        <td>@Html.DisplayFor(modelItem => item.EventAction_Aggregate)</td>
+                                                        <td class="text-center">@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+                                                        <td class="text-center">
+                                                            @if (item.IsLockedConfirmed == 0)
+                                                            {
+                                                                if (Model.RoleAccessFlag == "PR")
+                                                                {
+                                                                    <script type="text/javascript">
+                                                                        $(document).ready(function () {
+                                                                            showlockendTogglebtnYN("@item.IsLockedEnable.ToString()", "@sno.ToString()");
+                                                                        });
+                                                                    </script>
+                                                                    <button type="button" id=@lockendtogglebtnID.ToString() class="btn btn-sm btn-toggle btn-secondary btn-toggle-lockend" data-toggle="button" aria-pressed="false" autocomplete="off" title="Enable lock/unlock project details?">
+                                                                        <div class="handle"></div>
+                                                                    </button>                                                                
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (item.IsLockedEnable == 1)
+                                                                    {
+                                                                        @Html.DisplayName("Yes")
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("No")
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {                                                                
+                                                                if (item.IsLockedEnable == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }                                                                
+                                                            }
+                                                        </td>                                                                                                                
+                                                        <td class="text-center">
+                                                            @if (item.IsLockedEnable == 1 && item.IsLockedConfirmed == 0)
+                                                            {
+                                                                if (Model.RoleAccessFlag == "SA" || Model.RoleAccessFlag == "PR")
+                                                                {
+                                                                    <script type="text/javascript">
+                                                                        $(document).ready(function () {
+                                                                            showprmconfirmTogglebtnYN("@item.IsLockPromoterDN.ToString()", "@sno.ToString()");
+                                                                        });
+                                                                    </script>
+                                                                    <button type="button" id=@prmconfirmtogglebtnID.ToString() class="btn btn-sm btn-toggle btn-secondary btn-toggle-prmconfirm" data-toggle="button" aria-pressed="false" autocomplete="off" title="Is confirmed lock/unlock promoter details?">
+                                                                        <div class="handle"></div>
+                                                                    </button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (item.IsLockPromoterDN == 1)
+                                                                    {
+                                                                        @Html.DisplayName("Yes")
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("No")
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (item.IsLockPromoterDN == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            }
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (item.IsLockedEnable == 1 && item.IsLockedConfirmed == 0)
+                                                            {
+                                                                if (Model.RoleAccessFlag == "SA" || Model.RoleAccessFlag == "PR")
+                                                                {
+                                                                    <script type="text/javascript">
+                                                                        $(document).ready(function () {
+                                                                            showprjconfirmTogglebtnYN("@item.IsLockProjectDN.ToString()", "@item.IsLockQtrDN.ToString()", "@sno.ToString()");
+                                                                        });
+                                                                    </script>
+                                                                    <button type="button" id=@prjconfirmtogglebtnID.ToString() class="btn btn-sm btn-toggle btn-secondary btn-toggle-prjconfirm" data-toggle="button" aria-pressed="false" autocomplete="off" title="Is confirmed lock/unlock project and quarterly details?">
+                                                                        <div class="handle"></div>
+                                                                    </button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (item.IsLockProjectDN == 1 && item.IsLockQtrDN == 1)
+                                                                    {
+                                                                        @Html.DisplayName("Yes")
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("No")
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (item.IsLockProjectDN == 1 && item.IsLockQtrDN == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            }
+                                                        </td>                                                                                                                                                            
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>                                
+                            </div>
+                            <!-- /.row (nested) -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal --> 
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    
+    <script>
+        function showlockendTogglebtnYN(dataString, srNo) {
+            var dataAction = dataString;
+            var varlockendFlag = 0;
+            if (dataAction != '0') {
+                //YPV(1) NPV(0)
+                varlockendFlag = 1;
+            };
+
+            var vallockendShowId = '#lockendtogglebtn' + srNo;
+            var strpvstatus = '#lockendtogglestatus';
+            var vallockendstatusShowId = strpvstatus.concat(srNo);
+            switch (varlockendFlag) {
+                case 0:
+                    $(document).find(vallockendShowId.trim()).removeClass('active');
+                    $(document).find(vallockendstatusShowId.trim()).addClass('border-left-danger warning');
+                    break;
+                case 1:
+                    $(document).find(vallockendShowId.trim()).addClass('active');
+                    $(document).find(vallockendstatusShowId.trim()).removeClass('border-left-danger warning');
+                    break;
+            }
+        }
+        function showprmconfirmTogglebtnYN(dataString, srNo) {
+            var dataAction = dataString;
+            var varprmconfirmFlag = 0;
+            if (dataAction != '0') {
+                //YPV(1) NPV(0)
+                varprmconfirmFlag = 1;
+            };
+
+            var valprmconfirmShowId = '#prmconfirmtogglebtn' + srNo;
+            var strpvstatus = '#prmconfirmtogglestatus';
+            var valprmconfirmstatusShowId = strpvstatus.concat(srNo);
+            switch (varprmconfirmFlag) {
+                case 0:
+                    $(document).find(valprmconfirmShowId.trim()).removeClass('active');
+                    $(document).find(valprmconfirmstatusShowId.trim()).addClass('border-left-danger warning');
+                    break;
+                case 1:
+                    $(document).find(valprmconfirmShowId.trim()).addClass('active');
+                    $(document).find(valprmconfirmstatusShowId.trim()).removeClass('border-left-danger warning');
+                    break;
+            }
+        }
+        function showprjconfirmTogglebtnYN(dataString, srNo) {
+            var dataAction = dataString;
+            var varprjconfirmFlag = 0;
+            if (dataAction != '0') {
+                //YPV(1) NPV(0)
+                varprjconfirmFlag = 1;
+            };
+
+            var valprjconfirmShowId = '#prjconfirmtogglebtn' + srNo;
+            var strpvstatus = '#prjconfirmtogglestatus';
+            var valprjconfirmstatusShowId = strpvstatus.concat(srNo);
+            switch (varprjconfirmFlag) {
+                case 0:
+                    $(document).find(valprjconfirmShowId.trim()).removeClass('active');
+                    $(document).find(valprjconfirmstatusShowId.trim()).addClass('border-left-danger warning');
+                    break;
+                case 1:
+                    $(document).find(valprjconfirmShowId.trim()).addClass('active');
+                    $(document).find(valprjconfirmstatusShowId.trim()).removeClass('border-left-danger warning');
+                    break;
+            }
+        }
+
+        $(document).ready(function () {
+            $('table#dataTables-controlpanel').DataTable({
+                responsive: true,
+                "pageLength": 100,
+                "lengthMenu": [[100, 100, 150, 200, 250], [100, 100, 150, 200, 250]],
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [8, 9, 10]
+                }],
+                "language": {
+                    "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                    "lengthMenu": "Show _MENU_ records"
+                },
+                "pagingType": "full_numbers"
+            });
+        });
+    </script>
+}

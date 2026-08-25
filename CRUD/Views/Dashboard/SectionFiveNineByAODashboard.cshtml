@@ -1,0 +1,864 @@
+﻿@model CRUD.Models.Dashboard.ClsPrp_DashboardDesk_FactsFigure
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script src="@Url.Content("~/js-highcharts/highcharts.js")"></script>
+<script src="@Url.Content("~/js-highcharts/data.js")"></script>
+<script src="@Url.Content("~/js-highcharts/drilldown.js")"></script>
+<script src="@Url.Content("~/js-highcharts/variable-pie.js")"></script>
+
+<link href="@Url.Content("~/dist/css/fixed-plugin.css")" rel="stylesheet" />
+
+
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-spzoom]').spzoom();
+    });
+</script>
+
+<script>
+    $(function () {
+
+        var baseUrl = $('body').attr('data-base-url');
+
+        (function (H) {
+            //DATALABELS
+            H.wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
+                var css = this.chart.options.drilldown.activeDataLabelStyle;
+                proceed.call(this);
+            
+                css.textDecoration = 'none !important';
+                css.fontWeight = 'normal';
+                css.cursor = 'default';
+                css.color = 'black !important';
+            
+            
+                H.each(this.points, function (point) {
+               
+                    if (point.drilldown && point.dataLabel) {
+                        point.dataLabel
+                            .css(css)
+                            .on('click', function () {
+                                return false;
+                            });
+                    }
+                });
+            });
+        
+            //For X-axis labels
+            H.wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
+                var point = proceed.call(this, series, options, x),
+                    chart = series.chart,
+                    tick = series.xAxis && series.xAxis.ticks[x],
+                    tickLabel = tick && tick.label;
+                console.log("series");
+                console.log(series);
+
+                if (point.drilldown) {
+
+                    // Add the click event to the point label
+                    H.addEvent(point, 'click', function () {
+                        point.doDrilldown();
+                    });
+
+                    // Make axis labels clickable
+                    if (tickLabel) {
+                        if (!tickLabel._basicStyle) {
+                            tickLabel._basicStyle = tickLabel.element.getAttribute('style');
+                        }
+                        tickLabel.addClass('highcharts-drilldown-axis-label').css({
+                            'text-decoration': 'none !important',
+                            'font-weight': 'normal !important',
+                            'cursor': 'auto',
+                            'color': 'black !important'
+
+                        }).on('click', function () {
+                            if (point.doDrilldown) {
+                                return false;
+                            }
+                        });
+                    }
+                } else if (tickLabel && tickLabel._basicStyle) {
+                }
+
+                return point;
+            });
+        })(Highcharts);
+
+        //For Section Five-Nine DATA        
+        $.ajax({
+            type: "POST",
+            url: baseUrl + "Dashboard/GetSectionFiveNineLiveReportsDataByAOdetails",
+            datatype: "Json",
+            data: { IndexId: "0" },
+            success: function (data) {
+                drawBarChartSectionFiveNinesByAO(data);
+                displayListSectionFiveNineByAO(data);
+            },
+            error: function (data) {
+                alert('Bad Request! Invalid Data Details.');
+            }
+        });
+
+        //For Section Five-Nine PieCharts DATA        
+        $.ajax({
+            type: "POST",
+            url: baseUrl + "Dashboard/GetPieChartSectionFiveNineLiveReportsDataByAOdetails",
+            datatype: "Json",
+            data: { IndexId: "0" },
+            success: function (data) {
+                drawPieChartSectionFiveNinesByAO(data);
+            },
+            error: function (data) {
+                alert('Bad Request! Invalid Data Details.');
+            }
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerSectionFiveNinedetails);
+    });
+
+    function drawBarChartSectionFiveNinesByAO(data) {
+        var myChart = Highcharts.chart('sectionfivenine-livereport-container', {
+            chart: {
+                type: 'column'
+            },
+            title: false,
+            subtitle: false,
+            xAxis: {
+                type: 'category',
+                labels: {
+                    style: {
+                        color: 'black !important',
+                        textDecoration: "none !important"
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Number of Complaints'
+                },
+                labels: {
+                    style: {
+                        color: 'black !important',
+                        textDecoration: "none !important"
+                    }
+                }
+
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y:.f}',
+                        style: {
+                            color: 'black !important',
+                            textDecoration: "none !important"
+                        }
+                    }
+                }
+            },
+
+            tooltip: {
+                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.f}</b><br/>'
+            },
+
+            series: [
+                {
+                    name: "Notices (Section 59)",
+                    colorByPoint: true,
+                    data: data.LiveReportSectionFiveNinesData
+                }
+            ]
+        });
+    }
+
+    function drawPieChartSectionFiveNinesByAO(data) {
+        var myPieChart = Highcharts.chart('districtwithsectionfivenines-pie-chart-container', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            tooltip: {
+                pointFormat: '{series.name} (%age): <b>{point.percentage:.1f}%</b><br/>' +
+                            'Number of Complaints/Notices (per district): <b>{point.sectionfivenines}</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>', //'<b>{point.name}</b>: {point.percentage:.1f}%'
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Section Five-Nine',
+                colorByPoint: true,
+                data: data.LiveReportSectionFiveNinePieChartsData
+            }]
+        });
+    }
+
+    function displayListSectionFiveNineByAO(data) {
+        var result = data.SummaryStatusSectionFiveNinesData;
+        console.log(result);
+        $('#displayTotalComplaintsNotices').text(result[0].value);
+        $('#displayNumberComplaintFiled').text(result[1].value);
+
+        $('#displayNumberForIssuancePenalityNotices').text(result[5].value);
+        $('#displayNumberPendingShowCauseNotice').text(result[6].value);
+        $('#displayNumberShowCauseNoticeIssuedForPenality').text(result[7].value);
+        $('#displayNumberShowCauseNoticeIssuedForPenalityButNoneAppeared').text(result[8].value);
+        $('#displayNumberShowCauseNoticeIssuedForPenalityAndReceivedBackUnserved').text(result[9].value);
+
+        $('#displayNumberComplaintDecided').text(result[10].value);
+        $('#displayNumberDisposeOf').text(result[12].value);
+        $('#displayNumberDismissedNonMaintainble').text(result[13].value);        
+        $('#displayNumberDuplicateMergeFile').text(result[14].value);
+
+        $('#displayNumberSentForDocumentaryEvidence').text(result[15].value);
+        $('#displayNumberForSubmissionOfComplianceReport').text(result[16].value);
+        $('#displayNumberSentForDocumentaryEvidenceDefaulterPromoters').text(result[17].value);
+
+        $('#displayNumberUnderConsideration').text(result[18].value);
+        $('#displayNumberPersonalHearing').text(result[20].value);
+        $('#displayNumberReplyAndDocument').text(result[22].value);
+        $('#displayNumberExParteProcedings').text(result[23].value);
+        $('#displayNumberSentForPublication').text(result[27].value);
+
+        $('#displayNumberPendingForPublication').text(result[24].value);
+        $('#displayNumberPublishedInNewpapers').text(result[28].value);
+    }
+
+    function infohelpHandlerSectionFiveNinedetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>District Information</b><br/> <i class="fa fa-check-square" style="color:#064576"></i> Amritsar<br/> <i class="fa fa-check-square" style="color:#064576"></i> Barnala<br/> <i class="fa fa-check-square" style="color:#064576"></i> Bathinda<br/> <i class="fa fa-check-square" style="color:#064576"></i> Faridkot<br/> <i class="fa fa-check-square" style="color:#064576"></i> Fatehgarh Sahib<br/> <i class="fa fa-check-square" style="color:#064576"></i> Firozpur' +
+                '<br/> <i class="fa fa-check-square" style="color:#064576"></i> Gurdaspur<br/> <i class="fa fa-check-square" style="color:#064576"></i> Hoshiarpur<br/> <i class="fa fa-check-square" style="color:#064576"></i> Jalandhar<br/> <i class="fa fa-check-square" style="color:#064576"></i> Kapurthala<br/> <i class="fa fa-check-square" style="color:#064576"></i> Ludhiana<br/> <i class="fa fa-check-square" style="color:#064576"></i> Mansa<br/> <i class="fa fa-check-square" style="color:#064576"></i> Moga' +
+                '<br/> <i class="fa fa-check-square" style="color:#064576"></i> Muktsar<br/> <i class="fa fa-check-square" style="color:#064576"></i> Patiala<br/> <i class="fa fa-check-square" style="color:#064576"></i> Rupnagar (Ropar)<br/> <i class="fa fa-check-square" style="color:#064576"></i> SAS Nagar (Mohali)<br/> <i class="fa fa-check-square" style="color:#064576"></i> Sangrur<br/> <i class="fa fa-check-square" style="color:#064576"></i> SBS Nagar (Nawanshahr)' +
+                '<br/> <i class="fa fa-check-square" style="color:#064576"></i> Tarn Taran<br/> <i class="fa fa-check-square" style="color:#064576"></i> Pathankot<br/> <i class="fa fa-check-square" style="color:#064576"></i> Fazilka<br/> <i class="fa fa-check-square" style="color:#064576"></i> Others',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $().ready(function () {
+
+            window_width = $(window).width();
+
+            if (window_width > 767) {
+                //if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+                //    $('.fixed-plugin .dropdown').addClass('open');
+                //}
+                if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+                    $('.fixed-plugin .dropdown').removeClass("open");
+                }
+            }
+
+            $('.fixed-plugin a').click(function (event) {
+                if ($(this).hasClass('switch-trigger')) {                    
+                    if (event.stopPropagation) {
+                        event.stopPropagation();
+                    } else if (window.event) {
+                        window.event.cancelBubble = true;
+                    }
+                }
+            });
+
+            $('.fixed-plugin .badge').click(function () {
+                var elem = $(this);
+                var parentBadge = $(elem).attr('data-color');
+
+                $(".fa-dot-circle-o").removeClass('icon-cog-purple');
+                $(".fa-dot-circle-o").removeClass('icon-cog-azure');
+                $(".fa-dot-circle-o").removeClass('icon-cog-green');
+                $(".fa-dot-circle-o").removeClass('icon-cog-orange');
+                $(".fa-dot-circle-o").removeClass('icon-cog-danger');
+                $(".fa-dot-circle-o").removeClass('icon-cog-rose');
+
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-purple');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-azure');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-green');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-orange');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-danger');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-rose');
+
+                if (parentBadge == "purple") {                    
+                    $(".fa-dot-circle-o").addClass('icon-cog-purple');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-purple');
+                }
+                if (parentBadge == "azure") {                    
+                    $(".fa-dot-circle-o").addClass('icon-cog-azure');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-azure');
+                }
+                if (parentBadge == "green") {
+                    $(".fa-dot-circle-o").addClass('icon-cog-green');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-green');
+                }
+                if (parentBadge == "orange") {
+                    $(".fa-dot-circle-o").addClass('icon-cog-orange');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-orange');
+                }
+                if (parentBadge == "danger") {
+                    $(".fa-dot-circle-o").addClass('icon-cog-danger');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-danger');
+                }
+                if (parentBadge == "rose") {                   
+                    $(".fa-dot-circle-o").addClass('icon-cog-rose');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-rose');
+                }
+            });
+
+
+
+
+
+            //    if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            //    var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            //    $full_page_background.fadeOut('fast', function() {
+            //        $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+            //        $full_page_background.fadeIn('fast');
+            //    });
+            //    }
+
+            //    if ($('.switch-sidebar-image input:checked').length == 0) {
+            //    var new_image = $('.fixed-plugin li.active .img-holder').find("img").attr('src');
+            //    var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            //    $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+            //    $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+            //    }
+
+            //    if ($sidebar_responsive.length != 0) {
+            //    $sidebar_responsive.css('background-image', 'url("' + new_image + '")');
+            //    }
+            //});
+
+
+        });
+    });
+</script>
+<style>
+    .icon-cog-purple {
+        color: purple;
+    }
+    .icon-cog-azure {
+        color: deepskyblue;
+    }
+    .icon-cog-green {
+        color: green;
+    }
+    .icon-cog-orange {
+        color: darkslategrey;
+    }
+    .icon-cog-danger {
+        color: red;
+    }
+    .icon-cog-rose {
+        color: maroon;
+    }
+    .dashboard-filter-strong {
+        font-weight: bold;
+    }
+    .dashboard-filter-text-purple {
+        color: purple;
+    }
+    .dashboard-filter-text-azure {
+        color: deepskyblue;
+    }
+    .dashboard-filter-text-green {
+        color: green;
+    }
+    .dashboard-filter-text-orange {
+        color: darkslategrey;
+    }
+    .dashboard-filter-text-danger {
+        color: red;
+    }
+    .dashboard-filter-text-rose {
+        color: maroon;
+    }
+
+    .dashboard-barcharts-frame {
+        min-width: 240px;
+        height: 300px;
+        margin: 0 auto;
+        /*background: url('../images/dashboard-loader-gears-animation.gif');*/
+        background: url('../images/dashboard-loading-animation.gif');
+        background-repeat: no-repeat;
+    }
+    .dashboard-piecharts-frame {
+        background: url('../images/dashboard-loading-animation.gif');
+        background-repeat: no-repeat;
+        /*background-position: center;*/
+    }
+</style>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Dashboard</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_RegisteredProjects)+</div>
+                                <div>Registered Projects</div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <a href="@Url.Action("ProjectByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_RegisteredAgents)+</div>
+                                <div>Registered Agents</div>
+                            </div>
+                            <!--  <div class="col-xs-5">
+                                <img src="images/icon1.png">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="@Url.Action("RealEstateAgentByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_SectionThreeOneComplaints)+</div>
+                                <div>Complaints (Section 31)</div>
+                            </div>
+
+                            <!--  <div class="col-xs-5">
+                                <img src="images/icon1.png">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="@Url.Action("ProjectByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-red">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_SectionFiveNineComplaints)+</div>
+                                <div>Notices (Section 59)</div>
+                            </div>
+                            <!--  <div class="col-xs-5">
+                                <img src="images/icon1.png">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="@Url.Action("SectionFiveNineByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- /.row Header-->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <i class="fa fa-clock-o fa-lg" aria-hidden="true"></i> Live Report - Complaints/ Notices (Section 59)
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                     <div id="sectionfivenine-livereport-container" class="dashboard-barcharts-frame"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.highchartds-container -->                
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-8 -->
+            <!-- /.col-lg-4 -->
+        </div>
+        <!-- /.row Live Report-->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <i class="fa fa-pie-chart fa-lg" aria-hidden="true"></i> Region Wise Status of Complaints/ Notices (Section 59)
+                        <span class="pull-right">
+                            <a class="a info-help-details" id="infohelpHandlerDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                        </span>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="flot-chart dashboard-piecharts-frame">                            
+                            <div id="districtwithsectionfivenines-pie-chart-container"></div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+
+            <div class="col-lg-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <i class="fa fa-list fa-lg"></i> Notices (Section 59) Summary Filters
+                        <span class="pull-right">
+                            @String.Format("{0:dddd, MMMM d, yyyy}", DateTime.Now)
+                        </span>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="list-group">
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Total Complaint(s)/ Notice(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayTotalComplaintsNotices" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Complaint Filed(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayNumberComplaintFiled" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw icon-cog-red"></i> For issuance of Penality Notice(s)
+                                <span class="pull-right text-danger small">
+                                    <span id="displayNumberForIssuancePenalityNotices" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Pending for show cause Notice(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayNumberPendingShowCauseNotice" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Show cause notice issued for penality(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayNumberShowCauseNoticeIssuedForPenality" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Show cause notice issued for penality but None Appeared(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberShowCauseNoticeIssuedForPenalityButNoneAppeared" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Show cause notice issued for penality and received back unserved(s)
+                                <span class="pull-right text-warning small">
+                                    <span id="displayNumberShowCauseNoticeIssuedForPenalityAndReceivedBackUnserved" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Complaint Decided(s)
+                                <span class="pull-right text-warning small">
+                                    <span id="displayNumberComplaintDecided" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Dispose of(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayNumberDisposeOf" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Dismissed as Non Maintainble(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayNumberDismissedNonMaintainble" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>                            
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Duplicate / Merge file(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberDuplicateMergeFile" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Under consideration(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberUnderConsideration" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Personal Hearing(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberPersonalHearing" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Reply and document(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberReplyAndDocument" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Ex parte procedings(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberExParteProcedings" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Sent for Publication(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberSentForPublication" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Pending for Publication(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberPendingForPublication" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Published in Newpapers(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberPublishedInNewpapers" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Sent for Documentary Evidence(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberSentForDocumentaryEvidence" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> For submission of Compliance Report(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberForSubmissionOfComplianceReport" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Sent for Documentary Evidence as Defaulter Promoter(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayNumberSentForDocumentaryEvidenceDefaulterPromoters" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>                            
+                        </div>
+                        <!-- /.list-group -->
+
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+
+                <!-- /.panel -->
+                <!-- /.panel -->
+                <!-- /.panel .chat-panel -->
+            </div>
+            <!-- /.col-lg-8 -->
+            <!-- /.col-lg-4 -->
+        </div>
+            <!-- /.row -->
+    }
+</div>
+<!-- /.wrapper -->
+
+<div class="fixed-plugin">
+    <div class="dropdown show-dropdown open">
+        <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-cog fa-2x"> </i>
+        </a>
+        <ul class="dropdown-menu" x-placement="top-start" style="position: absolute; top: -47px; left: -303px; will-change: top, left;">
+            <li class="header-title"> Dashboard Filters</li>
+            <li class="adjustments-line">
+                <a href="javascript:void(0)" class="switch-trigger active-color">
+                    <div class="badge-colors ml-auto mr-auto text-center">
+                        <span class="badge filter badge-purple" data-color="purple"></span>
+                        <span class="badge filter badge-azure" data-color="azure"></span>
+                        <span class="badge filter badge-green" data-color="green"></span>
+                        <span class="badge filter badge-warning active" data-color="orange"></span>
+                        <span class="badge filter badge-danger" data-color="danger"></span>
+                        <span class="badge filter badge-rose" data-color="rose"></span>
+                    </div>
+                    <div class="clearfix"></div>
+                </a>
+            </li>
+            <li class="header-title">Full Screen</li>
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-success btn-block disabled" style="background-color:#7bb73f; font-size:small; font-weight:Normal;">
+                    Section 59 Notices (Full Screen)
+                </a>
+            </li>            
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-default btn-block disabled" style="background-color:#064576; font-size:small; font-weight:Normal;">
+                    Section 59 Notices (Full Screen) 
+                </a>
+            </li> 
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-success btn-block disabled" style="background-color:#7bb73f; font-size:small; font-weight:Normal;">
+                    View Calendar
+                </a>
+            </li> 
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-default btn-block disabled" style="background-color:#064576; font-size:small; font-weight:Normal;">
+                    View Documentation
+                </a>
+            </li>
+            <li class="header-title">Thank you for visiting geo location map!</li>
+            <li class="button-container text-center">
+                <div class="form-group">
+                    <button id="twitter" class="btn btn-round btn-twitter sharrre"><i class="fa fa-twitter"></i></button>
+
+                    <a href="https://www.facebook.com/MGSIPA/photos/a.2032773913682452/2032774290349081/?type=3&theater" target="_blank">
+                        <span class="btn btn-round btn-facebook sharrre">
+                            <i class="fa fa-facebook-f"></i>
+                        </span>
+                    </a>
+                </div>
+                <br>
+                <br>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

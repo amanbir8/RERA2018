@@ -1,0 +1,441 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_FileRearrangementAgentDocumentDetails
+
+@{
+    Layout = null;
+}
+
+<script>
+    jQuery.validator.addMethod("alphanumericcc", function (value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9 ,-.()/]*$/.test($.trim(value));
+    }, "Special characters are not allowed.");
+
+    $("#myform_CPagentdocmodify").validate({
+        rules: {
+            AgentDoc_InfoCode_Input: {
+                required: true
+            },
+            AgentDoc_InfoCode_ConfirmInput: {
+                required: true
+            },
+            AgentDoc_ReferenceNumber_Input: {
+                required: true,
+                maxlength: 90
+            },
+            Remarks_IfAny_Input: {
+                required: true,
+                maxlength: 300
+            }
+        },
+        messages: {
+            AgentDoc_InfoCode_Input: {
+                required: "this field is required"
+            },
+            AgentDoc_InfoCode_ConfirmInput: {
+                required: "this field is required"
+            },
+            AgentDoc_ReferenceNumber_Input: {
+                required: "this field is required",
+                maxlength: "this field contains max {0} characters"
+            },
+            Remarks_IfAny_Input: {
+                required: "this field is required",
+                maxlength: "this field contains max {0} characters"
+            }
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var baseUrl = $('body').attr('data-base-url');
+
+        function saveOrder(data) {
+            return $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'POST',
+                url: baseUrl + "HelpdeskControlPanel/UpdateOptionsSetRearrangementAgentDocsDetail",
+                data: data,
+                success: function (d) {
+                    if (d.status == true) {
+                        alert(d.statusMessage);
+                        var manageragentdocsModal = $(document).find('#myModal');
+                        $(manageragentdocsModal).fadeOut(1000, function () {
+                            $(manageragentdocsModal).modal('hide');
+                        });
+                    }
+                    else {
+                        if (d.remarks == 'Error') {
+                            alert(d.statusMessage);
+                        }
+                        else {
+                            alert('Failed! Something went wrong');
+                        }
+                    }
+                },
+                error: function () {
+                    alert("Oops! Something went wrong")
+                }
+            });
+        }
+
+        $("#saveOrder").click(function (e) {
+            e.preventDefault();
+            var orderArr = [];
+            orderArr.length = 0;
+            var isAllValid = false;
+
+            if ($("input[name='IsUpdateModifyFlag_AgentDocument']:checked").val() == '1') {
+                if ($('#AgentDoc_InfoCode_Input').val() != '' && $('#AgentDoc_InfoCode_ConfirmInput').val() != '') {
+                    var xpRegistrationNumber = $("#RERAnumberRegistration_Input").val(),
+                        xpDiaryNumber = $("#AgentDiaryNumber_Input").val(),
+                        xpPreviousDocInfoCode = $("#AgentDoc_InfoCode").val(),
+                        xpDocInfoCode = $("#AgentDoc_InfoCode_Input").val(),
+                        xpConfirmDocInfoCode = $("#AgentDoc_InfoCode_ConfirmInput").val(),
+                        xpReferenceNumber = $("#AgentDoc_ReferenceNumber_Input").val(),
+                        xpRemarksIfAny = $("#Remarks_IfAny_Input").val();
+
+                    if (xpDocInfoCode >= 0) {
+                        if (xpConfirmDocInfoCode >= 0) {
+                            if (xpDocInfoCode == xpConfirmDocInfoCode) {
+                                if (xpDocInfoCode != xpPreviousDocInfoCode) {
+                                    isAllValid = true;
+                                }
+                                else {
+                                    alert('Invalid! The document name (for update/modify) (*) fields are required.');
+                                    isAllValid = false;
+                                }
+                            }
+                            else {
+                                alert('Mismatched! The document name (for update/modify) (*) fields are mismatched.');
+                                isAllValid = false;
+                            }
+                        }
+                        else {
+                            alert('Invalid! The confirm document name (for update/modify) (*) fields are invalid.');
+                            isAllValid = false;
+                        }
+                    }
+                    else {
+                        alert('Invalid! The document name (for update/modify) (*) fields are invalid.');
+                        isAllValid = false;
+                    }
+                }
+                else {
+                    alert('The mandatory (*) fields are required.');
+                    isAllValid = false;
+                }
+            }
+            else {
+                isAllValid = false;
+            }
+
+            if (isAllValid) {
+                var r = confirm("Are you sure you want to save these document details?");
+                if (r == true) {
+                    var pAgentDocIndexID = $("#AgentDoc_IndexID").val(),
+                        pAgentDocID = $("#AgentDoc_ID").val(),
+                        pAgentID = $("#Agent_ID").val(),                        
+                        pAgent_DiaryNumber = $("#Agent_DiaryNumber").val(),
+                        pAgentDocInfoCode = $("#AgentDoc_InfoCode").val(),
+                        pApplicationSearchFlag = $("#Application_SearchTypeFlag").val(),
+                        pUpdateModifyFlag = $("input[name='IsUpdateModifyFlag_AgentDocument']:checked").val(),
+                        pRegistrationNumber = $("#RERAnumberRegistration_Input").val(),
+                        pDiaryNumber = $("#AgentDiaryNumber_Input").val(),
+                        pDocInfoCode = $("#AgentDoc_InfoCode_Input").val(),
+                        pConfirmDocInfoCode = $("#AgentDoc_InfoCode_ConfirmInput").val(),
+                        pReferenceNumber = $("#AgentDoc_ReferenceNumber_Input").val(),
+                        pRemarksIfAny = $("#Remarks_IfAny_Input").val()
+                        pExtra01_column = $("#Extra01_column").val(),
+                        pExtra02_column = $("#Extra02_column").val(),
+                        pRoleAccessFlag = $("#RoleAccessFlag").val();
+
+                    orderArr.push({
+                        AgentDoc_IndexID: pAgentDocIndexID,
+                        AgentDoc_ID: pAgentDocID,
+                        Agent_ID: pAgentID,
+                        AgentRenewal_ID: 0,
+                        Agent_DiaryNumber: pAgent_DiaryNumber,
+                        AgentDoc_InfoCode: pAgentDocInfoCode,
+                        Application_SearchTypeFlag: pApplicationSearchFlag,
+                        IsUpdateModifyFlag_AgentDocument: pUpdateModifyFlag,
+                        RERAnumberRegistration_Input: pRegistrationNumber,
+                        AgentDiaryNumber_Input: pDiaryNumber,
+                        AgentDoc_InfoCode_Input: pDocInfoCode,
+                        AgentDoc_InfoCode_ConfirmInput: pConfirmDocInfoCode,
+                        AgentDoc_ReferenceNumber_Input: pReferenceNumber,
+                        Remarks_IfAny_Input: pRemarksIfAny,
+                        Extra01_column: pExtra01_column,
+                        Extra02_column: pExtra02_column,
+                        RoleAccessFlag: pRoleAccessFlag,
+                    });
+
+                    var data = JSON.stringify({
+                        requestobj: orderArr
+                    });
+
+                    $.when(saveOrder(data)).then(function (response) {
+                        console.log(response);
+                    }).fail(function (err) {
+                        console.log(err);
+                    });
+                }
+            }
+        });
+
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var agentdocmodifymanagerModal = $(document).find('#myModal');
+            $(agentdocmodifymanagerModal).fadeOut(1000, function () {
+                $(agentdocmodifymanagerModal).modal('hide');
+            });
+        });
+    });
+</script>
+<style>
+    *.bgdisabled-color {
+        background-color: #F0F0F0;
+    }
+
+    *.bgdisplay-color {
+        background-color: #8fcedd;
+    }
+
+    .disclaimer-text {
+        text-align: justify;
+        text-justify: inter-word;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var vcheckoptionvalue = $("input[name='IsUpdateModifyFlag_AgentDocument']:checked").val();
+        if (vcheckoptionvalue == '1') {            
+            $("#saveOrder").prop('disabled', false);
+        }
+        else {            
+            $("#saveOrder").prop('disabled', true);
+        };
+
+        $(document).on('click', '.radio-modifyflagoptions', function (e) {
+            if (this.value == '1') {
+                $("#saveOrder").prop('disabled', false);
+            }
+            else {
+                $("#saveOrder").prop('disabled', true);
+            };
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id = "myform_CPagentdocmodify" }))
+                            {
+                                @Html.HiddenFor(model => model.AgentDoc_IndexID)
+                                @Html.HiddenFor(model => model.AgentDoc_ID)
+                                @Html.HiddenFor(model => model.Agent_ID)
+                                @Html.HiddenFor(model => model.AgentRenewal_ID)
+                                @Html.HiddenFor(model => model.Application_SearchTypeFlag)
+                                @Html.HiddenFor(model => model.Agent_DiaryNumber)
+                                @Html.HiddenFor(model => model.Agent_Name)
+                                @Html.HiddenFor(model => model.AgentAddressDistrict, htmlAttributes: new { @id = "pmAgentAddDist" })
+                                @Html.HiddenFor(model => model.AgentDoc_InfoCode)
+                                @Html.HiddenFor(model => model.AgentDoc_ReferenceNumber)
+                                @Html.HiddenFor(model => model.Remarks_IfAny)
+                                @Html.HiddenFor(model => model.Extra01_column)
+                                @Html.HiddenFor(model => model.Extra02_column)
+                                @Html.HiddenFor(model => model.RoleAccessFlag)
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <label class="control-label">(A.) Selected Document Details</label>
+                                                    </div>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(i.) Diary Number (Agent)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.Agent_DiaryNumber, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.Agent_DiaryNumber, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(ii.) Agent Name</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.Agent_Name, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.Agent_Name, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(iii.) Agent Address District Name</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.AgentAddressDistrict, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.AgentAddressDistrict, "", new { @class = "text-danger" })                                                       
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(iv.) Document Name (Selected)</label>                                                        
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.DropDownListFor(model => model.AgentDoc_InfoCode, new SelectList(Model.prpMasterDocs, "AgentDocMaster_InfoCode", "AgentDocMaster_InfoName"), "Select", new { @class = "form-control bgdisabled-color", @disabled = "disabled" })
+                                                        @Html.ValidationMessageFor(model => model.AgentDoc_InfoCode, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(v.) Reference Number (Selected)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.AgentDoc_ReferenceNumber, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.AgentDoc_ReferenceNumber, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(vi.) Remarks, If Any (Selected)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @disabled = "disabled", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                            <hr/>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <label class="control-label">(B.) Update or Modify Document Details? </label>                                                        
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.IsUpdateModifyFlag_AgentDocument, "1", new { @id = "chkmodifyflagoptionsY", @class = "radio-modifyflagoptions" }) Yes
+                                                            @Html.RadioButtonFor(model => model.IsUpdateModifyFlag_AgentDocument, "0", new { @id = "chkmodifyflagoptionsN", @class = "radio-modifyflagoptions", @checked = "checked" }) No
+                                                        </label>
+                                                        @Html.ValidationMessageFor(model => model.IsUpdateModifyFlag_AgentDocument, "", new { @class = "text-danger" })                                                        
+                                                    </div>                                                    
+                                                </div>
+                                            </div>                                           
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label mand">(i.) Document Name (Update/Modify)</label>                                                        
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.DropDownListFor(model => model.AgentDoc_InfoCode_Input, new SelectList(Model.prpMasterDocs, "AgentDocMaster_InfoCode", "AgentDocMaster_InfoName"), "Select", new { @class = "form-control bgdisabled-color bgdisplay-color" })
+                                                        @Html.ValidationMessageFor(model => model.AgentDoc_InfoCode_Input, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label mand">(ii.) Confirm Document Name (Update/Modify)</label>                                                        
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.DropDownListFor(model => model.AgentDoc_InfoCode_ConfirmInput, new SelectList(Model.prpMasterDocs, "AgentDocMaster_InfoCode", "AgentDocMaster_InfoName"), "Select", new { @class = "form-control bgdisplay-color" })
+                                                        @Html.ValidationMessageFor(model => model.AgentDoc_InfoCode_ConfirmInput, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label mand">(iii.) Reference Number, If Any (Update/Modify)</label>                                                        
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.AgentDoc_ReferenceNumber_Input, new { htmlAttributes = new { @class = "form-control bgdisplay-color", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.AgentDoc_ReferenceNumber_Input, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="control-label">(iv.) Remarks, If Any (Update/Modify)</label>                                                        
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.Remarks_IfAny_Input, new { htmlAttributes = new { @class = "form-control bgdisplay-color", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.Remarks_IfAny_Input, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-lg-12 text-right">
+                                            <button type="button" id="saveOrder" class="btn btn-primary"><i class="fa fa-refresh"></i> Update/Modify</button>
+                                            <button type="button" id="cancelOrder" class="btn btn-primary"><i class="fa fa-times"></i> Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                           }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

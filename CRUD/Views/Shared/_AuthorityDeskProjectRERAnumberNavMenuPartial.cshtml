@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNet.Identity
+<script>
+    $(document).ready(function () {
+        var currentLoc = window.location.pathname;
+        $(document).find('a.tab-btns[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff' });
+    });
+</script>
+@if (Request.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <fieldset class="col-md-12">
+                    <legend class="my">RERA Registration Number (Project) Details</legend>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.ActionLink("Add RERA Registration Number", "Add_ProjectRERAregistrationNumber", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })                              
+                                @Html.ActionLink("Upload RERA Certificate", "Add_ProjectRERAcertificateDetails", "HelpDesk", null, new { @class = "btn tab-btns btn-outline btn-primary" })
+                                @*@Html.ActionLink("Upload Dispatch Letter(s) to Real Estate Agent", "Add_AgentRERAregistrationNumber", "HelpDeskAgent", null, new { @class = "btn tab-btns btn-outline btn-primary", @disabled = "disabled" })*@
+                                @Html.ActionLink("Action", "ProjectRERAnumberInfoEventInsert", "Helpdesk", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,538 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormM_PreHearingDate
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+
+    table#promoter-documents-list-table tr td a.button {
+        display: none;
+    }
+    table#promoter-documents-list-table tr:hover td a.button {
+        display: inline-block;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+    .bg-plus-square-glow-show {
+        /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
+        /*box-shadow: 0 0 10px #FF4961;*/
+        color: green;
+    }
+    .bg-pdf-glow-show {
+        /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
+        /*box-shadow: 0 0 10px #FF4961;*/
+        color: #7bb73f;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>
+    $(function () {
+        var baseUrl = $('body').attr('data-base-url');      
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [9]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers",
+
+            responsive: true
+        });
+
+        if ($('#Phone_No').val() === "0") {
+            $('#Phone_No').val("");
+        }
+
+        if ($('#C_column').val() === "0") {
+            $('#C_column').val("15");
+        }
+
+        $(document).on('click', 'a#modalOpenerViewInterimOrderButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var FormM_Id = $.trim($(parentRow).find('input.hdnComplaintID').val());
+            var HearingFormM_Id = $.trim($(parentRow).find('input.hdnHearingID').val());
+            FormM_Id = parseInt(FormM_Id);
+            HearingFormM_Id = parseInt(HearingFormM_Id);
+            $.ajax({
+                url: baseUrl + 'HelpdeskComplaint/FormMInfoInterimOrderDetails',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'FormM_Id': FormM_Id, 'HearingFormM_Id': HearingFormM_Id },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.complaint-diary-number').attr('data-diary-no'));
+            var agentName = $.trim($(parentRow).find('td.bench-name').attr('data-bench-name'));
+            $(projectDetailsModal).find('h4.modal-title').html('Details of Interim Order(s) - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (Bench: ' + agentName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script>
+    $(function () {
+        $('#PreHearingDate').datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+
+            onSelect: function (selected) {                
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate());
+                $("#D_column").datepicker("option", "maxDate", dt);
+            }
+        }); //.datepicker("option", "minDate", new Date());
+
+        $('#D_column').datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+
+            onSelect: function (selected) {
+                var HearingDate = $("#PreHearingDate").val();
+                if (HearingDate == '') {
+                    alert('Please select Next Hearing Date Fixed first!');
+                    $("#D_column").val('');
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<script type="text/javascript">
+		$(function() {
+		    $("#PreHearingTime").inputmask({ mask: function () { return ["9:99 AA", "99:99 AA"]; } });
+
+		    $('#PreHearingFixedForCode').change(function () {
+		        $('#PreHearingFixedForName').empty();
+		        $("input[name='PreHearingFixedForName']").val($("#PreHearingFixedForCode option:selected").text());
+		    });
+
+		    $('#PreHearingBench').change(function () {
+		        $('#B_column').empty();
+		        $("input[name='B_column']").val($("#PreHearingBench option:selected").text());
+		    });
+		});
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Complaint (Form-M) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Complaint (Form-M) : Hearing Record Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Complaint Form-M - ( @Html.DisplayFor(model => model.zapRelated_RegDiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zapComplainantName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5 project-name">
+                                                        @Html.DisplayFor(model => model.zapComplainantName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zapComplaintFormLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zapComplaintFormLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskComplaintNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;"><a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Add Complaint Hearing Date along with Remarks</h4>
+                                </div>
+                            </div>
+
+                            @using (Html.BeginForm("FormM_PreHearingDateAdd", "HelpdeskComplaint", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()                                
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                @Html.HiddenFor(model => model.PreHearingDate_IndexID)
+                                @Html.HiddenFor(model => model.PreHearingDate_ID)
+                                @Html.HiddenFor(model => model.ComplainantApplicant_RelatedComplaint_ID)
+                                @Html.HiddenFor(model => model.ComplainantApplicant_RelatedComplaint_Code)
+                                @Html.HiddenFor(model => model.ComplaintType_MN)
+                                @Html.HiddenFor(model => model.PreHearingFixedForName)
+                                @Html.HiddenFor(model => model.B_column)
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Complaint Hearing Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.A_column, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>                                                        
+                                                        <div class="col-md-9">
+                                                            <label class="form-group">                                                                
+                                                                @Html.RadioButtonFor(model => model.A_column, "Hearing", new { id = "chkOtherPreHearing", @checked = "checked" }) Hearing
+                                                                @Html.RadioButtonFor(model => model.A_column, "Preliminary Hearing", new { id = "chkPreHearing" }) Preliminary Hearing
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PreHearingDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Next Hearing Date Fixed/ Preliminary-Hearing Date Fixed as sent/provided by PS of the respective bench.">
+                                                            @Html.EditorFor(model => model.PreHearingDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PreHearingDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PreHearingTime, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.PreHearingTime, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PreHearingTime, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PreHearingBench, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Respective Bench of Preliminary-Hearing/ Hearing.">
+                                                            @Html.DropDownListFor(m => m.PreHearingBench, new SelectList(Model.PreHearingBenchMaster, "PreHearingBenchCode", "PreHearingBenchName"), "Select", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.PreHearingBench, "", new { @class = "text-danger" })                                                            
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Fixed For</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.PreHearingFixedForCode, new SelectList(Model.PreHearingFixedForMaster, "PreHearingFixedForCode", "PreHearingFixedForName"), "Select", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.PreHearingFixedForCode, "", new { @class = "text-danger" })                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.C_column, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Period within which the respondent is required to file reply (in days).">
+                                                            @Html.EditorFor(model => model.C_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.C_column, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.D_column, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Business On Date/ Date Fixed for Proceeding of the respective bench.">
+                                                            @Html.EditorFor(model => model.D_column, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.D_column, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Remarks and status of complaint, if any.">
+                                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.Label("Complaint Status, If Any", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Preliminary-Hearing/ Hearing complaint status, if any.">
+                                                            @Html.EditorFor(model => model.PreHearingStatus, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PreHearingStatus, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>                                                
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @if (Model.IsDraft == 1)
+                                            {
+                                                <input type="submit" value="@TempData["PreHearingMsubmitvalue"]" class="btn btn-outline btn-primary" disabled = "disabled" />
+                                            }
+                                            else
+                                            {
+                                                <input type="submit" value="@TempData["PreHearingMsubmitvalue"]" class="btn btn-outline btn-primary" />                                                
+                                            }                                            
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "FormM_PreHearingDateAdd", "HelpdeskComplaint", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                                <div class="row">
+                                        <div class="form-group">                                            
+                                            <div class="col-md-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    @Html.DisplayName("SNo")
+                                                                </th>                                                                
+                                                                <th>
+                                                                    @Html.DisplayName("Next Hearing Date")
+                                                                    @*@Html.DisplayNameFor(model => model.PreHearingDate)*@
+                                                                </th>
+                                                                <th>
+                                                                    @Html.DisplayName("Next Hearing Time")
+                                                                    @*@Html.DisplayNameFor(model => model.PreHearingTime)*@
+                                                                </th>
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.B_column)
+                                                                </th>
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.PreHearingFixedForName)
+                                                                </th>
+                                                                <th>
+                                                                    @*@Html.DisplayNameFor(model => model.D_column)*@
+                                                                    @Html.DisplayName("Business On Date")
+                                                                </th>
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.IsInterimOrder)
+                                                                </th>                                                                
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.Remarks_IfAny)
+                                                                </th>                                                                                                                                
+                                                                <th>
+                                                                    @*@Html.DisplayNameFor(model => model.CreatedOn)*@
+                                                                    @Html.DisplayName("Date of Upload")
+                                                                </th>                                                               
+                                                                <th>@Html.DisplayName("Edit| Delete")</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int srnumber = 0;
+                                                            }
+                                                            @foreach (var item in Model.prpongoing)
+                                                            {
+                                                                {
+                                                                    srnumber = srnumber + 1;
+                                                                }
+                                                                <tr> 
+                                                                    <td>                                                                        
+                                                                        @Html.DisplayName(srnumber.ToString())                                                                        
+                                                                    </td>                                                                   
+                                                                    <td class="complaint-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.PreHearingDate)">
+                                                                        @Html.DisplayFor(modelItem => item.PreHearingDate)
+                                                                        @Html.HiddenFor(modelItem => item.ComplainantApplicant_RelatedComplaint_ID, new { @class = "hdnComplaintID" })
+                                                                        @Html.HiddenFor(modelItem => item.PreHearingDate_ID, new { @class = "hdnHearingID" })
+                                                                    </td>
+                                                                    <td class="bench-name" data-bench-name="@Html.DisplayFor(modelItem => item.B_column)">
+                                                                        @Html.DisplayFor(modelItem => item.PreHearingTime)
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DisplayFor(modelItem => item.B_column)
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DisplayFor(modelItem => item.PreHearingFixedForName)
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DisplayFor(modelItem => item.D_column)
+                                                                    </td>
+                                                                    <td>                                                                        
+                                                                        <span class="bg-border-show">
+                                                                            @if (item.IsInterimOrder > 0)
+                                                                            {
+                                                                                @Html.DisplayFor(modelItem => item.InterimOrderStatusRemark)                                                                                
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @Html.DisplayName("Not Available")
+                                                                            }
+                                                                            <br/>
+                                                                            <span class="pull-left">
+                                                                                <a class="button" title="Upload Interim Order(s)" href="@Url.Action("FormM_InterimOrderHearingDate", "HelpdeskComplaint", new { bmCFMcode = item.ComplainantApplicant_RelatedComplaint_ID, bmHFMcode = item.PreHearingDate_ID, bmHFMXcode= item.PreHearingDate_IndexID })"><i class="fa fa-upload fa-fw bg-plus-square-glow-show" aria-hidden="true"></i></a>
+                                                                                <a class="button" id="modalOpenerViewInterimOrderButton" href="javascript:void(0);" title="View Interim Order(s)"><i class="fa fa-file-text fa-fw bg-pdf-glow-show" aria-hidden="true"></i></a>                                                                                                                                                                
+                                                                            </span>
+                                                                        </span>
+                                                                    </td>                                                                    
+                                                                    <td>
+                                                                        @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                                                    </td>                                                                                                                                        
+                                                                    <td>
+                                                                        @Html.DisplayFor(modelItem => item.CreatedOn)
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (item.IsDraft != 1)
+                                                                        {
+                                                                            @Html.ActionLink("Edit", "Edit_FormM_PreHearingDateAdd", new { FormMPreHearingDate_IndexID = item.PreHearingDate_IndexID, ComplaintFormM_ID = item.ComplainantApplicant_RelatedComplaint_ID }) @("| ")
+                                                                            @Html.ActionLink("Delete", "Delete_FormM_PreHearingDateAdd", new { FormMPreHearingDate_IndexID = item.PreHearingDate_IndexID, ComplaintFormM_ID = item.ComplainantApplicant_RelatedComplaint_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Html.ActionLink("View", "Edit_FormM_PreHearingDateAdd", new { FormMPreHearingDate_IndexID = item.PreHearingDate_IndexID, ComplaintFormM_ID = item.ComplainantApplicant_RelatedComplaint_ID })
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>                         
+                            <!-- /.col-lg-12 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

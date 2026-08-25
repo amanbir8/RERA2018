@@ -1,0 +1,60 @@
+﻿@model CRUD.Models.HelpDeskAgent.ClsPrp_AuthorityDesk_AgentRERAnumberSummaryDetails
+@{
+    Layout = null;
+}
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.RealEstateAgentRegDiaryNumber_Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.RealEstateAgentName)</th>
+                        <th>@Html.DisplayName("State Name")</th>
+                        <th>@Html.DisplayNameFor(model => model.Prepared_RegistrationNumber)</th>
+                        <th>@Html.DisplayNameFor(model => model.Prepared_IssueDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.Prepared_ValidUptoDate)</th>                                                                     
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.prpongoing)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.RealEstateAgentRegDiaryNumber_Name)</td>
+                            <td align="justify">@Html.DisplayFor(modelItem => item.RealEstateAgentName)</td>
+                            @if (item.Prepared_AgentStateType.ToString() == "PUN")
+                            {
+                                <td>@Html.DisplayName("Punjab")</td>
+                            }
+                            else if (item.Prepared_AgentStateType.ToString() == "CHD")
+                            {
+                                <td>@Html.DisplayName("Chandigarh")</td>
+                            }
+                            else if (item.Prepared_AgentStateType.ToString() == "HRY")
+                            {
+                                <td>@Html.DisplayName("Haryana")</td>
+                            }
+                            else if (item.Prepared_AgentStateType.ToString() == "HIM")
+                            {
+                                <td>@Html.DisplayName("Himachal Pradesh")</td>
+                            }
+                            else
+                            {
+                                <td>@Html.DisplayName("Other")</td>
+                            }                          
+                            <td align="justify">@Html.DisplayFor(modelItem => item.Prepared_RegistrationNumber)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Prepared_IssueDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Prepared_ValidUptoDate)</td>                                                       
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

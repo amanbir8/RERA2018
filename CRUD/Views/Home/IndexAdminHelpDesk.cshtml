@@ -1,0 +1,570 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <link rel="icon" href="@Url.Content("~/images/Rera_Design3b_03.png")">
+    <meta name="author" content="">
+    <title>Real Estate Regulatory Authority, Punjab</title>
+    <link href="@Url.Content("~/vendor/bootstrap/css/bootstrap.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/vendor/bootstrap/css/bootstrap.min.css")" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <!-- MetisMenu CSS -->
+    <link href="@Url.Content("~/vendor/metisMenu/metisMenu.min.css")" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="@Url.Content("~/dist/css/sb-admin-2.css")" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="@Url.Content("~/vendor/morrisjs/morris.css")" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="@Url.Content("~/vendor/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top my-nav-menu" role="navigation" style="margin-bottom: 0; ">
+            <div class="navbar-header">
+                <img src="@Url.Content("~/images/logo_dash1.png")" alt="logo" style="float: left; height: 48px; width: 48px;">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <a class="navbar-brand" href="super-admin.html">Real Estate Regulatory Authority, Punjab </a>
+
+            </div>
+            <!-- /.navbar-header -->
+            <ul class="nav navbar-top-links navbar-right my-toogle-icons">
+                <li style="color:#fff;">Welcome : Admin@123!, Help Desk</li>
+
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li>
+                            <a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+            <div class="navbar-default sidebar my-nav-menu-sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu" style="line-height: 25px;">
+                        <li>
+                            <a href="super-admin.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                        </li>
+                        <!--Promoter Profile Tabs-->
+                        <li>
+                            <a href="#"><i class="fa fa-building fa-fw"></i> Projects<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="project-listing.html">Project Details <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                                </li>
+                                <li>
+                                    <a href="#">Project Extensions <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#"> <i class="fa fa-briefcase fa-fw" aria-hidden="true"></i> Agents<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#">Agent Details <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                                </li>
+                                <li>
+                                    <a href="#">Agent Extensions <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <!--Application Change-->
+                        <li>
+                            <a href="#"><i class="fa fa-edit fa-fw" aria-hidden="true"></i> Complaints<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#">Complaint Detail<i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-users fa-fw" aria-hidden="true"></i> Promoters<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#">Promoter Details <i class="fa fa-angle-double-right" aria-hidden="true"></i></a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-file fa-fw"></i> Reports</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3 class="page-header">Dashboard</h3>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <img src="@Url.Content("~/images/icon1.png")">
+
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">26</div>
+                                    <div>Projects</div>
+                                </div>
+                            </div>
+                        </div>                        
+                        <a href="@Url.Action("IndexHelpDeskProjects", "Home")">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <img src="@Url.Content("~/images/icon7.png")">                                    
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">12</div>
+                                    <div>Complaints</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-briefcase fa-4x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">124</div>
+                                    <div>RealEstate Agents</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-users fa-4x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">13</div>
+                                    <div>Promoters</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+            <div class="row">
+
+            </div>
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Live Project Report
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr class="">
+                                            <th>S.No.</th>
+                                            <th>District Name</th>
+                                            <th>New Applications </th>
+                                            <th>In Process</th>
+
+                                            <th>Incomplete</th>
+                                            <th>Project Extension</th>
+                                            <th>Registered</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Amritsar</td>
+                                            <td>17</td>
+                                            <td>21</td>
+                                            <td>18</td>
+                                            <td>15</td>
+                                            <td>4</td>
+                                            <td>125</td>
+                                        </tr>
+                                        <tr class="panel-default">
+                                            <td>2</td>
+                                            <td>Ludhiana</td>
+                                            <td>21</td>
+                                            <td>16</td>
+                                            <td>14</td>
+                                            <td>7</td>
+                                            <td>6</td>
+                                            <td>107</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>Jalandhar</td>
+                                            <td>13</td>
+                                            <td>19</td>
+                                            <td>9</td>
+                                            <td>3</td>
+                                            <td>7</td>
+                                            <td>87</td>
+                                        </tr>
+
+                                        <tr class="">
+                                            <td>4</td>
+                                            <td>Hoshiarpur</td>
+                                            <td>29</td>
+                                            <td>21</td>
+                                            <td>35</td>
+                                            <td>4</td>
+                                            <td>1</td>
+                                            <td>61</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>5</td>
+                                            <td>S.A.S Nagar</td>
+                                            <td>11</td>
+                                            <td>31</td>
+                                            <td>30</td>
+                                            <td>9</td>
+                                            <td>9</td>
+                                            <td>38</td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+
+
+                <!-- /.col-lg-8 -->
+                <!-- /.col-lg-4 -->
+            </div>
+
+
+
+
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Recent Registered Projects
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>S.No.</th>
+                                            <th>Project Name</th>
+
+                                            <th>Promoter Name</th>
+                                            <th>District</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Mark</td>
+                                            <td>Otto</td>
+                                            <td>Ludhiana</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Jacob</td>
+                                            <td>Thornton</td>
+                                            <td>Amritsar</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>Larry</td>
+                                            <td>the Bird</td>
+                                            <td>Hoshiarpur</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>4</td>
+                                            <td>Larry</td>
+                                            <td>the Bird</td>
+                                            <td>Jalandhar</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>5</td>
+                                            <td>Larry</td>
+                                            <td>the Bird</td>
+                                            <td>Patiala</td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <i class="fa fa-bell fa-fw"></i> Recent Activities
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="list-group">
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-building fa-fw"></i> 2 New Projects
+                                    <span class="pull-right text-muted small">
+                                        <em>4 days ago</em>
+                                    </span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-envelope fa-fw"></i> 3 New Complaints
+                                    <span class="pull-right text-muted small">
+                                        <em>12 days ago</em>
+                                    </span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-user fa-fw"></i> 1 New Agent
+                                    <span class="pull-right text-muted small">
+                                        <em>27 days ago</em>
+                                    </span>
+                                </a>
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-tasks fa-fw"></i> New Task
+                                    <span class="pull-right text-muted small">
+                                        <em>43 days ago</em>
+                                    </span>
+                                </a>
+
+                                <a href="#" class="list-group-item">
+                                    <i class="fa fa-file fa-fw"></i> New Reports
+                                    <span class="pull-right text-muted small">
+                                        <em>4 days ago</em>
+                                    </span>
+                                </a>
+                            </div>
+                            <!-- /.list-group -->
+
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    <!-- /.panel -->
+                    <!-- /.panel .chat-panel -->
+                </div>
+                <!-- /.col-lg-8 -->
+                <!-- /.col-lg-4 -->
+            </div>
+            <!-- /.row -->
+
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Region Wise Status of Projects
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="flot-chart">
+                                <div class="flot-chart-content" id="flot-pie-chart" style="padding: 0px; position: relative;">
+                                    <canvas class="flot-base" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 429px; height: 400px;" width="429" height="400"></canvas>
+                                    <canvas class="flot-overlay" style="direction: ltr; position: absolute; left: 0px; top: 0px; width: 429px; height: 400px;" width="429" height="400"></canvas>
+                                    <div class="legend">
+                                        <div style="position: absolute; width: 57px; height: 64px; top: 5px; right: 5px; background-color: rgb(255, 255, 255); opacity: 0.85;"> </div>
+                                        <table style="position:absolute;top:5px;right:5px;;font-size:smaller;color:#545454">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="legendColorBox">
+                                                        <div style="border:1px solid #ccc;padding:1px">
+                                                            <div style="width:4px;height:0;border:5px solid rgb(237,194,64);overflow:hidden"></div>
+
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="legendLabel">Amritsar</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="legendColorBox">
+                                                        <div style="border:1px solid #ccc;padding:1px">
+                                                            <div style="width:4px;height:0;border:5px solid rgb(175,216,248);overflow:hidden"></div>
+
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="legendLabel">Mohali</td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td class="legendColorBox">
+                                                        <div style="border:1px solid #ccc;padding:1px">
+                                                            <div style="width:4px;height:0;border:5px solid rgb(203,75,75);overflow:hidden"></div>
+
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="legendLabel">Ludhiana</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="legendColorBox">
+                                                        <div style="border:1px solid #ccc;padding:1px">
+                                                            <div style="width:4px;height:0;border:5px solid rgb(77,167,77);overflow:hidden"></div>
+
+                                                        </div>
+                                                    </td>
+                                                    <td class="legendLabel">Hoshiarpur</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-6 -->
+                <!-- /.col-lg-6 -->
+            </div>
+
+        </div>
+
+        <!-- /#page-wrapper -->
+    </div>
+
+    <div class="container-fluid" style="border-top: 1px solid #064576; background-color: #064576; color: #fff; ">
+        <div class=container">
+            <div class="row">
+                <div class="text-center col-md-12" style="margin-top: 4px;">
+                    <ul class="list-inline copyright">
+                        <li class="list-inline-item">&copy; 2018 RERA Punjab. All Rights Reserved</li>
+                        <li class="list-inline-item">|</li>
+                        <li class="list-inline-item">Designed and Developed by C-DAC Mohali</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- /#wrapper -->
+    <!-- jQuery -->
+    <script src="@Url.Content("~/vendor/jquery/jquery.min.js")"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="@Url.Content("~/vendor/bootstrap/js/bootstrap.min.js")"></script>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <!-- Morris Charts JavaScript -->
+    <script src="@Url.Content("~/vendor/raphael/raphael.min.js")"></script>
+    <script src="@Url.Content("~/vendor/morrisjs/morris.min.js")"></script>
+    <script src="@Url.Content("~/data/morris-data.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+    <script src="@Url.Content("~/vendor/flot/excanvas.min.js")"></script>
+    <script src="@Url.Content("~/vendor/flot/jquery.flot.js")"></script>
+    <script src="@Url.Content("~/vendor/flot/jquery.flot.pie.js")"></script>
+    <script src="@Url.Content("~/vendor/flot/jquery.flot.resize.js")"></script>
+    <script src="@Url.Content("~/vendor/flot/jquery.flot.time.js")"></script>
+    <script src="@Url.Content("~/vendor/flot-tooltip/jquery.flot.tooltip.min.js")"></script>
+    <script src="@Url.Content("~/data/flot-data.js")"></script>
+</body>
+</html>

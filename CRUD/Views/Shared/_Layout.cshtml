@@ -1,0 +1,265 @@
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <link rel="icon" href="@Url.Content("~/images/Rera_Design3b_03.png")">
+    <meta name="author" content="">
+
+    <title>Real Estate Regulatory Authority, Punjab</title>
+    @Styles.Render("~/Content/css")
+    <link href="@Url.Content("~/vendor/bootstrap/css/bootstrap.min.css")" rel="stylesheet">
+    <!--CSS-->
+    <link href="@Url.Content("~/css/roboto.css")" rel="stylesheet" type="text/css">
+    <!-- MetisMenu CSS -->
+    <link href="@Url.Content("~/vendor/metisMenu/metisMenu.min.css")" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="@Url.Content("~/dist/css/sb-admin-2.css")" rel="stylesheet">
+    <!-- Morris Charts CSS -->
+    <link href="@Url.Content("~/vendor/morrisjs/morris.css")" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="@Url.Content("~/vendor/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
+    <link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+    @*<script src="@Url.Content("~/vendor/jquery/jquery.min.js")"></script>*@
+    <script src="@Url.Content("~/Scripts/jquery-1.12.4.js")"></script>
+    <script src="@Url.Content("~/Scripts/modernizr-2.5.3.js")"></script>
+    @*@Scripts.Render("~/bundles/modernizr")*@
+
+</head>
+<body data-base-url="@Url.Content("../")">
+    <div id="wrapper">
+
+        <!-- loader image -->
+        <div class="loader-gif-img">
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <div class="">
+                @*<h1>Please wait...</h1>*@
+                <img src="@Url.Content("~/images/ajax-loader.gif")" width="200" style=" background: #fff; height: auto; ">
+                <h1>Please wait...</h1>
+            </div>
+        </div>
+        <!-- /loader image -->
+        @*<input type="text" name="current_url" class="current-url hidden" value="" style="display: none;" />*@
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top my-nav-menu" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <img src="@Url.Content("~/images/logo_dash1.png")" alt="logo" style="float: left; height: 48px; width: 48px;">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @*<a class="navbar-brand" href="index.html">Real Estate Regulatory Authority, Punjab </a>*@
+                @Html.ActionLink("Real Estate Regulatory Authority, Punjab", "IndexDefault", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <!-- /.navbar-header -->
+            @Html.Partial("_LoginPartial")
+            <!-- /.navbar-top-links -->
+            <div id="siderbar-menunav" class="navbar-default sidebar my-nav-menu-sidebar" role="navigation">
+                @Html.Partial("_LoginNavMenuPartial")
+                @*@RenderSection("navigationLeftMenu", required: false)*@
+                <!-- /.sidebar-collapse -->
+            </div>
+        </nav>
+
+
+        @*<div class="navbar navbar-inverse navbar-fixed-top" style="background-color:#7bb73f;color:#fff;">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        @Html.ActionLink("Real Estate Regulatory Authority, Punjab", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li>@Html.ActionLink("Home", "IndexDefault", "Home")</li>
+                            <li>@Html.ActionLink("Adm", "IndexAdmin", "Home")</li>
+                            <li>@Html.ActionLink("Agt", "IndexAgent", "Home")</li>
+                            <li>@Html.ActionLink("Cmp", "IndexComplainant", "Home")</li>
+                            <li>@Html.ActionLink("Hdk", "IndexHelpDesk", "Home")</li>
+                            <li>@Html.ActionLink("Prt", "IndexPromoter", "Home")</li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>   *@
+        <div id="page-wrapper">
+            @*<div class="container body-content">*@
+            @RenderBody()
+            @*<hr />
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>&copy; @DateTime.Now.Year - RERA Punjab. All Rights Reserved | Designed and Developed by C-DAC Mohali</p>
+                    </div>
+                </div>*@
+        </div>
+    </div>
+    <!-- /#page-wrapper -->
+    <!-- /#wrapper -->
+    <div class="container-fluid" style="border-top: 1px solid #064576; background-color: #064576; color: #fff; ">
+        <div class="container&quot;">
+            <div class="row">
+                <div class="text-center col-md-12" style="margin-top: 4px;">
+                    <ul class="list-inline copyright">
+                        <li class="list-inline-item"><span style="font-size: 12px">© @DateTime.Now.Year RERA Punjab. All Rights Reserved</span></li>
+                        <li class="list-inline-item"><span style="font-size: 12px">|</span></li>
+                        <li class="list-inline-item"><span style="font-size: 12px">Designed and Developed by C-DAC Mohali</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#wrapper -->
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <!-- Morris Charts JavaScript -->
+    <script src="@Url.Content("~/vendor/raphael/raphael.min.js")"></script>
+    <script src="@Url.Content("~/vendor/morrisjs/morris.min.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+
+    @*@Scripts.Render("~/bundles/jquery")*@
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script>
+        //$(document).ready(function () {
+        //    $(document).on('click', '.sidebar-nav a', function () {
+        //        var curHref = $.trim($(this).attr('href'));
+        //        console.log($(this));
+        //        // return false;
+        //        if ((curHref != "#") || (curHref != " ")) {
+        //            $('input.current-url').val('click');
+        //        }
+        //    });
+        //});
+
+        /**
+         * function to show Ajax-loader
+         */
+        function startPreloader() {
+            $(".loader-gif-img").css("display", "block");
+        }
+        /**
+         * function to hide Ajax-loader
+         */
+        function stopPreloader() {
+            $(".loader-gif-img").css("display", "none");
+        }
+    </script>
+
+    @*WORKING SOLUTION BUT ALSO WORKS ON PAGE RELOAD*@
+    @*@if (User.Identity.IsAuthenticated)
+        {
+            <script>
+            let isInternalNavigation = false;
+
+            document.addEventListener("click", function (e) {
+                if (e.target.tagName === "A" || e.target.closest("a")) {
+                    isInternalNavigation = true;
+                }
+            });
+
+            document.addEventListener("submit", function () {
+                isInternalNavigation = true;
+            });
+
+            window.addEventListener("beforeunload", function () {
+
+                if (!isInternalNavigation) {
+
+                    var userId = '@User.Identity.GetUserId()';
+
+                    navigator.sendBeacon('/Account/AutoLogout?userId=' + userId);
+                }
+            });
+            </script>
+        }*@
+
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script>
+        (function () {
+            let isInternalNavigation = false;
+            let isReloadAction = false;
+            let autoLogoutSent = false;
+
+            // Internal navigation (links/forms) should NOT trigger auto logout
+            document.addEventListener("click", function (e) {
+                if (e.target.closest("a")) {
+                    isInternalNavigation = true;
+                }
+            }, true);
+
+            document.addEventListener("submit", function () {
+                isInternalNavigation = true;
+            }, true);
+
+            // Reload detection (F5 / Ctrl+R / Cmd+R)
+            window.addEventListener("keydown", function (e) {
+                const key = (e.key || "").toLowerCase();
+                if (key === "f5" || ((e.ctrlKey || e.metaKey) && key === "r")) {
+                    isReloadAction = true;
+                }
+            }, true);
+
+            try {
+                const originalReload = window.location.reload.bind(window.location);
+                window.location.reload = function () {
+                    isReloadAction = true;
+                    return originalReload();
+                };
+            } catch (err) {
+                
+            }
+
+            function sendAutoLogout(event) {
+                if (autoLogoutSent) return;
+                if (isInternalNavigation) return;
+                if (isReloadAction) return;
+
+                // If page goes to back-forward cache, do NOT logout
+                if (event && event.type === "pagehide" && event.persisted) return;
+
+                autoLogoutSent = true;
+
+                const url = "/Account/AutoLogout";
+                const payload = "userId=@User.Identity.GetUserId()";
+
+                if (navigator.sendBeacon) {
+                    const blob = new Blob([payload], {
+                        type: "application/x-www-form-urlencoded; charset=UTF-8"
+                    });
+                    navigator.sendBeacon(url, blob);
+                } else {
+                    fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+                        body: payload,
+                        keepalive: true,
+                        credentials: "same-origin"
+                    });
+                }
+            }
+
+            // Close/tab close/browser close path
+            window.addEventListener("pagehide", sendAutoLogout, true);
+            window.addEventListener("beforeunload", sendAutoLogout, true);
+        })();
+        </script>
+    }
+
+</body>
+</html>

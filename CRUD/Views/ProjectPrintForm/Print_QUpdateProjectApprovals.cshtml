@@ -1,0 +1,134 @@
+﻿@model CRUD.Models.ProjectPrint.ClsPrp_PrmProject_Print_QUpdatesProjectApprovalDetails
+
+@{
+    Layout = null;
+}
+<!-- /.wrapper -->
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.prpQUProjectDiaryNumberDetails != null)
+                {
+                    if (Model.prpQUProjectDiaryNumberDetails.Count > 0)
+                    {
+                        foreach (var item in Model.prpQUProjectDiaryNumberDetails)
+                        {
+                            var varDate = System.DateTime.Now.Date;
+                            <tr>
+                                <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                                <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                            </tr>
+                            <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Quarterly Update Details of Registered Real Estate Project (Quarterly Form)")</b></td></tr>
+                            <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                            <tr>
+                                <td width="25%">@Html.DisplayName("Diary Number of Updates")</td>
+                                <td width="35%">@Html.DisplayFor(modelitem => item.QUpdateProject_RegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                <td colspan="2">
+                                    @Html.DisplayFor(modelitem => item.QUpdateProject_QuarterName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName(" of ")
+                                    @Html.DisplayFor(modelitem => item.QUpdateProject_Year, new { htmlAttributes = new { @class = "form-control" } })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>@Html.LabelFor(modelitem => item.zipProjectName, htmlAttributes: new { @class = "control-label" })</td>
+                                <td>@Html.DisplayFor(modelitem => item.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                <td colspan="2">
+                                    @Html.DisplayName("District :")
+                                    @Html.DisplayFor(modelitem => item.zipProjectDistrictName, new { htmlAttributes = new { @class = "form-control" } })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>@Html.LabelFor(modelitem => item.zipPromoterName, htmlAttributes: new { @class = "control-label" })</td>
+                                <td colspan="3">@Html.DisplayFor(modelitem => item.zipPromoterName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.DisplayName("Registration Number")</td>
+                                <td>@Html.DisplayFor(modelitem => item.RERAnumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td colspan="3">
+                                    @Html.DisplayName("(Issue Date :")
+                                    @Html.DisplayFor(modelitem => item.RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName("and Valid Upto Date :")
+                                    @Html.DisplayFor(modelitem => item.RERAnumberValidUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName(")")
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">Error! Try Again.</td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4"><h4>@Html.DisplayName("Quarterly Updates: Project Approval(s)/NOC(s) Details")</h4></td></tr>
+            </table>               
+            @if (Model.prpongoing != null)
+            {
+                if (Model.prpongoing.Count > 0)
+                {
+                    <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                        <thead>
+                            <tr>
+                                <th width="5%">@Html.Label("S No")</th>
+                                <th width="40%">@Html.Label("Document Name")</th>
+                                <th width="15%">@Html.Label("Document Type")</th>
+                                <th>@Html.Label("Document Status")</th>
+                                <th width="20%">@Html.Label("Expected/ Planned Date of Receipt")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int sno = 0;
+                            }
+                            @foreach (var item in Model.prpongoing)
+                            {
+                                {
+                                    sno = sno + 1;
+                                }
+                                <tr class="odd gradeX">
+                                    <td>@Html.DisplayName(sno.ToString())</td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DocumentType_Name)
+                                        @if (item.DocumentType_Name == "Other Document")
+                                        {
+                                            @Html.DisplayFor(modelItem => item.DocumentType_IfOtherSpecifyName)
+                                        }
+                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.DocumentType_CategoryName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.DocumentType_Status)</td>
+                                    <td style="text-align:center;">@Html.DisplayFor(modelItem => item.Date_ApplicationPlannedorExpectedReceipt)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            }                            
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic; font-size:small; border: 1px solid #ccc">Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.</td></tr>
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic; font-size:medium;">(Authorized Signatory)</td></tr>
+            </table>
+        </div>
+
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->

@@ -1,0 +1,271 @@
+﻿@model CRUD.Models.Promoter.ClsPrp_Project_DiaryNumberPromoterDashbaord
+
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/dist/css/main.css")">
+<style>
+    .row100 td{
+        padding-left: 25px !important;
+    }
+    .row100.head th{
+        padding-left: 25px !important;
+    }
+    #descCheckListEnvelop{
+        max-height: 300px;
+        overflow-y : scroll;
+    }
+</style>
+<script>
+    $(function () {
+        "use strict";
+        $('.column100').on('mouseover', function () {
+            var table1 = $(this).parent().parent().parent();
+            var table2 = $(this).parent().parent();
+            var verTable = $(table1).data('vertable') + "";
+            var column = $(this).data('column') + "";
+
+            $(table2).find("." + column).addClass('hov-column-' + verTable);
+            $(table1).find(".row100.head ." + column).addClass('hov-column-head-' + verTable);
+        });
+
+        $('.column100').on('mouseout', function () {
+            var table1 = $(this).parent().parent().parent();
+            var table2 = $(this).parent().parent();
+            var verTable = $(table1).data('vertable') + "";
+            var column = $(this).data('column') + "";
+
+            $(table2).find("." + column).removeClass('hov-column-' + verTable);
+            $(table1).find(".row100.head ." + column).removeClass('hov-column-head-' + verTable);
+        });
+
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+      
+        $(document).on('click', 'a#divdescriptionOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+
+            var diaryNo = $.trim($(parentRow).find('input.hdnProjectDiaryNumber').val());
+            var projectName = $.trim($(parentRow).find('input.hdnProjectName').val());
+            
+            // ajax to fetch data corresponding to projectId
+            var projectId = $.trim($(parentRow).find('input.hdnProjectID').val());
+            projectId = parseInt(projectId);
+            var progressbarDiv = $('#showDescriptionChecklist');
+            $("#showDescriptionChecklistName").html('');
+            $("#showDescriptionChecklistNameTitle").html('');
+            $.ajax({
+                url: BASE_URL + 'Promoter/GetChecklistNotAcceptedByProjectId',
+                dataType: 'Json',
+                type: 'GET',
+                data: { 'projectId': projectId },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    progressbarDiv.fadeIn(2000);
+
+                    $("#showDescriptionChecklist").show();
+                    $("#showDescriptionChecklistName").html(response);
+
+                    $("#showDescriptionChecklistTitle").show();
+                    $("#showDescriptionChecklistNameTitle").html("Project Name : " + projectName + " (" + diaryNo + ")");
+                }
+            });
+        });
+
+        $(document).on('click', 'a#modalOpenerAppExtensionButton', function (e) {
+
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var projectdiaryNo = $.trim($(parentRow).find('input.hdnProjectDiaryNumber').val());
+            var projectName = $.trim($(parentRow).find('input.hdnProjectName').val());
+            var projectextensiondiaryNo = $.trim($(parentRow).find('input.hdnProjectExtensionDiaryNumber').val());
+            var projectId = $.trim($(parentRow).find('input.hdnProjectID').val());
+            var projectpromoterId = $.trim($(parentRow).find('input.hdnProjectPromoterID').val());
+            projectId = parseInt(projectId);
+            projectpromoterId = parseInt(projectpromoterId);
+            $.ajax({
+                url: BASE_URL + 'Promoter/ProjectInfoApplicationForExtensionStatusView',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'projectpromoterId': projectpromoterId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true,
+                        "ordering": false,
+                        "searching": false,
+                        "paging": false,
+                        "info": false,
+                        "lengthChange": false
+                    });
+                }
+            });
+            $(projectDetailsModal).find('.modal-header input#projectDiaryNumberId').val(projectdiaryNo);
+            $(projectDetailsModal).find('h4.modal-title a').html(projectextensiondiaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Dashboard</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="table100 ver1 m-b-110 table-responsive">
+                <table class="table-striped" data-vertable="ver1" style="border: 1px solid #e2e2e2;">
+                    <thead>
+                        <tr class="row100 head">
+                            <th class="column100 column1" style="width: 12%;" data-column="column1">@Html.DisplayNameFor(model => model.Project_Name)</th>
+                            <th class="column100 column2" style="width: 14%;" data-column="column2">@Html.DisplayNameFor(model => model.PromoterRegDiaryNumber_Name)</th>
+                            <th class="column100 column3" data-column="column3">@Html.DisplayNameFor(model => model.Project_AddressDistrictName)</th>
+                            <th class="column100 column4" style="width: 40%;" data-column="column4">@Html.DisplayNameFor(model => model.EventAction_Aggregate)</th>
+                            <th class="column100 column5" style="width: 12%;" data-column="column5">@Html.DisplayNameFor(model => model.EventAction_IdentifiedOn)</th>
+                            <th class="column100 column6" style="width: 14%;" data-column="column6">@Html.DisplayNameFor(model => model.Project_RERAregistrationNumber)</th>
+                        </tr>
+                    </thead>
+                    <tbody style="">
+                        @foreach (var item in Model.prpongoing)
+                        {
+                        <tr class="row100">
+                            <td class="column100 column1" data-column="column1">
+                                @Html.DisplayFor(modelItem => item.Project_Name)
+                                @Html.HiddenFor(modelItem => item.Project_ID, new { @class = "hdnProjectID" })
+                                @Html.HiddenFor(modelItem => item.Project_Name, new { @class = "hdnProjectName" })
+                                @Html.HiddenFor(modelItem => item.PromoterRegDiaryNumber_Name, new { @class = "hdnProjectDiaryNumber" })
+                                @Html.HiddenFor(modelItem => item.Promoter_ID, new { @class = "hdnProjectPromoterID" })
+                                @Html.HiddenFor(modelItem => item.Extra2, new { @class = "hdnProjectExtensionDiaryNumber" })
+                            </td>
+                            <td class="column100 column2" data-column="column2">@Html.DisplayFor(modelItem => item.PromoterRegDiaryNumber_Name)</td>
+                            <td class="column100 column3" data-column="column3">@Html.DisplayFor(modelItem => item.Project_AddressDistrictName)</td>
+                            <td class="column100 column4" data-column="column4">
+                                @Html.DisplayFor(modelItem => item.EventAction_Aggregate)
+                                @if (item.EventAction_Type== "110007" || item.EventAction_Type == "110010" || item.EventAction_Type == "110011" || item.EventAction_Type == "110012")
+                                {
+                                    <a id="divdescriptionOpenerButton" class="btn btn-info btn-circle" href="javascript:void(0);" title="View Status Details"><i class="fa fa-eye"></i></a>
+                                }                                
+                                @if (item.Extra2 != "FlagNil")
+                                {
+                                    <a id="modalOpenerAppExtensionButton" class="btn btn-success" href="javascript:void(0);" title="View Status (Application for Extension) Details">Application for Extension: @Html.DisplayFor(modelItem => item.Extra2)</a>
+                                }
+                            </td>
+                            <td class="column100 column5" data-column="column5">@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+                            <td class="column100 column6" data-column="column6">
+                                @Html.DisplayFor(modelItem => item.Project_RERAregistrationNumber)                                
+                                @if (item.Project_RERAregistrationNumber != "NA")
+                                {
+                                    //more info                                
+                                    <a href="javascript:void(0);" title="more info details"><i class="fa fa-info-circle" aria-hidden="true"></i></a>
+                                }                           
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="row" id="showDescriptionChecklistTitle" style="display: none">
+                <br />
+                <div class="col-md-12 alert alert-warninge">                    
+                    <div id="showDescriptionChecklistNameTitle" class="info">HH</div>
+                </div>
+            </div>
+            <div class="row100" id="showDescriptionChecklist" style="display: none">                
+                <div class="col-md-12 alert alert-warning" id="descCheckListEnvelop">
+                    <div id="showDescriptionChecklistName" class="info">HH</div>
+                </div>
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Application for Extension - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+                <input type="hidden" name="projectDiaryNumberId" id="projectDiaryNumberId" value="" />
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>                
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#TableFormEcontentStatus').DataTable({
+                "searching": false,
+                "paging": false,
+                "info": false,
+                "lengthChange": false,
+                'aoColumnDefs': [{
+                    'bSortable': false
+                }]
+            });
+        });
+    </script>
+}
+
+
+

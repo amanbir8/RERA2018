@@ -1,0 +1,194 @@
+﻿
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var displayBASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a#modalRegisteredPromoterOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var jointpromoterdetailsmodal = $(document).find('#myModal');
+            $(jointpromoterdetailsmodal).find('.modal-body').html('');
+
+            var pflagid = $('#Related_Promoter_Application_ID').val();
+            var pflagkey = "0";
+            pflagid = parseInt(pflagid);
+            pflagkey = parseInt(pflagkey);
+
+            $.ajax({
+                url: displayBASE_URL + 'Promoter/Search_promoterlistpreviousregistrationNA',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'flagid': pflagid, 'flagkey': pflagkey },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(jointpromoterdetailsmodal).find('.modal-body').html(response);
+                }
+            });
+
+            var diaryno = 'Promoter Profile (No record founds)';
+
+            $(jointpromoterdetailsmodal).find('h4.modal-title').html('Search Registration Detail - <a href="javascript:void(0);"></a>');
+            $(jointpromoterdetailsmodal).find('h4.modal-title a').html(diaryno);
+            $(jointpromoterdetailsmodal).modal('show');
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Joint-Promoter Registration</b><br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-I: Search Existing Promoter Profile Detail (if Any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-II: Add Joint-Promoter Profile.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-III: Add Track Record and Litigations, If Any.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-IV: Review and Confirm Application Form.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Note down Diary Number for your future reference.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    };
+</script>
+
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Joint-Promoter(s) Profile</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Joint-Promoter - Individual/ Other than Individual (Company/ Proprietorship Firm/ Societies/ Partnership Firm/Competent Authority etc)
+                    <span class="pull-right">
+                        <a id="modalRegisteredPromoterOpenerButton" href="javascript:void(0);" title="Search Registered Promoter(s)"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-search-plus" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Not Applicable</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-2">
+                                                            @Html.Label("Joint-Promoter(s) Status", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-9 alert alert-warning">
+                                                            Not Applicable, As per profile details, It's possible that the required information of promoter profile details hasn't been gathered or provided yet, and therefore it is marked as "Not Applicable" until further details can be made available. or The requested promoter profile details are not available related to the joint-promoter profile(s) - Nil.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.ActionLink("Reset", "Create_JointPromoterProfileNA", "Promoter", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <!-- /.col-lg-12 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

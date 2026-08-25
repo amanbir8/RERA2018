@@ -1,0 +1,1408 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthorityDesk_FormM_Registration
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/vendor/summernote/summernote.css")" rel="stylesheet" />
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script src="@Url.Content("~/vendor/summernote/summernote.min.js")"></script>
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        // Initialize Editor
+        $('.textarea-editor').summernote({
+            height: 300, // set editor height
+            minHeight: null, // set minimum height of editor
+            maxHeight: null, // set maximum height of editor
+            focus: false // set focus to editable area after initializing summernote
+        });
+    });
+
+</script>
+<script>
+    $(function () {
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [5]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    });
+</script>
+<script>
+         // When the user scrolls down 20px from the top of the document, show the button
+          window.onscroll = function () { scrollFunction() };
+
+          function scrollFunction() {
+              if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                  document.getElementById("customTopBtn").style.display = "block";
+              } else {
+                  document.getElementById("customTopBtn").style.display = "none";
+              }
+          }
+
+          // When the user clicks on the button, scroll to the top of the document
+          function topFunction() {
+              document.body.scrollTop = 0; // For Safari
+              document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+          }
+
+</script>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerViewProjectsPDFButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            var FormMN_Id = 0;
+            FormMN_Id = parseInt(FormMN_Id);
+            $.ajax({
+                url: BASE_URL + 'HelpdeskComplaint/Display_FormMNInfoListofProjectsPDF',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'FormMN_Id': FormMN_Id },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                }
+            });            
+            var complaintName = $.trim($(document).find('#zapRelated_RegDiaryNumber').val());            
+            $(projectDetailsModal).find('h4.modal-title').html('Registered Projects Detail - (File: ' + complaintName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+
+<style>
+        #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+    #customTopBtn:hover {
+        background-color: #555; /* Add a dark-grey background on hover */
+    }
+</style>
+<script type="text/javascript">
+    $(function () {
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        if ($('#Complainant_AadhaarNumber').val() == "0" || $('#Complainant_AadhaarNumber').val() == "" || $('#Complainant_AadhaarNumber').val() == "0.00") {
+            $('#Complainant_AadhaarNumber').val("");
+        }
+        if ($('#Complainant_LandlineFaxNumber').val() == "0" || $('#Complainant_LandlineFaxNumber').val() == "" || $('#Complainant_LandlineFaxNumber').val() == "0.00") {
+            $('#Complainant_LandlineFaxNumber').val("");
+        }
+
+        if ($('#AuthorizedRepresentativeCounsel_MobileNumber').val() == "0" || $('#AuthorizedRepresentativeCounsel_MobileNumber').val() == "" || $('#AuthorizedRepresentativeCounsel_MobileNumber').val() == "0.00") {
+            $('#AuthorizedRepresentativeCounsel_MobileNumber').val("");
+        }
+        if ($('#AuthorizedRepresentativeCounsel_LandlineFaxNumber').val() == "0" || $('#AuthorizedRepresentativeCounsel_LandlineFaxNumber').val() == "" || $('#AuthorizedRepresentativeCounsel_LandlineFaxNumber').val() == "0.00") {
+            $('#AuthorizedRepresentativeCounsel_LandlineFaxNumber').val("");
+        }
+
+        if ($('#Respondent_MobileNumber').val() == "0" || $('#Respondent_MobileNumber').val() == "" || $('#Respondent_MobileNumber').val() == "0.00") {
+            $('#Respondent_MobileNumber').val("");
+        }
+        if ($('#Respondent_LandlineFaxNumber').val() == "0" || $('#Respondent_LandlineFaxNumber').val() == "" || $('#Respondent_LandlineFaxNumber').val() == "0.00") {
+            $('#Respondent_LandlineFaxNumber').val("");
+        }
+
+        if ($('#ReliefSought_TotalValueINR_FlatPlotApartment').val() == "0" || $('#ReliefSought_TotalValueINR_FlatPlotApartment').val() == "" || $('#ReliefSought_TotalValueINR_FlatPlotApartment').val() == "0.00") {
+            $('#ReliefSought_TotalValueINR_FlatPlotApartment').val("");
+        }
+        if ($('#ReliefSought_TotalAmountPaid_tilldateINR').val() == "0" || $('#ReliefSought_TotalAmountPaid_tilldateINR').val() == "" || $('#ReliefSought_TotalAmountPaid_tilldateINR').val() == "0.00") {
+            $('#ReliefSought_TotalAmountPaid_tilldateINR').val("");
+        }
+
+        if ($('#ReliefSought_PossessionDate').val() == "01-Jan-0001" || $('#ReliefSought_PossessionDate').val() == "01/01/0001") {
+            $('#ReliefSought_PossessionDate').val("");
+        }
+        if ($('#ReliefSought_ActualPossessionDate_IfDelivered').val() == "01-Jan-0001" || $('#ReliefSought_ActualPossessionDate_IfDelivered').val() == "01/01/0001") {
+            $('#ReliefSought_ActualPossessionDate_IfDelivered').val("");
+        }
+    });
+</script>
+
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on("click", "a.lock-acc-details", lockUnclockHandler);
+
+        //Lock-Unlock-Loader-Handler
+        var parmLockUnlock = $.trim($(document).find('#IsDraft').val());
+        if (parmLockUnlock == 1) { //L
+            $("#btnLockAccDetails").prop('disabled', false);
+            $("#btnLockAccDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockAccDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockAccDetails").attr("title", "Unlock Details");
+            $("#btnLockAccDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlock == 5) { //UL
+            $("#btnLockAccDetails").prop('disabled', false);
+            $("#btnLockAccDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockAccDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockAccDetails").attr("title", "Lock Details");
+            $("#btnLockAccDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlock == 6) { //PL
+            $("#btnLockAccDetails").prop('disabled', true);
+            $("#btnLockAccDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockAccDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockAccDetails").attr("title", "Unlock Details");
+            $("#btnLockAccDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockAccDetails").prop('disabled', true);
+            $("#btnLockAccDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockAccDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockAccDetails").attr("title", "Lock Details");
+            $("#btnLockAccDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+    });
+
+    function lockUnclockHandler() {
+
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmComplaintId = $.trim($(document).find('#ComplaintFormM_ID').val());
+            var parmLockUnlock = $.trim($(document).find('#IsDraft').val());
+            var parmComplaintIndexID = $.trim($(document).find('#ComplaintFormM_IndexID').val());
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'HelpdeskComplaint/LockUnlockHandler_ComplaintFormMcontentDetails',
+                data: { 'parmComplaintId': parmComplaintId, 'parmLockUnlock': parmLockUnlock, 'parmComplaintIndexID': parmComplaintIndexID },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockAccDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockAccDetails").attr("title", "Unlock Details");
+                        $("#btnLockAccDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockAccDetails").prop('disabled', true);
+                        $("#btnLockAccDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockAccDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockAccDetails").attr("title", "Lock Details");
+                        $("#btnLockAccDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockAccDetails").prop('disabled', true);
+                        $("#btnLockAccDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.display-factscase-document', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var complaintDetailsModal = $(document).find('#myModal');
+            $(complaintDetailsModal).find('.modal-body').html('');
+            var factscaseId = $.trim($(document).find('.display-factscase-document').attr('data-factscase-code'));
+            var profileId = $.trim($(document).find('.display-factscase-document').attr('data-factscase-profile'));
+            var complaintMId = $.trim($(document).find('.display-factscase-document').attr('data-factscase-formcode'));
+            factscaseId = parseInt(factscaseId);
+            profileId = parseInt(profileId);
+            complaintMId = parseInt(complaintMId);
+            $.ajax({
+                url: BASE_URL + 'HelpdeskComplaint/ComplaintFormM_DetailFactsCaseFile',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'factscaseID': factscaseId, 'profileID': profileId, 'complaintMID': complaintMId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(complaintDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            var complaintName = 'PDF file';//$.trim($(document).find('#zipProjectName').val());
+            $(complaintDetailsModal).find('h4.modal-title').html('Facts of the Case - (' + complaintName + ')');
+            $(complaintDetailsModal).modal('show');
+        });
+
+        $(document).on('click', 'a.display-factscase-history-details', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var complaintDetailsModal = $(document).find('#myModal');
+            $(complaintDetailsModal).find('.modal-body').html('');            
+            var pComplaintId = $.trim($(document).find('#ComplaintFormM_ID').val());
+            pComplaintId = parseInt(pComplaintId);            
+            $.ajax({
+                url: BASE_URL + 'HelpdeskComplaint/ComplaintFormM_DetailFactsCaseFile_History',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'complaintMID': pComplaintId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(complaintDetailsModal).find('.modal-body').html(response);
+                    $(complaintDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var complaintName = $.trim($(document).find('#zapRelated_RegDiaryNumber').val());            
+            $(complaintDetailsModal).find('h4.modal-title').html('"Facts of the Case" Document Trash History - (File: ' + complaintName + ')');
+            $(complaintDetailsModal).modal('show');
+        });
+
+        $(document).on('click', 'a.download-factscase-document', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var factscaseId = $.trim($(document).find('.download-factscase-document').attr('data-factscase-code'));
+            var filename = $.trim($(document).find('.download-factscase-document').attr('data-factscase-filename'));
+            var filelink = $.trim($(document).find('.download-factscase-document').attr('data-factscase-file'));
+            factscaseId = parseInt(factscaseId);
+            $.ajax({
+                type: "GET",
+                url: BASE_URL + 'HelpdeskComplaint/Download_FactsCase_ConplaintFormM_File',
+                cache: false,
+                data: { 'factscaseID': factscaseId, 'filename': filename, 'filelink': filelink },
+                contentType: "application/json; charset=utf-8",
+                dataType: "text",
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (data) {
+                    stopPreloader();
+                    //Convert Base64 string to Byte Array.
+                    var bytes = Base64ToBytes(data);
+                    //Convert the Byte Data to BLOB object.
+                    var blob = new Blob([bytes], { type: "application/octetstream" });
+
+                    //Check the Browser type and download the File.
+                    var isIE = false || !!document.documentMode;
+                    //if (isIE) {
+                        //    window.navigator.msSaveBlob(blob, fileName);
+                    //} else {
+                    //}
+                    var url = window.URL || window.webkitURL;
+                    var pdflink = url.createObjectURL(blob);
+                    var downloadLink = $("<a></a>")
+                        .attr("href", pdflink)
+                        .attr("download", filename) //"file.pdf")
+                        .css("display", "none");
+                    $("body").append(downloadLink);
+                    downloadLink[0].click();
+                    downloadLink.remove();
+                    url.revokeObjectURL(pdflink);
+                }
+            });
+        });
+
+        function Base64ToBytes(base64) {
+            var s = window.atob(base64);
+            var bytes = new Uint8Array(s.length);
+            for (var i = 0; i < s.length; i++) {
+                bytes[i] = s.charCodeAt(i);
+            }
+            return bytes;
+        };        
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(document).on("click", "a.lock-factscase-file-details", lockUnclockfactscasefileHandler);
+    });
+    function lockUnclockfactscasefileHandler() {
+
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+            var elem = $(this);
+            var parmComplaintId = $.trim($(document).find('#ComplaintFormM_ID').val());            
+            var parmFactsCaseId = $.trim(elem.attr('data-factscase-code'));
+            var parmProfileId = $.trim(elem.attr('data-factscase-profile'));
+            var parmLockUnlock = $.trim(elem.attr('data-factscase-flag'));
+            var clickedElementId = $.trim(elem.attr('id'));
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'HelpdeskComplaint/LockUnlockHandler_ComplaintFormM_FactsCaseFile',
+                data: { 'parmComplaintId': parmComplaintId, 'parmFactsCaseId': parmFactsCaseId, 'parmProfileId': parmProfileId, 'parmLockUnlock': parmLockUnlock },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    clickedElementId = "#" + clickedElementId;
+                    if (data.statusCode == 101) {
+                        $(clickedElementId).find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $(clickedElementId).attr("title", "Unlock Details");
+                        $(clickedElementId).find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $(clickedElementId).prop('disabled', true);
+                        $(clickedElementId).find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $(clickedElementId).find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $(clickedElementId).attr("title", "Lock Details");
+                        $(clickedElementId).find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $(clickedElementId).prop('disabled', true);
+                        $(clickedElementId).find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Complaint (Form-M) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Form-M (Complaint under section 31 of the Act) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Complaint Form-M - ( @Html.DisplayFor(model => model.zapRelated_RegDiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zapComplainantName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5 project-name">
+                                                        @Html.DisplayFor(model => model.zapComplainantName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.HiddenFor(model => model.ComplaintFormM_IndexID)
+                                                        @Html.HiddenFor(model => model.ComplaintFormM_ID)
+                                                        @Html.HiddenFor(model => model.ComplaintFormM_Code)
+                                                        @Html.HiddenFor(model => model.IsDraft)
+                                                        @Html.HiddenFor(model => model.IsLock)
+                                                        @Html.HiddenFor(model => model.Profile_ID)
+                                                        @Html.HiddenFor(model => model.zapRelated_RegDiaryNumber)
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zapComplaintFormLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zapComplaintFormLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskComplaintNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Complaint Form-M Details
+                                        <span class="pull-right">
+                                            <a class="a display-factscase-history-details" href="javascript:void(0);" title="History PDF Documents"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-bars" aria-hidden="true"></i></span></a>
+                                            <a class="a lock-acc-details" id="btnLockAccDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                        </span>
+                                    </h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">(1.)(a) Particulars of the complainant(s)</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Name of Complainant</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => Model.Complainant_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Email ID of Complainant</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.Complainant_EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Mobile Number of Complainant</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.Complainant_MobileNumber != 0)
+                                                        {
+                                                        @Html.DisplayFor(model => model.Complainant_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Landline Number or Fax Number of Complainant</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.Complainant_LandlineFaxNumber != 0)
+                                                        {
+                                                        @Html.DisplayFor(model => model.Complainant_LandlineFaxNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Aadhaar Number of Complainant</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.Complainant_AadhaarNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <b>Address of the existing office / residence of the complainant</b>
+                                            <hr />
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address Line 1</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResComplainant_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address Line 2</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResComplainant_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address State</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResComplainant_AddressStateCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address District</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResComplainant_AddressDistrictCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address PIN Code</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResComplainant_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <b>Address for Service of All Notices</b>
+                                            <hr />
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        @if (Model.IsOfficeResComplainantAddress_SameAsServiceNoticeAddress == "1")
+                                                        {
+                                                        @Html.DisplayName("[YES], ")
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("[NO], ")
+                                                        }
+                                                        <label class="control-label">Is Your Address for Service of All Notices is same as Address of the existing office / residence of the complainant?</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address Line 1</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address Line 2</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address State</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressStateCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address District</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressDistrictCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address PIN Code</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">(1.)(b) Particulars of the Authorized Representative/ Counsel details (Advocate or any other person), If complaint is filed through Authorized Representative/ Counsel, particulars thereof:</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Name of Authorized Representative/ Counsel</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.AuthorizedRepresentativeCounsel_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Email ID of Authorized Representative/ Counsel</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.AuthorizedRepresentativeCounsel_EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Mobile Number of Authorized Representative/ Counsel</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.AuthorizedRepresentativeCounsel_MobileNumber != 0)
+                                                        {
+                                                        @Html.DisplayFor(model => model.AuthorizedRepresentativeCounsel_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Landline Number or Fax Number of Authorized Representative/ Counsel</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.AuthorizedRepresentativeCounsel_LandlineFaxNumber != 0)
+                                                        {
+                                                        @Html.DisplayFor(model => model.AuthorizedRepresentativeCounsel_LandlineFaxNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">(2.) Particulars of the respondents</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Complaint Against</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.RelatesComplaint_ComplaintAgainstType == "Promoter")
+                                                        {
+                                                        @Html.DisplayName("Real Estate Promoter")
+                                                        }
+                                                        else if (Model.RelatesComplaint_ComplaintAgainstType == "Agent")
+                                                        {
+                                                        @Html.DisplayName("Real Estate Agent")
+                                                        }
+                                                        else if (Model.RelatesComplaint_ComplaintAgainstType == "Allottee")
+                                                        {
+                                                        @Html.DisplayName("Allottee")
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">RERA Registration Number of Project/ Agent to which the Complaint relates</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.RelatesComplaint_ProjectAgent_RERA_RegNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @if (Model.RelatesComplaint_ComplaintAgainstType == "Promoter")
+                                                        {
+                                                        <a class="modalOpenerViewProjectsPDFButton" href="javascript:void(0);" title="View Registered Projects">
+                                                            <span class="btn btn-info btn-circle">
+                                                                <i class="fa fa-info" aria-hidden="true"></i>
+                                                            </span>
+                                                        </a>
+                                                        }
+                                                        else if (Model.RelatesComplaint_ComplaintAgainstType == "Allottee")
+                                                        {
+                                                        <a class="modalOpenerViewProjectsPDFButton" href="javascript:void(0);" title="View Registered Projects">
+                                                            <span class="btn btn-info btn-circle">
+                                                                <i class="fa fa-info" aria-hidden="true"></i>
+                                                            </span>
+                                                        </a>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Name of the Real Estate Project/ Agent to which the Complaint relates</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.RelatesComplaint_ProjectAgent_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if (Model.D_column == "unregisteredproject")
+                                            {
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Location of the Real Estate Project to which the complaint relates (Project Address)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label class="control-label">Reference document(s) information of the Real Estate Project to which the complaint relates</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-6">
+                                                                    <label class="control-label">(i) CLU document:</label>
+                                                                    @if (Model.IsYes_columnCLU == "YCLU")
+                                                                        {
+                                                                        @Html.DisplayName("[YES]")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.DisplayName("[NO]")
+                                                                        }
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="control-label">(ii) Agreement to Sell:</label>
+                                                                    @if (Model.IsYes_columnAgreementSale == "YATS")
+                                                                        {
+                                                                        @Html.DisplayName("[YES]")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.DisplayName("[NO]")
+                                                                        }
+                                                                </div>
+                                                                <br />
+                                                                <div class="col-md-6">
+                                                                    <label class="control-label">(iii) License to develop Colony:</label>
+                                                                    @if (Model.IsYes_columnLTDC == "YLTDC")
+                                                                        {
+                                                                        @Html.DisplayName("[YES]")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.DisplayName("[NO]")
+                                                                        }
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="control-label">(iv) Allotment Letter:</label>
+                                                                    @if (Model.IsYes_columnAllotmentLetter == "YALD")
+                                                                        {
+                                                                        @Html.DisplayName("[YES]")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.DisplayName("[NO]")
+                                                                        }
+                                                                </div>
+                                                                <br />
+                                                                <div class="col-md-6">
+                                                                    <label class="control-label">(v) Regularization Certificate:</label>
+                                                                    @if (Model.IsYes_columnRegCert == "YREGC")
+                                                                        {
+                                                                        @Html.DisplayName("[YES]")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.DisplayName("[NO]")
+                                                                        }
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="control-label">(vi) LOI document:</label>
+                                                                    @if (Model.IsYes_columnLOI == "YLOI")
+                                                                        {
+                                                                        @Html.DisplayName("[YES]")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.DisplayName("[NO]")
+                                                                        }
+                                                                </div>
+                                                                <br />
+                                                                <div class="col-md-12">
+                                                                    <label class="control-label">(vii) Other, If Any:</label>
+                                                                    @if (Model.columnExtraReferenceNumber == "YEXTRA")
+                                                                        {
+                                                                        @Html.DisplayName("[YES]")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        @Html.DisplayName("[NO]")
+                                                                        }
+                                                                </div>
+                                                                <br />
+                                                                <div class="col-md-12">
+                                                                    @if (Model.columnExtraReferenceNumber == "YEXTRA")
+                                                                        {
+                                                                        @Html.DisplayName("[")
+                                                                        @Html.DisplayFor(model => model.E_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        @Html.DisplayName("]")
+                                                                        }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            }
+                                            <hr />
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Name of Respondent</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.Respondent_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Email ID of Respondent</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.Respondent_EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Mobile Number of Respondent</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.Respondent_MobileNumber != 0)
+                                                        {
+                                                        @Html.DisplayFor(model => model.Respondent_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Landline Number or Fax Number of Respondent</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.Respondent_LandlineFaxNumber != 0)
+                                                        {
+                                                        @Html.DisplayFor(model => model.Respondent_LandlineFaxNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <b>Office / residence Address of the respondent</b>
+                                            <hr />
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address Line 1</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResRespondent_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address Line 2</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResRespondent_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address State</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResRespondent_AddressStateCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address District</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResRespondent_AddressDistrictCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address PIN Code</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.OfficeResRespondent_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <b>Address for Service of All Notices</b>
+                                            <hr />
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        @if (Model.IsOfficeResRespondentAddress_SameAsServiceNoticeAddress == "1")
+                                                        {
+                                                        @Html.DisplayName("[YES], ")
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("[NO], ")
+                                                        }
+                                                        <label class="control-label">Is Your Address for Service of All Notices is same as Office / residence Address of the respondent?</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address Line 1</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address Line 2</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address State</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressStateCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address District</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressDistrictCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Address PIN Code</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ServiceNoticesRespondent_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">(3.) Jurisdiction of the Real Estate Regulatory Authority, Punjab (Declaration)</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-offset-1 col-md-11">
+                                                        @if (Model.IsAgreeDeclaration_JurisdictionRERAPunjab == "1")
+                                                        {
+                                                        @Html.DisplayName("[YES], ")
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("[NO], ")
+                                                        }
+                                                        I/we, the complainant(s), declare that the subject matter of the claim falls within the jurisdiction of the Regulatory Authority.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">(4.) Facts of the case</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Facts of Complaint [Mention a concise statement of facts and grounds for complaint.]</label>
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        @Html.Raw("<div style='width:95%; text-align:justify;'>" + Model.FactsCase_Statement + "</div>")
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            @if (Model.FactsCase_Documents != null)
+                                            {
+                                                if (Model.FactsCase_Documents.Count != 0)
+                                                {
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                            </div>
+                                                            <div class="col-md-9">
+                                                                @{
+                                                                    int snoFactsCaseDocs = 0;
+                                                                    string btnLockfactscaseDetails = string.Empty;                                                                    
+                                                                }
+                                                                <!-- PDF file (Cnt One or More) -->
+                                                                @foreach (var item in Model.FactsCase_Documents)
+                                                                {
+                                                                    {
+                                                                        snoFactsCaseDocs = snoFactsCaseDocs + 1;
+                                                                        btnLockfactscaseDetails = "btnLockfactscaseDetails" + snoFactsCaseDocs.ToString();
+                                                                    }
+                                                                    <div class="panel-group">
+                                                                        <div class="row">
+                                                                            <!-- PDF file (Cnt One or More) -->
+                                                                            <div class="col-lg-12">
+                                                                                <div class="form-group">
+                                                                                    <fieldset class="col-md-12">
+                                                                                        <legend class="my">
+                                                                                            @Html.DisplayName("(" + snoFactsCaseDocs.ToString() + ")") Facts of the Case
+                                                                                            @Html.DisplayName("(")
+                                                                                            @Html.DisplayFor(model => item.FactsCaseDoc_FileFormat, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                            @Html.DisplayName(")")
+                                                                                        </legend>
+                                                                                        <div class="row">
+                                                                                            <div class="form-group">
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.LabelFor(model => item.FactsCaseDoc_InfoName, htmlAttributes: new { @class = "control-label" })
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.DisplayFor(model => item.FactsCaseDoc_InfoName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.LabelFor(model => item.FactsCaseDoc_IssueDate, htmlAttributes: new { @class = "control-label" })
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.DisplayFor(model => item.FactsCaseDoc_IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="form-group">
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.LabelFor(model => item.Doc_NumberOfPages, htmlAttributes: new { @class = "control-label" })
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.DisplayFor(model => item.Doc_NumberOfPages, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                                    @Html.DisplayName("page(s)")
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.LabelFor(model => item.FactsCaseDoc_FileFormat, htmlAttributes: new { @class = "control-label" })
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.DisplayFor(model => item.FactsCaseDoc_FileFormat, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="row">
+                                                                                            <div class="form-group">
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.LabelFor(model => item.FactsCaseDoc_FileSize, htmlAttributes: new { @class = "control-label" })
+                                                                                                </div>
+                                                                                                <div class="col-md-3">
+                                                                                                    @Html.DisplayFor(model => item.FactsCaseDoc_FileSize, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                                </div>
+                                                                                                <div class="col-md-6">                                                                                                    
+                                                                                                    <div class="pull-right"> 
+                                                                                                        <span class="btn-boxfile-factscase">
+                                                                                                            <a class="a display-factscase-document" data-factscase-code="@Html.DisplayFor(model => item.FactsCaseDocument_ID)" data-factscase-profile="@Html.DisplayFor(model => item.Profile_ID)" data-factscase-formcode="@Html.DisplayFor(model => item.ComplainantApplicant_RelatedComplaintM_ID)" href="javascript:void(0);" title="View File"><span class="btn btn-primary btn-outline btn-xs"><i class="fa fa-file-pdf-o" aria-hidden="true"> </i></span></a>
+                                                                                                            <a class="a download-factscase-document" data-factscase-code="@Html.DisplayFor(model => item.FactsCaseDocument_ID)" data-factscase-filename="@Html.DisplayFor(model => item.FactsCaseDoc_FileName)" data-factscase-file="@Html.DisplayFor(model => item.FactsCaseDoc_FilePath)" href="javascript:void(0);" title="Download"><span class="btn btn-primary btn-outline btn-xs"><i class="fa fa-download" aria-hidden="true"> </i></span></a>
+                                                                                                            <a href="~/@Html.DisplayFor(model => item.FactsCaseDoc_FilePath)" title="New Browser Tab" target="_blank"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-external-link" aria-hidden="true"></i></span></a>
+                                                                                                        </span>
+                                                                                                        @if (item.IsDraft == 1)
+                                                                                                        {   //L
+                                                                                                            <a class="a lock-factscase-file-details" data-factscase-code="@Html.DisplayFor(model => item.FactsCaseDocument_ID)" data-factscase-profile="@Html.DisplayFor(model => item.Profile_ID)" data-factscase-flag="@Html.DisplayFor(model => item.IsDraft)" id=@btnLockfactscaseDetails href="javascript:void(0);" title="Unlock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-key" aria-hidden="true"></i></span></a>                                                                                                                
+                                                                                                        }
+                                                                                                        else if (item.IsDraft == 5)
+                                                                                                        {   //UL
+                                                                                                            <a class="a lock-factscase-file-details" data-factscase-code="@Html.DisplayFor(model => item.FactsCaseDocument_ID)" data-factscase-profile="@Html.DisplayFor(model => item.Profile_ID)" data-factscase-flag="@Html.DisplayFor(model => item.IsDraft)" id=@btnLockfactscaseDetails href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>                                                                                                                
+                                                                                                        }
+                                                                                                        else if (item.IsDraft == 6)
+                                                                                                        {   //PL
+                                                                                                            <a data-factscase-code="@Html.DisplayFor(model => item.FactsCaseDocument_ID)" data-factscase-profile="@Html.DisplayFor(model => item.Profile_ID)" data-factscase-flag="@Html.DisplayFor(model => item.IsDraft)" id=@btnLockfactscaseDetails href="javascript:void(0);" title="Unlock Details" disabled="disabled"><span class="btn btn-outline btn-primary btn-xs disabledlockunlock"><i class="fa fa-key" aria-hidden="true"></i></span></a>                                                                                                                
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <a data-factscase-code="@Html.DisplayFor(model => item.FactsCaseDocument_ID)" data-factscase-profile="@Html.DisplayFor(model => item.Profile_ID)" data-factscase-flag="@Html.DisplayFor(model => item.IsDraft)" id=@btnLockfactscaseDetails href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs disabledlockunlock"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </fieldset>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                <!-- /.col-lg-12 (nested) -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">(5.) Relief(s) Sought</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label"><b>A.</b> In view of the facts mentioned in paragraph 4 above, the complainant prays for the following relief(s). [Specify below the relief(s) claimed explaining the grounds of relief(s) and the legal provisions (if any) relied upon]</label>
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        @Html.Raw("<div style='width:95%; text-align:justify;'>" + Model.ReliefSought_Statement + "</div>")
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <b>B.</b> Additional details, If monetary relief sought consists of any Compensation/ Penalty/ Interest <br /><br />
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Date of possession as per agrreement for sale/allotment letter etc.</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.ReliefSought_PossessionDate != new DateTime(01, 01, 0001))
+                                                        {
+                                                        @Html.DisplayFor(model => model.ReliefSought_PossessionDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Actual date of possession, If delivered</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.ReliefSought_ActualPossessionDate_IfDelivered != new DateTime(01, 01, 0001))
+                                                        {
+                                                        @Html.DisplayFor(model => model.ReliefSought_ActualPossessionDate_IfDelivered, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Date of Allotment Letter</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.A_column != new DateTime(01, 01, 0001))
+                                                        {
+                                                        @Html.DisplayFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Date of Agreement to Sale, If any</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @if (Model.B_column != new DateTime(01, 01, 0001))
+                                                        {
+                                                        @Html.DisplayFor(model => model.B_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("--")
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Total value of Flat/Plot/Apartment (INR)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ReliefSought_TotalValueINR_FlatPlotApartment, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Total Amount paid till date (INR)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.ReliefSought_TotalAmountPaid_tilldateINR, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Flat/ Apartment/ Plot Number (Booked with complete Address of associated property)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DisplayFor(model => model.C_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">(6.) Interim Order/ Relief, if Prayed for</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label">Pending final decision of the complaint the complainant seeks issue of the following interim order [Give here the nature of the interim order prayed for with reasons.]</label>
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        @Html.Raw("<div style='width:95%; text-align:justify;'>" + Model.InterimOrderRelief_Statement + "</div>")
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">(7.) Complaint not pending with any other Court, etc. or has not been decided by any other Court/ Authority, etc. (Declaration)</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-offset-1 col-md-11">
+                                                        @if (Model.IsAgreeDeclaration_ComplaintNotPendingCourtAuthority == "1")
+                                                        {
+                                                        @Html.DisplayName("[YES], ")
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DisplayName("[NO], ")
+                                                        }
+                                                        @*@Html.DisplayFor(model => model.IsAgreeDeclaration_ComplaintNotPendingCourtAuthority, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                        I/we, the complainant(s), further declare that the matter regarding which this complaint has been made is not pending before any court of law or any other authority or any other tribunal(s) and has not been decided by any court of law or any other authority.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Registered Projects Details</h4>
+            </div>
+            <div class="modal-body">
+                @*<embed src="@Url.Content("~/rwPDF/registeredprojectslist/List_of_Registered_Projects.pdf&embedded=true")" style="width: 100%; height: 600px;" alt="pdf">*@
+                @*<iframe src="@Url.Content("~/rwPDF/registeredprojectslist/List_of_Registered_Projects.pdf&embedded=true")" style="width:100%; height:600px;" frameborder="0"></iframe>*@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}

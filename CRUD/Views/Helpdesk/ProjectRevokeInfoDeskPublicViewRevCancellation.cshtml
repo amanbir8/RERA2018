@@ -1,0 +1,899 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_RevocationCancellationDiaryNumber
+
+@*<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+    <script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>*@
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<link rel="stylesheet" href="@Url.Content("~/dist/css/daterangepicker.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+<script src="@Url.Content("~/dist/js/moment.js")"></script>
+<script src="@Url.Content("~/dist/js/daterangepicker.js")"></script>
+
+
+@*<style>
+    /* Toggle Switch */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+    }
+
+        .switch input {
+            display: none;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        background-color: #ccc;
+        border-radius: 20px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: .3s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .3s;
+        }
+
+    input:checked + .slider {
+        background-color: #337ab7;
+    }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+</style>
+
+
+@*NEW CODE
+
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+        stopPreloader();
+
+
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 50,
+            "lengthMenu": [[50, 100, 150, 200, 250], [50, 100, 150, 200, 250]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [9, 10]
+            }]
+        });
+
+
+        //$(document).on('click', '.modalDownloadExcelButton', function (e) {
+        //    e.preventDefault();
+        //    window.location = BASE_URL + 'Helpdesk/ProjectsInPublicView_ExportToExcel';
+        //});
+
+        $(document).on('click', '.info-help-details', infohelpHandlerExtensionFormdetails);
+
+
+
+        function showYear() {
+            $('#filterType').val('year');
+            $('#yearWrapper').show();
+            $('#dateRangeWrapper').hide();
+
+            $('#fromDate').val('');
+            $('#toDate').val('');
+        }
+
+        function showDate() {
+            $('#filterType').val('daterange');
+            $('#yearWrapper').hide();
+            $('#dateRangeWrapper').show();
+
+            var selectedYear = $('#approvalYear').val();
+            var start = moment(selectedYear, "YYYY").startOf('year');
+            var end = moment(selectedYear, "YYYY").endOf('year');
+            setText(start, end);
+        }
+
+        $('#toggleFilter').change(function () {
+            if ($(this).is(':checked')) {
+                showDate();
+            } else {
+                showYear();
+                //  Force reload when switching to year
+                startPreloader();
+                $('#MngPrPvRevCancFilterForm').submit();
+            }
+        });
+
+        // Restore state
+        if ($('#fromDate').val() && $('#toDate').val()) {
+            $('#toggleFilter').prop('checked', true);
+            showDate();
+        } else {
+            showYear();
+        }
+
+        $('#approvalYear').change(
+            function () {
+                if ($('#filterType').val() === 'year') {
+                    startPreloader();
+                    $('#MngPrPvRevCancFilterForm').submit();
+                }
+            });
+
+        var selectedYear = $('#approvalYear').val();
+
+        var from = $('#fromDate').val()
+            ? moment($('#fromDate').val())
+            : moment(selectedYear, "YYYY").startOf('year');
+
+        var to = $('#toDate').val()
+            ? moment($('#toDate').val())
+            : moment(selectedYear, "YYYY").endOf('year');
+
+        $('#customDateRangePicker').daterangepicker({
+            autoUpdateInput: false,
+            showDropdowns: true,
+            startDate: from,
+            endDate: to,
+            maxSpan: { days: 90 },
+            locale: {
+                format: 'DD MMM YYYY',
+                customRangeLabel: 'Custom Range'
+            },
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        });
+
+        function getLabel(start, end) {
+            var selectedYear = $('#approvalYear').val();
+
+            if (start.isSame(moment(selectedYear, "YYYY").startOf('year'), 'day') &&
+                end.isSame(moment(selectedYear, "YYYY").endOf('year'), 'day')) {
+                return 'This Year';
+            }
+            if (start.isSame(moment(), 'day') && end.isSame(moment(), 'day')) return 'Today';
+
+            if (start.isSame(moment().subtract(1, 'days'), 'day') &&
+                end.isSame(moment().subtract(1, 'days'), 'day')) return 'Yesterday';
+
+            if (start.isSame(moment().subtract(6, 'days'), 'day') &&
+                end.isSame(moment(), 'day')) return 'Last 7 Days';
+
+            if (start.isSame(moment().subtract(29, 'days'), 'day') &&
+                end.isSame(moment(), 'day')) return 'Last 30 Days';
+
+            if (start.isSame(moment().startOf('month'), 'day') &&
+                end.isSame(moment().endOf('month'), 'day')) return 'This Month';
+
+            if (start.isSame(moment().subtract(1, 'month').startOf('month'), 'day') &&
+                end.isSame(moment().subtract(1, 'month').endOf('month'), 'day')) return 'Last Month';
+
+            return null;
+        }
+
+        function setText(start, end) {
+
+            var label = getLabel(start, end);
+
+            if (label) {
+                $('#customDateRangePicker').val(label);
+            } else {
+                $('#customDateRangePicker').val(
+                    start.format('DD MMM YYYY') + ' - ' + end.format('DD MMM YYYY')
+                );
+            }
+        }
+
+        setText(from, to);
+
+        $('#customDateRangePicker').on('apply.daterangepicker', function (ev, picker) {
+
+            var label = picker.chosenLabel;
+
+            $('#filterType').val('daterange');
+            $('#fromDate').val(picker.startDate.format('YYYY-MM-DD'));
+            $('#toDate').val(picker.endDate.format('YYYY-MM-DD'));
+            $('#selectedRangeLabel').val(label);
+
+            setText(picker.startDate, picker.endDate, label);
+
+            startPreloader();
+            $('#MngPrPvRevCancFilterForm').submit();
+        });
+
+
+
+        $(document).on('click', 'a#modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            var projectId = $.trim($(parentRow).find('input.hdnProjectID').val());
+            var promoterId = $.trim($(parentRow).find('input.hdnPromoterID').val());
+            projectId = parseInt(projectId);
+            promoterId = parseInt(promoterId);
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectRevokeInfoEventLog',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'promoterId': promoterId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.project-diary-number').attr('data-diary-no'));
+            var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+
+
+    function infohelpHandlerExtensionFormdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Color Code</b><br/> <i class="fa fa-check-square" style="color:yellow"></i> Pending public view options of revocation/cancellation of registered project.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Revoked/Cancelled RERA registered project.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+
+</script>*@
+
+
+<style>
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+    }
+
+    #filterToggleBtn.active {
+        background: #337ab7;
+        color: #fff;
+    }
+
+    .filter-panel {
+        position: absolute;
+        top: 36px;
+        right: 0;
+        width: 260px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 14px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        display: none;
+        z-index: 999;
+        overflow: visible;
+        animation: fadeIn 0.2s ease;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .filter-section {
+        margin-bottom: 14px;
+    }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-section label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            cursor: pointer;
+        }
+
+    .filter-panel input[type="radio"] {
+        margin-right: 6px;
+    }
+
+    .filter-panel .form-control {
+        height: 30px;
+        font-size: 12px;
+        border-radius: 4px;
+    }
+
+    /*.btn-xs {
+        padding: 4px 8px;
+        font-size: 12px;
+    }*/
+    .header-actions .btn-xs {
+        padding: 1px 5px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+    }
+
+    .filter-summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 5px 10px;
+        border: 1px solid #b8e2c8;
+        border-radius: 5px;
+        background: linear-gradient(180deg, #f5fcf8 0%, #ebf8f0 100%);
+        color: #216b43;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+
+        .filter-summary i {
+            color: #2f8f5b;
+            font-size: 12px;
+        }
+
+    #dateRangeWrapper,
+    #yearWrapper {
+        margin-top: 6px;
+    }
+
+    #customDateRangePicker {
+        cursor: pointer;
+        background-color: #fff;
+    }
+
+    .daterangepicker {
+        z-index: 99999 !important;
+    }
+
+        .daterangepicker .drp-calendar {
+            max-width: none;
+        }
+</style>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+        stopPreloader();
+
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 50,
+            "lengthMenu": [[50, 100, 150, 200, 250], [50, 100, 150, 200, 250]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [9, 10]
+            }]
+        });
+
+
+        $(document).on('click', '.modalDownloadExcelButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + 'Helpdesk/PublicViewApplicationsforProjectCompletion_ExportToExcel';
+        });
+
+        $(document).on('click', '.info-help-details', infohelpHandlerExtensionFormdetails);
+
+        $('#filterToggleBtn').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $('#filterPanel').toggle();
+            $(this).toggleClass('active');
+
+            var picker = $('#customDateRangePicker').data('daterangepicker');
+            if (picker && $('#dateRangeWrapper').is(':visible')) {
+                picker.move();
+            }
+        });
+
+        $(document).on('mousedown', function (e) {
+            if ($(e.target).closest('#filterPanel, #filterToggleBtn, .daterangepicker').length) {
+                return;
+            }
+
+            $('#filterPanel').hide();
+            $('#filterToggleBtn').removeClass('active');
+        });
+
+        $('#filterPanel').on('click', function (e) {
+            e.stopPropagation();
+        });
+
+        function showYear() {
+            $('#filterType').val('year');
+            $('#yearWrapper').show();
+            $('#dateRangeWrapper').hide();
+            $('#fromDate').val('');
+            $('#toDate').val('');
+            updateFilterSummary();
+        }
+
+        function showDate() {
+            $('#filterType').val('daterange');
+            $('#yearWrapper').hide();
+            $('#dateRangeWrapper').show();
+
+            var selectedYear = $('#approvalYear').val();
+            var start = moment(selectedYear, "YYYY").startOf('year');
+            var end = moment(selectedYear, "YYYY").endOf('year');
+
+            if (!$('#fromDate').val() || !$('#toDate').val()) {
+                $('#fromDate').val(start.format('YYYY-MM-DD'));
+                $('#toDate').val(end.format('YYYY-MM-DD'));
+            }
+
+            setText(
+                moment($('#fromDate').val(), 'YYYY-MM-DD'),
+                moment($('#toDate').val(), 'YYYY-MM-DD')
+            );
+            updateFilterSummary();
+
+            var picker = $('#customDateRangePicker').data('daterangepicker');
+            if (picker) {
+                picker.setStartDate(moment($('#fromDate').val(), 'YYYY-MM-DD'));
+                picker.setEndDate(moment($('#toDate').val(), 'YYYY-MM-DD'));
+                picker.move();
+            }
+        }
+
+        $('input[name="filterMode"]').change(function () {
+            if ($(this).val() === 'year') {
+                showYear();
+                //startPreloader();
+                //$('#MngPrPvRevCancFilterForm').submit();
+            } else {
+                showDate();
+            }
+        });
+
+        if ($('#fromDate').val() && $('#toDate').val()) {
+            $('input[name="filterMode"][value="date"]').prop('checked', true);
+            showDate();
+        }
+        //else {
+        //    $('input[name="filterMode"][value="year"]').prop('checked', true);
+        //    showYear();
+        //}
+        else {
+            $('input[name="filterMode"][value="year"]').prop('checked', false); // changing to false
+            $('#filterType').val('year');
+            $('#yearWrapper').hide();
+            $('#dateRangeWrapper').hide();
+            updateFilterSummary();
+        }
+
+        $('#approvalYear').change(function () {
+            if ($('#filterType').val() === 'year') {
+                startPreloader();
+                $('#MngPrPvRevCancFilterForm').submit();
+            } else {
+                var selectedYear = $('#approvalYear').val();
+                var start = moment(selectedYear, "YYYY").startOf('year');
+                var end = moment(selectedYear, "YYYY").endOf('year');
+
+                $('#fromDate').val(start.format('YYYY-MM-DD'));
+                $('#toDate').val(end.format('YYYY-MM-DD'));
+                setText(start, end);
+                updateFilterSummary();
+
+                var picker = $('#customDateRangePicker').data('daterangepicker');
+                if (picker) {
+                    picker.setStartDate(start);
+                    picker.setEndDate(end);
+                    picker.move();
+                }
+            }
+        });
+
+        var selectedYear = $('#approvalYear').val();
+
+        var from = $('#fromDate').val()
+            ? moment($('#fromDate').val(), 'YYYY-MM-DD')
+            : moment(selectedYear, "YYYY").startOf('year');
+
+        var to = $('#toDate').val()
+            ? moment($('#toDate').val(), 'YYYY-MM-DD')
+            : moment(selectedYear, "YYYY").endOf('year');
+
+        $('#customDateRangePicker').daterangepicker({
+            autoUpdateInput: false,
+            showDropdowns: true,
+            startDate: from,
+            endDate: to,
+            maxSpan: { days: 90 },
+            parentEl: 'body',
+            opens: 'left',
+            drops: 'down',
+            locale: {
+                format: 'DD MMM YYYY',
+                customRangeLabel: 'Custom Range'
+            },
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        });
+
+        function getLabel(start, end) {
+            var selectedYear = $('#approvalYear').val();
+
+            if (start.isSame(moment(selectedYear, "YYYY").startOf('year'), 'day') &&
+                end.isSame(moment(selectedYear, "YYYY").endOf('year'), 'day')) {
+                return '-- Select --';
+            }
+
+            if (start.isSame(moment(), 'day') && end.isSame(moment(), 'day')) return 'Today';
+
+            if (start.isSame(moment().subtract(1, 'days'), 'day') &&
+                end.isSame(moment().subtract(1, 'days'), 'day')) return 'Yesterday';
+
+            if (start.isSame(moment().subtract(6, 'days'), 'day') &&
+                end.isSame(moment(), 'day')) return 'Last 7 Days';
+
+            if (start.isSame(moment().subtract(29, 'days'), 'day') &&
+                end.isSame(moment(), 'day')) return 'Last 30 Days';
+
+            if (start.isSame(moment().startOf('month'), 'day') &&
+                end.isSame(moment().endOf('month'), 'day')) return 'This Month';
+
+            if (start.isSame(moment().subtract(1, 'month').startOf('month'), 'day') &&
+                end.isSame(moment().subtract(1, 'month').endOf('month'), 'day')) return 'Last Month';
+
+            return null;
+        }
+
+        function setText(start, end) {
+            var label = getLabel(start, end);
+
+            if (label) {
+                $('#customDateRangePicker').val(label);
+            } else {
+                $('#customDateRangePicker').val(
+                    start.format('DD MMM YYYY') + ' - ' + end.format('DD MMM YYYY')
+                );
+            }
+        }
+
+        function updateFilterSummary() {
+            var selectedYear = $('#approvalYear').val();
+            var isDateMode = $('#filterType').val() === 'daterange' && $('#fromDate').val() && $('#toDate').val();
+            var start = isDateMode ? moment($('#fromDate').val(), 'YYYY-MM-DD') : moment(selectedYear, "YYYY").startOf('year');
+            var end = isDateMode ? moment($('#toDate').val(), 'YYYY-MM-DD') : moment(selectedYear, "YYYY").endOf('year');
+
+            $('#filterSummaryText').text('Showing data from ' + start.format('DD MMM YYYY') + ' to ' + end.format('DD MMM YYYY'));
+        } 
+
+        setText(from, to);
+        updateFilterSummary();
+
+        $('#customDateRangePicker').on('show.daterangepicker', function (ev, picker) {
+            picker.move();
+        });
+
+        $('#customDateRangePicker').on('apply.daterangepicker', function (ev, picker) {
+            $('#filterType').val('daterange');
+            $('#fromDate').val(picker.startDate.format('YYYY-MM-DD'));
+            $('#toDate').val(picker.endDate.format('YYYY-MM-DD'));
+            $('#selectedRangeLabel').val(picker.chosenLabel || 'Custom Range');
+
+            setText(picker.startDate, picker.endDate);
+            updateFilterSummary();
+
+            startPreloader();
+            $('#MngPrPvRevCancFilterForm').submit();
+        });
+
+        $(document).on('click', 'a#modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            var projectId = $.trim($(parentRow).find('input.hdnProjectID').val());
+            var promoterId = $.trim($(parentRow).find('input.hdnPromoterID').val());
+            projectId = parseInt(projectId);
+            promoterId = parseInt(promoterId);
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectCompletionInfoEventLog',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'promoterId': promoterId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.project-diary-number').attr('data-diary-no'));
+            var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+
+
+    function infohelpHandlerExtensionFormdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Color Code</b><br/> <i class="fa fa-check-square" style="color:yellow"></i> Pending completion of registered project and public view options.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> RERA registered project (Project Completion Certificates).',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">List of Projects : Revocation/Cancellation Registration(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <style>
+        .nav-tabs > li.active > a {
+            border-top: 2px solid #7bb73f;
+        }
+
+        .nav-tabs > li > a {
+            background-color: #eee;
+            color: #333;
+        }
+    </style>
+    <div class="row" style="margin-bottom:5px;">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item active">
+                    <a class="nav-link active" id="revoke-tab" href="@Url.Action("ProjectRevokeInfoDeskPublicViewRevCancellation", "Helpdesk")" role="tab" aria-controls="revoke" aria-selected="true">Revoked Registration</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="suspended-tab" href="@Url.Action("ProjectRevokeInfoDeskPublicViewRevSuspended", "Helpdesk")" role="tab" aria-controls="suspended" aria-selected="false">Suspended Registration</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="withdraw-tab" href="@Url.Action("ProjectRevokeInfoDeskPublicViewRevWithdrawn", "Helpdesk")" role="tab" aria-controls="withdraw" aria-selected="false">Withdrawn Registration</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    List of Projects: Revoked Registration(s) Details
+                    @*<span class="pull-right">
+            <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+            <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+        </span>*@
+
+                    <div class="pull-right header-actions">
+                        <div class="filter-summary">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            <span id="filterSummaryText"></span>
+                        </div>
+                        <button id="filterToggleBtn" class="btn btn-outline btn-primary btn-xs" title="Filter">
+                            <i class="fa fa-filter"></i>
+                        </button>
+
+                        <div id="filterPanel" class="filter-panel">
+                            @using (Html.BeginForm("ProjectRevokeInfoDeskPublicViewRevCancellation", "Helpdesk", FormMethod.Post, new { id = "MngPrPvRevCancFilterForm" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" id="filterType" name="filterType" value="year" />
+                                <input type="hidden" id="selectedRangeLabel" name="rangelabel" value="@ViewBag.SelectedRangeLabel" />
+                                <input type="hidden" id="fromDate" name="fromDate" value="@ViewBag.FromDate" />
+                                <input type="hidden" id="toDate" name="toDate" value="@ViewBag.ToDate" />
+
+                                <div class="filter-section">
+                                    <label>Select Option:</label>
+                                    <label>
+                                        <input type="radio" name="filterMode" value="year" checked> Year
+                                    </label>
+                                    <div id="yearWrapper">
+                                        @Html.DropDownList("approvalYear", new SelectList(ViewBag.Years, "Value", "Text", ViewBag.SelectedApprovalYear), new { @class = "form-control input-sm" })
+                                    </div>
+                                </div>
+
+                                <div class="filter-section">
+                                    <label>
+                                        <input type="radio" name="filterMode" value="date"> Date Range
+                                    </label>
+                                    <div id="dateRangeWrapper" style="display:none;">
+                                        <input type="text" id="customDateRangePicker" class="form-control input-sm" placeholder="Select Date Range" readonly />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i> </span></a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.DisplayName("SNo")</th>
+                                            <th>@Html.DisplayNameFor(model => model.ProjectRegDiaryNumber_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Project_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Promoter_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Project_AddressDistrictName)</th>
+                                            <th>@Html.DisplayName("RERA Number")</th>
+                                            <th>@Html.DisplayName("Registration Upto Date")</th>
+                                            <th>@Html.DisplayName("Extension of Registration Upto Date")</th>
+                                            <th>@Html.DisplayName("Last Modified Date")</th>
+                                            <th>@Html.DisplayName("View Status")</th>
+                                            <th>@Html.DisplayName("View Order")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int sno = 0;
+                                        }
+                                        @foreach (var item in Model.prpongoing)
+                                        {
+                                            {
+                                                sno = sno + 1;
+                                            }
+                                            <tr class="odd gradeX">
+                                                <td>@Html.DisplayName(sno.ToString())</td>
+                                                <td class="project-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.ProjectRegDiaryNumber_Name)">
+                                                    @Html.DisplayFor(modelItem => item.Revoke_RegDiaryNumber_Name)
+                                                    @Html.DisplayName(" of ")
+                                                    @Html.DisplayFor(modelItem => item.ProjectRegDiaryNumber_Name)
+                                                </td>
+                                                <td class="project-name" data-project-name="@Html.DisplayFor(modelItem => item.Project_Name)">@Html.DisplayFor(modelItem => item.Project_Name)</td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Promoter_Name)
+                                                    @Html.HiddenFor(modelItem => item.Project_ID, new { @class = "hdnProjectID" })
+                                                    @Html.HiddenFor(modelItem => item.Promoter_ID, new { @class = "hdnPromoterID" })
+                                                </td>
+                                                <td>@Html.DisplayFor(modelItem => item.Project_AddressDistrictName)</td>
+                                                @if (item.EventAction_Type.ToString() == "850017" || item.EventAction_Type.ToString() == "850018" || item.EventAction_Type.ToString() == "850019")
+                                                {
+                                                    <td class="warning" title="Pending Public View of Revoked/Cancelled Projects">@Html.DisplayFor(modelItem => item.Project_RERAregistrationNumber)</td>
+                                                    <td class="warning" title="Pending Public View of Revoked/Cancelled Projects">@Html.DisplayFor(modelItem => item.Project_RERAregistrationValidUptoDate)</td>
+                                                    <td class="warning" title="Pending Public View of Revoked/Cancelled Projects">
+                                                        @if (item.Project_RERAextnregistrationValidUptoDate.Value.ToString("MM/dd/yyyy") != "01/01/0001")
+                                                        {
+                                                            @Html.DisplayFor(modelItem => item.Project_RERAextnregistrationValidUptoDate)
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayName("--")
+                                                        }
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="success" title="Revoked/Cancelled RERA registered project">@Html.DisplayFor(modelItem => item.Project_RERAregistrationNumber)</td>
+                                                    <td class="success" title="Revoked/Cancelled RERA registered project">@Html.DisplayFor(modelItem => item.Project_RERAregistrationValidUptoDate)</td>
+                                                    <td class="success" title="Revoked/Cancelled RERA registered project">
+                                                        @*@if (item.Project_RERAextnregistrationValidUptoDate.Value.ToString("MM/dd/yyyy") != "01/01/0001")*@
+                                                        @if (item.Project_RERAextnregistrationValidUptoDate.HasValue && item.Project_RERAextnregistrationValidUptoDate.Value != DateTime.MinValue)
+                                                        {
+                                                            @Html.DisplayFor(modelItem => item.Project_RERAextnregistrationValidUptoDate)
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.DisplayName("--")
+                                                        }
+                                                    </td>
+                                                }
+                                                <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+                                                <td class="center">
+                                                    <a id="modalOpenerButton" href="javascript:void(0);"><i class="fa fa-eye"></i></a>
+                                                </td>
+                                                @if (item.ProjectRERAcert_FilePath.ToString() == string.Empty)
+                                                {
+                                                    <td class="center">
+                                                        @Html.DisplayName("--")
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="center">
+                                                        <a href="~/@Html.DisplayFor(modelItem => item.ProjectRERAcert_FilePath)@Html.DisplayFor(modelItem => item.ProjectRERAcert_FileName)" target="_blank"><i class="fa fa-external-link-square"></i></a>
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet"></link>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+}

@@ -1,0 +1,411 @@
+﻿@model CRUD.Models.Promoter.ClsPrp_JointPromoter_Confirm_ReviewMaster
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+
+    @if (TempData["JointPromoter_RegDiaryNumber_Name"].ToString() != "")
+    { 
+        <text >
+            $(document).ready(function()
+                {
+                swal({
+                title: "Message",
+                    text: "@TempData["JointPromoter_RegDiaryNumber_Name"]",
+                    type: "success"
+                }, function () {
+                    window.location = "../PromoterConfirm/JointPromoter_ReviewConfirmDetail";
+                });
+            });
+        </text>
+    }    
+
+</script>
+
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Joint-Promoter Registration</b><br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-I: Search Existing Promoter Profile Detail (if Any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-II: Add Joint-Promoter Profile.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-III: Add Track Record and Litigations, If Any.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-IV: Review and Confirm Application Form.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Note down Diary Number for your future reference.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    };
+</script>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Review/ Confirm Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Joint-Promoter Details - Review/ Confirm
+                    <span class="pull-right">                        
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("JointPromoter_ReviewConfirmDetail", "PromoterConfirm", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                @Html.HiddenFor(model => model.Related_Promoter_ID, htmlAttributes: new { @id = "RefPromoterID" })
+                                @Html.HiddenFor(model => model.Related_Promoter_Type, htmlAttributes: new { @id = "RefPromoterType" })
+                                @Html.HiddenFor(model => model.Related_RegistrationNumber, htmlAttributes: new { @id = "RefRegistrationNumber" })
+                                @Html.HiddenFor(model => model.Related_Promoter_DiaryNumber, htmlAttributes: new { @id = "RefPromoterDiaryNumber" })
+                                @Html.HiddenFor(model => model.IsPublicView, htmlAttributes: new { @id = "RefPublicView" })
+
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Select Option</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select Diary Number</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if ((System.Collections.IEnumerable)TempData["ReviewJPrmMasterlist"] != null)
+                                                            {
+                                                                if (TempData["SelectedReviewJPrmListValue"] != null)
+                                                                {
+                                                                    @Html.DropDownListFor(m => m.Related_JointPromoter_ID, new SelectList((System.Collections.IEnumerable)TempData["ReviewJPrmMasterlist"], "Related_JointPromoter_ID", "Related_JointPromoter_DiaryNumber", TempData["SelectedReviewJPrmListValue"].ToString()), "Select Option", new { @class = "form-control" })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DropDownListFor(m => m.Related_JointPromoter_ID, new SelectList((System.Collections.IEnumerable)TempData["ReviewJPrmMasterlist"], "Related_JointPromoter_ID", "Related_JointPromoter_DiaryNumber"), "Select Option", new { @class = "form-control" })
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownListFor(m => m.Related_JointPromoter_ID, new SelectList(" "), "Select Option", new { @class = "form-control" })
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <input type="submit" value="Submit Detail" formaction="JointPromoter_Option_ReviewConfirmDetail" class="btn btn-outline btn-primary" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                if (TempData["JointPromoter_displayName"].ToString() != "NA")
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Joint-Promoter Detail</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Related_JointPromoter_Name, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @TempData["JointPromoter_displayName"]
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Related_JointPromoter_Type, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @TempData["JointPromoter_displayType"]
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                    
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Review/ Confirmation Status</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName("S No")
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayName("Review/Confirmation Title")
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayName("Status")
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.DisplayName("Action Required")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <hr />
+                                                </div>
+                                                @{
+                                                    int sno_JPrm = 1;
+                                                 }
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno_JPrm.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.ActionLink("Joint-Promoter Profile", "Create_JointPromoterProfile", "Promoter")
+                                                        </div>
+                                                        @if (TempData["statusFlag_JointPromoterProfile"].ToString() == "Complete")
+                                                        {
+                                                            if (Convert.ToString(TempData["submitvalueFlag_JointPromoterProfile"]) != "Confirmed")
+                                                            {
+                                                                <div class="col-md-3 alert-warning">
+                                                                    @TempData["status_JointPromoterProfile"]<br />
+                                                                    @TempData["message_JointPromoterProfile"]
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-success">
+                                                                    @TempData["status_JointPromoterProfile"]
+                                                                    @if (Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 1)
+                                                                    {
+                                                                        <a href="@Url.Action("Print_JointPromoterIndDetail","PromoterPrintForm")" target="_blank">
+                                                                            <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                        </a>
+                                                                    }
+                                                                    <br />
+                                                                    @TempData["message_JointPromoterProfile"]
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["status_JointPromoterProfile"]<br />
+                                                                @TempData["message_JointPromoterProfile"]
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 1 || Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 5 || Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 6)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue_JointPromoterProfile"]" class="btn btn-default" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue_JointPromoterProfile"]" formaction="ReviewConfirm_JointPromoterProfile" class="btn btn-default" />
+                                                            }
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                @if (Session["ReviewOtherExperience_YN_Flag"].ToString() == "Y")
+                                                {
+                                                    if (Session["ReviewOtherLitigations_YN_Flag"].ToString() == "Y")
+                                                    {
+                                                        {
+                                                            sno_JPrm = sno_JPrm + 1;
+                                                        }
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-1">
+                                                                    @Html.DisplayName(sno_JPrm.ToString())
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.ActionLink("Joint-Pormoter Litigation(s) Detail", "Create_JointPromoterTrackLitigations", "Promoter")
+                                                                </div>
+                                                                @if (TempData["statusFlag_JointPromoterLitigations"].ToString() == "Complete")
+                                                                {
+                                                                    if (Convert.ToString(TempData["submitvalueFlag_JointPromoterLitigations"]) != "Confirmed")
+                                                                    {
+                                                                        <div class="col-md-3 alert-warning">
+                                                                            @TempData["status_JointPromoterLitigations"]<br />
+                                                                            @TempData["message_JointPromoterLitigations"]
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="col-md-3 alert-success">
+                                                                            @TempData["status_JointPromoterLitigations"]
+                                                                            @if (Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 1)
+                                                                            {
+                                                                                <a href="@Url.Action("Print_JointPromoterLitigationsDetails", "PromoterPrintForm")" target="_blank">
+                                                                                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                                </a>
+                                                                            }
+                                                                            <br />
+                                                                            @TempData["message_JointPromoterLitigations"]
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-md-3 alert-danger">
+                                                                        @TempData["status_JointPromoterLitigations"]<br />
+                                                                        @TempData["message_JointPromoterLitigations"]
+                                                                    </div>
+                                                                }
+
+                                                                <div class="col-md-5">
+                                                                    @if (Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 1 || Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 5 || Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 6)
+                                                                    {
+                                                                        <input type="submit" value="@TempData["submitvalue_JointPromoterLitigations"]" class="btn btn-default" disabled="disabled" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="submit" value="@TempData["submitvalue_JointPromoterLitigations"]" formaction="ReviewConfirm_JointPromoterLitigations" class="btn btn-default" />
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Disclaimer</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12 text-justify">
+                                                            Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12 text-left">
+                                                            @if (Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 1 || Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 5 || Convert.ToInt32(TempData["JointPromoter_IsdraftValue"]) == 6)
+                                                            {
+                                                                <input type="submit" value="I Agree" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                if (TempData["JointPromoterAgree"].ToString() == "Done")
+                                                                {
+                                                                    <input type="submit" value="I Agree" class="btn btn-outline btn-primary" formaction="BtnJointPromoter_ReviewConfirm_SubmitAgree" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="I Agree" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                }
+                                                            }
+                                                            <div>
+                                                                @if (TempData["JointPromoter_RegDiaryNumber_Name"] != null)
+                                                                {
+                                                                    <b>  @TempData["JointPromoter_RegDiaryNumber_Name"].ToString()</b>
+                                                                }
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                             }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}

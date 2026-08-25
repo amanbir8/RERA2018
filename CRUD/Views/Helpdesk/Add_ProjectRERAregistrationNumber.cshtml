@@ -1,0 +1,670 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_ProjectRERAnumberDiaryNumber
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+               
+        $("input[name='IsAlreadyRegistration']").click(function () {
+            if ($("#chkYes").is(":checked")) {                
+                $("#idReraNo").show();                
+                $('#ExistingRegistration').attr('readonly', false);
+            }
+            else {
+                $("#idReraNo").hide();
+            }
+        });
+
+
+        if ($("#chkYes").is(":checked")) {
+            $("#idReraNo").show();            
+            $('#ExistingRegistration').attr('readonly', false);
+        }
+        else {
+            $("#idReraNo").hide();            
+            $('#ExistingRegistration').attr('readonly', false);
+            $('#ExistingRegistration').val("");
+        }
+    });
+</script>
+<script>
+    $(function () {
+        $('#RERAnumberIssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#RERAnumberRegUptoDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#RERAnumberIssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<script type="text/javascript">
+		$(function() {
+		    $("#RERAnumberRegistration").inputmask({ mask: function () { return ["AAAAAA-AAA99-AA9999"]; } });
+		    $("#ExistingRegistration").inputmask({ mask: function () { return ["AAAAAA-AAA99-AA9999"]; } });		    
+		});
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<style>
+    *.bgextractdisplay-color {
+        background-color: #8fcedd;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var BASE_URLm = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButtonRegNumberCalc', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            
+            var parmProjectId = $.trim($(document).find('#Project_ID').val());
+            var parmPromoterId = $.trim($(document).find('#Promoter_ID').val());
+            var parmdocFlag = $(this).attr('data-document-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmPromoterId = parseInt(parmPromoterId);
+            parmdocFlag = parseInt(parmdocFlag);
+
+            var varDNumber = $("#ProjectRegDiaryNumber_Name").val();
+            var varProjectName = $("#ProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URLm + 'Helpdesk/ProjectRegistrationNumberRecordsCalculator',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': parmProjectId, 'promoterId': parmPromoterId, 'varflag': parmdocFlag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('File Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+
+        $(document).on('click', 'a.modalOpenerButtonRegNumHistory', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmProjectId = $.trim($(document).find('#Project_ID').val());
+            var parmPromoterId = $.trim($(document).find('#Promoter_ID').val());
+            var parmdocFlag = $(this).attr('data-document-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmPromoterId = parseInt(parmPromoterId);
+            parmdocFlag = parseInt(parmdocFlag);
+
+            var varDNumber = $("#ProjectRegDiaryNumber_Name").val();
+            var varProjectName = $("#ProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URLm + 'Helpdesk/ProjectRegistrationNumberRecordsHistory',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': parmProjectId, 'promoterId': parmPromoterId, 'varflag': parmdocFlag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('File Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('#RERAnumberRegistration').change(function () {
+            var RegdNo = $("#RERAnumberRegistration").val();
+            var baseUrl = $('body').attr('data-base-url');
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "Helpdesk/CheckRERAregistrationNumber",
+                data: '{mRegNumber: "' + RegdNo + '" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response) {
+                        alert("Registration Number Already exist! Try another.")
+                        $("#RERAnumberRegistration").val('');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">List of Projects : RERA Number Registration(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                     RERA Registration Number (Project) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Project /Application - ( @Html.DisplayFor(model => model.zipProject_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zipProjectName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5 project-name">
+                                                        @Html.DisplayFor(model => model.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipProjectLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zipProjectLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskProjectRERAnumberNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>
+                                        Add RERA Registration Number (Project) Details
+                                        <span class="pull-right"> 
+                                            <a class="modalOpenerButtonRegNumHistory" data-document-flag="1" href="javascript:void(0);" title="View Registration Number History"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-search-plus" aria-hidden="true"></i></span></a>                                           
+                                            <a class="modalOpenerButtonRegNumberCalc" data-document-flag="1" href="javascript:void(0);" title="View Registration Number Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-calculator" aria-hidden="true"></i></span></a>                                            
+                                        </span>
+                                    </h4>
+                                </div>
+                            </div>
+                            @using (Html.BeginForm("Add_ProjectRERAregistrationNumber", "Helpdesk", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()                               
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                                                                             
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Project Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectRegDiaryNumber_Name, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectRegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectRegDiaryNumber_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PromoterName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.PromoterName, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.PromoterName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PromoterRegDiaryNumber_Name, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.PromoterRegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.PromoterRegDiaryNumber_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectAddressLine1, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectAddressLine1, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectAddressLine1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectAddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectAddressLine2, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectAddressLine2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">District Name</label>
+                                                        </div>                                                        
+                                                        @if (Model.districtMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.ProjectAddressDistrict, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control", @disabled = "disabled" })
+                                                                @Html.ValidationMessageFor(model => model.ProjectAddressDistrict, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }                                                            
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">State Name</label>
+                                                        </div>
+                                                        @if (Model.stateMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(m => m.ProjectAddressState, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control", @disabled = "disabled" })
+                                                                @Html.ValidationMessageFor(m => m.ProjectAddressState, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectAddressPIN, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectAddressPIN, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectAddressPIN, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectWebLink, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectWebLink, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectWebLink, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>             
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Authorized Person Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AuthorizedPerson_FirstName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Name of Authorized Person(s) without any Salutation (Mr./Mrs/M/s etc.).">
+                                                            @Html.EditorFor(model => model.AuthorizedPerson_FirstName, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.AuthorizedPerson_FirstName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AuthorizedPerson_LastName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.AuthorizedPerson_LastName, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.AuthorizedPerson_LastName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AuthorizedPerson_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.AuthorizedPerson_AddressLine1, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.AuthorizedPerson_AddressLine1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AuthorizedPerson_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.AuthorizedPerson_AddressLine2, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.AuthorizedPerson_AddressLine2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AuthorizedPerson_PIN, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.AuthorizedPerson_PIN, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.AuthorizedPerson_PIN, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">District Name</label>
+                                                        </div>
+                                                        @if (Model.districtMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.AuthorizedPerson_District, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control", @disabled = "disabled" })
+                                                                @Html.ValidationMessageFor(model => model.AuthorizedPerson_District, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        } 
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">State Name</label>
+                                                        </div>
+                                                        @if (Model.stateMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(m => m.AuthorizedPerson_State, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control", @disabled = "disabled" })
+                                                                @Html.ValidationMessageFor(m => m.AuthorizedPerson_State, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }                                                                                                               
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AuthorizedPerson_Mobile, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Mobile Number of Authorized Signatory without any prefix and country code.">
+                                                            @Html.EditorFor(model => model.AuthorizedPerson_Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.AuthorizedPerson_Mobile, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.AuthorizedPerson_Email, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Valid Email Address of Authorized Signatory.">
+                                                            @Html.EditorFor(model => model.AuthorizedPerson_Email, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.AuthorizedPerson_Email, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">RERA Registration Number Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RERAnumberRegistration, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="New issued RERA registration number on application file after approved by approval authority.">
+                                                            @Html.EditorFor(model => model.RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control", @maxlength = "20", @placeholder = "PBRERA-SAS01-PM0001" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAnumberRegistration, "", new { @class = "text-danger" })
+                                                        </div>                            
+                                                    </div>
+                                                </div>                    
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RERAnumberIssueDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAnumberIssueDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAnumberRegUptoDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RemarksIfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RemarksIfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RemarksIfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                     
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other(s)</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">(i) Is Already have RERA Number? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsAlreadyRegistration, "Y", htmlAttributes: new { @id = "chkYes" }) Yes
+                                                                @Html.RadioButtonFor(model => model.IsAlreadyRegistration, "N", htmlAttributes: new { @id = "chkNo" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsAlreadyRegistration, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="idReraNo" class="row" style="display: none">
+                                                    <div class="form-group">
+                                                        <div class="col-md-offset-1 col-md-5">
+                                                            (a) @Html.LabelFor(model => model.ExistingRegistration, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">                                                           
+                                                            @Html.EditorFor(model => model.ExistingRegistration, new { htmlAttributes = new { @class = "form-control", onChange = "Get_Rear_Number(this);", @maxlength = "20", @placeholder = "PBRERA-SAS01-PM0001" } })
+                                                            @Html.ValidationMessageFor(model => model.ExistingRegistration, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">(ii) Is Valid for Public View? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsPublicView, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">(iii) Is Extension of Registration? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsExtensionIssued, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.IsExtensionIssued, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsExtensionIssued, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">(iv) Is Any Condition/Annexure? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsWithdrawn, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.IsWithdrawn, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsWithdrawn, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @if (Model.IsDraft == 1)
+                                            {
+                                                <input type="submit" value="@TempData["submitvalue"]" class="btn btn-outline btn-primary" disabled = "disabled" />
+                                            }
+                                            else
+                                            {
+                                                <input type="submit" value="@TempData["submitvalue"]" class="btn btn-outline btn-primary" />
+                                            }                                      
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "Add_ProjectRERAregistrationNumber", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })                                     
+                                        
+                                            @Html.HiddenFor(m => m.Project_RERAnumber_DiaryNumber_IndexID)
+                                            @Html.HiddenFor(m => m.Project_RERAnumber_DiaryNumber_ID)
+                                            @Html.HiddenFor(m => m.ProjectRegDiaryNumber_ID)
+                                            @Html.HiddenFor(m => m.ProjectRegDiaryNumber_NameYear)
+                                            @Html.HiddenFor(m => m.ProjectRegDiaryNumber_tbl_IndexID)
+                                            @Html.HiddenFor(m => m.ProjectRegDiaryNumber_CreatedDate)
+                                            @Html.HiddenFor(m => m.Promoter_ID)
+                                            @Html.HiddenFor(m => m.Project_ID)
+                                            @Html.HiddenFor(m => m.User_ID)
+                                            @Html.HiddenFor(m => m.PromoterRegDiaryNumber_ID)
+                                            @Html.HiddenFor(m => m.PromoterRegDiaryNumber_NameYear)
+                                            @Html.HiddenFor(m => m.PromoterRegDiaryNumber_tbl_IndexID)
+                                            @Html.HiddenFor(m => m.PromoterRegDiaryNumber_CreatedDate)
+
+                                            @Html.HiddenFor(m => m.ProjectQuarterlyRegDiaryNumber_ID)
+                                            @Html.HiddenFor(m => m.ProjectQuarterly_QuarterYear)
+                                            @Html.HiddenFor(m => m.ProjectQuarterlyRegDiaryNumber_tbl_IndexID)
+                                            @Html.HiddenFor(m => m.ProjectQuarterly_CreatedDate)
+                                            @Html.HiddenFor(m => m.PromoterType)
+
+                                            @Html.HiddenFor(m => m.ProjectRegDiaryNumber_Name)
+                                            @Html.HiddenFor(m => m.PromoterRegDiaryNumber_Name)
+                                            @Html.HiddenFor(m => m.ProjectQuarterly_QuarterName)
+                                            @Html.HiddenFor(m => m.ProjectQuarterly_CreatedDate)
+                                            @Html.HiddenFor(m => m.PromoterName)
+
+                                            @Html.HiddenFor(m => m.PromoterWebLink)
+                                            @Html.HiddenFor(m => m.PromoterAuthSignFormB)
+                                            @Html.HiddenFor(m => m.ProjectName)
+                                            @Html.HiddenFor(m => m.ProjectAddressLine1)
+                                            @Html.HiddenFor(m => m.ProjectAddressLine2)
+
+                                            @Html.HiddenFor(m => m.ProjectAddressDistrict)
+                                            @Html.HiddenFor(m => m.ProjectAddressState)
+                                            @Html.HiddenFor(m => m.ProjectAddressSubDivision)
+                                            @Html.HiddenFor(m => m.ProjectAddressPIN)
+                                            @Html.HiddenFor(m => m.ProjectPotentialZone)
+
+                                            @Html.HiddenFor(m => m.ProjectWebLink)
+                                            @Html.HiddenFor(m => m.AuthorizedPerson_FirstName)
+                                            @Html.HiddenFor(m => m.AuthorizedPerson_LastName)
+                                            @Html.HiddenFor(m => m.AuthorizedPerson_AddressLine1)
+                                            @Html.HiddenFor(m => m.AuthorizedPerson_AddressLine2)
+
+                                            @Html.HiddenFor(m => m.AuthorizedPerson_District)
+                                            @Html.HiddenFor(m => m.AuthorizedPerson_State)
+                                            @Html.HiddenFor(m => m.AuthorizedPerson_PIN)
+                                            @Html.HiddenFor(m => m.IsDraftSecMember)
+                                            @Html.HiddenFor(m => m.IsDraftMember)
+
+                                            @Html.HiddenFor(m => m.Extra1)
+                                            @Html.HiddenFor(m => m.Extra2)
+                                            @Html.HiddenFor(m => m.Extra3)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                @*<h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>*@
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+}

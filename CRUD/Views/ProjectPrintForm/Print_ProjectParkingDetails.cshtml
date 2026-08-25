@@ -1,0 +1,128 @@
+﻿@model CRUD.Models.ProjectPrint.ClsPrp_PrmProject_Print_ProjectParkingDetails
+
+@{    
+    Layout = null;
+}
+
+<div id="wrapper">   
+    <div class="row">
+        <div class="col-lg-12">
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.prpProjectDiaryNumberDetails != null)
+                {
+                    foreach (var item in Model.prpProjectDiaryNumberDetails)
+                    {
+                        var varDate = System.DateTime.Now.Date;
+                        <tr>
+                            <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                            <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                        </tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Application Form (Project Updates: Parking Details)")</b></td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Project Diary Number")</td>
+                            <td width="35%">@Html.DisplayFor(modelitem => item.PromoterRegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.zipProjectName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("District")</td>
+                            <td>
+                                @Html.DisplayFor(modelitem => item.zipProjectDistrictName, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.zipPromoterName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.zipPromoterName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+                @if (Model.prpongoing != null)
+                {
+                    <tr>
+                        <td>@Html.DisplayName("Quarter/ Year")</td>
+                        <td colspan="2">
+                            @foreach (var item in Model.prpongoing.Select(item => item.A_column).Distinct().ToArray())
+                            {
+                                @Html.DisplayName(item.ToString())
+                            }
+                            @Html.DisplayName("/ ")
+                            @foreach (var item in Model.prpongoing.Select(item => item.B_column).Distinct().ToArray())
+                            {
+                                @Html.DisplayName(item.ToString())
+                            }
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4"><h4>@Html.DisplayName("Quarterly Update Details regarding Parking")</h4></td></tr>
+            </table>
+            @if (Model.prpongoing != null)
+            {
+                <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                    <thead>
+                        <tr>
+                            <th>@Html.Label("S No")</th>
+                            <th>@Html.Label("Type of Parking")</th>
+                            <th>@Html.Label("Total Area of Parking Space")</th>
+                            <th style="text-align:center;">@Html.Label("No of Parking Space available for Sale")</th>
+                            <th style="text-align:center;">@Html.Label("No of Parking Space Booked or Sold")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        @foreach (var item in Model.prpongoing)
+                        {
+                            {
+                                sno = sno + 1;
+                            }
+                            <tr class="odd gradeX">
+                                <td width="5%">@Html.DisplayName(sno.ToString())</td>
+                                <td width="20%">@Html.DisplayFor(modelItem => item.ParkingType)</td>
+                                <td width="20%">
+                                    @Html.DisplayFor(modelItem => item.ParkingSpace_Area_Total, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName("sqr Mtrs")
+                                </td>
+                                <td style="text-align:center;">@Html.DisplayFor(modelItem => item.ParkingSpace_AvailableforSale_Number)</td>
+                                <td style="text-align:center;">@Html.DisplayFor(modelItem => item.ParkingSpace_BookedSold_Number)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                </table>
+            }
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic; font-size:small; border: 1px solid #ccc">Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.</td></tr>
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic; font-size:medium;">(Authorized Signatory)</td></tr>
+            </table>
+        </div>
+
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->
+
+

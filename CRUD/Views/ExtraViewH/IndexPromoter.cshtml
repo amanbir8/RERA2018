@@ -1,0 +1,229 @@
+﻿@{
+    ViewBag.Title = "Promoter Profile";
+}
+<!--<h2>@ViewBag.Title.</h2>
+<h4>@ViewBag.Message</h4>-->
+
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Dashboard</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-yellow">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <img src="@Url.Content("~/images/projects.png")" />
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">17</div>
+                            <div>Registered Projects</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-green">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <img src="@Url.Content("~/images/task.png")" />
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">2</div>
+                            <div>Tasks/Status</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-yellow">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <img src="@Url.Content("~/images/review.png")" />
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">11</div>
+                            <div>Review/Confirm</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-red">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <img src="@Url.Content("~/images/helpdesk.png")" />
+                            @*<i class="fa fa-info-circle fa-5x"></i>*@
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">&nbsp;</div>
+                            <div>Help Desk</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Alerts
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div class="alert alert-success">
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy type specimen book. <a href="#" class="alert-link">details</a>.
+                    </div>
+                    <div class="alert alert-info">
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy type specimen book. <a href="#" class="alert-link">details</a>.
+                    </div>
+                    <div class="alert alert-warning">
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy type specimen book. <a href="#" class="alert-link">details</a>.
+                    </div>
+                    <div class="alert alert-danger">
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy type specimen book. <a href="#" class="alert-link">details</a>.
+                    </div>
+                </div>
+                <!-- .panel-body -->
+            </div>
+            <!-- /.panel -->
+            <!-- /.panel -->
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-8 -->
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-bell fa-fw"></i> Notifications
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item">
+                            <i class="fa fa-money fa-fw"></i> Payment Received
+                            <span class="pull-right text-muted small">
+                                <em>7 minutes ago</em>                                
+                            </span>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <i class="fa fa-envelope fa-fw"></i> Message Sent
+                            <span class="pull-right text-muted small">
+                                <em>27 minutes ago</em>
+                            </span>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <i class="fa fa-tasks fa-fw"></i> New Task
+                            <span class="pull-right text-muted small">
+                                <em>43 minutes ago</em>
+                            </span>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                            <span class="pull-right text-muted small">
+                                <em>11:32 AM</em>
+                            </span>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <i class="fa fa-bolt fa-fw"></i> Server Crashed!
+                            <span class="pull-right text-muted small">
+                                <em>11:13 AM</em>
+                            </span>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <i class="fa fa-warning fa-fw"></i> Server Maintenance
+                            <span class="pull-right text-muted small">
+                                <em>Yesterday</em>
+                            </span>
+                        </a>                        
+                        
+                    </div>
+                    <!-- /.list-group -->
+                    <a href="#" class="btn btn-default btn-block">View All Alerts</a>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+            <!-- /.panel -->
+            <!-- /.panel .chat-panel -->
+         </div>
+        <!-- /.col-lg-4 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /#page-wrapper -->
+
+
+
+@*<div class="row">
+    <div class="col-md-4">
+        <h3>Promoter Info - My Account</h3>       
+        <p><a class="btn btn-default" href="#">My Profile &raquo;</a></p>
+	<p><a class="btn btn-default" href="#">Parent Entity(s) Details &raquo;</a></p>        
+	<p><a class="btn btn-default" href="#">Other Organization Member Details &raquo;</a></p>
+	<p><a class="btn btn-default" href="#">Experience Details &raquo;</a></p>
+	<p><a class="btn btn-default" href="#">Promoter Litigation(s) Details &raquo;</a></p>
+	<p><a class="btn btn-default" href="#">Documents Upload &raquo;</a></p>
+	<p><a class="btn btn-default" href="#">Application for Change &raquo;</a></p>
+        <p><a class="btn btn-default" href="#">Promoter Aganist Complaint &raquo;</a></p>
+    </div>
+    <div class="col-md-8 text-justify" >
+        <h3>Application Forms</h3>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged</p>
+	<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged</p>
+        <p><a class="btn btn-default" href="#">Submit</a>&nbsp;<a class="btn btn-default" href="#">Save As Draft</a>&nbsp;<a class="btn btn-default" href="#">Cancel</a></p>
+    </div>    
+</div>*@
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+}
+
+
+

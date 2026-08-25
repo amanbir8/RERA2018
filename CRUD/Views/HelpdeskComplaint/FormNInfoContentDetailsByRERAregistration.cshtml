@@ -1,0 +1,125 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthorityDesk_FormN_RegistrationForRegDiaryNumber
+
+@{
+    Layout = null;
+}
+
+<script>
+
+    function rowContentwithformat(d, Index) {
+        // `d` is the original data object for the row 
+        //console.log(d);
+        //console.log(Index);
+        var parmRespondentName = $.trim($(d).find('#hdnVarRespondentName' + Index).val());
+        var parmProjectName = $.trim($(d).find('#hdnVarProjectName' + Index).val());
+        var parmReliefSoughtStatement = $.trim($(d).find('#hdnVarReliefSoughtStatement' + Index).val());
+        var parmFactsCaseStatement = $.trim($(d).find('#hdnVarFactsCaseStatement' + Index).val());
+
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +            
+            '<tr>' +
+                '<td><b>Respondent:</b></td>' +
+                '<td>' + parmRespondentName + '</td>' +
+            '</tr>' +           
+            '<tr>' +
+                '<td><b>Project:</b></td>' +
+                '<td>' + parmProjectName + '</td>' +
+            '</tr>' +            
+            '<tr>' +
+                '<td colspan="2"><hr/></td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td><b>Relief Sought Statement:</b></td>' +
+                '<td align="justify">' + parmReliefSoughtStatement + '</td>' +
+            '</tr>' +
+            //'<tr>' +
+            //    '<td colspan="2"><hr/></td>' +
+            //'</tr>' +
+            //'<tr>' +
+            //    '<td>Facts Case Statement: </td>' +
+            //    '<td align="justify">' + parmFactsCaseStatement + '</td>' +
+            //'</tr>' +
+        '</table>';
+    }
+
+    $(document).ready(function () {
+        $('#TableFormNcontentShow tbody').on('click', 'td.details-control', function (e) {
+            e.preventDefault();
+
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');            
+            var qdataArrayIndex = $.trim($(parentRow).find('td.hdn-array-number').attr('data-array-number'));
+
+            var mtable = $('#TableFormNcontentShow').DataTable();
+
+            var tr = $(this).closest('tr');         
+            var row = mtable.row(tr);
+
+            if (row.child.isShown()) {                
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {                
+                row.child(rowContentwithformat(row.data(), qdataArrayIndex)).show();
+                tr.addClass('shown');
+            }
+        });
+    });
+</script>
+
+<style>
+
+    td.details-control:after {
+        font-family: FontAwesome;
+        content: "\f0fe";
+        color: grey;
+        cursor: pointer;
+    }
+    tr.shown td.details-control:after {
+        font-family: FontAwesome;
+        content: "\f146";        
+        color: #FF4961;
+    }
+
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="TableFormNcontentShow" class="table table-striped table-bordered table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th><i class="fa fa-list-ol" aria-hidden="true"></i></th>
+                        <th>@Html.DisplayNameFor(model => model.yComplaintRegDiaryNumber_Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.yCreatedOn)</th>
+                        <th>@Html.DisplayNameFor(model => model.Complainant_Name)</th>                        
+                        <th>@Html.DisplayName("Entrusted To")</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int sno = 0;                                               
+                    }
+                    @foreach (var item in Model.prpComplaintFormN)
+                    {
+                        {
+                            sno = sno + 1;
+                        }
+                        <tr>                            
+                            <td class="details-control"></td>
+                            <td>@Html.DisplayFor(modelItem => item.yComplaintRegDiaryNumber_Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.yCreatedOn)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Complainant_Name)</td>                            
+                            <td class="hdn-array-number" data-array-number="@sno.ToString()">
+                                @Html.DisplayFor(modelItem => item.yC_column)                                
+                                @Html.HiddenFor(modelItem => item.Respondent_Name, new { @id = "hdnVarRespondentName" + sno.ToString() })
+                                @Html.HiddenFor(modelItem => item.ReliefSought_Statement, new { @id = "hdnVarReliefSoughtStatement" + sno.ToString() })
+                                @Html.HiddenFor(modelItem => item.yB_column, new { @id = "hdnVarProjectName" + sno.ToString() })
+                                @*@Html.HiddenFor(modelItem => item.FactsCase_Statement, new { @id = "hdnVarFactsCaseStatement" + sno.ToString() })*@
+                            </td>                            
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,553 @@
+﻿@model CRUD.Models.HelpDeskAgent.ClsPrp_AuthorityDesk_RenewalAgent_RERA_Certificate
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+
+            //"photo address" have value on submit button
+            //and "user_photo" have value on update button
+            //so check length of control on save (files.length) and update (path.length)
+
+            var files = $("#Photo_Address").get(0).files;
+            var path = $('#user_Photo').attr('src').replace('/', '');
+
+            if (files.length > 0 || path.length > 0) {
+                $(submitButton).parents('form').submit();
+            }
+            else {
+                alert("Please Add Document file to Upload!")
+                return false;
+            }
+        });
+    });
+
+    var baseUrl = $('body').attr('data-base-url');
+
+    function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                var selectedFile = input.files[0];
+                var imageType = 'image/jpeg';
+                if (selectedFile.type.match(imageType)) {
+                    $('#user_Photo').attr('src', e.target.result);
+                }
+                if (selectedFile.type.match('application/pdf')) {
+                    var dataURL = baseUrl + 'images/pdf-icon.gif';
+                    $('#user_Photo').attr('src', dataURL);
+                    $('#user_Photo').attr('width', '78');
+                    $('#user_Photo').attr('height', '78');
+                }                
+            }
+            filerdr.readAsDataURL(input.files[0]);
+            $('#Photo_AddressShow').empty();
+            $("#Photo_AddressShow").val(input.files[0].name);
+        }
+    }
+</script>
+<script>
+    $(function () {
+
+        $('[data-spzoom]').spzoom();
+
+        $('#AgentRERAcert_IssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [5, 6]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    });
+</script>
+<style>
+    *.bgextractdisplay-color {
+        background-color: #8fcedd;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var BASE_URLm = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButtonRegNumberCalc', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var agentDetailsModal = $(document).find('#myModal');
+            $(agentDetailsModal).find('.modal-body').html('');
+
+            //var parmAgentId = $.trim($(document).find('#Related_Agent_ID').val());            
+            var parmAgentId = $(this).attr('data-rnagent-flag');
+            var parmdocFlag = $(this).attr('data-document-flag');
+            parmAgentId = parseInt(parmAgentId);
+            parmdocFlag = parseInt(parmdocFlag);
+
+            var varDNumber = elem.attr('data-rndairy-number');
+            var varAgentName = elem.attr('data-rnagent-name');
+            $(agentDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URLm + 'HelpdeskAgent/RealestateRnAgentRegistrationNumberRecordsCalculator',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'agentId': parmAgentId, 'varflag': parmdocFlag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(agentDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            $(agentDetailsModal).find('h4.modal-title').html('Registration Number Detail - <a href="javascript:void(0);"></a>');
+            $(agentDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varAgentName + ')');
+            $(agentDetailsModal).modal('show');
+        });
+
+        $(document).on('click', 'a.modalOpenerButtonRegNumHistory', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var agentDetailsModal = $(document).find('#myModal');
+            $(agentDetailsModal).find('.modal-body').html('');
+
+            //var parmAgentId = $.trim($(document).find('#Related_Agent_ID').val());
+            var parmAgentId = $(this).attr('data-rnagent-flag');
+            var parmRnAgentId = $.trim($(document).find('#Related_RenewalAgent_ID').val());
+            var parmRnAgentSeqId = $.trim($(document).find('#Related_RenewalOrderSequence').val());
+            var parmRnAgentYrId = $.trim($(document).find('#Related_RelatedRenewalAgent_Year').val());
+            var parmdocFlag = $(this).attr('data-document-flag');
+            parmAgentId = parseInt(parmAgentId);
+            parmRnAgentId = parseInt(parmRnAgentId);
+            parmRnAgentSeqId = parseInt(parmRnAgentSeqId);
+            parmRnAgentYrId = parseInt(parmRnAgentYrId);
+            parmdocFlag = parseInt(parmdocFlag);
+
+            var varDNumber = elem.attr('data-rndairy-number');
+            var varAgentName = elem.attr('data-rnagent-name');
+            $(agentDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URLm + 'HelpdeskAgent/RealestateRnAgentRegistrationNumberRecordsHistory',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'agentId': parmAgentId, 'rnagentId': parmRnAgentId, 'rnagentseqId': parmRnAgentSeqId, 'rnagentyrId': parmRnAgentYrId, 'varflag': parmdocFlag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(agentDetailsModal).find('.modal-body').html(response);
+                    $(agentDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(agentDetailsModal).find('h4.modal-title').html('Registration Number History - <a href="javascript:void(0);"></a>');
+            $(agentDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varAgentName + ')');
+            $(agentDetailsModal).modal('show');
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">List of Real-Estate Agents : Renewal RERA Number Registration(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Renewal of Registration Certificate (RERA Registration Certificate of Real Estate Agent) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Real Estate Agent Application - ( @Html.DisplayFor(model => model.zapRenewalAgent_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zapRenewalAgentName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.DisplayFor(model => model.zapRenewalAgentName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.DisplayName("(")
+                                                        @Html.DisplayFor(model => model.zapRenewalAgent_RegistrationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.DisplayName(")")
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zapRenewalAgentLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zapRenewalAgentLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskRenewalAgentRERAnumberNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>
+                                        Upload Renewal of Registration Certificate (Real Estate Agent) Details
+                                        <span class="pull-right">
+                                            <a class="modalOpenerButtonRegNumHistory" data-document-flag="2" data-rnagent-flag="@Html.DisplayFor(model => model.zapRelated_Agent_ID)" data-rndairy-number="@Html.DisplayFor(model => model.zapRenewalAgent_DiaryNumber)" data-rnagent-name="@Html.DisplayFor(model => model.zapRenewalAgentName)" href="javascript:void(0);" title="View Registration Number History"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-search-plus" aria-hidden="true"></i></span></a>
+                                            <a class="modalOpenerButtonRegNumberCalc" data-document-flag="2" data-rnagent-flag="@Html.DisplayFor(model => model.zapRelated_Agent_ID)" data-rndairy-number="@Html.DisplayFor(model => model.zapRenewalAgent_DiaryNumber)" data-rnagent-name="@Html.DisplayFor(model => model.zapRenewalAgentName)" href="javascript:void(0);" title="View Registration Number Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-calculator" aria-hidden="true"></i></span></a>
+                                        </span>
+                                    </h4>
+                                </div>
+                            </div>
+                                @using (Html.BeginForm("Add_RenewalAgentRERAcertificateDetails", "HelpdeskAgent", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(model => model.RenewalAgent_RERAcertificate_IndexID)
+                                    @Html.HiddenFor(model => model.RenewalAgent_RERAcertificate_ID)
+                                    @Html.HiddenFor(model => model.Related_RenewalAgent_ID)
+                                    @Html.HiddenFor(model => model.Related_RenewalOrderSequence)
+                                    @Html.HiddenFor(model => model.Related_RelatedRenewalAgent_Year)
+                                    @Html.HiddenFor(model => model.Related_Agent_ID)
+                                    @Html.HiddenFor(model => model.Related_AgentDiaryNumber_Name)
+                                    @Html.HiddenFor(model => model.Related_Agent_Type)
+                                    @Html.HiddenFor(model => model.Related_UserID)
+                                    @Html.HiddenFor(model => model.Related_RERAnumberRegistration)
+                                    @Html.HiddenFor(model => model.Related_ReferenceDiaryNumber_Name)
+                                    @Html.HiddenFor(model => model.Related_tbl_RegDiaryNumber_indexID)
+
+                                    @Html.HiddenFor(model => model.zapRelated_Agent_ID)
+                                    @Html.HiddenFor(model => model.zapRelated_AgentType_ID)
+                                    @Html.HiddenFor(model => model.zapRelated_RenewalAgent_ID)
+                                    @Html.HiddenFor(model => model.zapRelated_RenewalAgent_SequenceID)
+                                    @Html.HiddenFor(model => model.zapRelated_RenewalAgent_YearID)
+                                    @Html.HiddenFor(model => model.zapRenewalAgent_DiaryNumber)
+                                    @Html.HiddenFor(model => model.zapRenewalAgent_RegistrationNumber)
+                                    @Html.HiddenFor(model => model.zapRenewalAgentName)
+                                    @Html.HiddenFor(model => model.zapRenewalAgentLastModifiedOn)
+
+                                    @Html.HiddenFor(model => model.IsActiveProvider)
+                                    @Html.HiddenFor(model => model.IsDraft)
+                                    @Html.HiddenFor(model => model.IsDraftHelpDesk)
+                                    @Html.HiddenFor(model => model.IsDraftEvaluation)
+                                    @Html.HiddenFor(model => model.IsDraftSecMember)
+                                    @Html.HiddenFor(model => model.IsDraftMember)
+                                    @Html.HiddenFor(model => model.IsWithdrawn)
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Renewal of Registration Approval Details</legend>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @{var listItemsDocTypeName = new List<SelectListItem>
+                                                                    {
+                                                                        new SelectListItem {  Text = "..." , Value=""  },
+                                                                        new SelectListItem {  Text = "Registration Letter" , Value="Registration Letter"  },
+                                                                        new SelectListItem {  Text = "Revised Registration Letter" , Value="Revised Registration Letter"  },
+                                                                        new SelectListItem {  Text = "Registration Certificate" , Value="Registration Certificate"  },
+                                                                        new SelectListItem {  Text = "Revised Registration Certificate" , Value="Revised Registration Certificate"  },
+                                                                        new SelectListItem {  Text = "Other Document (Please Specify)" , Value="Others"  },
+                                                                    };
+                                                                }
+                                                                @Html.LabelFor(model => model.AgentRERAcert_InfoName, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.AgentRERAcert_InfoName, new SelectList(listItemsDocTypeName, "Value", "Text"), new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.AgentRERAcert_InfoName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(m => m.A_column, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.A_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(m => m.A_column, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(m => m.AgentRERAcert_ReferenceNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.AgentRERAcert_ReferenceNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(m => m.AgentRERAcert_ReferenceNumber, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(m => m.AgentRERAcert_IssueDate, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.AgentRERAcert_IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(m => m.AgentRERAcert_IssueDate, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Is Valid for Public View (Yes/No)?</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label>
+                                                                    @Html.RadioButtonFor(model => model.IsPublicView, "1", htmlAttributes: new { @id = "chkPVYes" }) Yes
+                                                                    @Html.RadioButtonFor(model => model.IsPublicView, "0", htmlAttributes: new { @id = "chkPVNo" }) No
+                                                                </label>
+                                                                @Html.ValidationMessageFor(model => model.IsPublicView, "", new { @class = "text-danger" })
+                                                            </div>                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Is Any Condition/Annexure? (Yes/No)?</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label>
+                                                                    @Html.RadioButtonFor(model => model.IsCertificateIssued, "1", htmlAttributes: new { @id = "chkCAYes" }) Yes
+                                                                    @Html.RadioButtonFor(model => model.IsCertificateIssued, "0", htmlAttributes: new { @id = "chkCANo" }) No
+                                                                </label>
+                                                                @Html.ValidationMessageFor(model => model.IsCertificateIssued, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(m => m.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(m => m.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(m => m.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                                                                     
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Upload Document/Certificate</legend>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">@Html.LabelFor(model => model.AgentRERAcert_FilePath, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                            <div class="col-md-3">
+                                                                <div class="input-group">
+                                                                    <label class="input-group-btn">
+                                                                        <span class="btn btn-primary">
+                                                                            Browse… <input type="file" id="Photo_Address" name="Photo_Address" onchange="showPhoto(this)" style="display: none;" multiple="" />
+                                                                        </span>
+                                                                    </label>
+                                                                    <input type="text" id="Photo_AddressShow" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="control-label col-md-3">
+                                                                @Html.HiddenFor(model => model.AgentRERAcert_FilePath)
+                                                                @Html.HiddenFor(model => model.AgentRERAcert_FileName)
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/@Html.DisplayFor(model => model.AgentRERAcert_FilePath)@Html.DisplayFor(model => model.AgentRERAcert_FileName)" alt="No Image" />
+                                                            </div>  
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                @TempData["notice"]<br />Certificate/Document Should be in .JPG/.JPEG/.PDF format and less than 1 MB
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                @if (Model.IsDraft == 1)
+                                                {
+                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                }
+                                                &nbsp;
+                                                @Html.ActionLink("Reset", "Add_RenewalAgentRERAcertificateDetails", "HelpdeskAgent", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                              }
+                                <div class="row">
+                                    <div class="form-group">                                        
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                @Html.DisplayName("Diary Number")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.AgentRERAcert_InfoName)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.AgentRERAcert_ReferenceNumber)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.AgentRERAcert_IssueDate)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.Remarks_IfAny)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayName("View")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayName("Delete")
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var item in Model.prpongoing)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Related_AgentDiaryNumber_Name)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.AgentRERAcert_InfoName)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.AgentRERAcert_ReferenceNumber)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.AgentRERAcert_IssueDate)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                                                </td>
+                                                                <td>                                                                
+                                                                    <a href="~/@Html.DisplayFor(modelItem => item.AgentRERAcert_FilePath)@Html.DisplayFor(modelItem => item.AgentRERAcert_FileName)" target="_blank"><i class="fa fa-external-link-square"></i></a>
+                                                                </td>
+                                                                <td>
+                                                                    @if (item.IsDraft != 1)
+                                                                    {
+                                                                        @Html.ActionLink(" ", "Delete_RenewalAgentRERAcertificateDetails", new { inRnAgentRERAcertificate_IndexID = item.RenewalAgent_RERAcertificate_IndexID, inRnAgentRERAcertificate_ID = item.RenewalAgent_RERAcertificate_ID, inAgent_ID = item.Related_Agent_ID, inRnAgent_ID = item.Related_RenewalAgent_ID, inRnAgent_Yr = item.Related_RelatedRenewalAgent_Year, inRnAgent_SeqID = item.Related_RenewalOrderSequence }, new { onclick = "return confirm('Do you want to delete?');", @class = "fa fa-remove" })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @("--")
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                 </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

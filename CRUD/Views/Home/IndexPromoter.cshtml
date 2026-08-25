@@ -1,0 +1,397 @@
+﻿@{
+    ViewBag.Title = "Promoter Profile";
+}
+<!--<h2>@ViewBag.Title.</h2>
+<h4>@ViewBag.Message</h4>-->
+
+@*<link rel="stylesheet" href="@Url.Content("~/dist/css/modal-alerts.css")" />
+<link rel="stylesheet" href="@Url.Content("~/css/style-modal-notification.css")" />
+<script src="@Url.Content("~/dist/js/modal-alerts.js")"></script>
+ onmouseover="alerts.show({ css: 'error', title: 'Notification', message: '<p>In addition to the project registration fee, INR 5000/- as annual portal convenience fee needs to be submitted.</p><p>All payments need to be in the form of a Demand Draft in favor of Real Estate Regulatory Authority, Punjab<p>' });"*@
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        new PNotify({
+            title: 'Notification',
+            text: 'In addition to the project registration fee, the composite web-portal fee (Reference to circular notice RERA-PB-FIN-2020-1641-1666 dated 02-Mar-2020) needs to be submitted.',
+            hide: false
+        });
+
+        new PNotify({
+            title: 'Notification',
+            text: 'All payments need to be Online Payment OR in the form of a Demand Draft in favor of Real Estate Regulatory Authority, Punjab.',
+            type: 'info',
+            hide: false
+        });
+        
+        //alerts.show({ css: 'error', title: 'An error has occured', message: 'There was a problem with adding the field to the table. Please contact support.' });
+        //$('#modalDiscount').modal('show');
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Instructions and Application Process Flow</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Step By Step - Instructions for filing Online Project Registration Form
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-12 text-justify" style="line-height: 28px; color: #000; font-family: roboto;">
+
+
+                                <p style="text-align: justify;">
+                                    Online registration facility can be used for registration of New as well as Already Registered Projects (with
+                                    RERA registration number). The link to access the facility is same for both type of projects – “Register
+                                    Online” on the home page of RERA Punjab web portal.
+                                </p>
+
+                                <p>
+                                    Before user starts filing the online project registration form it is advisable to go through the “Project
+                                    Registration Checklist” under Document tab and “User Manual” under FAQs tab, available on the
+                                    homepage of RERA Punjab, web portal.
+                                </p>
+
+                                <p>
+                                    Also, kindly note that the project registration fees is payable through online payment facility as well as DD/ Bankers Cheque only. 
+                                    Thus the user should be ready with the online payment (Net Banking/Credit Card/Debit Card) and DD/ Bankers Cheque
+                                    before filing the online project registration form for New Projects and should submit the same along with
+                                    the hardcopy of the application form and documents uploaded online for registration. Fee calculator
+                                    provided on the home page of the RERA Punjab web portal can be used beforehand to calculate the
+                                    tentative project registration fees for the convenience.
+                                </p>
+
+
+
+                                <div class="panel-group" id="accordion">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" class="panel-accordion-toggle collapsed">Instruction for New Project Registration</a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseOne" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
+                                            <div class="panel-body">
+
+                                                <ul class="list-group" style="list-style-type: none;">
+                                                    <li><b style="">Step 1:</b> Promoter Profile Creation and Submission (One time Activity)</li>
+                                                    <li>
+                                                        <ul style="list-style-type: decimal;">
+                                                            <li>
+                                                                Click on the “Promoter Profile” to see all the sub-sections to be filled for creation of promoter
+                                                                profile. All the sub-sections to be filled are mentioned below:
+
+                                                                <ul>
+
+                                                                    <li>My Profile</li>
+                                                                    <li> Parent Entity(s) Details</li>
+                                                                    <li> Organization Member Details</li>
+                                                                    <li>
+                                                                        Promoter’s Track Record
+
+                                                                        <ul>
+                                                                            <li> Details and Profile – Completed & On-Going Projects</li>
+                                                                            <li> Litigations If Any</li>
+                                                                        </ul>
+                                                                    </li>
+
+                                                                    <li> Documents Upload</li>
+                                                                    <li> Profile Review/ Confirm</li>
+                                                                    <p>
+                                                                        User is requested to follow the sequence in which sub-sections are provided, while filing the
+                                                                        form.
+                                                                    </p>
+                                                                </ul>
+                                                            </li>
+
+
+
+
+                                                            <li>
+                                                                List of documents required to be uploaded:
+
+                                                                <ul>
+                                                                    <li>Photograph of Promoter (in case the promoter is an Individual)</li>
+                                                                    <li>
+                                                                        Balance sheet of the promoter for the last 3 financial years (in case the Annual report is not
+                                                                        provided)
+                                                                    </li>
+                                                                    <li>
+                                                                        Profit loss statement of the promoter for the last 3 financial years (in case the Annual report
+                                                                        is not provided)
+                                                                    </li>
+                                                                    <li>
+                                                                        Cash Flow Statement of the promoter for the last 3 financial years (in case the Annual report
+                                                                        is not provided)
+                                                                    </li>
+                                                                    <li> Directors Report for the last 3 financial years (if applicable)</li>
+                                                                    <li> Auditor’s Report for the last 3 financial years</li>
+                                                                    <li>
+                                                                        Annual Report for the last 3 financial years (Only the initial pages of the report up to the
+                                                                        table of contents and the pages containing the financial statements like balance sheet, profit
+                                                                        and loss statement and cash flow statement is required)
+                                                                    </li>
+                                                                    <li>
+                                                                        Income Tax Return for the last 3 financial years in case of Individual (in case the promoter
+                                                                        is an Individual)
+                                                                    </li>
+                                                                    <li> PAN Card of the Promoter/Firm</li>
+                                                                    <li> Company Registration Certificate/ MoU of the promoter</li>
+                                                                    <li> Photograph of Organization Members</li>
+                                                                    <p>
+                                                                        Kindly note that, it is mandatory to upload all the documents listed on the drop down at the
+                                                                        “Document Upload” sub-section for online submission of application.
+                                                                    </p>
+                                                                </ul>
+                                                            </li>
+
+
+
+
+                                                            <li>
+                                                                Profile Review/ Confirm: The last step for the creation and submission of promoter profile is
+                                                                “Profile Review/ Confirm” sub-section, where the user can review the details provided in all of the
+                                                                previous sub-sections and then confirm the same.
+                                                                All the sub-sections are to be confirmed by pressing the “Confirm Button” under the “Action
+                                                                Required” column against each of the sub-section, once all the sub-sections are confirmed the “I
+                                                                Agree” button at the bottom of the page will be activated.
+                                                                On pressing the “I Agree” button the promoter profile will be submitted and all the information
+                                                                thus provided, will be available in the view mode only and the user would not be able to make any
+                                                                changes. Therefore it is suggested that the final “I Agree” button will only be pressed when the user
+                                                                has reviewed all the information and is sure of submitting the same. On submission a unique
+                                                                promoter application id will be created, which the user can save for future communications with
+                                                                the Authority.
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+
+
+                                                    <li><b>Step 2:</b> Adding and Submitting Projects for Registration with the Authority</li>
+
+
+                                                    <li>
+                                                        <ul style="list-style-type: decimal;">
+
+                                                            <li>
+                                                                Click on the “Project Details” tab to see and fill all sub-sections to add and submit project. Fill the
+                                                                following sub-section a project to be registered with the Authority:
+                                                            </li>
+
+
+                                                            <ul>
+                                                                <li>Add Project</li>
+                                                                <li>
+                                                                    Project Land Details
+
+                                                                    <ul>
+                                                                        <li> Project Land Detail</li>
+                                                                        <li> Land Khasra Details</li>
+                                                                    </ul>
+                                                                </li>
+                                                                <li> Project Litigations</li>
+                                                                <li> Project Approval Details</li>
+                                                                <li> Document Upload</li>
+                                                                <li>
+                                                                    Project Update Details<ul>
+                                                                        <li> Construction Details</li>
+                                                                        <li> Inventory Details</li>
+                                                                        <li> Internal Facility Details</li>
+                                                                        <li> External Facility Details</li>
+                                                                        <li> Parking Details</li>
+                                                                        <li> Project Professionals</li>
+                                                                        <li> Project Photographs</li>
+                                                                    </ul>
+                                                                </li>
+                                                                <li> Special Bank Account</li>
+                                                                <li> Payment Details</li>
+                                                                <p>
+                                                                    Kindly note that all the sub-sections depend on the Add Project sub-section, where the user first
+                                                                    has to add a project only then other sub-sections can be filled. It is recommended to access and
+                                                                    fill the form in the order of the sub-sections and complete all the sub-sections for a particular
+                                                                    project at a time.
+                                                                </p>
+                                                            </ul>
+
+                                                            <li>List of documents to be uploaded:</li>
+
+
+                                                            <ul>
+                                                                <li>Photograph of Project Land and Construction Site </li>
+                                                                <li> Project Schedule/ Work Plan </li>
+                                                                <li> Encumbrance cert./ Non-Encumbrance cert. </li>
+                                                                <li> Photograph - Floor Plan </li>
+                                                                <li> Photograph - Floor/Plot Construction Status </li>
+                                                                <li> Pro-forma of Agreement for Sale </li>
+                                                                <li> Pro-forma of Allotment Letter </li>
+                                                                <li> Pro-forma of Conveyance Deed </li>
+                                                                <li> Pro-forma of Application Form </li>
+                                                                <li> Authenticated Copy of Form B </li>
+                                                                <li> Legal Title Deed(s) related to project land </li>
+                                                                <li> Consent Details of Land Owner (In case promoter is not owner of the project land) </li>
+                                                                <li> Joint Development/ Collaboration Agreement </li>
+                                                                <li> Legal Title Deed of Joint Developers/ Collaborators </li>
+                                                                <li> Latest Jamabandi report for the project land </li>
+                                                                <li> Land Title Search Report </li>
+                                                                <li> Approved Layout/ Sanction Plan </li>
+                                                                <li> Approved Building Plan </li>
+                                                                <li> Approved Project Site/Location Map </li>
+                                                                <li> Agreement between Promoter and Development Authority (In case of Mega Project) </li>
+                                                                <li>LoI to develop Colony/ Society </li>
+                                                                CLU Certificate
+                                                    </li>
+                                                    <li> License to develop Colony/ Society</li>
+                                                    <li> Advertisement/ Brochure related to the project</li>
+                                                    <li> Photographs of Internal Infrastructure</li>
+                                                    <li> Form 1 - Architect's Certificate</li>
+                                                    <li> Form 2 - Engineer's Certificate</li>
+                                                    <li> Form 3 - CA Certificate</li>
+                                                    <li> Approval Documents - NOC/ Clearances</li>
+                                                    <li> Copy of DD/Banker’s cheque OR Online payment details for the registration fee</li>
+                                                    <p>
+                                                        Kindly note that, it is mandatory to upload all the documents listed on the drop down at the
+                                                        “Document Upload” sub-section for online submission of application.
+                                                    </p>
+
+
+                                                </ul>
+
+
+
+
+
+                                                <li>Project Review/ Confirm</li>
+
+                                                <p>
+                                                    After filing all the sub-sections for a project, click on the “Project Review/ Confirm” and review the
+                                                    filled information under the project updates section and confirm the same. After confirming the
+                                                    details, press “I Agree” button and move to Project Details sub-section to review and confirm the
+                                                    details for a project.
+                                                    After confirming all the details, press “I Agree” button for submitting the application with the
+                                                    Authority for project registration. Please note that once user clicks on the project details “I Agree”
+                                                    button, the user would not be able to update or change the information thus submitted.
+                                                </p>
+                                                <p>
+                                                    <b>
+                                                        Therefore in order to submit a project application for registration, first user has to
+                                                        fill the details under three sub sections – Promoter Profile, Project Details and
+                                                        Project Update Details and review/ confirm and “I Agree” all the three sections.
+                                                    </b>
+                                                </p>
+                                                </ul>
+                                                </li>
+
+
+
+                                                <li><b>Step 3:</b> Physical Submission of Documents and Application Form</li>
+
+
+                                                <p>
+                                                    After submitting the application for registration, again go to the “Profile Review/ Confirm” section under
+                                                    Promoter Profile and “Project Review/ Confirm” section to download the forms filled under each of the
+                                                    sub-sections.
+                                                </p>
+                                                <p>
+                                                    Please note that, user has to go to each of three review/ confirm section and download the forms for each
+                                                    of the sub-section individually.
+                                                </p>
+                                                <p>
+                                                    Once downloaded, take the print out of the forms and submit along with a hard copy of the documents
+                                                    uploaded with the Authority within 7 days of submission of online application.
+                                                </p>
+
+
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" class="panel-accordion-toggle" aria-expanded="false">Instruction for Already Registered Projects (RERA Registration Number Issued)</a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseThree" class="panel-collapse collapse in" aria-expanded="false" style="">
+                                            <div class="panel-body">
+
+
+                                                <p>
+                                                    Please make sure that for upload of information as already registered project RERA Registration number
+                                                    must be issued and correct number is readily available for reference. The link is same as used for New
+                                                    Project i.e. “Register Online” on the home page of RERA Punjab web portal. Follow the below mentioned
+                                                    steps for upload of the information of already registered projects:
+                                                </p>
+
+
+
+
+                                                <b>Step 1:</b> Promoter Profile Creation and Submission (One time Activity)
+                                                <p>Refer Step 1 of “Instruction for New Project Registration”</p>
+                                                <b>Step 2:</b> Adding and Submitting Projects for Registration with the Authority
+                                                <p>
+                                                    Refer Step 2 of “Instruction for New Project Registration”, the only difference is, while filling the “Add
+                                                    Project” sub-section under the “Project Details” tab please select the “Existing RERA Project” in select
+                                                    option and provide the RERA Registration number in the same issued format. On filing the “Existing RERA
+                                                    Number” field the project name will be automatically populated, which the user can verify against the
+                                                    allotted registration number.
+                                                </p>
+                                                <p>
+                                                    Also in the “Payment Details” sub-section, provide the details and copy of the same DD/ Bankers cheque or Online Payment
+                                                    through which the registration fees was paid and was submitted with the Authority.
+                                                </p>
+                                                <b>Step 3:</b> Physical Submission of Documents and Application Form
+                                                <p>Refer Step 3 of “Instruction for New Project Registration”</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.col-lg-6 (nested) -->
+                            <!-- /.col-lg-6 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+
+                    <!-- .panel-body -->
+
+                </div>
+                <!-- /.row (nested) -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+</div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}
+
+
+

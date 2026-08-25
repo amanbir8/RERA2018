@@ -1,0 +1,312 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_RevocationCancellationProjectEventLog
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script type="text/javascript">
+
+    @if (TempData["RevokeEventSubmitMessage"].ToString() != "")
+    {
+        if (TempData["RevokeEventSubmitMessageMappingUrlFlag"].ToString() != "ResetFlag")
+        {
+            <text>
+                $(document).ready(function () {
+                    swal({
+                        title: "Message",
+                        text: "@TempData["RevokeEventSubmitMessage"]",
+                        type: "success"
+                    }, function () {
+                        window.location = "../@TempData["RevokeEventSubmitMessageMappingUrlFlag"]";
+                    });
+                });
+            </text>
+        }
+        else
+        {
+            <text>
+                $(document).ready(function()
+                    {
+                    swal({
+                    title: "Message",
+                        text: "@TempData["RevokeEventSubmitMessage"]",
+                        type: "success"
+                    }, function () {
+                        return true;
+                    });
+                });
+            </text>
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#EventAction_Type').change(function () {
+
+            var BASE_URLn = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: "POST",
+                url: BASE_URLn + 'Helpdesk/GetProjectRevokeEventDescriptionMasterByCode',
+                datatype: "Json",
+                data: { EventCode: $('#EventAction_Type').val() },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (data) {
+                    stopPreloader();
+                    $.each(data, function (index, value) {
+
+                        $('#getEventDescFileInfo').show();
+                        $('#EventDescDiscription').text("Description : " + value.EventAction_Description);
+                    });
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#dataTables-example').DataTable({
+            responsive: true
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');        
+
+        $(document).on('click', 'a.modalOpenerButtonCode', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var projectId = $('#Related_Project_ID').val();
+            var promoterId = $('#Related_Promoter_ID').val();
+            projectId = parseInt(projectId);
+            promoterId = parseInt(promoterId);
+            var varDNumber = $("#Project_DiaryNumber").val();
+            var varProjectName = $.trim($(document).find("div.project-name").text());
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectRevokeInfoEventLog',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'promoterId': promoterId },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('File History Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+</script>
+<script>
+   // get remaining words count for textarea
+   var maxMessageLength = 2400;
+   var messageField = $('#myform_RevokeEvent').find('textarea#Remarks_IfAny');
+   $('body').on('input', 'textarea#Remarks_IfAny', function (e) {
+       var msgVal = $(this).val();
+       var msgValLen = msgVal.length;
+       if (msgValLen <= maxMessageLength) {
+           var remaining = parseInt(maxMessageLength - msgValLen);
+           $(this).parents('.form-group').find('.words-remain').html(remaining + ' characters remaining');
+       }
+   });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Projects (Registration Revocation/Cancellation) Application Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Application Action Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("ProjectRevokeInfoEventInsert", "Helpdesk", FormMethod.Post, new { enctype = "multipart/form-data", id = "myform_RevokeEvent" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                                                
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.ProjectRevokeEventAction_ID)
+                                @Html.HiddenFor(model => model.Related_Project_ID)
+                                @Html.HiddenFor(model => model.Project_DiaryNumber)
+                                @Html.HiddenFor(model => model.Revoke_DiaryNumber)
+                                @Html.HiddenFor(model => model.Related_Promoter_ID)
+                                @Html.HiddenFor(model => model.RERA_RegistrationNumber)
+                                @Html.HiddenFor(model => model.ProjectRegistrationNumberName)
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Project - ( @Html.DisplayFor(model => model.ProjectRegistrationNumberName, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-2">
+                                                            @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-4 project-name">
+                                                            @Html.DisplayFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @Html.LabelFor(model => model.Project_DiaryNumber, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            @Html.DisplayFor(model => model.Revoke_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.DisplayName(" of ")
+                                                            @Html.DisplayFor(model => model.Project_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>                                
+                                @Html.Partial("_AuthorityRevokeProjectDeskNavMenuPartial")
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h4 class="page-header" style="margin-top: 15px;"><a class="modalOpenerButtonCode" href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Application Action Details</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Application Action Operations</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.EventAction_Type, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        @if (Model.EventMaster != null)
+                                                        {
+                                                            <div class="col-md-3">                                                                
+                                                                @Html.DropDownListFor(model => model.EventAction_Type, new SelectList(Model.EventMaster, "EventAction_Code", "EventAction_Aggregate"), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.EventAction_Type, "", new { @class = "text-danger" })                                                                
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.EventAction_Type, new SelectList(" "), "Select", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.EventAction_Type, "", new { @class = "text-danger" })                                                                
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="getEventDescFileInfo" style="display:none">
+                                                    <div class="help-block col-md-offset-3 col-md-9">
+                                                        <div id="EventDescDiscription" class="info"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+
+                                                        <div class="col-md-3">                                                            
+                                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control"} })
+                                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })                                                            
+                                                        </div>
+                                                        <div class="col-md-6">                                                             
+                                                        </div>                                                        
+                                                        <div class="col-md-11">
+                                                            <div class="col-md-offset-3 col-md-8">
+                                                                <i class="words-remain help-block col-md-6">
+                                                                    2400 characters remaining
+                                                                </i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="getChecklistDescFileInfo" style="display:none">
+                                                    <div class="help-block col-md-offset-3 col-md-9">
+                                                        <div id="ChecklistDescDiscription" class="info"></div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "ProjectRevokeInfoEventInsert", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })                                                                                                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+                </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details <a href="javascript:void(0);" class="title-project-details"></a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+        
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet" />    
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>    
+}

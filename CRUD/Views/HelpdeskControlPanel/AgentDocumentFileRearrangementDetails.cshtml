@@ -1,0 +1,446 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_FileRearrangementAgentDocumentDetails
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/dist/css/rera-toggleshow.css")" rel="stylesheet" />
+<!-- DataTables JavaScript -->
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+<!-- Custom Theme JavaScript -->
+<script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        var getUrlCPvalue;
+
+        $(document).on('click', 'a.modalDownloadExcelButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            window.location = BASE_URL + 'HelpdeskControlPanel/ExportAgentFileReArrangementDocsToExcel';
+            $('input[type=text]').each(function () {
+                $(this).val('');
+            });
+        });
+
+        @if (TempData["returnUrlCPvalue"].ToString() != "")
+        {
+            <text>
+                getUrlCPvalue = '@TempData["returnUrlCPvalue"]';
+            </text>
+        }
+
+        $(document).on('click', 'a.controlpanelHomeButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + getUrlCPvalue;
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>File Rearragement System</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Search real-estate agent document details with reference to Diary Number/ Registration Number/ RERA Number.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> IT Manager can intialize the file rearrangement application details.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+
+    .border-left-danger {
+        border-left: .15rem solid #FF4961 !important;
+    }
+
+    .border-left-warning {
+        border-left: .25rem solid #f6c23e !important;
+    }
+
+    .bg-exclamation-triangle-warning {
+        color: #FF4961 !important;
+        display: inline-block !important;
+    }
+
+    .bg-exclamation-triangle-none {
+        display: none !important;
+    }
+
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+
+    .bg-plus-square-glow-show {
+        color: green;
+    }
+
+    a.add-upload-disabled:hover {
+        cursor: not-allowed;
+    }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $("#RERAnumberRegistration_Input").inputmask({ mask: function () { return ["AAAAAA-AAA99-AAA9999"]; } });
+        $("#AgentDiaryNumber_Input").inputmask({ mask: function () { return ["AAA99999999"]; } });
+	});
+</script>
+<script>
+    $(function () {
+        $('table#pcc-status-table').dataTable({
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers",            
+            "pageLength": 50,
+            "lengthMenu": [[50, 100, 150, 200, 250], [50, 100, 150, 200, 250]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [1, 8]
+            }]
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        var vchecksearchtypevaluedatemode = $("input[name='Application_SearchTypeFlag']:checked").val();
+        if (vchecksearchtypevaluedatemode == '21') {
+            $("#rowRegistrationFilter").addClass("show").removeClass("hide");
+            $("#rowDiaryFilter").addClass("hide").removeClass("show");
+        }
+        else if (vchecksearchtypevaluedatemode == '22') {
+            $("#rowRegistrationFilter").addClass("hide").removeClass("show");
+            $("#rowDiaryFilter").addClass("show").removeClass("hide");
+        };
+
+        $(document).on('click', '.radio-applicationformvalue', function (e) {
+            if (this.value == '21') {
+                $("#rowRegistrationFilter").addClass("show").removeClass("hide");
+                $("#rowDiaryFilter").addClass("hide").removeClass("show");
+            }
+            else if (this.value == '22') {
+                $("#rowRegistrationFilter").addClass("hide").removeClass("show");
+                $("#rowDiaryFilter").addClass("show").removeClass("hide");
+            }
+        });
+
+        $(document).on('click', 'a#modalOpenerActionButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var agentDetailsModal = $(document).find('#myModal');
+            $(agentDetailsModal).find('.modal-body').html('');
+            var agentId = $.trim($(parentRow).find('input.hdnAgentID').val());
+            var agentrenewalId = $.trim($(parentRow).find('input.hdnAgentRenewalID').val());
+            var refdocId = $.trim($(parentRow).find('input.hdnRefDocID').val());
+            var refindexId = $.trim($(parentRow).find('input.hdnRefIndexID').val());
+            var refId = $.trim($(parentRow).find('input.hdnRefID').val());            
+            agentId = parseInt(agentId);
+            agentrenewalId = parseInt(agentrenewalId);
+            refdocId = parseInt(refdocId);
+            refindexId = parseInt(refindexId);
+            refId = parseInt(refId);
+            $.ajax({
+                url: BASE_URL + 'HelpdeskControlPanel/AgentDocumentFileRearrangementPanel',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'agentId': agentId, 'agentrenewalId': agentrenewalId, 'refdocId': refdocId, 'refindexId': refindexId, 'refId': refId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(agentDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.agent-diary-number').attr('data-diary-no'));
+            var agentName = $.trim($(parentRow).find('td.agent-name').attr('data-agent-name'));
+            $(agentDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + agentName + ')');
+            $(agentDetailsModal).modal('show');
+        });
+
+        $(document).on('click', 'a#modalOpenerTrashButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var agentDetailsModal = $(document).find('#myModal');
+            $(agentDetailsModal).find('.modal-body').html('');
+            var agentId = $.trim($(parentRow).find('input.hdnAgentID').val());
+            var agentrenewalId = $.trim($(parentRow).find('input.hdnAgentRenewalID').val());
+            var refdocId = $.trim($(parentRow).find('input.hdnRefDocID').val());
+            var refindexId = $.trim($(parentRow).find('input.hdnRefIndexID').val());
+            var refId = $.trim($(parentRow).find('input.hdnRefID').val());
+            agentId = parseInt(agentId);
+            agentrenewalId = parseInt(agentrenewalId);
+            refdocId = parseInt(refdocId);
+            refindexId = parseInt(refindexId);
+            refId = parseInt(refId);
+            $.ajax({
+                url: BASE_URL + 'HelpdeskControlPanel/AgentDocumentFileRearrangementTrash',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'agentId': agentId, 'agentrenewalId': agentrenewalId, 'refdocId': refdocId, 'refindexId': refindexId, 'refId': refId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(agentDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.agent-diary-number').attr('data-diary-no'));
+            var agentName = $.trim($(parentRow).find('td.agent-name').attr('data-agent-name'));
+            $(agentDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + agentName + ')');
+            $(agentDetailsModal).modal('show');
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Control Panel</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Control Panel : CP 8.5 File/Document Rearrangement Panel of Agent Applications/Registrations
+                    <span class="pull-right">
+                        <a href="@Url.Action("AgentDocumentFileRearrangementAddDetails", "HelpdeskControlPanel")" title="Add/Upload Document"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-upload" aria-hidden="true"></i></span></a>
+                        <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>                        
+                        <a class="controlpanelHomeButton" href="javascript:void(0);" title="Home"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-home" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>                        
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            
+                            @using (Html.BeginForm("AgentDocumentFileRearrangementDetails", "HelpdeskControlPanel", FormMethod.Post, new { enctype = "multipart/form-data", id="frmAgentRearrangementOptions" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Search Options</legend>                                    
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Search By</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.Application_SearchTypeFlag, "21", new { id = "chkRegistrationNumber", @class = "radio-applicationformvalue", @checked = "checked" }) Registration Number
+                                                    @Html.RadioButtonFor(model => model.Application_SearchTypeFlag, "22", new { id = "chkDiaryNumber", @class = "radio-applicationformvalue" }) Diary Number
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.Application_SearchTypeFlag, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="rowRegistrationFilter">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Registration Number</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.RERAnumberRegistration_Input, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.RERAnumberRegistration_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-7">
+                                                <input type="Submit" id="ViewRegistrationFilter" value="Proceed" class="btn btn-outline btn-primary" />
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "AgentDocumentFileRearrangementDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row hide" id="rowDiaryFilter">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Diary Number</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.AgentDiaryNumber_Input, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.AgentDiaryNumber_Input, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-7">
+                                                <input type="Submit" id="ViewDiaryFilter" value="Proceed" class="btn btn-outline btn-primary" />
+                                                &nbsp;
+                                                @Html.ActionLink("Cancel", "AgentDocumentFileRearrangementDetails", "HelpdeskControlPanel", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            <div class="row">
+                                <br />
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            @if (Model.prpongoing != null)
+                                            {
+                                                <table class="table table-striped table-bordered" id="pcc-status-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>@Html.DisplayName("Sr No")</th>
+                                                            <th>
+                                                                @Html.DisplayName("Action")
+                                                            </th>                                                            
+                                                            <th>
+                                                                @Html.DisplayName("Diary Number")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.RERA_RegistrationNumber)
+                                                            </th>                                                            
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.Agent_Name)
+                                                            </th>                                                            
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.AgentDoc_InfoCode)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.AgentDoc_ReferenceNumber)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.AgentDoc_IssueDate)
+                                                            </th>                                                            
+                                                            <th>
+                                                                @Html.DisplayName("View")
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            int snopccstatus = 0;
+                                                        }
+                                                        @foreach (var item in Model.prpongoing)
+                                                        {
+                                                            {
+                                                                snopccstatus = snopccstatus + 1;
+                                                            }
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.DisplayName(snopccstatus.ToString())
+                                                                </td>
+                                                                <td class="center">
+                                                                    <a id="modalOpenerActionButton" href="javascript:void(0);" title="File Re-Arrangement Options"><i class="fa fa-pencil-square-o bg-plus-square-glow-show"></i></a>
+                                                                    &nbsp;
+                                                                    <a id="modalOpenerTrashButton" href="javascript:void(0);" title="Trash"><i class="fa fa-trash bg-plus-square-glow-show"></i></a>
+                                                                </td>
+                                                                <td class="project-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.Agent_DiaryNumber)">
+                                                                    @Html.DisplayFor(modelItem => item.Agent_DiaryNumber)
+                                                                </td>
+                                                                <td>                                                                   
+                                                                    @Html.DisplayFor(modelItem => item.RERA_RegistrationNumber)
+                                                                </td>
+                                                                <td class="agent-name" data-agent-name="@Html.DisplayFor(modelItem => item.Agent_Name)">
+                                                                    @Html.DisplayFor(modelItem => item.Agent_Name)
+                                                                    @Html.HiddenFor(modelItem => item.Agent_ID, new { @class = "hdnAgentID" })
+                                                                    @Html.HiddenFor(modelItem => item.AgentRenewal_ID, new { @class = "hdnAgentRenewalID" })
+                                                                    @Html.HiddenFor(modelItem => item.AgentDoc_InfoCode, new { @class = "hdnRefDocID" })
+                                                                    @Html.HiddenFor(modelItem => item.AgentDoc_ID, new { @class = "hdnRefID" })
+                                                                    @Html.HiddenFor(modelItem => item.AgentDoc_IndexID, new { @class = "hdnRefIndexID" })
+                                                                </td>                                                                                                                               
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.AgentDoc_InfoName)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.AgentDoc_ReferenceNumber)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.AgentDoc_IssueDate)
+                                                                </td>                                                                
+                                                                <td align="center">
+                                                                    <a href="~/@Html.DisplayFor(modelItem => item.AgentDoc_FilePath)" target="_blank" title="View Document"><i class="fa fa-external-link-square"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Real-estate Agent - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}

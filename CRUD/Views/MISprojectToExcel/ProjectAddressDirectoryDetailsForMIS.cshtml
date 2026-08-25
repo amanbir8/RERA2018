@@ -1,0 +1,280 @@
+﻿@model CRUD.Models.MISprojectToExcel.Clsprp_MIS_ProjectAddressDirectoryDetails
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Project Address</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_PotentialZoneCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_PotentialZoneCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_AddressDistrictCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_AddressStateCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_AddressSubDivisionCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_AddressSubDivisionCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                        
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Project's Authorized Person Details</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.DisplayName("Authorized Person Name")
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_MiddleName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                        
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.AuthorizedPerson_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.AuthorizedPerson_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.AuthorizedPerson_AddressDistrictCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.AuthorizedPerson_AddressStateCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.AuthorizedPerson_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>                                
+                            </div>
+                        </div>  
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.AuthorizedPerson_EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.AuthorizedPerson_MobileNumber, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.AuthorizedPerson_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                      
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Promoter's Address Details</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_Name, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-9">
+                                    @Html.DisplayFor(model => model.Promoter_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_AuthorisedSignatory_Name, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-9">
+                                    @Html.DisplayFor(model => model.Promoter_AuthorisedSignatory_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>                                
+                            </div>
+                        </div>                                               
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_CommAddress_Line1, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Promoter_CommAddress_Line1, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_CommAddress_Line2, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Promoter_CommAddress_Line2, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_CommDistrict, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Promoter_CommDistrict, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_CommState, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Promoter_CommState, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_Comm_PIN, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Promoter_Comm_PIN, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_AuthorisedSignatory_Email, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Promoter_AuthorisedSignatory_Email, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_AuthorisedSignatory_MobileNumber, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Promoter_AuthorisedSignatory_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.EventAction_IdentifiedOn)</th>
+                        <th>@Html.DisplayNameFor(model => model.Project_DiaryNumber)</th>
+                        <th>@Html.DisplayNameFor(model => model.EventAction_Aggregate)</th>
+                        <th>@Html.DisplayName("Prepared By")</th>
+                        <th>@Html.DisplayNameFor(model => model.Remarks_IfAny)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.prpongoing)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Project_DiaryNumber)</td>
+                            <td>@Html.DisplayFor(modelItem => item.EventAction_Aggregate)</td>
+                            @if (item.EventAction_IdentifiedBy != "999")
+                            {
+                                <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedBy)</td>
+                            }
+                            else
+                            {
+                                <td>@Html.DisplayName(" ")</td>
+                            }
+                            <td align="justify">@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>*@
+
+    </div>
+</div>

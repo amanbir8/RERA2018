@@ -1,0 +1,504 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_Project_BuildingTowerBlock_Inventory
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+
+    <script>$.uiBackCompat = false;</script>
+
+@*<script type="text/javascript">
+	$('a.anchor').on('click', function(e){
+		e.preventDefault();
+		var elem = $(this);
+		bootbox.confirm({
+		    message: "Are You sure you want to delete?",
+		    buttons: {
+		        confirm: {
+		            label: 'Yes',
+		            className: 'btn-success'
+		        },
+		        cancel: {
+		            label: 'No',
+		            className: 'btn-danger'
+		        }
+		    },
+		    callback: function (result) {
+		        alert($(elem).attr('href'));
+		    }
+		});
+	});
+
+
+</script>*@
+
+
+<script type="text/javascript">
+
+        //////function confirmdelete() {
+        //////    debugger;
+            
+        //////    var status = false;
+        //////    bootbox.confirm({
+        //////        message: "Are You sure you want to delete CHAHCA?",
+        //////        buttons: {
+        //////            confirm: {
+        //////                label: 'Yes',
+        //////                className: 'btn-success'
+        //////            },
+        //////            cancel: {
+        //////                label: 'No',
+        //////                className: 'btn-danger'
+        //////            }
+        //////        },
+        //////        callback: function (result) {
+        //////            status = result;
+        //////            alert(status);
+        //////            //return status;
+        //////        }
+        //////    });
+            
+        //////    return status;
+            
+
+        //////}
+
+        ////////function cdelete(status) {
+        ////////    //debugger;
+
+           
+
+        ////////    return status;
+
+
+        ////////}
+
+
+        $(document).ready(function () {
+
+            var drpYearText = $(document).find("select#drpQYear").val();
+            var drpQuarterText = $(document).find("select#drpQName").val();
+
+            $("#hdnQYear").val(drpYearText);
+            $("#hdnQName").val(drpQuarterText);
+
+            $('#drpQYear').attr('disabled', true);
+            $('#drpQName').attr('disabled', true);
+            //$('#A_column').attr('readonly', false);
+            //$('#B_column').attr('readonly', true);
+
+            $(document).on('click', '#BtnDrp', function (e) {
+                e.preventDefault();
+                var proceedButton = $(this);
+                var drpText = $(document).find("select#ProjectInventoryRelated_ProjectRegistration_ID").val();
+                //alert(drpText)
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                    // $("#idMainForm").hide();
+                }
+                else {
+                    $("#idMainForm").show();
+                    $(proceedButton).parents('form').submit();
+                }
+            });
+
+
+
+
+            $(document).on('click', '#BtnMainform', function (e) {
+                var submitButton = $(this);
+                e.preventDefault();
+                var drpText = $(document).find("select#ProjectInventoryRelated_ProjectRegistration_ID").val();
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                    //$("#idMainForm").hide();
+                    drpText = "";
+                    return false;
+                }
+                else {
+
+                    //bootbox.confirm({
+                    //    message: "Are You sure you want to continue?",
+                    //    buttons: {
+                    //        confirm: {
+                    //            label: 'Yes',
+                    //            className: 'btn-success'
+                    //        },
+                    //        cancel: {
+                    //            label: 'No',
+                    //            className: 'btn-danger'
+                    //        }
+                    //    },
+                    //    callback: function (result) {
+                    //        if (result) {
+                    $(submitButton).parents('form').submit();
+                    //$('#BtnMainform').submit();
+                    //        }
+                    //    }
+                    //});
+
+
+                    // $("#idMainForm").show();
+                }
+
+
+            });
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('table#promoter-documents-list-table').dataTable({
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [4]
+                }],
+                "language": {
+                    "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                    "lengthMenu": "Show _MENU_ records"
+                },
+                "pagingType": "full_numbers"
+            });
+
+        });
+
+      function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                $('#user_Photo').attr('src', e.target.result);
+            }
+            filerdr.readAsDataURL(input.files[0]);
+            //$(':input[type="submit"]').prop('disabled', false);
+            //$('#Create').prop('disabled', false);
+        }
+    }
+</script>
+
+@*<script>
+        $('.example-button').on('click', function (e) {
+
+           bootbox.confirm({
+    message: "Are You sure you want to delete?",
+    buttons: {
+        confirm: {
+            label: 'Yes',
+            className: 'btn-success'
+        },
+        cancel: {
+            label: 'No',
+            className: 'btn-danger'
+        }
+    },
+    callback: function (result) {
+        console.log('This was logged in the callback: ' + result);
+    }
+});
+        })
+
+</script>*@
+<script>
+   //    $(function () {
+   //        var startYear = 2001;
+   //        var endYear = 2050;
+   //        var defaultValue = 'select'
+   //        $('#B_column').append('<option value="' + defaultValue + '">' + defaultValue + '</option>');
+   //        for (var i = startYear; i <= endYear; i++)
+   //            $('#B_column').append('<option value="' + i + '">' + i + '</option>');
+
+
+   //});
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project Update (Quarterly): Building/ Tower/ Block Inventory Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Building/ Tower/ Block Inventory Details :- [Fill in the details of the type of apartments/ shops/ plots being developed or sold in each of the building/ towers/ blocks added in the previous section. Multiple types of apartments/ shops/ plots can be added under each of the building/ towers/ blocks.]
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+
+                            @using (Html.BeginForm("DropdownlistProjectInventory", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                                @Html.AntiForgeryToken()
+
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Project</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label">Select Project</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownListFor(m => m.ProjectInventoryRelated_ProjectRegistration_ID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "Select Project", new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                            }
+                            <div @if (Session["Project_id"] != null) { @Html.Raw("style=''")           } else { @Html.Raw("style='display: none;'")           }>
+                                @using (Html.BeginForm())
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(model => model.ProjectInventory_IndexID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.HiddenFor(model => model.ProjectInventory_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.HiddenFor(model => model.ProjectInventoryRelated_ProjectRegistration_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Select Quarterly Update Option</legend>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Select Year</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @if (@TempData["CurrentYears"] != null)
+                                                                {
+                                                                @Html.DropDownListFor(model => model.B_column, new SelectList(ViewBag.Years, "Text", "Value", TempData["CurrentYears"]), new { @id = "drpQYear", @class = "form-control" })
+                                                                }
+                                                                else
+                                                                {
+                                                                @Html.DropDownListFor(model => model.B_column, new SelectList(ViewBag.Years, "Text", "Value"),  new { @id = "drpQYear", @class = "form-control" })
+                                                                }
+                                                                @Html.HiddenFor(model => model.B_column, new { id = "hdnQYear" })
+                                                                @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            @*<div class="col-md-3">
+                                            @Html.DropDownListFor(model => model.B_column, new SelectList(""), new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })
+                                        </div>*@
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Select Quarter</label>
+
+                                                                @{var listItems1 = new List<SelectListItem>
+                                                {
+
+                                                   // new SelectListItem {  Text = "..." , Value=""  },
+                                                    new SelectListItem {  Text = "Registration Process" , Value="Registration Process"  },
+                                                    new SelectListItem {  Text = "First Quarter" , Value="First Quarter"  },
+                                                     new SelectListItem {  Text = "Second Quarter" , Value="Second Quarter"  },
+                                                     new SelectListItem {  Text = "Third Quarter" , Value="Third Quarter"  },
+                                                     new SelectListItem {  Text = "Fourth Quarter" , Value="Fourth Quarter"  },
+                                                };
+                                                                }
+
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.A_column, new SelectList(listItems1, "Value", "Text"), new { @id = "drpQName", @class = "form-control" })
+                                                                @Html.HiddenFor(model => model.A_column, new { id = "hdnQName" })
+                                                                @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Building/ Tower/ Block Inventory Details</legend>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.BuildingTowerBlock_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="In case of Group Housing or Building/ Tower Development, name of same Building or Tower is required, which is added in construction details section. In case of plotted development name of same Block is required, which is added in construction details section.">
+                                                                @Html.DropDownListFor(model => model.BuildingTowerBlock_Name, new SelectList(Model.MasterBuilding, "BuildingTowerBlock_Name", "BuildingTowerBlock_Name"), "Select", new { @class = "form-control" })@*//ProjectConstruction_ID*@
+                                                                @*@Html.EditorFor(model => model.BuildingTowerBlock_Name, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                                @Html.ValidationMessageFor(model => model.BuildingTowerBlock_Name, "", new { @class = "text-danger" })
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ApartmentShopPlot_Type, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="In case of Group Housing or Building/ Tower Development – Type of Apartment can be – 1 BHK, 2 BHK, 3BHK, 4BHK, Penthouse or Villa, details of all type of apartments constructed in a particular Building/ Tower are to be added. For commercial details of shops are required, similarly for plotted development details of plots in a particular block are required.">
+                                                                @Html.EditorFor(model => model.ApartmentShopPlot_Type, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.ApartmentShopPlot_Type, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ApartmentShopPlot_CarpetArea, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Carpet area of type of apartment/ plots/ shops added.">
+                                                                @Html.EditorFor(model => model.ApartmentShopPlot_CarpetArea, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.ApartmentShopPlot_CarpetArea, "", new { @class = "text-danger" })
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ApartmentShopPlot_ExclusiveOpenTerraceArea, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.ApartmentShopPlot_ExclusiveOpenTerraceArea, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.ApartmentShopPlot_ExclusiveOpenTerraceArea, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ApartmentShopPlot_ExclusiveBalconyVerandahArea, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.ApartmentShopPlot_ExclusiveBalconyVerandahArea, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.ApartmentShopPlot_ExclusiveBalconyVerandahArea, "", new { @class = "text-danger" })
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ApartmentShopPlot_AvailableforSaleNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.ApartmentShopPlot_AvailableforSaleNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.ApartmentShopPlot_AvailableforSaleNumber, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.ApartmentShopPlot_AlreadySoldNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.ApartmentShopPlot_AlreadySoldNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.ApartmentShopPlot_AlreadySoldNumber, "", new { @class = "text-danger" })
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    @if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                    {
+                                                        <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                    }
+                                                    &nbsp;
+                                                    @Html.ActionLink("Reset", "Create_Inventory", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                                                    }
+
+                                @*<div>
+                @Html.ActionLink("Back to List", "Create_Inventory")
+            </div>*@
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                        <thead>
+                                            <tr>
+
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BuildingTowerBlock_Name)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.ApartmentShopPlot_Type)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.ApartmentShopPlot_AvailableforSaleNumber)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.ApartmentShopPlot_AlreadySoldNumber)
+                                                </th>
+                                                <th>@Html.DisplayName("Edit| Delete")</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.prpongoing)
+                                            {
+                                                <tr>
+
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.BuildingTowerBlock_Name)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.ApartmentShopPlot_Type)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.ApartmentShopPlot_AvailableforSaleNumber)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.ApartmentShopPlot_AlreadySoldNumber)
+                                                    </td>
+                                                    <td>
+                                                        @if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                        {
+                                                            @Html.ActionLink("View", "Edit_Inventory", new { ProjectRegistration_ID = item.ProjectInventoryRelated_ProjectRegistration_ID, ProjectInventory_IndexID = item.ProjectInventory_IndexID })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("Edit", "Edit_Inventory", new { ProjectRegistration_ID = item.ProjectInventoryRelated_ProjectRegistration_ID, ProjectInventory_IndexID = item.ProjectInventory_IndexID }) @("| ")
+                                                            @Html.ActionLink("Delete", "Delete_Inventory", new { ProjectRegistration_ID = item.ProjectInventoryRelated_ProjectRegistration_ID, ProjectInventory_IndexID = item.ProjectInventory_IndexID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                     </table>
+                                </div>
+                            </div>
+
+                                        </div>
+                                        <!-- /.row (nested) -->
+                                    </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+                <!-- /.col-lg-12 -->
+                        </div>
+            <!-- /.row -->
+        </div>
+    </div>
+    <!-- /.wrapper -->
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+
+        <script src="@Url.Content("~/dist/js/bootbox.min.js")"></script>
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+
+    }

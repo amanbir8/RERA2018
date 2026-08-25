@@ -1,0 +1,425 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthDesk_Number_ExtensionRegistrationInfoCalculator
+@{
+    Layout = null;
+}
+<link href="@Url.Content("~/dist/css/rera-toggleshow.css")" rel="stylesheet" />
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<style>
+    *.bgdisabled-color {
+        background-color: #F0F0F0;
+    }
+
+    *.bgdisplay-color {
+        background-color: #8fcedd;
+    }
+
+    *.bgspecialdisplay-color {
+        background-color: #7bb73f;
+    }
+
+    .disclaimer-text {
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
+    .dataTables_filter {
+        display: none;
+    }
+
+    .dataTables_info {
+        display: none;
+    }
+
+    .sorder-disable {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var popoverBaseUrl = $('body').attr('data-base-url');
+        //$("[data-toggle=popover]").popover({
+        //    trigger: 'click',
+        //    placement: "right",
+        //    title: '<i class="fa fa-info-circle"></i> Detail of Last Registered Number(s) <a href="javascript:void(0);" class="close" title="Close">&times;</a>',
+        //    html: true,
+        //    content: function () {
+        //        return $('#popover-content').html();
+        //    }
+        //});
+        //$(document).on("click", ".popover .close", function () {
+        //    $('.popover').css('display', 'none');
+        //});
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var baseUrl = $('body').attr('data-base-url');
+
+        $("#submitOrder").click(function (e) {
+            e.preventDefault();           
+            var isAllValid = false;
+
+            if ($('#RegistrationIssueDate_Output').val() != '' && $('#RegistrationValidUptoDate_Output').val() != '') {
+                var xpRelated_Project_ID = $("#Related_Project_ID").val(),
+                    xpRelated_Promoter_ID = $("#Related_Promoter_ID").val(),
+                    xpRegistrationNumber_Output = $("#RegistrationNumber_Output").val(),
+                    xpRegistrationIssueDate_Output = $("#RegistrationIssueDate_Output").val(),
+                    xpRegistrationValidUptoDate_Output = $("#RegistrationValidUptoDate_Output").val(),                    
+                    xpExtensionRegdFlag = $("#IsGeneratedRegistrationNumber").val(),
+                    xpIsDraft = $("#IsDraft").val();
+
+                if (Date.parse(xpRegistrationIssueDate_Output) <= Date.parse(xpRegistrationValidUptoDate_Output)) {
+                    isAllValid = true;
+                }
+                else {
+                    alert('Invalid! Registration issue date should be less than registration valid upto date.');
+                    isAllValid = false;
+                }
+            }
+            else {
+                alert('The mandatory (*) fields are required.');
+                isAllValid = false;
+            }
+
+            if (isAllValid) {
+                var pExtensionRegdFlag = $("#IsGeneratedRegistrationNumber").val(),
+                    pIsDraft = $("#IsDraft").val();
+
+                $("#rowCalA").attr("style", "display:block");
+                $("#rowCalB").attr("style", "display:block");
+                $("#rowCalC").attr("style", "display:block");                
+
+                if (pExtensionRegdFlag > 0) {
+                    $("#lblAlertNumber").text($("#ExtensionRegistrationNumber_Calc").val());
+                    $("#rowCalCI").attr("style", "display:block");
+                    $("#rowCalCII").attr("style", "display:none");
+                    $("#rowCalE").attr("style", "display:none");
+                }
+                else {
+                    $("#rowCalCI").attr("style", "display:none");
+                    if (pIsDraft == 1) {
+                        $("#rowCalCII").attr("style", "display:block");
+                    }
+                    else {
+                        $("#rowCalCII").attr("style", "display:none");
+                    }
+                }                                
+
+                $("#submitOrder").addClass('sorder-disable');
+                $("#submitOrder").prop('disabled', true);
+            }
+        });
+
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).fadeOut(1000, function () {
+                $(projectDetailsModal).modal('hide');
+            });
+        });
+
+        $("#proceedOrder").click(function (e) {
+            e.preventDefault();
+            $("#RERAnumberRegistration").addClass('bgextractdisplay-color');
+            $("#ExtnRegistrationIssueDate").addClass('bgextractdisplay-color');
+            $("#ExtnRegistrationRegUptoDate").addClass('bgextractdisplay-color');
+
+            $("#RERAnumberRegistration").val($("#txtextensionregdnumber").val());
+            $("#ExtnRegistrationIssueDate").val($("#txtextensionregdissuedate").val());
+            $("#ExtnRegistrationRegUptoDate").val($("#txtextensionregduptodate").val());
+
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).modal('hide');
+        });
+    });
+</script>
+<script>
+    $(function () {
+        $('#RegistrationIssueDate_Output').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#RegistrationValidUptoDate_Output').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        $("#txtextensionregdnumber").inputmask({ mask: function () { return ["AAAAAA-AAA99-AA9999"]; } });
+        $('#txtextensionregdissuedate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#txtextensionregduptodate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+    });
+</script>
+<script>
+    $("#myform_FormFiveNumberCalculator").validate({
+        rules: {
+            RegistrationIssueDate_Output: {
+                required: true,                
+                maxlength: 15,
+                minlength: 10
+            },
+            RegistrationValidUptoDate_Output: {
+                required: true,                
+                maxlength: 15,
+                minlength: 10
+            },
+            txtextensionregdissuedate: {
+                required: true,                
+                maxlength: 15,
+                minlength: 10
+            },
+            txtextensionregduptodate: {
+                required: true,                
+                maxlength: 15,
+                minlength: 10
+            }            
+        }
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id = "myform_FormFiveNumberCalculator" }))
+                            {
+                                @Html.HiddenFor(m => m.IsDraft)
+                                @Html.HiddenFor(m => m.Related_Project_ID)
+                                @Html.HiddenFor(m => m.Related_Promoter_ID)
+                                @Html.HiddenFor(m => m.IsGeneratedRegistrationNumber)
+                                @Html.HiddenFor(m => m.ExtensionRegistrationNumber_Calc)
+                                @Html.HiddenFor(m => m.ExtensionRegistrationIssueDate_Calc)
+                                @Html.HiddenFor(m => m.ExtensionRegistrationValidUptoDate_Calc)
+                                @Html.HiddenFor(m => m.setNumberAlreadyExisted_Flag)
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(A.)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label mand">Diary Number</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.DisplayFor(model => model.ExtensionForm_DiaryNumber, new { htmlAttributes = new { @class = "form-control" }
+})
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(B.)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label mand">Registration Number</label>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.DisplayFor(model => model.RegistrationNumber_Output, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(C.)</label>
+                                                    </div>
+                                                    <div class="col-md-11">
+                                                        <label class="control-label">Registration Form/To Date Details</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label mand">(i) Issue Date</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        @Html.EditorFor(model => model.RegistrationIssueDate_Output, new { htmlAttributes = new { @class = "form-control bgdisabled-color" } })
+                                                        @Html.ValidationMessageFor(model => model.RegistrationIssueDate_Output, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label mand">(ii) Valid upto Date</label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        @Html.EditorFor(model => model.RegistrationValidUptoDate_Output, new { htmlAttributes = new { @class = "form-control bgdisabled-color" } })
+                                                        @Html.ValidationMessageFor(model => model.RegistrationValidUptoDate_Output, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-lg-12 text-right">
+                                            <button type = "button" id="submitOrder" class="btn btn-primary"><i class="fa fa-calculator"></i> Generate Number</button>
+                                              <button type = "button" id= "cancelOrder" class="btn btn-primary"><i class="fa fa-refresh"></i> Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="row" id="rowCalA" style="display:none;">                                    
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <a data-html="true" data-toggle="popover" href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>
+                                            <label class="control-label">Extension of Registration of Project Details <i class="fa fa-angle-double-right"></i></label>                                            
+                                        </div>                                        
+                                        <div class="col-md-offset-1 col-md-3">
+                                            <label class="control-label">(i) Extension of Registration of Project's Number</label> 
+                                                                                                                                   
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.ExtensionRegistrationNumber_Calc, new { htmlAttributes = new { @class = "form-control bgdisplay-color", @id = "txtextensionregdnumber" } })
+                                            @Html.ValidationMessageFor(model => model.ExtensionRegistrationNumber_Calc, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-4">                                                                                  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowCalB" style="display:none;">
+                                    <div class="form-group">
+                                        <div class="col-md-offset-1 col-md-3">
+                                            <label class="control-label">(ii) Issue/ Approval Date</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.ExtensionRegistrationIssueDate_Calc, new { htmlAttributes = new { @class = "form-control bgdisplay-color", @id = "txtextensionregdissuedate" } })
+                                            @Html.ValidationMessageFor(model => model.ExtensionRegistrationIssueDate_Calc, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-4">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowCalC" style="display:none;">
+                                    <div class="form-group">
+                                        <div class="col-md-offset-1 col-md-3">
+                                            <label class="control-label">(iii) Extension of Registration Valid Upto Date</label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.EditorFor(model => model.ExtensionRegistrationValidUptoDate_Calc, new { htmlAttributes = new { @class = "form-control bgdisplay-color", @id = "txtextensionregduptodate" } })
+                                            @Html.ValidationMessageFor(model => model.ExtensionRegistrationValidUptoDate_Calc, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-4">                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowCalCI" style="display:none;">                                    
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="alert alert-success alert-dismissable">
+                                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                                <strong>Registration Alert:</strong> Already registered extension of registration of the project! (
+                                                @Html.Label(" ", new { @id = "lblAlertNumber" })
+                                                ) The registration number is correct/ allotted to the perspective project file and you're ready to go.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowCalCII" style="display:none;">
+                                    <div class="form-group">
+                                        <div class="col-md-12 text-right">                                            
+                                            <button type="button" id="proceedOrder" class="btn btn-primary"><i class="fa fa-angle-double-right"></i> Proceed</button> @*disabled="disabled"*@
+                                        </div>
+                                    </div>
+                                </div>                               
+                                <div class="row" id="rowCalE">
+                                    <div class="form-group">
+                                        <div class="col-md-12 disclaimer-text">
+                                            Disclaimer: The generation of the registration number provided herein is based on the information supplied by promoter and verified by authority on the Authority's web-portal.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="popover-content" class="hide">
+                                    <form id="form">
+                                        <div class="form-group">
+                                            <div class="col-lg-12">
+                                                <div class="row">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-4">
+                                                            @Html.LabelFor(model => model.lastdisplayProjectDiaryNumber, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-8">                                                           
+                                                            @Html.DisplayFor(model => model.lastdisplayProjectDiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @*<div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-4">
+                                                            @Html.LabelFor(model => model.lastdisplayProjectName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-8">                                                            
+                                                            @Html.DisplayFor(model => model.lastdisplayProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                    </div>
+                                                </div>*@
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-4">
+                                                            @Html.LabelFor(model => model.lastdisplayRegistrationNumber, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            @Html.DisplayFor(model => model.lastdisplayRegistrationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-4">
+                                                            @Html.LabelFor(model => model.lastdisplayRegistrationIssueDate, htmlAttributes: new { @class = "control-label" })                                                            
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            @Html.DisplayFor(model => model.lastdisplayRegistrationIssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>                                                                                                               
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-4">
+                                                            @Html.LabelFor(model => model.lastdisplayRegistrationValidUptoDate, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            @Html.DisplayFor(model => model.lastdisplayRegistrationValidUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                 
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                           }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                </div>
+            </div>
+            <!-- /.row (panel) -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

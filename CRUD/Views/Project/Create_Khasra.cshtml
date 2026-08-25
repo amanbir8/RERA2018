@@ -1,0 +1,333 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_Project_KhasraAreaDetails
+
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+
+    <script>$.uiBackCompat = false;</script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(document).on('click', '#BtnDrp', function (e) {
+                e.preventDefault();
+                var proceedButton = $(this);
+                var drpText = $(document).find("select#ProjectKhasraAreaRelated_ProjectRegistration_ID").val();
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                    // $("#idMainForm").hide();
+                }
+                else {
+                    $("#idMainForm").show();
+                    $(proceedButton).parents('form').submit();
+                }
+            });
+
+            $(document).on('click', '#BtnMainform', function (e) {
+                var submitButton = $(this);
+                e.preventDefault();
+                var drpText = $(document).find("select#ProjectKhasraAreaRelated_ProjectRegistration_ID").val();
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                    //$("#idMainForm").hide();
+                    drpText = "";
+                    return false;
+                }
+                else {
+                    $(submitButton).parents('form').submit();
+                    // $("#idMainForm").show();
+                }
+
+
+            });
+
+
+            $('table#promoter-documents-list-table').dataTable({
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [3]
+                }],
+                "language": {
+                    "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                    "lengthMenu": "Show _MENU_ records"
+                },
+                "pagingType": "full_numbers"
+            });
+
+        });
+    </script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project Land Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Project Land - Khasra Number(s) Details :- [In case the project consists of more than 10 (ten) Khasra numbers, then fill the details of any 10 Khasras in this section and upload a PDF under the “Project Land Khasra Report or Plan” in the Documents Upload section consisting of the details of all the Khasra numbers as follows:  a) Khasra Number b) Area of land proposed to be developed under the khasra no. c) Name of the village under the khasra no. d) ownership status-Not Owned By Promoter/Owned By Promoter]
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+
+    @using (Html.BeginForm("Dropdownlist", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        <fieldset class="col-md-12">
+            <legend class="my">Select Project</legend>
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <label class="control-label">Select Project</label>
+                    </div>
+                    <div class="col-md-3">
+                        @Html.DropDownListFor(m => m.ProjectKhasraAreaRelated_ProjectRegistration_ID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "Select Project", new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-6">
+                        <input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+    }
+                                    <div @if (Session["Project_id"] != null) { @Html.Raw("style=''")    } else { @Html.Raw("style='display: none;'")    }>
+                                        @using (Html.BeginForm())
+                                        {
+                                            @Html.AntiForgeryToken()
+
+                                            @*<div class="form-horizontal col-md-10" style="position:relative;margin-left:5%;text-align:left;">*@
+                                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                                @Html.HiddenFor(model => model.ProjectKhasraArea_IndexID, htmlAttributes: new { @class = "control-label" })
+                                                @Html.HiddenFor(model => model.ProjectKhasraArea_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.HiddenFor(model => model.ProjectKhasraAreaRelated_ProjectRegistration_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                                        
+                                                @*<div class="form-group">
+                                                        <div class="col-md-10">
+                                                            @Html.HiddenFor(model => model.ProjectKhasraAreaRelated_ProjectRegistration_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                    </div>*@
+
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Project Land - Khasra Number Details</legend>
+
+
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.KhasraNumber_ProposedLand_TobeDeveloped, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.KhasraNumber_ProposedLand_TobeDeveloped, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.ValidationMessageFor(model => model.KhasraNumber_ProposedLand_TobeDeveloped, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.Area_ProposedLand_EachKhasraNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.Area_ProposedLand_EachKhasraNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.ValidationMessageFor(model => model.Area_ProposedLand_EachKhasraNumber, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.A_column, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Name of villages under which the proposed project Khasra falls">
+                                                                            @Html.EditorFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row"  >
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @{var listItems1 = new List<SelectListItem>
+                                                {
+
+                                                    new SelectListItem {  Text = "Select" , Value="", Selected=true  },
+                                                    new SelectListItem {  Text = "Owned By Promoter" , Value="Y"  },
+                                                    new SelectListItem {  Text = "Not Owned By Promoter" , Value="N"  },
+                                                };
+                                                                            }
+                                                                            @Html.LabelFor(model => model.B_column, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DropDownListFor(model => model.B_column, new SelectList(listItems1,   "Value","Text"), new { @class = "form-control" })
+                                                                            @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @*<div class="form-group">
+                                                        @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                        <div class="col-md-10">
+                                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.A_column, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                        <div class="col-md-10">
+                                                            @Html.EditorFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.B_column, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                        <div class="col-md-10">
+                                                            @Html.EditorFor(model => model.B_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.C_column, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                        <div class="col-md-10">
+                                                            @Html.EditorFor(model => model.C_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.C_column, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>*@
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Convert.ToInt32(TempData["ProjectIsdraftValue"]) == 1 || Convert.ToInt32(TempData["ProjectIsdraftValue"]) == 5 || Convert.ToInt32(TempData["ProjectIsdraftValue"]) == 6)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                                }
+                                                                //<input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                            }                                                            
+                                                            &nbsp;
+                                                            @Html.ActionLink("Reset", "Create_Khasra", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @*</div>*@
+                                        }
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                @*<div class="col-md-12">
+                                                                    @Html.ActionLink("Back to List", "Create_Khasra")
+                                                                </div>*@
+                                                                <div class="col-md-12">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                                            <thead>
+                                                                                <tr>                                                                                    
+                                                                                    <th>
+                                                                                        @Html.DisplayNameFor(model => model.KhasraNumber_ProposedLand_TobeDeveloped)
+                                                                                    </th>
+                                                                                    <th>
+                                                                                        @Html.DisplayNameFor(model => model.Area_ProposedLand_EachKhasraNumber)
+                                                                                    </th>
+                                                                                    <th>
+                                                                                        @Html.DisplayName("Project Land Type")
+                                                                                    </th>                                                                                    
+                                                                                    <th>@Html.DisplayName("Edit| Delete")</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @foreach (var item in Model.prpongoing)
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            @Html.DisplayFor(modelItem => item.KhasraNumber_ProposedLand_TobeDeveloped)
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @Html.DisplayFor(modelItem => item.Area_ProposedLand_EachKhasraNumber)
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            @if (item.B_column == "Y")
+                                                                                            {
+                                                                                                @Html.DisplayName("Owned By Promoter")
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                @Html.DisplayName("Not Owned By Promoter")
+                                                                                            }
+                                                                                        </td>                                                                                        
+                                                                                        <td>
+                                                                                            @if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                                                            {
+                                                                                                @Html.ActionLink("View", "Edit_Khasra", new { ProjectKhasra_IndexID = item.ProjectKhasraArea_IndexID, ProjectKhasraRelated_ProjectRegistration_ID = item.ProjectKhasraAreaRelated_ProjectRegistration_ID })                                                                                                
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                @Html.ActionLink("Edit", "Edit_Khasra", new { ProjectKhasra_IndexID = item.ProjectKhasraArea_IndexID, ProjectKhasraRelated_ProjectRegistration_ID = item.ProjectKhasraAreaRelated_ProjectRegistration_ID }) @*@Html.Raw("|")*@ @("| ")
+                                                                                                @Html.ActionLink("Delete", "Delete_Khasra", new { ProjectKhasra_IndexID = item.ProjectKhasraArea_IndexID, ProjectKhasraRelated_ProjectRegistration_ID = item.ProjectKhasraAreaRelated_ProjectRegistration_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                                                            }
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <!-- /.row (nested) -->
+                                            </div>
+                                <!-- /.panel-body -->
+                            </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+    <!-- /.wrapper -->
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    }
+
+
+

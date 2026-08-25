@@ -1,0 +1,121 @@
+H:\save_update_all\CRUD\bin\ApplicationInsights.config
+H:\save_update_all\CRUD\bin\roslyn\csc.exe
+H:\save_update_all\CRUD\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+H:\save_update_all\CRUD\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+H:\save_update_all\CRUD\bin\roslyn\Microsoft.CodeAnalysis.dll
+H:\save_update_all\CRUD\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+H:\save_update_all\CRUD\bin\roslyn\Microsoft.CSharp.Core.targets
+H:\save_update_all\CRUD\bin\roslyn\Microsoft.VisualBasic.Core.targets
+H:\save_update_all\CRUD\bin\roslyn\System.Collections.Immutable.dll
+H:\save_update_all\CRUD\bin\roslyn\System.Reflection.Metadata.dll
+H:\save_update_all\CRUD\bin\roslyn\vbc.exe
+H:\save_update_all\CRUD\bin\roslyn\VBCSCompiler.exe
+H:\save_update_all\CRUD\bin\roslyn\VBCSCompiler.exe.config
+H:\save_update_all\CRUD\bin\CRUD.dll.config
+H:\save_update_all\CRUD\bin\CRUD.dll
+H:\save_update_all\CRUD\bin\CRUD.pdb
+H:\save_update_all\CRUD\bin\Google.Protobuf.dll
+H:\save_update_all\CRUD\obj\Debug\CRUD.dll
+H:\save_update_all\CRUD\obj\Debug\CRUD.pdb
+H:\save_update_all\CRUD\obj\Debug\CRUD.csprojResolveAssemblyReference.cache
+D:\RERA2018 project\CRUD\obj\Debug\CRUD.csprojResolveAssemblyReference.cache
+D:\RERA2018 project\CRUD\bin\ApplicationInsights.config
+D:\RERA2018 project\CRUD\bin\roslyn\csc.exe
+D:\RERA2018 project\CRUD\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+D:\RERA2018 project\CRUD\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+D:\RERA2018 project\CRUD\bin\roslyn\Microsoft.CodeAnalysis.dll
+D:\RERA2018 project\CRUD\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\RERA2018 project\CRUD\bin\roslyn\Microsoft.CSharp.Core.targets
+D:\RERA2018 project\CRUD\bin\roslyn\Microsoft.VisualBasic.Core.targets
+D:\RERA2018 project\CRUD\bin\roslyn\System.Collections.Immutable.dll
+D:\RERA2018 project\CRUD\bin\roslyn\System.Reflection.Metadata.dll
+D:\RERA2018 project\CRUD\bin\roslyn\vbc.exe
+D:\RERA2018 project\CRUD\bin\roslyn\VBCSCompiler.exe
+D:\RERA2018 project\CRUD\bin\roslyn\VBCSCompiler.exe.config
+D:\RERA2018 project\CRUD\bin\CRUD.dll.config
+D:\RERA2018 project\CRUD\bin\CRUD.dll
+D:\RERA2018 project\CRUD\bin\CRUD.pdb
+D:\RERA2018 project\CRUD\bin\EPPlus.dll
+D:\RERA2018 project\CRUD\bin\itextsharp.dll
+D:\RERA2018 project\CRUD\bin\itextsharp.xmlworker.dll
+D:\RERA2018 project\CRUD\bin\QRCoder.dll
+D:\RERA2018 project\CRUD\bin\RazorPDF.dll
+D:\RERA2018 project\CRUD\bin\RazorPDF.Legacy.dll
+D:\RERA2018 project\CRUD\bin\Rotativa.dll
+D:\RERA2018 project\CRUD\bin\EPPlus.xml
+D:\RERA2018 project\CRUD\bin\itextsharp.xml
+D:\RERA2018 project\CRUD\obj\Debug\CRUD.dll
+D:\RERA2018 project\CRUD\obj\Debug\CRUD.pdb
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\ApplicationInsights.config
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\tessdata\eng.traineddata
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\csc.exe
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\System.Collections.Immutable.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\System.Reflection.Metadata.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\vbc.exe
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\VBCSCompiler.exe
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\roslyn\VBCSCompiler.exe.config
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\x86\leptonica-1.80.0.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\x86\tesseract41.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\x64\leptonica-1.80.0.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\x64\tesseract41.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\x86\pdfium.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\CRUD.dll.config
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\CRUD.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\CRUD.pdb
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Apitron.PDF.Rasterizer.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Dapper.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\EPPlus.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Hangfire.AspNet.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Hangfire.Core.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Hangfire.MemoryStorage.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Hangfire.MySql.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Hangfire.SqlServer.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\itextsharp.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\itextsharp.xmlworker.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\MySqlConnector.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\QRCoder.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\RazorPDF.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\RazorPDF.Legacy.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Rotativa.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\System.Buffers.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\System.Memory.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\System.Runtime.CompilerServices.Unsafe.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\System.Threading.Tasks.Extensions.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\WebActivatorEx.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Apitron.PDF.Rasterizer.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Dapper.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\EPPlus.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Hangfire.AspNet.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Hangfire.Core.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\Hangfire.SqlServer.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\itextsharp.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\MySqlConnector.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\System.Buffers.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\System.Memory.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\System.Runtime.CompilerServices.Unsafe.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\System.Threading.Tasks.Extensions.xml
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\ca\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\de\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\es\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\fa\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\fr\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\nb\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\nl\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\pt\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\pt-BR\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\pt-PT\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\sv\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\tr-TR\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\zh\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\bin\zh-TW\Hangfire.Core.resources.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.csprojAssemblyReference.cache
+E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.csproj.CoreCompileInputs.cache
+E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.csproj.CopyComplete
+E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.dll
+E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.pdb

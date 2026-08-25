@@ -1,0 +1,236 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_UserManagerList
+
+@{
+    Layout = null;
+}
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>
+    $(document).ready(function () {       
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var usermanagerModal = $(document).find('#myModal');
+            $(usermanagerModal).fadeOut(1000, function () {
+                $(usermanagerModal).modal('hide');
+            });
+        });
+    });
+</script>
+<style>
+    *.bgdisabled-color {  
+        background-color: #F0F0F0;
+    }
+    .bgdisplay-color {
+        background-color: #8fcedd;
+    }
+    .disclaimer-text {
+        text-align: justify;
+        text-justify: inter-word;
+    }
+    *.displayfontbold-color {
+        background-color: #F0F0F0;
+        font-weight: bold;
+    }
+</style>
+<script>
+    $(function () {
+        $('#usersEmail').attr('Disabled', true);
+        $('#usersPhoneNumber').attr('Disabled', true);
+        $('.radio-emailsoptions').attr('Disabled', true);
+        $('.radio-phonenumberoptions').attr('Disabled', true);
+        $('.radio-twofactoroptions').attr('Disabled', true);
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id = "myformResetViewUserManager" }))
+                            {
+                                @Html.HiddenFor(model => model.rolesId)
+                                @Html.HiddenFor(model => model.usersId)
+                                @Html.HiddenFor(model => model.usersUserName)
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(A.)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                       @Html.LabelFor(model => model.usersUserName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">                                                        
+                                                        <strong>
+                                                            @Html.DisplayFor(model => model.usersUserName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.usersUserName, "", new { @class = "text-danger" })
+                                                        </strong>                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">                                                    
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(B.)</label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.LabelFor(model => model.rolesName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.DisplayFor(model => model.rolesName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.rolesName, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(C.)</label>
+                                                    </div>
+                                                    <div class="col-md-11">
+                                                        Email Address & Phone Number Details
+                                                    </div>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label">(i.)</label>
+                                                        @Html.LabelFor(model => model.usersEmail, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.EditorFor(model => model.usersEmail, new { htmlAttributes = new { @class = "form-control bgdisplay-color" } })
+                                                        @Html.ValidationMessageFor(model => model.usersEmail, "", new { @class = "text-danger" })
+                                                    </div>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label">(ii.)</label>
+                                                        @Html.LabelFor(model => model.usersPhoneNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.EditorFor(model => model.usersPhoneNumber, new { htmlAttributes = new { @class = "form-control bgdisplay-color" } })
+                                                        @Html.ValidationMessageFor(model => model.usersPhoneNumber, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(D.)</label>
+                                                    </div>
+                                                    <div class="col-md-11">
+                                                        Verifications (Email Address & Phone Number) Details
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group"> 
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>                                                   
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(i.) Email Confrimrd (Yes/No)?</label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.usersEmailConfirmed, "1", new { @id = "chkemailsoptionsY", @class = "radio-emailsoptions" }) Yes
+                                                            @Html.RadioButtonFor(model => model.usersEmailConfirmed, "0", new { @id = "chkemailsoptionsN", @class = "radio-emailsoptions" }) No
+                                                        </label>
+                                                        @Html.ValidationMessageFor(model => model.usersEmailConfirmed, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(ii.) Phone Number Confrimrd (Yes/No)?</label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.usersPhoneNumberConfirmed, "1", new { @id = "chkphoneoptionsY", @class = "radio-phonenumberoptions" }) Yes
+                                                            @Html.RadioButtonFor(model => model.usersPhoneNumberConfirmed, "0", new { @id = "chkphoneoptionsN", @class = "radio-phonenumberoptions" }) No
+                                                        </label>
+                                                        @Html.ValidationMessageFor(model => model.usersPhoneNumberConfirmed, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label"></label>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="control-label mand">(iii.) Two-Factor Authentication (Yes/No)?</label>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.usersTwoFactorEnabled, "1", new { @id = "chktwofactoroptionsY", @class = "radio-twofactoroptions" }) Yes
+                                                            @Html.RadioButtonFor(model => model.usersTwoFactorEnabled, "0", new { @id = "chktwofactoroptionsN", @class = "radio-twofactoroptions" }) No
+                                                        </label>
+                                                        @Html.ValidationMessageFor(model => model.usersTwoFactorEnabled, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-lg-12 text-right">                                            
+                                            <button type="button" id="cancelOrder" class="btn btn-primary"><i class="fa fa-refresh"></i> Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>                              
+                                <div class="row" id="rowCalE">
+                                    <div class="form-group">
+                                        <div class="col-md-12 disclaimer-text">
+                                            Disclaimer: Punjab RERA has provided this update options for your convenience only. The email address or phone number of update or reset options provided herein is based on the information supplied by the promoter, So the information provided by the promoter should be verified/ authenticated before updates at the authority's website (RERA web-portal).
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

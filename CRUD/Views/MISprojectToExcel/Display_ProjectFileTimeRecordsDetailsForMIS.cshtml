@@ -1,0 +1,567 @@
+﻿@model CRUD.Models.MISprojectToExcel.Clsprp_MIS_ProjectAverageFileTimeProjectRecordDetails
+
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/js-highcharts/highcharts.js")"></script>
+<script src="@Url.Content("~/js-highcharts/data.js")"></script>
+<script src="@Url.Content("~/js-highcharts/drilldown.js")"></script>
+<script src="@Url.Content("~/js-highcharts/variable-pie.js")"></script>
+
+<link href="@Url.Content("~/dist/css/fixed-plugin.css")" rel="stylesheet" />
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 50,
+            "lengthMenu": [[50, 100, 150, 200, 250], [50, 100, 150, 200, 250]]
+        });
+       
+        $('#btnExportToExcel').click(function () {
+            window.location = BASE_URL + 'MISprojectToExcel/ExportwithDetailRecordsFileTimeToExcel';
+            $('input[type=text]').each(function () {
+                $(this).val('');
+            });
+        });
+
+        $(document).on('click', 'a#modalOpenerRecordsShowButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectpromoterDetailsModal = $(document).find('#myModal');
+            $(projectpromoterDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId             
+            var projectId = $.trim($(parentRow).find('input.hdnRelatedProjectID').val());
+            var promoterId = $.trim($(parentRow).find('input.hdnRelatedPromoterID').val());
+            var applicationflagId = $.trim($(document).find('input.radio-projectregistration:checked').val());            
+            projectId = parseInt(projectId);
+            promoterId = parseInt(promoterId);
+            applicationflagId = parseInt(applicationflagId);
+            $.ajax({
+                url: BASE_URL + 'MISprojectToExcel/ProjectFileTimeRecordsShowNoReplybyPromotersForMIS',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'ProjectId': projectId, 'PromoterId': promoterId, 'ApplicationFlagId': applicationflagId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectpromoterDetailsModal).find('.modal-body').html(response);
+                    $(projectpromoterDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.project-eventactiontype').attr('data-eventactiontype-number'));
+            var projectName = $.trim($(parentRow).find('td.project-eventactiontypename').attr('data-project-eventactiontypename'));
+            $(projectpromoterDetailsModal).find('h4.modal-title').html('No Reply by Promoters Details - <a href="javascript:void(0);"></a>');
+            $(projectpromoterDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectpromoterDetailsModal).modal('show');
+        });
+
+        var vcheckrangevaluedatemode = $("input[name='IsRangeValueDateInputFlag']:checked").val();
+        if (vcheckrangevaluedatemode == '1') {
+            $("#rowDateFilterDD").attr("style", "display:block");
+            $("#rowDateFilterYY").attr("style", "display:none");
+        }
+        else if (vcheckrangevaluedatemode == '2') {
+            $("#rowDateFilterDD").attr("style", "display:none");
+            $("#rowDateFilterYY").attr("style", "display:block");
+        }
+
+        $(document).on('click', '.radio-applicationrangevaluedate', function (e) {
+            if (this.value == '1') {
+                $("#rowDateFilterDD").attr("style", "display:block");
+                $("#rowDateFilterYY").attr("style", "display:none");
+            }
+            else if (this.value == '2') {
+                $("#rowDateFilterDD").attr("style", "display:none");
+                $("#rowDateFilterYY").attr("style", "display:block");
+            }
+        });
+
+    });
+</script>
+<script>
+    $(function () {
+
+        $("#InputEntry_FromDate").datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+
+            onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate() + 1);
+                $("#InputEntry_ToDate").datepicker("option", "minDate", dt);
+            }
+        });
+
+        $("#InputEntry_ToDate").datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+                var projStartDate = $("#InputEntry_FromDate").val();
+                if (projStartDate == '') {
+                    alert('Please select From Date first!');
+                    $("#InputEntry_ToDate").val('');
+                    return false;
+                }
+                var dt = new Date(selected);                
+                dt.setDate(dt.getDate());
+
+                var start = $("#InputEntry_FromDate").datepicker("getDate");
+                var end = $("#InputEntry_ToDate").datepicker("getDate");
+                var days = (end - start) / (1000 * 60 * 60 * 24);
+                if (days>30) {
+                    alert('Please select upto 30 days Only!');
+                    $("#InputEntry_ToDate").val('');
+                    return false;
+                }
+                $("#InputEntry_FromDate").datepicker("option", "maxDate", dt);
+            }
+        });
+    });
+</script>
+<script>
+    $(function () {
+        var baseUrl = $('body').attr('data-base-url');
+        $.ajax({
+            type: "POST",
+            url: baseUrl + "MISprojectToExcel/GetRotatelevelsChartProjectActivityIndexLiveReportsData",
+            datatype: "Json",
+            data: { IndexId: "0" },
+            success: function (data) {              
+                drawRotatedLevelChartProjectAnalysisRecrods(data);
+            },
+            error: function (data) {
+                alert('Bad Request! Invalid Data Details.');
+            }
+        });        
+    });
+    
+    function drawRotatedLevelChartProjectAnalysisRecrods(data) {        
+        var myPieChart = Highcharts.chart('lastactiontyperange-rotated-level-container', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'File Prepared Index/ Analysis (In Days)'
+            },
+            xAxis: {
+                type: 'category',
+                labels: {
+                    rotation: -45,
+                    style: {
+                        fontSize: '12px',
+                        fontFamily: 'Verdana, sans-serif'                        
+                    }
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Number of Days'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                pointFormat: 'File Activity/Index: <b>{point.y:f} days</b>'
+            },
+            series: [{
+                name: 'indexfilerecords',
+                data: data.LiveReportProjectIndexRecordsRotatelevelsChartsData,                    
+                dataLabels: {
+                    enabled: true,                    
+                    color: '#064576',                    
+                    format: '{point.y:f}'                    
+                }
+            }]
+        });
+
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project Report : File Prepared Activity Record Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    
+    <style>
+        .nav-gridshow-tabs > li.active > a {
+            border-top: 2px solid #7bb73f;
+        }
+
+        .nav-gridshow-tabs > li > a {
+            background-color: #eee;
+            color: #333;
+        }
+
+        .display-griddata-tabs > li.active > a {
+            border-top: 2px solid #064576;
+            color: #064576;
+        }
+
+        .display-griddata-tabs > li > a {
+            background-color: #d9edf7;
+            color: #064576;
+        }
+
+        .main_content {
+            width: auto;
+        }
+    </style>
+
+    <div class="row" style="margin-bottom:5px;">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs nav-gridshow-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" href="@Url.Action("Display_ProjectFileTimeDetailsForMIS", "MISprojectToExcel")" role="tab" aria-controls="profile" aria-selected="false">Elementary Records</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link active" id="home-tab" href="@Url.Action("Display_ProjectFileTimeRecordsDetailsForMIS", "MISprojectToExcel")" role="tab" aria-controls="home" aria-selected="true">Detailed Records</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="home-tab" href="@Url.Action("Display_ProjectFileTimeAverageRecordsDetailsForMIS", "MISprojectToExcel")" role="tab" aria-controls="home" aria-selected="false">Average Records</a>
+                </li>                
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    List of Activities/ Detailed Records [File Prepared Index/ Analysis] Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("Display_ProjectFileTimeRecordsDetailsForMIS", "MISprojectToExcel", FormMethod.Post, new { enctype = "multipart/form-data", @id = "ProjectRecordsFilePreparedRecord" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Options</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Search For</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "51", new { id = "chkProjectRegistration", @class = "radio-projectregistration", @checked = "checked" }) Project Registration 
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "52", new { id = "chkExtensionRegistration", @class = "radio-projectregistration" }) Extension of Registration 
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "53", new { id = "chkProjectCompletion", @class = "radio-projectregistration" }) Project Completion 
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsApplicationModeFlag, "", new { @class = "text-danger" })
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Date Range Option</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsApplicationDateFlag, "21", new { id = "chkApplicationDate", @class = "radio-applicationdate", @checked = "checked" }) Application Received/Submitted 
+                                                    @Html.RadioButtonFor(model => model.IsApplicationDateFlag, "23", new { id = "chkApprovalDate", @class = "radio-approvaldate" }) Application Approved for Registration  
+                                                    @Html.RadioButtonFor(model => model.IsApplicationDateFlag, "24", new { id = "chkNoReplyByPromoterDate", @class = "radio-noreplypromoterdate" }) In-Complete Application (No Reply by Promoters)
+                                                    @Html.RadioButtonFor(model => model.IsApplicationDateFlag, "22", new { id = "chkActionDate", @class = "radio-actiondate" }) Last action by RERA 
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsApplicationDateFlag, "", new { @class = "text-danger" })
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Entry Date Type</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsRangeValueDateInputFlag, "1", new { id = "chkApplicationDate", @class = "radio-applicationrangevaluedate", @checked = "checked" }) From-Date/To-Date
+                                                    @Html.RadioButtonFor(model => model.IsRangeValueDateInputFlag, "2", new { id = "chkApprovalDate", @class = "radio-applicationrangevaluedate" }) Month/Year
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsRangeValueDateInputFlag, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="rowDateFilterDD">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                @Html.LabelFor(model => model.InputEntry_FromDate, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.InputEntry_FromDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @onfocus = "this.value=''" } })
+                                                @Html.ValidationMessageFor(model => model.InputEntry_FromDate, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                @Html.LabelFor(model => model.InputEntry_ToDate, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.InputEntry_ToDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @onfocus = "this.value=''" } })
+                                                @Html.ValidationMessageFor(model => model.InputEntry_ToDate, "", new { @class = "text-danger" })
+                                            </div>                                           
+                                            <div class="col-md-2">
+                                                <input type="submit" id="ViewDetailDD" value="View Details" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" id="rowDateFilterYY">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                @Html.LabelFor(model => model.EventMonth, htmlAttributes: new { @class = "control-label mand" })
+                                                @{var listItemsEventMonth = new List<SelectListItem>
+                                                    {
+                                                        new SelectListItem {  Text = "--Select--" , Value="0"  },
+                                                        new SelectListItem {  Text = "January" , Value="1"  },
+                                                        new SelectListItem {  Text = "February" , Value="2"  },
+                                                        new SelectListItem {  Text = "March" , Value="3"  },
+                                                        new SelectListItem {  Text = "April" , Value="4"  },
+                                                        new SelectListItem {  Text = "May" , Value="5"  },
+                                                        new SelectListItem {  Text = "June" , Value="6"  },
+                                                        new SelectListItem {  Text = "July" , Value="7"  },
+                                                        new SelectListItem {  Text = "August" , Value="8"  },
+                                                        new SelectListItem {  Text = "September" , Value="9"  },
+                                                        new SelectListItem {  Text = "October" , Value="10"  },
+                                                        new SelectListItem {  Text = "November" , Value="11"  },
+                                                        new SelectListItem {  Text = "December" , Value="12"  },
+                                                    };
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownListFor(model => model.EventMonth, new SelectList(listItemsEventMonth, "Value", "Text"), new { @id = "drpEventMonth", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.EventMonth, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                @Html.LabelFor(model => model.EventYear, htmlAttributes: new { @class = "control-label mand" })
+                                                @{var listItemsEventYear = new List<SelectListItem>
+                                                    {
+                                                        new SelectListItem {  Text = "--Select--" , Value="0"  },
+                                                        new SelectListItem {  Text = "2016" , Value="2016"  },
+                                                        new SelectListItem {  Text = "2017" , Value="2017"  },
+                                                        new SelectListItem {  Text = "2018" , Value="2018"  },
+                                                        new SelectListItem {  Text = "2019" , Value="2019"  },
+                                                        new SelectListItem {  Text = "2020" , Value="2020"  },
+                                                        new SelectListItem {  Text = "2021" , Value="2021"  },
+                                                        new SelectListItem {  Text = "2022" , Value="2022"  },
+                                                        new SelectListItem {  Text = "2023" , Value="2023"  },
+                                                        new SelectListItem {  Text = "2024" , Value="2024"  },
+                                                        new SelectListItem {  Text = "2025" , Value="2025"  },
+                                                        new SelectListItem {  Text = "2026" , Value="2026"  },
+                                                        new SelectListItem {  Text = "2027" , Value="2027"  },
+                                                        new SelectListItem {  Text = "2028" , Value="2028"  },
+                                                        new SelectListItem {  Text = "2029" , Value="2029"  },
+                                                        new SelectListItem {  Text = "2030" , Value="2030"  },
+                                                    };
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownListFor(model => model.EventYear, new SelectList(listItemsEventYear, "Value", "Text"), new { @id = "drpEventYear", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.EventYear, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="submit" id="ViewDetailYY" value="View Details" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </fieldset>
+                            }
+                            <div class="row">
+                                <br />
+                            </div>                            
+                            @using (Html.BeginForm("ExportwithDetailRecordsFileTimeToExcel", "MISprojectToExcel"))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <span class="btn btn-outline btn-primary" id="btnExportToExcel">
+                                                <i class="fa fa-download"></i>
+                                                <span>Export To Excel</span>                                                
+                                            </span>
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "Display_ProjectFileTimeRecordsDetailsForMIS", "MISprojectToExcel", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                <div class="col-md-12">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div>
+                                        <div class="main_content" id="main-content">
+                                            <ul class="nav nav-tabs display-griddata-tabs">
+                                                <li class="nav-item active">
+                                                    <a class="nav-link active" data-toggle="tab" href="#Data-info">Data</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#Graph-info">Graph</a>
+                                                </li>
+                                            </ul>
+
+                                            <!-- Tab panes -->
+                                            <div class="tab-content">
+                                                <!--   Data-info   -->
+                                                <div class="tab-pane active" id="Data-info">
+                                                    <div id="main-content">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="table-responsive">
+                                                                    <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>@Html.DisplayName("SNo")</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.Project_DiaryNumber)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.ApplicationDate_IdentifiedOn)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.Project_Name)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.ApplicationApprovalDate)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.RegistrationApproval_Days)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.LastActionbyRERA_Days)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.ApplicationRecipt_Days)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.A_column)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.LastActivity_EventAction_Aggregate)</th>
+                                                                                <th>@Html.DisplayNameFor(model => model.LastActivity_EventAction_IdentifiedOn)</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @{
+                                                                                int sno = 0;
+                                                                            }
+                                                                            @foreach (var item in Model.prpongoing)
+                                                                            {
+                                                                                {
+                                                                                    sno = sno + 1;
+                                                                                }
+                                                                                <tr class="odd gradeX">
+                                                                                    <td>@Html.DisplayName(sno.ToString())</td>
+                                                                                    <td class="project-eventactiontype" data-eventactiontype-number="@Html.DisplayFor(modelItem => item.Project_DiaryNumber)">
+                                                                                        @Html.DisplayFor(modelItem => item.Project_DiaryNumber)
+                                                                                        @Html.HiddenFor(modelItem => item.Related_Project_ID, new { @class = "hdnRelatedProjectID" })
+                                                                                        @Html.HiddenFor(modelItem => item.Related_Promoter_ID, new { @class = "hdnRelatedPromoterID" })
+                                                                                        @Html.HiddenFor(modelItem => item.IsApplicationModeFlag, new { @class = "hdnApplicationModeFlag" })                                                                                        
+                                                                                    </td>
+                                                                                    <td class="project-eventactiontypename" data-project-eventactiontypename="@Html.DisplayFor(modelItem => item.Project_Name)">
+                                                                                        @Html.DisplayFor(modelItem => item.ApplicationDate_IdentifiedOn)
+                                                                                    </td>
+                                                                                    <td>@Html.DisplayFor(modelItem => item.Project_Name)</td>
+                                                                                    <td>
+                                                                                        @if (item.ApplicationApprovalDate.Value.ToString("MM/dd/yyyy") == "01/01/0001")
+                                                                                        {
+                                                                                            @Html.DisplayName("--")
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @Html.DisplayFor(modelItem => item.ApplicationApprovalDate)
+                                                                                        }
+                                                                                    <td>@Html.DisplayFor(modelItem => item.RegistrationApproval_Days)</td>
+                                                                                    <td>@Html.DisplayFor(modelItem => item.LastActionbyRERA_Days)</td>
+                                                                                    <td>@Html.DisplayFor(modelItem => item.ApplicationRecipt_Days)</td>
+                                                                                    <td>
+                                                                                        <a id="modalOpenerRecordsShowButton" href="javascript:void(0);" title="View Details">@Html.DisplayFor(modelItem => item.A_column)</a>                                                                                    
+                                                                                    </td>
+                                                                                    <td>@Html.DisplayFor(modelItem => item.LastActivity_EventAction_Aggregate)</td>
+                                                                                    <td>@Html.DisplayFor(modelItem => item.LastActivity_EventAction_IdentifiedOn)</td>
+                                                                                </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--   Graph-info   -->
+                                                <div class="tab-pane fade" id="Graph-info">
+                                                    <div id="main-content">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="flot-chart dashboard-piecharts-frame">
+                                                                    <div id="lastactiontyperange-rotated-level-container"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Project's Activity Index Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet"></link> 
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script> 
+    
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>  
+}

@@ -1,0 +1,268 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_Project_Litigations
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+
+    <script>$.uiBackCompat = false;</script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#idMainForm").hide();
+            $(document).on('click', '#BtnDrp', function (e) {
+                e.preventDefault();
+                var proceedButton = $(this);
+                var drpText = $(document).find("select#LitigationsRelated_ProjectRegistration_ID").val();
+                //alert(drpText)
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                    // $("#idMainForm").hide();
+                }
+                else {
+                    $("#idMainForm").show();
+                    $(proceedButton).parents('form').submit();
+                }
+            });
+
+            $(document).on('click', '#BtnMainform', function (e) {
+                var submitButton = $(this);
+                e.preventDefault();
+                var drpText = $(document).find("select#LitigationsRelated_ProjectRegistration_ID").val();
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                    //$("#idMainForm").hide();
+                    drpText = "";
+                    return false;
+                }
+                else {
+                    $(submitButton).parents('form').submit();
+                     $("#idMainForm").show();
+                }
+            });
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('table#promoter-documents-list-table').dataTable({
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [3]
+                }],
+                "language": {
+                    "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                    "lengthMenu": "Show _MENU_ records"
+                },
+                "pagingType": "full_numbers"
+            });
+
+        });
+    </script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project Litigation(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Litigation(s) Related to Project (If Any) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm("DropdownlistLitigations", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Project</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label">Select Project</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownListFor(m => m.LitigationsRelated_ProjectRegistration_ID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "Select Project", new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                            }
+                            <div @if (Session["Project_id"] != null) { @Html.Raw("style=''")       } else { @Html.Raw("style='display: none;'")       }>
+
+                                @using (Html.BeginForm())
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                    @Html.HiddenFor(model => model.ProjectLitigations_IndexID, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.ProjectLitigations_ID, htmlAttributes: new { @class = "control-label" })
+                                    @Html.HiddenFor(model => model.LitigationsRelated_ProjectRegistration_ID, htmlAttributes: new { @class = "control-label" })
+
+
+                                    @*<label class="control-label col-md-2">Select Project</label>
+                    @Html.DropDownListFor(m => m.LitigationsRelated_ProjectRegistration_ID, new SelectList(ViewBag.list, "ProjectRegistration_ID", "Project_Name"), "Select Project", new { @class = "form-control" })*@
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my">Litigations Details</legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => model.Case_Title, htmlAttributes: new { @class = "control-label mand" })
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Title of the Litigation related to the Project.">
+                                                                    @Html.EditorFor(model => model.Case_Title, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    @Html.ValidationMessageFor(model => model.Case_Title, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => model.Case_Number, htmlAttributes: new { @class = "control-label mand" })
+                                                                </div>
+                                                                <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Reference Number of Litigation related to the Project.">
+                                                                    @Html.EditorFor(model => model.Case_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    @Html.ValidationMessageFor(model => model.Case_Number, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => model.AuthorityForumName_CasePendingResolved, htmlAttributes: new { @class = "control-label mand" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.EditorFor(model => model.AuthorityForumName_CasePendingResolved, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    @Html.ValidationMessageFor(model => model.AuthorityForumName_CasePendingResolved, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-10">
+                                                            @if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled = "disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Convert.ToInt32(TempData["ProjectIsdraftValue"]) == 1 || Convert.ToInt32(TempData["ProjectIsdraftValue"]) == 5 || Convert.ToInt32(TempData["ProjectIsdraftValue"]) == 6)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                                }
+                                                                // <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                            }                                                            
+                                                            &nbsp;
+                                                            @Html.ActionLink("Reset", "Create_litigations", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                }
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.Case_Title)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.Case_Number)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.AuthorityForumName_CasePendingResolved)
+                                                            </th>
+
+                                                            <th>@Html.DisplayName("Edit| Delete")</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var item in Model.prpongoing)
+                                                        {
+                                                            <tr>
+
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Case_Title)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Case_Number)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.AuthorityForumName_CasePendingResolved)
+                                                                </td>
+
+                                                                <td>
+                                                                    @if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                                    {
+                                                                        @Html.ActionLink("View", "Edit_Litigations", new { ProjectLitigations_IndexID = item.ProjectLitigations_IndexID, ProjectRegistration_ID = item.LitigationsRelated_ProjectRegistration_ID })                                                                        
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.ActionLink("Edit", "Edit_Litigations", new { ProjectLitigations_IndexID = item.ProjectLitigations_IndexID, ProjectRegistration_ID = item.LitigationsRelated_ProjectRegistration_ID }) @("| ")
+                                                                        @Html.ActionLink("Delete", "Delete_Litigations", new { ProjectLitigations_IndexID = item.ProjectLitigations_IndexID, ProjectRegistration_ID = item.LitigationsRelated_ProjectRegistration_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                </div>
+                <!-- /.row (nested) -->
+            </div>
+                                <!-- /.panel-body -->
+                        </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+    <!-- /.wrapper -->
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    }
+

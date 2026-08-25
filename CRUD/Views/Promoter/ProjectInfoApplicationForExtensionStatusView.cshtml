@@ -1,0 +1,185 @@
+﻿@model CRUD.Models.Promoter.ClsPrp_Project_DiaryNumberPromoterDashbaord
+
+@{
+    Layout = null;
+}
+
+<script>
+
+    function rowContentwithformat(d, Index) {
+        
+        var parmRegDiaryNumberName = $.trim($(d).find('#hdnVarPromoterRegDiaryNumber_Name' + Index).val());
+        var parmProjectName = $.trim($(d).find('#hdnVarProject_Name' + Index).val());
+        var parmRERAregistrationNumber = $.trim($(d).find('#hdnVarProject_RERAregistrationNumber' + Index).val());
+        var parmEventActionAggregateStatement = $.trim($(d).find('#hdnVarEventAction_Aggregate' + Index).val());
+        var parmEventActionIdentifiedOnDate = $.trim($(d).find('#hdnVarEventAction_IdentifiedOn' + Index).val());
+
+        var fromDate = new Date(parmEventActionIdentifiedOnDate);      
+        parmEventActionIdentifiedOnDate = formatDate(fromDate);
+                
+        var parmProjectDNumber = $('input#projectDiaryNumberId').val();
+
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+            '<tr>' +
+                '<td><b>Diary Number:</b></td>' +
+                '<td><b>' + parmRegDiaryNumberName + '</b> (Application for Extension)</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td><b>Project:</b></td>' +
+                '<td>' + parmProjectName + '</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td><b>Project Diary Number:</b></td>' +
+                '<td>' + parmProjectDNumber + '</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td><b>Registration Number:</b></td>' +
+                '<td>' + parmRERAregistrationNumber + '</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td colspan="2"><hr/></td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td><b>Status Date:</b></td>' +
+                '<td>' + parmEventActionIdentifiedOnDate + '</td>' +
+            '</tr>' +
+            '<tr>' +
+                '<td><b>Status Remarks:</b></td>' +
+                '<td align="justify">' + parmEventActionAggregateStatement + '</td>' +
+            '</tr>' +
+        '</table>';
+    }
+
+    function formatDate(date) {
+        var monthNames = ["January", "February", "March", "April", "May", "June", "July",
+          "August", "September", "October", "November", "December"];
+        var monthShortNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
+        var day = date.getDate();
+        if (day < 10) {
+            day = '0' + day;
+        }
+        var monthIndex = date.getMonth();
+        var year = date.getFullYear();
+        return day + '-' + monthShortNames[monthIndex] + '-' + year;
+    }
+
+    $(document).ready(function () {
+
+        $('#TableFormEcontentStatus tbody').on('click', 'td.details-control', function (e) {
+            e.preventDefault();
+
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var qdataArrayIndex = $.trim($(parentRow).find('td.hdn-array-number').attr('data-array-number'));
+
+            var mtable = $('#TableFormEcontentStatus').DataTable();
+            var tr = $(this).closest('tr');
+            var row = mtable.row(tr);
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+                $('#TableFormEmyRowCheckListStatusRemarks').hide();
+            }
+            else {
+                row.child(rowContentwithformat(row.data(), qdataArrayIndex)).show();
+                tr.addClass('shown');
+                $('#TableFormEmyRowCheckListStatusRemarks').show();
+            }            
+        });
+    });
+</script>
+<style>
+    td.details-control:after {
+        font-family: FontAwesome;
+        content: "\f0fe";
+        color: grey;
+        cursor: pointer;
+    }
+
+    tr.shown td.details-control:after {
+        font-family: FontAwesome;
+        content: "\f146";
+        color: #FF4961;
+    }
+
+    /*.dataTables_filter, .dataTables_info, .dataTables_paginate, .dataTables_length { display: none; }*/
+
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="TableFormEcontentStatus" class="table table-striped table-bordered table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th><i class="fa fa-list-ol" aria-hidden="true"></i></th>
+                        <th>@Html.DisplayNameFor(model => model.EventAction_IdentifiedOn)</th>                        
+                        <th>@Html.DisplayNameFor(model => model.EventAction_Aggregate)</th>                                             
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int sno = 0;
+                    }
+                    @foreach (var item in Model.prpongoing)
+                    {
+                        {
+                            sno = sno + 1;
+                        }
+                        <tr>
+                            <td class="details-control"></td>
+                            <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>                            
+                            <td class="hdn-array-number" data-array-number="@sno.ToString()">
+                                @Html.DisplayFor(modelItem => item.EventAction_Aggregate)
+                                @Html.HiddenFor(modelItem => item.PromoterRegDiaryNumber_Name, new { @id = "hdnVarPromoterRegDiaryNumber_Name" + sno.ToString() })
+                                @Html.HiddenFor(modelItem => item.Project_Name, new { @id = "hdnVarProject_Name" + sno.ToString() })
+                                @Html.HiddenFor(modelItem => item.Project_RERAregistrationNumber, new { @id = "hdnVarProject_RERAregistrationNumber" + sno.ToString() })
+                                @Html.HiddenFor(modelItem => item.EventAction_Aggregate, new { @id = "hdnVarEventAction_Aggregate" + sno.ToString() })
+                                @Html.HiddenFor(modelItem => item.EventAction_IdentifiedOn, new { @id = "hdnVarEventAction_IdentifiedOn" + sno.ToString() })
+                            </td>                                                      
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (Model.AppExtnCheckListContent != null)
+{
+    <div id="TableFormEmyRowCheckListStatusRemarks" class="row" style="display:none;">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table id="TableFormEcontentCheckListStatusRemarks" class="table table-striped table-bordered table-hover" style="width: 100%;">
+                    <thead>
+                        <tr>  
+                            <th><i class="fa fa-table" aria-hidden="true" style="color:#FF4961;"></i></th>                      
+                            <th>@Html.DisplayName("Check-list Name")</th>
+                            <th>@Html.DisplayName("Remarks, If Any")</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sxno = 0;
+                        }
+                        @foreach (var item in Model.AppExtnCheckListContent)
+                        {
+                            {
+                                sxno = sxno + 1;
+                            }
+                            <tr>
+                                <td>@Html.DisplayName(sxno.ToString())</td>                            
+                                <td>@Html.DisplayFor(modelItem => item.CriteriaSubCode)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

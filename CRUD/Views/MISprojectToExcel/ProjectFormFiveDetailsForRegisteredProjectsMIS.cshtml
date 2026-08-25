@@ -1,0 +1,142 @@
+﻿@model CRUD.Models.MISprojectToExcel.ClsprpMIS_ProjectStatementofAccountsFormFive
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Project Details</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_Name, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_Name, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Promoter_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RERAnumberRegistration, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                        
+                    </fieldset>
+                </div>
+            </div>
+        </div>     
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Audited Annual Reports on Statement of Accounts Details</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.FinancialYear_EndingOnDate, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.FinancialYear_EndingOnDate, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.Label("Form-5 Submitted Date", htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.ModifyOn, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Percentage_of_Completion, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Percentage_of_Completion, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName("%")
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.ExplanatoryNote, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.ExplanatoryNote, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.CollectedDuring_FinancialYear_Amount_INR, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.CollectedDuring_FinancialYear_Amount_INR, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName("/-")
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.CollectedTillDate_Amount_INR, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.CollectedTillDate_Amount_INR, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName("/-")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.WithdrawDuring_FinancialYear_Amount_INR, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.WithdrawDuring_FinancialYear_Amount_INR, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName("/-")
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.WithdrawnTillDate_Amount_INR, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.WithdrawnTillDate_Amount_INR, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName("/-")
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                         
+                    </fieldset>
+                </div>
+            </div>
+        </div>  
+    </div>
+</div>

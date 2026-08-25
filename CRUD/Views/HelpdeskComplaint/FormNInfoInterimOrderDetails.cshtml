@@ -1,0 +1,54 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormN_PreHearingInterimOrder
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.IntrimOrderDoc_InfoName)</th>
+                        <th>@Html.DisplayNameFor(model => model.IntrimOrderDoc_ReferenceNumber)</th>
+                        <th>@Html.DisplayNameFor(model => model.IntrimOrderDoc_IssueDate)</th>                        
+                        <th>@Html.DisplayNameFor(model => model.Upload_PageStartNumber)</th>
+                        <th>@Html.DisplayNameFor(model => model.Remarks_IfAny)</th>
+                        <th>
+                            @Html.DisplayName("View")
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int pagelastnumber = 0;
+                    }
+                    @foreach (var item in Model.prpongoing)
+                    {
+                        {
+                            pagelastnumber = item.Upload_PageStartNumber + item.Upload_PageEndNumber - 1;
+                        }
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.IntrimOrderDoc_InfoName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.IntrimOrderDoc_ReferenceNumber)</td>
+                            <td>@Html.DisplayFor(modelItem => item.IntrimOrderDoc_IssueDate)</td>                            
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Upload_PageStartNumber)
+                                @Html.DisplayName(" (Pages ")
+                                @Html.DisplayFor(modelItem => item.Upload_PageEndNumber)
+                                @Html.DisplayName(" to ")
+                                @Html.DisplayName(pagelastnumber.ToString())
+                                @Html.DisplayName(" )")
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                            <td>
+                                <a href="~/@Html.DisplayFor(modelItem => item.IntrimOrderDoc_FilePath)/@Html.DisplayFor(modelItem => item.IntrimOrderDoc_FileName)" target="_blank"><i class="fa fa-external-link-square"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

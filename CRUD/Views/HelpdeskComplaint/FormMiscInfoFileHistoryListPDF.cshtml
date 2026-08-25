@@ -1,0 +1,133 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthorityDesk_FormMiscEventLog
+
+@{
+    Layout = null;
+}
+
+<style>
+    .rpt-pdf-display-font-bold {
+        font-weight: bold;
+    }
+
+    .rpt-pdf-display-border-box {
+        padding: 9px;
+        border: 1px solid #4CAF50;
+        text-align: justify;
+        font-size: 15px;
+    }
+
+    .rpt-pdf-display-border-inner-box-shadow {
+        padding: 6px;
+        font-size: 14px;
+        background-color: lightgrey;
+        font-style: italic;
+    }
+
+    .rpt-pdf-display-border-top-box {
+        padding: 9px 9px 9px 9px;
+        font-size: 15px;
+        background-color: lightgrey;
+    }
+
+    .rpt-pdf-display-border-title-box {
+        padding: 9px 9px 9px 9px;
+        border: 1px solid #ccc;
+        font-weight: bold;
+        font-size: 15px;
+        /*border-bottom: 1px solid #ddd;*/
+    }
+
+    .rpt-pdf-display-norecordsfound {
+        font-style: italic;
+        font-size: medium;
+        border: 1px solid #ccc;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.prpongoing != null)
+                {
+
+                    var varDate = System.DateTime.Now.Date;
+                    <tr>
+                        <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                        <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                    </tr>
+                        <tr><td colspan="4" class="rpt-pdf-display-border-title-box">@Html.DisplayName("Form-Unregistered Project Complaint File Status Report")</td></tr>
+                        <tr><td colspan="4"><br /><br /></td></tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Complaint Diary Number")</td>
+                            <td width="35%" class="rpt-pdf-display-font-bold">@Html.DisplayFor(model => model.zapRelated_RegDiaryNumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.zapComplainantName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td class="rpt-pdf-display-font-bold">@Html.DisplayFor(model => model.zapComplainantName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr><td colspan="4"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("File Status Details")</h4></td></tr>
+                }
+                else
+                {
+                    <tr><td colspan="4"><br /><br /></td></tr>
+                    <tr><td colspan="4" class="rpt-pdf-display-norecordsfound">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4"><br /><br /></td></tr>
+                }
+            </table>
+            @if (Model.prpongoing != null)
+            {
+                <table class="table table-striped table-bordered table-hover checklist-details-table" style="width:100%;">
+                    <thead>                        
+                        <tr>
+                            <th class="rpt-pdf-display-border-top-box">@Html.DisplayName("SNo")</th>
+                            <th class="rpt-pdf-display-border-top-box">@Html.DisplayNameFor(model => model.EventAction_IdentifiedOn)</th>
+                            <th class="rpt-pdf-display-border-top-box">@Html.DisplayName("Diary Number")</th>
+                            <th class="rpt-pdf-display-border-top-box">@Html.DisplayNameFor(model => model.EventAction_Aggregate)</th>          
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int sno = 0;
+                        }
+                        <tr><td colspan="4"><hr /></td></tr>
+                        @foreach (var item in Model.prpongoing)
+                        {
+                            {
+                                sno = sno + 1;
+                            }
+                            <tr class="odd gradeX">
+                                <td width="8%" valign="top" class="rpt-pdf-display-font-bold rpt-pdf-display-border-box">@Html.DisplayName('(' + sno.ToString() + ')')</td>
+                                <td width="15%" valign="top" class="rpt-pdf-display-font-bold rpt-pdf-display-border-box">@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+                                <td width="15%" valign="top" class="rpt-pdf-display-border-box">@Html.DisplayFor(modelItem => item.Related_RegDiaryNumber)</td>
+                                <td width="62%" valign="top" class="rpt-pdf-display-border-box">@Html.DisplayFor(modelItem => item.EventAction_Aggregate)</td>
+                            </tr>                            
+                            <tr class="odd gradeX">
+                                <td width="8%" valign="top"></td>
+                                <td width="95%" valign="top" colspan="3" class="rpt-pdf-display-border-box">
+                                    <span class="rpt-pdf-display-border-inner-box-shadow">@Html.DisplayNameFor(model => model.Remarks_IfAny)</span>:
+                                    &nbsp;
+                                    @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                </td>
+                            </tr>
+                            <tr><td colspan="5"><br /><br /></td></tr>
+                        }
+                        <tr><td colspan="5"><hr /></td></tr> 
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                    <tr><td colspan="4"><br /><br /></td></tr>
+                    <tr><td colspan="4" class="rpt-pdf-display-norecordsfound">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4"><br /><br /></td></tr>
+                </table>
+            }
+        </div>
+    </div>
+</div>

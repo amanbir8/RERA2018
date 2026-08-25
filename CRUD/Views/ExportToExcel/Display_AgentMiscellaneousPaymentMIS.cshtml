@@ -1,0 +1,279 @@
+﻿@model CRUD.Models.PaymentToExcel_MIS.ClsprpMIS_AgentPayment
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+
+        $('#btnExportToExcel').click(function () {
+            window.location = '../ExportToExcel/AgentRegistrationExportToExcel';
+            $('input[type=text]').each(function () {
+                $(this).val('');
+            });
+        });
+    });
+</script>
+<script>
+    $(function () {
+
+        $("#frmfromdate").datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+
+            onSelect: function (selected) {
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate() + 1);
+                $("#frmtodate").datepicker("option", "minDate", dt);
+            }
+        });
+
+        $("#frmtodate").datepicker({
+            dateFormat: 'dd-M-yy',
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+                var projStartDate = $("#frmfromdate").val();
+                if (projStartDate == '') {
+                    alert('Please select From Date first!');
+                    $("#frmtodate").val('');
+                    return false;
+                }
+                var dt = new Date(selected);
+                dt.setDate(dt.getDate());
+                $("#frmfromdate").datepicker("option", "maxDate", dt);
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $(document).on('click', '#ViewDetail', function (e) {
+            e.preventDefault();
+            var proceedButton = $(this);
+            var ddfromdate = $(document).find("#frmfromdate").val();
+            var ddtodate = $(document).find("#frmtodate").val();
+            //alert(drpText)
+            if ($.trim(ddfromdate) == "" || $.trim(ddtodate) == "") {
+                alert("Please select the transactions Date")
+                return false;
+            }
+            else {                
+                $(proceedButton).parents('form').submit();
+            }
+        });
+    });
+</script>
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+<script>
+    $(function () {
+
+        $('table#payments-list-table').dataTable({
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Payment Report : List of Payment(s)/ Transaction(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <style>
+        .nav-tabs > li.active > a {
+            border-top: 2px solid #7bb73f;
+        }
+
+        .nav-tabs > li > a {
+            background-color: #eee;
+            color: #333;
+        }
+    </style>
+
+    <div class="row" style="margin-bottom:5px;">
+        <div class="col-lg-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="agentReg-tab" href="@Url.Action("Display_AgentPaymentMIS", "ExportToExcel")" role="tab" aria-controls="home" aria-selected="true">Registration Payments</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="agentRenewal-tab" href="@Url.Action("Display_AgentRenewalPaymentMIS", "ExportToExcel")" role="tab" aria-controls="formM" aria-selected="false">Renewal of Registration Payments</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link active" id="agentMisc-tab" href="@Url.Action("Display_AgentMiscellaneousPaymentMIS", "ExportToExcel")" role="tab" aria-controls="formN" aria-selected="false">Miscellaneous Payments</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Agent Registration Payment(s)/ Transaction(s) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("Display_AgentMiscellaneousPaymentMIS", "ExportToExcel", FormMethod.Post, new { enctype = "multipart/form-data", @id = "PaymentMIS" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Transactions Date</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">From Date</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="text" id="frmfromdate" onfocus="this.value=''" name="FromDate" class = "form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">To Date</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="text" id="frmtodate" name="ToDate" class="form-control" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input type="submit" id="ViewDetail" value="View Details" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>                                
+                            }  
+                            <div class="row">
+                                <br />
+                            </div>                          
+                            @using (Html.BeginForm("AgentRegistrationExportToExcel", "ExportToExcel"))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <span class="btn btn-outline btn-primary" id="btnExportToExcel">
+                                                <i class="fa fa-download"></i>
+                                                <span>Export To Excel</span>
+                                                @*<input type="submit"  class="" />*@
+                                            </span>
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "Display_AgentMiscellaneousPaymentMIS", "ExportToExcel", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            @if (Model.prpongoing != null)
+                                            {
+                                                <table class="table table-striped table-bordered" id="payments-list-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>@Html.DisplayName("Sr No")</th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.Agent_Diary_Number)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.RealEstate_Agent_Name)
+                                                            </th>                                                            
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.PG_PayU_ID)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.Payment_Success_Date)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.PG_Payment_Description)
+                                                            </th>
+                                                            <th style="width: 15%; text-align:center;">
+                                                                @Html.DisplayNameFor(model => model.Amount)
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            int snopayment = 0;
+                                                        }
+                                                        @foreach (var item in Model.prpongoing)
+                                                        {
+                                                            {
+                                                                snopayment = snopayment + 1;
+                                                            }
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.DisplayName(snopayment.ToString())
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Agent_Diary_Number)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.RealEstate_Agent_Name)
+                                                                </td>                                                                
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.PG_PayU_ID)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Payment_Success_Date)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.PG_Payment_Description)
+                                                                </td>
+                                                                <td style="width: 15%; text-align:center;">
+                                                                    @Html.DisplayFor(modelItem => item.Amount)
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet" />
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+
+}

@@ -1,0 +1,438 @@
+﻿@model CRUD.Models.HelpDeskComplaint.ClsPrp_AuthorityDeskFormExe_Addmore_Complainant
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script>
+         // When the user scrolls down 20px from the top of the document, show the button
+          window.onscroll = function () { scrollFunction() };
+
+          function scrollFunction() {
+              if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                  document.getElementById("customTopBtn").style.display = "block";
+              } else {
+                  document.getElementById("customTopBtn").style.display = "none";
+              }
+          }
+
+          // When the user clicks on the button, scroll to the top of the document
+          function topFunction() {
+              document.body.scrollTop = 0; // For Safari
+              document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+          }
+
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on("click", "a.lock-doclist-details", lockUnlockHandlerDoclist);
+
+        //Lock-Unlock-Loader-Handler (Documents list Details)
+        var parmLockUnlockdoclist = $.trim($(document).find('#IsDraftAllComplainants').val());
+        if (parmLockUnlockdoclist == 1) { //L
+            $("#btnLockdoclistDetails").prop('disabled', false);
+            $("#btnLockdoclistDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockdoclistDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockdoclistDetails").attr("title", "Unlock Details");
+            $("#btnLockdoclistDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockdoclist == 5) { //UL
+            $("#btnLockdoclistDetails").prop('disabled', false);
+            $("#btnLockdoclistDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockdoclistDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockdoclistDetails").attr("title", "Lock Details");
+            $("#btnLockdoclistDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockdoclist == 6) { //PL
+            $("#btnLockdoclistDetails").prop('disabled', true);
+            $("#btnLockdoclistDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockdoclistDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockdoclistDetails").attr("title", "Unlock Details");
+            $("#btnLockdoclistDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockdoclistDetails").prop('disabled', true);
+            $("#btnLockdoclistDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockdoclistDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockdoclistDetails").attr("title", "Lock Details");
+            $("#btnLockdoclistDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+    });
+
+    function lockUnlockHandlerDoclist() {
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmLockUnlock = $.trim($(document).find('#IsDraftAllComplainants').val());
+            var parmComplaintID = $.trim($(document).find('#ComplainantApplicant_RelatedComplaint_ID').val());
+            var parmRelatedComplaintID = $.trim($(document).find('#zapRelated_Complaint_ID').val());
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'HelpdeskComplaint/LockUnlockHandler_FormExeaddmoreComplainantList',
+                data: { 'parmComplaintID': parmComplaintID, 'parmLockUnlock': parmLockUnlock, 'parmRelatedComplaintID': parmRelatedComplaintID },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockdoclistDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockdoclistDetails").attr("title", "Unlock Details");
+                        $("#btnLockdoclistDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockdoclistDetails").prop('disabled', true);
+                        $("#btnLockdoclistDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockdoclistDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockdoclistDetails").attr("title", "Lock Details");
+                        $("#btnLockdoclistDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockdoclistDetails").prop('disabled', true);
+                        $("#btnLockdoclistDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Complaint (Form-Execution) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Form-Execution: Additional Complainant(s) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Complaint Form-M - ( @Html.DisplayFor(model => model.zapRelated_RegDiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zapComplainantName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5 project-name">
+                                                        @Html.DisplayFor(model => model.zapComplainantName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.HiddenFor(model => model.ComplainantApplicant_RelatedComplaint_ID)
+                                                        @Html.HiddenFor(model => model.zapRelated_RegDiaryNumber)
+                                                        @Html.HiddenFor(model => model.IsDraftAllComplainants)
+                                                        @Html.HiddenFor(model => model.zapRelated_Complaint_ID)
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zapComplaintFormLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zapComplaintFormLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskComplaintFormExeNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Form-Execution: Additional Complainant(s) Details
+                                        <span class="pull-right">
+                                            <a class="a lock-doclist-details" id="btnLockdoclistDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                        </span>
+                                    </h4>
+                                </div>
+                            </div>
+                            @{
+                                int sno = 0;
+                            }
+                            @if (Model.FormExe_Complainant != null)
+                            {
+                                if (Model.FormExe_Complainant.Count > 0)
+                                {
+                                    foreach (var item in Model.FormExe_Complainant)
+                                    {
+                                        sno = sno + 1;
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my">(@sno.ToString()) Particulars of the additional complainant</legend>
+
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Name of Complainant</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Name_of_Complainant_or_Applicant, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Email ID of Complainant</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Mobile Number of Complainant</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @if (item.MobileNumber != 0)
+                                                                    {
+                                                                        @Html.DisplayFor(modelItem => item.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("--")
+                                                                    }
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Landline Number or Fax Number of Complainant</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @if (item.LandlineNumber != 0)
+                                                                    {
+                                                                        @Html.DisplayFor(modelItem => item.LandlineNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("--")
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Aadhaar Number of Complainant</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @if (item.Complainant_AadhaarNumber != 0)
+                                                                    {
+                                                                        @Html.DisplayFor(modelItem => item.Complainant_AadhaarNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("--")
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                        <b>Address of the existing office / residence of the complainant</b>
+                                                        <hr />
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address Line 1</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.RegOffice_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address Line 2</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.RegOffice_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address State</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.RegOffice_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address District</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.RegOffice_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address PIN Code</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.RegOffice_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                        <b>Address for Service of All Notices</b>
+                                                        <hr />
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-12">
+                                                                    @if (item.IsSameCommunicationAdd_ResOffAdd == true)
+                                                                    {
+                                                                        @Html.DisplayName("[YES], ")
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("[NO], ")
+                                                                    }
+                                                                    <label class="control-label">Address for Service of All Notices is same as Address of the existing office / residence of the complainant?</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address Line 1</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Service_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address Line 2</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Service_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address State</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Service_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address District</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Service_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <label class="control-label">Address PIN Code</label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(modelItem => item.Service_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Particulars of the additional complainant(s)</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <label class="control-label">No Record(s) Found.</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}

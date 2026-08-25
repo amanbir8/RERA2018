@@ -1,0 +1,931 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_QUpdatesProject_ApprovalDetails
+
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/dist/css/rera-toggleshow.css")" rel="stylesheet" />
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-spzoom]').spzoom();
+
+        var popoverBaseUrl = $('body').attr('data-base-url');
+        var showPopover = $.fn.popover.Constructor.prototype.show;
+        $.fn.popover.Constructor.prototype.show = function () {
+            showPopover.call(this);
+            if (this.options.showCallback) {
+                this.options.showCallback.call(this);
+            }
+        }
+
+        $("[data-toggle=popover]").popover({
+            trigger: 'click',
+            placement: "right",
+            title: '<i class="fa fa-cog"></i> Search Options <a href="javascript:void(0);" class="close" title="Close">&times;</a>',
+            html: true,
+            content: function () {
+                return $('#popover-content').html();
+            },
+            showCallback: function () {
+                $("#InputEntry_FromDate").datepicker({
+                    dateFormat: 'dd-M-yy',
+                    changeMonth: true,
+                    changeYear: true,
+
+                    onSelect: function (selected) {
+                        var dt = new Date(selected);
+                        dt.setDate(dt.getDate() + 1);
+                        $("#InputEntry_ToDate").datepicker("option", "minDate", dt);
+                    }
+                });
+                $("#InputEntry_ToDate").datepicker({
+                    dateFormat: 'dd-M-yy',
+                    changeMonth: true,
+                    changeYear: true,
+                    onSelect: function (selected) {
+                        var projStartDate = $("#InputEntry_FromDate").val();
+                        if (projStartDate == '') {
+                            alert('Please select From Date first!');
+                            $("#InputEntry_ToDate").val('');
+                            return false;
+                        }
+                        var dt = new Date(selected);
+                        dt.setDate(dt.getDate());
+
+                        var start = $("#InputEntry_FromDate").datepicker("getDate");
+                        var end = $("#InputEntry_ToDate").datepicker("getDate");
+                        var days = (end - start) / (1000 * 60 * 60 * 24);
+                        if (days > 180) {
+                            alert('Please select upto 180 days Only!');
+                            $("#InputEntry_ToDate").val('');
+                            return false;
+                        }
+                        $("#InputEntry_FromDate").datepicker("option", "maxDate", dt);
+                    }
+                });
+            }
+        }).on('click', function () {
+
+            $(document).on('click', '#ViewDetailYY', function (e) {
+                var submitButton = $(this);
+                e.preventDefault();
+                var inputvalRange = $(".radio-rangevaluedate:checked").val();
+                var inputvalQuarter = $("#drpEventQuarter").val();
+                var inputvalYear = $("#drpEventYear").val();
+
+                //$(submitButton).parents('form').submit();
+                $.post(popoverBaseUrl + '/Helpdesk/Display_ProjectQUpdatesStatusOfApprovals/', {
+                    IsRangeValueDateInputFlag: inputvalRange,
+                    EventQuarter: inputvalQuarter,
+                    EventYear: inputvalYear
+                }, function (r) {
+                    $('#popoverResult').html('the unknown records found as resonse from server')
+                });
+
+                $('#QUPStatusOfApprovalsSearchOptions').submit();
+            });
+
+            $(document).on('click', '#ViewDetailDD', function (e) {
+                var submitButton = $(this);
+                e.preventDefault();
+                var inputvalRange = $(".radio-rangevaluedate:checked").val();
+                var inputvalFromDate = $("#InputEntry_FromDate").val();
+                var inputvalToDate = $("#InputEntry_ToDate").val();
+
+                $.post(popoverBaseUrl + '/Helpdesk/Display_ProjectQUpdatesStatusOfApprovals/', {
+                    IsRangeValueDateInputFlag: inputvalRange,
+                    InputEntry_FromDate: inputvalFromDate,
+                    InputEntry_ToDate: inputvalToDate
+                }, function (r) {
+                    $('#popoverResult').attr("style", "display:block");
+                    var i = 0;
+                    if (i == 0) {
+                        i = 1;
+                        var width = 1;
+                        var id = setInterval(frame, 1);
+                        function frame() {
+                            if (width >= 100) {
+                                clearInterval(id);
+                                i = 0;
+                            } else {
+                                width++;
+                                $('.progress-bar').css('width', width + '%').attr('aria-valuenow', width);
+                            }
+                        }
+                    };
+                });
+
+                $('#QUPStatusOfApprovalsSearchOptions').submit();
+            });
+
+        });
+        $(document).on("click", ".popover .close", function () {
+            $('.popover').css('display', 'none');
+        });
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script>
+    $(document).ready(function () {
+
+        var vcheckrangevaluedatemode = $("input[name='IsRangeValueDateInputFlag']:checked").val();
+        if (vcheckrangevaluedatemode == '1') {
+            $("#rowDateFilterDD").attr("style", "display:none");
+            $("#rowDateFilterYY").attr("style", "display:block");
+        }
+        else if (vcheckrangevaluedatemode == '2') {
+            $("#rowDateFilterDD").attr("style", "display:block");
+            $("#rowDateFilterYY").attr("style", "display:none");
+        }
+
+        $(document).on('click', '.radio-rangevaluedate', function (e) {
+            if (this.value == '1') {
+                $("#rowDateFilterDD").attr("style", "display:none");
+                $("#rowDateFilterYY").attr("style", "display:block");
+            }
+            else if (this.value == '2') {
+                $("#rowDateFilterDD").attr("style", "display:block");
+                $("#rowDateFilterYY").attr("style", "display:none");
+            }
+        });
+
+    });
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }       
+
+    .border-left-danger {        
+        /*border-left: .25rem solid #f6c23e !important; warning color*/
+        border-left: .15rem solid #FF4961 !important;
+    }
+
+    .popover {
+        max-width: 100%;
+    }
+
+    .popover-title {
+        font-size: 15px;
+        font-weight: bold;
+        color: #31708f;
+        background-color: #d9edf7;
+        border-color: #bce8f1;
+    }
+
+    .popover-content {        
+        /*background-color: coral;*/
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var BASE_URLm = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButtonExpandRecords', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmPromoterId = $.trim($(document).find('#zipRelated_Promoter_ID').val());            
+            var parmdocFlag = $(this).attr('data-document-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmPromoterId = parseInt(parmPromoterId);            
+            parmdocFlag = parseInt(parmdocFlag);
+
+            var varDNumber = $("#zipProject_RERAregistrationNumber").val();
+            var varProjectName = $("#zipProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URLm + 'Helpdesk/ProjectQUpdatesInfoStatusRecords',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': parmProjectId, 'promoterId': parmPromoterId, 'varflag': parmdocFlag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Quarterly Update Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+
+        $(document).on('click', 'a.modalOpenerButtonAllRecordDetails', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmPromoterID = $.trim($(document).find('#zipRelated_Promoter_ID').val());
+            var parmdocFlag = $(this).attr('data-document-flag');            
+            parmProjectId = parseInt(parmProjectId);
+            parmPromoterID = parseInt(parmPromoterID);
+            parmdocFlag = parseInt(parmdocFlag);
+            var varDNumber = $.trim($(document).find('#zipProject_DiaryNumber').val());
+            var varProjectName = $.trim($(document).find('#zipProjectName').val());
+            $('#QUPStatusOfApprovalsSearchAllRecords').submit();
+        });
+    });
+</script>
+
+@*EXTRA start*@
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButtonExpandChecklist', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmCriteriaID = $(this).attr('data-criteria-code');
+            var parmCriteriaSubID = $(this).attr('data-subcriteria-code');
+            var parmCriteriaFlag = $(this).attr('data-criteria-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmCriteriaID = parseInt(parmCriteriaID);
+            parmCriteriaSubID = parseInt(parmCriteriaSubID);
+            parmCriteriaFlag = parseInt(parmCriteriaFlag);
+
+            var varDNumber = $("#zipProject_DiaryNumber").val();
+            var varProjectName = $("#zipProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectInfoCheckListDisplayLogByFlag',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'parmProjectId': parmProjectId, 'parmCriteriaID': parmCriteriaID, 'parmCriteriaSubID': parmCriteriaSubID, 'parmCriteriaFlag': parmCriteriaFlag },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Checklist History Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });      
+
+        $(document).on("click", "a.lock-approvalnoclist-details", lockUnlockHandlerApprovalnoclist);
+
+        $(document).on("click", "a.lock-approvalnoc-details", lockUnlockHandlerApprovalnoc);
+
+        //Lock-Unlock-Loader-Handler (Documents list Details)
+        var parmLockUnlockapprovalnoclist = $.trim($(document).find('#IsDraftAllapprovals').val());
+        if (parmLockUnlockapprovalnoclist == 1) { //L        
+            $("#btnLockapprovalnoclistDetails").prop('disabled', false);
+            $("#btnLockapprovalnoclistDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockapprovalnoclistDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockapprovalnoclistDetails").attr("title", "Unlock Details");
+            $("#btnLockapprovalnoclistDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockapprovalnoclist == 5) { //UL         
+            $("#btnLockapprovalnoclistDetails").prop('disabled', false);
+            $("#btnLockapprovalnoclistDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockapprovalnoclistDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockapprovalnoclistDetails").attr("title", "Lock Details");
+            $("#btnLockapprovalnoclistDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockapprovalnoclist == 6) { //PL         
+            $("#btnLockapprovalnoclistDetails").prop('disabled', true);
+            $("#btnLockapprovalnoclistDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockapprovalnoclistDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockapprovalnoclistDetails").attr("title", "Unlock Details");
+            $("#btnLockapprovalnoclistDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockapprovalnoclistDetails").prop('disabled', true);
+            $("#btnLockapprovalnoclistDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockapprovalnoclistDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockapprovalnoclistDetails").attr("title", "Lock Details");
+            $("#btnLockapprovalnoclistDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+    });
+
+    function lockUnlockHandlerApprovalnoclist() {
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmLockUnlock = $.trim($(document).find('#IsDraftAllapprovals').val());
+            var parmIndexID = 0;
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_ProjectApprovalsList',
+                data: { 'parmProjectId': parmProjectId, 'parmLockUnlock': parmLockUnlock, 'parmIndexID': parmIndexID },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockapprovalnoclistDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockapprovalnoclistDetails").attr("title", "Unlock Details");
+                        $("#btnLockapprovalnoclistDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockapprovalnoclistDetails").prop('disabled', true);
+                        $("#btnLockapprovalnoclistDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockapprovalnoclistDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockapprovalnoclistDetails").attr("title", "Lock Details");
+                        $("#btnLockapprovalnoclistDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockapprovalnoclistDetails").prop('disabled', true);
+                        $("#btnLockapprovalnoclistDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+    function lockUnlockHandlerApprovalnoc() {
+        var elem = $(this);
+        var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+        var parmLockUnlock = $(this).attr('data-locknnlockdoc-code');
+        var parmIndexID = $(this).attr('data-docindex-code');
+
+        if (parmLockUnlock == 1 || parmLockUnlock == 5) {
+
+            var btnLabel = $(this).attr("title");
+            var cnfrmTxt = "Do you want to lock details?";
+            if (btnLabel == "Unlock Details") {
+                var cnfrmTxt = "Do you want to unlock details?";
+            }
+
+            if (confirm(cnfrmTxt)) {              
+                var baseUrllockunlock = $('body').attr('data-base-url');
+
+                $.ajax({
+                    type: 'GET',
+                    url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_ProjectApprovalsByIndex',
+                    data: { 'parmProjectId': parmProjectId, 'parmLockUnlock': parmLockUnlock, 'parmIndexID': parmIndexID },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        alert(data.status);                        
+                        if (data.statusCode == 101) {
+                            elem.find("span").removeClass("btn-warning").addClass("btn-primary");
+                            elem.attr("title", "Unlock Details");
+                            elem.find("i").removeClass("fa-unlock").addClass("fa-key");
+                            elem.prop('disabled', true);
+                            elem.find("span").addClass("disabledlockunlock");
+                        } else if (data.statusCode == 105) {
+                            elem.find("span").removeClass("btn-primary").addClass("btn-warning");
+                            elem.attr("title", "Lock Details");
+                            elem.find("i").removeClass("fa-key").addClass("fa-unlock");
+                            elem.prop('disabled', true);
+                            elem.find("span").addClass("disabledlockunlock");
+                        }
+                    },
+                    failure: function (data) {
+                        alert('Bad Request! Failed');
+                    },
+                    error: function (err) {
+                        alert('Bad Request! Error');
+                    }
+                });
+            }
+        }
+        else {
+            $(this).preventDefault();
+        }
+    }
+</script>
+@*EXTRA end*@
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $('.btn-toggle').on('click', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            var parentRow = $(elem).parents('tr');
+
+            var projectId = $.trim($(parentRow).find('input.hdnProjectID').val());
+            var projectqupapprovalindexId = $.trim($(parentRow).find('input.hdnProjectQUPApprovalIndexID').val());
+            var projectqupapprovalId = $.trim($(parentRow).find('input.hdnProjectQUPApprovalID').val());
+            var prmFlag = $.trim($(parentRow).find('input.hdnPublicViewFlag').val());
+
+            var prmPublicUnpublic = $(elem).hasClass('active');
+            var elemid = $(elem).attr('id');
+
+            projectId = parseInt(projectId);
+            projectqupapprovalindexId = parseInt(projectqupapprovalindexId);
+            projectqupapprovalId = parseInt(projectqupapprovalId);
+
+            var varcnfrm = 0;
+            var cnfrmTxt = "Do you want to modify the public view (webpage) options?";
+            if (confirm(cnfrmTxt)) {
+                // Save it!
+                varcnfrm = 1;
+                if ($(this).attr('data-toggle') == 'button') {
+                    $.ajax({
+                        type: 'GET',
+                        url: BASE_URL + 'Helpdesk/PublicUnpublicHandler_ProjectQUpdatesStatusOfApprovalsByIndex',
+                        data: { 'prmprojectId': projectId, 'prmprojectapprovalsindexId': projectqupapprovalindexId, 'prmprojectapprovalsId': projectqupapprovalId, 'prmPublicUnpublic': prmPublicUnpublic },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            alert(data.status);
+                            if (data.statusCode == 101 || data.statusCode == 105) {
+                                setactionPublicViewTogglebtnYN(data.statusCode, elemid);
+                            } else {
+                                setdefaultPublicViewTogglebtnYN(prmFlag, elemid);
+                            }                                
+                        },
+                        failure: function (data) {
+                            alert('Bad Request! Failed');
+                            setdefaultPublicViewTogglebtnYN(prmFlag, elemid);
+                        },
+                        error: function (err) {
+                            alert('Bad Request! Error');
+                            setdefaultPublicViewTogglebtnYN(prmFlag, elemid);
+                        }
+                    });
+                }
+            }
+            if (varcnfrm != 1) {
+                disablePublicViewTogglebtnYN(elemid);
+            }
+        });        
+    });
+
+    function setdefaultPublicViewTogglebtnYN(dataString, srID) {
+        var dataAction = dataString;
+        var varPublicViewFlag = 0;
+        if (dataAction != 'NPV') {
+            //YPV(1) NPV(0)
+            varPublicViewFlag = 1;
+        };
+        var srtitle = '#';
+        var valpublicviewShowId = srtitle.concat(srID);
+        switch (varPublicViewFlag) {
+            case 0:
+                $(document).find(valpublicviewShowId.trim()).removeClass('active');
+                break;
+            case 1:
+                $(document).find(valpublicviewShowId.trim()).addClass('active');
+                break;
+        }
+    }
+    function setactionPublicViewTogglebtnYN(dataID, srID) {
+        var dataAction = dataID;
+        var varPublicViewFlag = 0;
+        if (dataAction == 101) {
+            //YPV(1) NPV(0)
+            varPublicViewFlag = 1;
+        };
+        var srtitle = '#';
+        var valpublicviewShowId = srtitle.concat(srID);
+        var len = valpublicviewShowId.toString().trim().length;
+        var res = valpublicviewShowId.substring(20, len);
+        var strpvstatus = '#publicviewtogglestatus';
+        var valpublicviewstatusShowId = strpvstatus.concat(res);
+        switch (varPublicViewFlag) {
+            case 0:
+                $(document).find(valpublicviewShowId.trim()).removeClass('active');
+                $(document).find(valpublicviewstatusShowId.trim()).addClass('border-left-danger warning');
+                break;
+            case 1:
+                $(document).find(valpublicviewShowId.trim()).addClass('active');
+                $(document).find(valpublicviewstatusShowId.trim()).removeClass('border-left-danger warning');                
+                break;
+        }
+    }
+    function disablePublicViewTogglebtnYN(srID) {
+        var srtitle = '#';
+        var valpublicviewShowId = srtitle.concat(srID);
+        $(document).find(valpublicviewShowId.trim()).prop('disabled', true);
+        $(document).find(valpublicviewShowId.trim()).addClass("disabledlockunlock");
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Quarterly Updates Detail of Registered Project</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Status of Approvals Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Quarterly Updates of Project - ( @Html.DisplayFor(model => model.zipProject_RERAregistrationNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zipProjectName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.DisplayFor(model => model.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        
+                                                        @Html.HiddenFor(model => model.zipQUpdateProject_RegDiaryNumber_Name)
+                                                        @Html.HiddenFor(model => model.zipProject_DiaryNumber)
+                                                        @Html.HiddenFor(model => model.zipPromoter_DiaryNumber)
+                                                        @Html.HiddenFor(model => model.zipProjectName)
+                                                        @Html.HiddenFor(model => model.zipRelated_Project_ID)
+                                                        @Html.HiddenFor(model => model.zipRelated_Promoter_ID)
+                                                        @Html.HiddenFor(model => model.zipProject_RERAregistrationNumber)
+                                                        @Html.HiddenFor(model => model.zipQUpdateProject_QuarterNameValue)
+                                                        @Html.HiddenFor(model => model.zipQUpdateProject_YearValue)
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipProject_DiaryNumber, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zipProject_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>                     
+                            @Html.Partial("_AuthorityQuarterlyUpdatesDeskNavMenuPartial")                            
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    @using (Html.BeginForm("Display_ProjectQUpdatesStatusOfApprovalRecords", "Helpdesk", FormMethod.Post, new { enctype = "multipart/form-data", @id = "QUPStatusOfApprovalsSearchAllRecords" }))
+                                    {
+                                        <h4 class="page-header" style="margin-top: 15px;">                                      
+                                            <a data-html="true" data-toggle="popover" href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>
+                                                Status of Approvals Details
+                                            <span class="pull-right">
+                                                @*<a class="modalOpenerButtonExpandChecklist" data-criteria-code="157" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>*@
+                                                @*<a class="a lock-approvalnoclist-details" id="btnLockapprovalnoclistDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>*@
+                                                <a class="modalOpenerButtonAllRecordDetails" data-document-flag="1" href="javascript:void(0);" title="View All Records"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-search-plus" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandRecords" data-document-flag="1" href="javascript:void(0);" title="View Quarterly Update Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-text" aria-hidden="true"></i></span></a>
+                                                <a title="Refresh" href="@Url.Action("Display_ProjectQUpdatesStatusOfApprovals", "Helpdesk")"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-refresh" aria-hidden="true"></i></span></a>                                                    
+                                            </span>                                            
+                                        </h4>
+                                    }
+                                    @using (Html.BeginForm("Display_ProjectQUpdatesStatusOfApprovals", "Helpdesk", FormMethod.Post, new { enctype = "multipart/form-data", @id = "QUPStatusOfApprovalsSearchOptions" }))
+                                    {
+                                        <div id="popover-content" class="hide">
+                                            <form id="form">
+                                                <div class="form-group">
+                                                    <div class="col-lg-12">
+
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-2">
+                                                                    <label class="control-label mand">Search For</label>
+                                                                </div>
+                                                                <div class="col-md-10">
+                                                                    <label class="form-group">
+                                                                        @Html.RadioButtonFor(model => model.IsRangeValueDateInputFlag, "1", new { id = "chkApplicationDate", @class = "radio-rangevaluedate", @checked = "checked" }) Quarter/Year
+                                                                        @Html.RadioButtonFor(model => model.IsRangeValueDateInputFlag, "2", new { id = "chkApprovalDate", @class = "radio-rangevaluedate" }) From-Date/To-Date
+                                                                    </label>
+                                                                    @Html.ValidationMessageFor(model => model.IsRangeValueDateInputFlag, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" id="rowDateFilterDD">
+                                                            <div class="form-group">
+                                                                <div class="col-md-2">
+                                                                    @Html.LabelFor(model => model.InputEntry_FromDate, htmlAttributes: new { @class = "control-label mand" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.EditorFor(model => model.InputEntry_FromDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @onfocus = "this.value=''" } })
+                                                                    @Html.ValidationMessageFor(model => model.InputEntry_FromDate, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    @Html.LabelFor(model => model.InputEntry_ToDate, htmlAttributes: new { @class = "control-label mand" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.EditorFor(model => model.InputEntry_ToDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @onfocus = "this.value=''" } })
+                                                                    @Html.ValidationMessageFor(model => model.InputEntry_ToDate, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <input type="submit" id="ViewDetailDD" value="View Details" class="btn btn-outline btn-primary" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row" id="rowDateFilterYY">
+                                                            <div class="form-group">
+                                                                <div class="col-md-2">
+                                                                    @Html.LabelFor(model => model.EventQuarter, htmlAttributes: new { @class = "control-label mand" })
+                                                                    @{var listItemsEventMonth = new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem {  Text = "--Select--" , Value="0"  },
+                                                                            new SelectListItem {  Text = "First Quarter (January-March)" , Value="1"  },
+                                                                            new SelectListItem {  Text = "Second Quarter (April-June)" , Value="2"  },
+                                                                            new SelectListItem {  Text = "Third Quarter (July-September)" , Value="3"  },
+                                                                            new SelectListItem {  Text = "Fourth Quarter (October-December)" , Value="4"  },
+                                                                        };
+                                                                    }
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DropDownListFor(model => model.EventQuarter, new SelectList(listItemsEventMonth, "Value", "Text"), new { @id = "drpEventQuarter", @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.EventQuarter, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    @Html.LabelFor(model => model.EventYear, htmlAttributes: new { @class = "control-label mand" })
+                                                                    @{var listItemsEventYear = new List<SelectListItem>
+                                                                        {
+                                                                            new SelectListItem {  Text = "--Select--" , Value="0"  },
+                                                                            new SelectListItem {  Text = "2016" , Value="2016"  },
+                                                                            new SelectListItem {  Text = "2017" , Value="2017"  },
+                                                                            new SelectListItem {  Text = "2018" , Value="2018"  },
+                                                                            new SelectListItem {  Text = "2019" , Value="2019"  },
+                                                                            new SelectListItem {  Text = "2020" , Value="2020"  },
+                                                                            new SelectListItem {  Text = "2021" , Value="2021"  },
+                                                                            new SelectListItem {  Text = "2022" , Value="2022"  },
+                                                                            new SelectListItem {  Text = "2023" , Value="2023"  },
+                                                                            new SelectListItem {  Text = "2024" , Value="2024"  },
+                                                                            new SelectListItem {  Text = "2025" , Value="2025"  },
+                                                                            new SelectListItem {  Text = "2026" , Value="2026"  },
+                                                                            new SelectListItem {  Text = "2027" , Value="2027"  },
+                                                                            new SelectListItem {  Text = "2028" , Value="2028"  },
+                                                                            new SelectListItem {  Text = "2029" , Value="2029"  },
+                                                                            new SelectListItem {  Text = "2030" , Value="2030"  },
+                                                                        };
+                                                                    }
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DropDownListFor(model => model.EventYear, new SelectList(listItemsEventYear, "Value", "Text"), new { @id = "drpEventYear", @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.EventYear, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <input type="submit" id="ViewDetailYY" value="View Details" class="btn btn-outline btn-primary" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="popoverResult" class="progress" style="display:none;">
+                                                            <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-StatusOfApprovals">
+                                                <thead>
+                                                    <tr>
+                                                        <th>@Html.DisplayName("Sr No")</th>
+                                                        @*<th style="width:10%" align="justify">@Html.DisplayName("Activity")</th>*@
+                                                        <th>@Html.DisplayName("Quarter/Year")</th>
+                                                        <th>@Html.DisplayName("Title of NOCs/ Consent to Operate")</th>
+                                                        <th>@Html.DisplayName("Type of Document")</th>
+                                                        <th>@Html.DisplayName("Status of Approvals")</th>
+                                                        <th>@Html.DisplayName("Date Planned for Application OR Expected Date of Receipt")</th>                                                        
+                                                        <th>@Html.DisplayName("Public View")</th>
+                                                        <th>@Html.DisplayName("Scan Copy of Document")</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        int snoApprovals = 0;
+                                                        string publicviewtogglebtnID = string.Empty;
+                                                        string publicviewtogglestatusID = string.Empty;
+                                                    }
+                                                    @foreach (var item in Model.prpongoing)
+                                                    {
+                                                        {
+                                                            snoApprovals = snoApprovals + 1;
+                                                            publicviewtogglebtnID = "publicviewtogglebtn" + @snoApprovals.ToString();
+                                                            publicviewtogglestatusID = "publicviewtogglestatus" + @snoApprovals.ToString();
+                                                        }
+                                                        <tr class="odd gradeX">
+                                                            <td>@Html.DisplayName(snoApprovals.ToString())</td>
+                                                            @*<td width="8%">
+                                                                <span>
+                                                                    <a class="modalOpenerButtonExpandChecklist" data-criteria-code="157" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                                                    @if (item.IsDraft == 1)
+                                                                    { //L
+                                                                        <a class="a lock-approvalnoc-details" data-locknnlockdoc-code="@Html.DisplayFor(modelItem => item.IsDraft)" data-docindex-code="@Html.DisplayFor(modelItem => item.ProjectApproval_IndexID)" href="javascript:void(0);" title="Unlock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-key" aria-hidden="true"></i></span></a>
+                                                                    }
+                                                                    else if (item.IsDraft == 5)
+                                                                    { //UL
+                                                                        <a class="a lock-approvalnoc-details" data-locknnlockdoc-code="@Html.DisplayFor(modelItem => item.IsDraft)" data-docindex-code="@Html.DisplayFor(modelItem => item.ProjectApproval_IndexID)" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                                                    }
+                                                                    else if (item.IsDraft == 6)
+                                                                    { //PL
+                                                                        <a class="a lock-approvalnoc-details" data-locknnlockdoc-code="@Html.DisplayFor(modelItem => item.IsDraft)" data-docindex-code="@Html.DisplayFor(modelItem => item.ProjectApproval_IndexID)" href="javascript:void(0);" title="Unlock Details"><span class="btn btn-outline btn-primary btn-xs disabledlockunlock"><i class="fa fa-key" aria-hidden="true"></i></span></a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a class="a lock-approvalnoc-details" data-locknnlockdoc-code="@Html.DisplayFor(modelItem => item.IsDraft)" data-docindex-code="@Html.DisplayFor(modelItem => item.ProjectApproval_IndexID)" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs disabledlockunlock"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                                                    }
+                                                                </span>
+                                                            </td>*@
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.setQUpdateProject_QuarterName)
+                                                                @if (item.QUpdateApproval_Year.ToString() != "0")
+                                                                {
+                                                                    @Html.DisplayName(" ")
+                                                                    @Html.DisplayFor(modelItem => item.QUpdateApproval_Year)
+                                                                }
+                                                                @Html.HiddenFor(modelItem => item.QUpdateApproval_QuarterName)
+                                                            </td>
+                                                            <td id=@publicviewtogglestatusID.ToString()>
+                                                                @Html.DisplayFor(modelItem => item.DocumentType_Name)
+                                                                @if (item.DocumentType_Name.ToString() == "Other Document")
+                                                                {
+                                                                    @Html.DisplayName(" (")
+                                                                    @Html.DisplayFor(modelItem => item.DocumentType_IfOtherSpecifyName)
+                                                                    @Html.DisplayName(")")
+                                                                }
+                                                            </td>
+                                                            <td>@Html.DisplayFor(modelItem => item.DocumentType_CategoryName)</td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.DocumentType_Status)
+                                                                @Html.HiddenFor(modelItem => item.Related_ApprovalProjectRegistration_ID, new { @class = "hdnProjectID" })
+                                                                @Html.HiddenFor(modelItem => item.QUpdateProjectApproval_IndexID, new { @class = "hdnProjectQUPApprovalIndexID" })
+                                                                @Html.HiddenFor(modelItem => item.QUpdateProjectApproval_ID, new { @class = "hdnProjectQUPApprovalID" })
+                                                                @Html.HiddenFor(modelItem => item.B_column, new { @class = "hdnPublicViewFlag" })
+                                                            </td>
+                                                            <td align="center">@Html.DisplayFor(modelItem => item.Date_ApplicationPlannedorExpectedReceipt)</td>                                                            
+                                                            <td class="row-publicview">
+                                                                @if (item.QUpdateApproval_Year.ToString() != "0")
+                                                                {
+                                                                    if (item.setQUpdateProject_QuarterName.ToString() != "NA")
+                                                                    {
+                                                                        <script type="text/javascript">
+                                                                            $(document).ready(function () {
+                                                                                showPublicViewTogglebtnYN("@item.B_column.ToString()", "@snoApprovals.ToString()");
+                                                                            });
+                                                                        </script>
+                                                                        <button type="button" id=@publicviewtogglebtnID.ToString() class="btn btn-sm btn-toggle btn-secondary" data-toggle="button" aria-pressed="false" autocomplete="off" title="Is acceptable for web-page?">
+                                                                            <div class="handle"></div>
+                                                                        </button>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("NA")
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("NA")
+                                                                }
+                                                            </td>
+                                                            <td width="13%" align="center">
+                                                                @if (Path.GetExtension(item.DocumentType_FileFormat.ToString()) == ".pdf")
+                                                                {
+                                                                    <a href="~/@Html.DisplayFor(modelItem => item.DocumentType_FilePath)@Html.DisplayFor(modelItem => item.DocumentType_FileName)" target="_blank">
+                                                                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a href="~/@Html.DisplayFor(modelItem => item.DocumentType_FilePath)@Html.DisplayFor(modelItem => item.DocumentType_FileName)" data-spzoom>
+                                                                        <img id="user_Photo" height="60" width="50" style="border:1px solid;" src="~/@Html.DisplayFor(modelItem => item.DocumentType_FilePath)@Html.DisplayFor(modelItem => item.DocumentType_FileName)" alt="No Image" />
+                                                                    </a>
+                                                                    <a href="~/@Html.DisplayFor(modelItem => item.DocumentType_FilePath)@Html.DisplayFor(modelItem => item.DocumentType_FileName)" target="_blank"><i class="fa fa-external-link-square"></i></a>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                    
+                    </div>
+                </div>
+                <!-- /.row (nested) -->
+            </div>
+            <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                @*<h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>*@
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet"></link>
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+
+    <script>
+        function showPublicViewTogglebtnYN(dataString, srNo) {
+            var dataAction = dataString;
+            var varPublicViewFlag = 0;
+            if (dataAction != 'NPV') {
+                //YPV(1) NPV(0)
+                varPublicViewFlag = 1;
+            };
+
+            var valpublicviewShowId = '#publicviewtogglebtn' + srNo;
+            var strpvstatus = '#publicviewtogglestatus';
+            var valpublicviewstatusShowId = strpvstatus.concat(srNo);
+            switch (varPublicViewFlag) {
+                case 0:
+                    $(document).find(valpublicviewShowId.trim()).removeClass('active');
+                    $(document).find(valpublicviewstatusShowId.trim()).addClass('border-left-danger warning');
+                    break;
+                case 1:
+                    $(document).find(valpublicviewShowId.trim()).addClass('active');
+                    $(document).find(valpublicviewstatusShowId.trim()).removeClass('border-left-danger warning');                    
+                    break;
+            }
+        }
+
+        $(document).ready(function () {
+            $('#dataTables-StatusOfApprovals').DataTable({
+                responsive: true,
+                "pageLength": 25,
+                "lengthMenu": [[25, 50, 75, 100], [25, 50, 75, 100]],
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [6, 7]
+                }]
+            });
+        });
+    </script>
+}
+

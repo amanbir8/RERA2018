@@ -1,0 +1,391 @@
+﻿@model CRUD.Models.ProjectPrint.ClsPrp_PrmProject_Print_ProjectRegistration
+
+@{    
+    Layout = null;
+}
+
+<div id="wrapper">   
+    <div class="row">
+        <div class="col-lg-12">           
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.prpProjectDiaryNumberDetails != null)
+                {
+                    foreach (var item in Model.prpProjectDiaryNumberDetails)
+                    {
+                        var varDate = System.DateTime.Now.Date;
+                        <tr>
+                            <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>                            
+                            <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                        </tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Application Form (Project Registration Details)")</b></td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Project Diary Number")</td>
+                            <td width="35%">@Html.DisplayFor(modelitem => item.PromoterRegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.zipProjectName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("District")</td>
+                            <td>
+                                @Html.DisplayFor(modelitem => item.zipProjectDistrictName, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.zipPromoterName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.zipPromoterName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Details regarding Project Registration")</h4></td></tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }                
+                @if (Model.prpongoing != null)
+                {
+                    foreach (var item in Model.prpongoing)
+                    {
+                        <tr>
+                            <td>@Html.DisplayName("Existing/New Registration")</td>
+                            <td colspan="3">
+                                @if (item.IsAlready_RERANumber.ToString() != "Y")
+                                {
+                                    @Html.DisplayName("New Project Registration")
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelitem => item.Existing_RERANumber, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName(" (Registered Project)")
+                                }                            
+                            </td>                            
+                        </tr>                 
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.Project_Amenities, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.Project_Amenities, new { htmlAttributes = new { @class = "form-control" } })</td>                         
+                        </tr>                        
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Specification Details of Proposed Project as per the Brochure/ Prospectus")</h4></td></tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.ProposedProjectDetail_Structure, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.ProposedProjectDetail_Structure, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.ProposedProjectDetail_Flooring, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.ProposedProjectDetail_Flooring, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.ProposedProjectDetail_WallFinishing, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.ProposedProjectDetail_WallFinishing, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.ProposedProjectDetail_SanitaryFittings, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.ProposedProjectDetail_SanitaryFittings, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.ProposedProjectDetail_ElectricalFittings, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.ProposedProjectDetail_ElectricalFittings, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.ProposedProjectDetail_Kitchen, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.ProposedProjectDetail_Kitchen, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        if (item.IsProposedProjectDetail_OthersIfAny.ToString() == "Y")
+                        {
+                            <tr>
+                                <td>@Html.LabelFor(modelitem => item.IsProposedProjectDetail_OthersIfAny, htmlAttributes: new { @class = "control-label" })</td>
+                                <td colspan="3">
+                                    @Html.LabelFor(modelitem => item.ProposedProjectDetail_OthersIfAnyName, htmlAttributes: new { @class = "control-label" })
+                                    @Html.DisplayFor(modelitem => item.ProposedProjectDetail_OthersIfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                </td>
+                            </tr>
+                        }                        
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4">
+                            <h4>
+                                @Html.DisplayName("Project Facts Details (")
+                                @Html.LabelFor(modelitem => item.Project_Status, htmlAttributes: new { @class = "control-label" })
+                                @Html.DisplayName(": ")
+                                @Html.DisplayFor(modelitem => item.Project_Status, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName(")")
+                            </h4>
+                            </td></tr>
+                        <tr>                            
+                            <td colspan="2">@Html.LabelFor(modelitem => item.ProjectStart_Date, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.ProjectStart_Date, new { htmlAttributes = new { @class = "form-control" } })</td>                                                       
+                        </tr>
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.ProjectCompletion_OriginalDate, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.ProjectCompletion_OriginalDate, new { htmlAttributes = new { @class = "form-control" } })</td>                            
+                        </tr>
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.ProjectCompletion_ProposedDate, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.ProjectCompletion_ProposedDate, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        @*<tr>                           
+                            <td colspan="2">@Html.LabelFor(modelitem => item.ProjectRegistrationProvided_Duration, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">@Html.DisplayFor(modelitem => item.ProjectRegistrationProvided_Duration, new { htmlAttributes = new { @class = "form-control" } })</td>                           
+                        </tr>*@
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.A_column, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">
+                                @if (item.A_column.ToString() == "0" || item.A_column.ToString() == "" || item.A_column.ToString() == "0.00")
+                                {
+                                    @Html.DisplayName("NA")
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => item.A_column, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayName(" (INR)")
+                                }                            
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.ProjectDelayReason_IfAny, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3">
+                                @if (item.ProjectDelayReason_IfAny.ToString() != "0")
+                                {
+                                    @Html.DisplayFor(modelItem => item.ProjectDelayReason_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("NA")
+                                }
+                            </td>
+                        </tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Project Address Details")</h4></td></tr>
+                        <tr>
+                            <td>@Html.DisplayName("Address Line 1")</td>
+                            <td>@Html.DisplayFor(modelitem => item.Project_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("Address Line 2")</td>
+                            <td>@Html.DisplayFor(modelitem => item.Project_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayName("District & State")</td>
+                            <td>
+                                @Html.DisplayFor(modelitem => item.Project_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName(", ")
+                                @Html.DisplayFor(modelitem => item.Project_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                            <td>@Html.DisplayName("Pin Code")</td>
+                            <td>@Html.DisplayFor(modelitem => item.Project_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayName("Sub Division")</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.Project_AddressSubDivisionCode, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.Project_PotentialZoneCode, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3">                                
+                                    @{
+                                        switch (item.Project_PotentialZoneCode)
+                                        {
+                                            case 1:
+                                                <text>
+                                                    Zone 1 - Master Plan Area of S.A.S. Nagar, New Chandigarh and Zirakpur.
+                                                </text>
+                                                break;
+                                            case 2:
+                                                <text>
+                                                    Zone 2 - Master Plan Area of Kharar, Dera Bassi and Banur.
+                                                </text>
+                                                break;
+                                            case 3:
+                                                <text>
+                                                    Zone 3 - Ludhiana (within and outside municipal limits upto 15 Kms.)
+                                                </text>
+                                                break;
+                                            case 4:
+                                                <text>
+                                                    Zone 4 - Jalandhar (within and outside municipal limits upto 10 Kms.)
+                                                </text>
+                                                break;
+                                            case 5:
+                                                <text>
+                                                    Zone 5 - Amritsar, Patiala, Khanna, Rajpura, Mandi Gobindgarh, Sirhind and Phagwara within and outside municipal limits upto 7 Kms and NH-1 upto 2 Kms on both sides, outside the potential zone.
+                                                </text>
+                                                break;
+                                            case 6:
+                                                <text>
+                                                    Zone 6 - Bathinda, Moga, Batala, Pathankot, Barnala, Malerkotla, Morinda, Hoshiarpur, within and outside municipal limits upto 5 Kms.
+                                                </text>
+                                                break;
+                                            case 7:
+                                                <text>
+                                                    Zone 7 - Sangrur, Sunam Udham Singh Wala, Nabha, Faridkot, Kotkapura, Ferozepur, Malout, Abohar, Sri Muktsar Sahib, Kapurthala, Nawanshahr, Rupnagar, Taran Taran, Gurdaspur, Samana, Jagraon, Mansa, Lalru, Kurali within and outside municipal limits upto 3 Kms and all other NH (except NH 1)/SH/Scheduled Roads upto 1 Kms both sides, outside the potential zone.
+                                                </text>
+                                                break;
+                                            case 8:
+                                                <text>
+                                                    Zone 8 - Rest of Punjab.
+                                                </text>
+                                                break;
+                                            default:
+                                                <text>
+                                                    @Html.DisplayFor(modelItem => item.Project_PotentialZoneCode, new { htmlAttributes = new { @class = "form-control" } })
+                                                </text>
+                                                break;
+                                        }
+                                    }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.ProjectWebsite_WebLink, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.ProjectWebsite_WebLink, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Contact Person/ Person for Communication with regards to Project")</h4></td></tr>
+                        <tr>
+                            <td>@Html.DisplayName("Contact Person")</td>
+                            <td colspan="3">
+                                @Html.DisplayFor(modelitem => item.AuthorizedPerson_FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName(" ")
+                                @Html.DisplayFor(modelitem => item.AuthorizedPerson_MiddleName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName(" ")
+                                @Html.DisplayFor(modelitem => item.AuthorizedPerson_LastName, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayName("Address Line 1")</td>
+                            <td>@Html.DisplayFor(modelitem => item.AuthorizedPerson_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("Address Line 2")</td>
+                            <td>@Html.DisplayFor(modelitem => item.AuthorizedPerson_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayName("District & State")</td>
+                            <td>
+                                @Html.DisplayFor(modelitem => item.AuthorizedPerson_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName(", ")
+                                @Html.DisplayFor(modelitem => item.AuthorizedPerson_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                            <td>@Html.DisplayName("Pin Code")</td>
+                            <td>@Html.DisplayFor(modelitem => item.AuthorizedPerson_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayName("Email Address")</td>
+                            <td>@Html.DisplayFor(modelitem => item.AuthorizedPerson_EmailAddress, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("Mobile Number")</td>
+                            <td>@Html.DisplayFor(modelitem => item.AuthorizedPerson_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>                        
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+                @{
+                    int snumber = 0;
+                }
+                @if (Model.ProjectType_Registration != null)
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4"><h4>@Html.DisplayName("Type of Project")</h4></td></tr>
+                    foreach (var item in Model.ProjectType_Registration)
+                    {
+                        {
+                            snumber = snumber + 1;
+                        }
+                        <tr>
+                            <td>@Html.DisplayName("(" + snumber.ToString() + ") ")
+                            @Html.DisplayFor(modelitem => item.ProjectType_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.ProjectType_SubType_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>                        
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+                @if (Model.prpongoing != null)
+                {
+                    foreach (var item in Model.prpongoing)
+                    {
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Other Details")</h4></td></tr>
+                        <tr>
+                            <td colspan="3">@Html.DisplayName("(1) Is the proforma for Agreement of Sale as per prescribed format of the RERA Act, 2016 “Form-Q”?")</td>
+                            <td style="text-align:center;">
+                                @if (item.IsProForma_AOS_RERAformat_AnnexureA.ToString() == "Y")
+                                {
+                                    @Html.DisplayName("Yes")
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("No")
+                                }
+                            </td>                            
+                        </tr>
+                        if (item.IsProForma_AOS_RERAformat_AnnexureA.ToString() == "NotApplicable") //"N")
+                        {
+                        <tr>
+                            <td colspan="3">@Html.DisplayName("If No, then Are the changes approved by RERA Punjab?")</td>
+                            <td style="text-align:center;">
+                                @if (item.IsProForma_AOS_RERAformat_No_IsApproved.ToString() == "Y")
+                                {
+                                    @Html.DisplayName("Yes")
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("No")
+                                }
+                            </td>
+                        </tr>
+                        }
+                        <tr>
+                            <td colspan="3">@Html.DisplayName("(2) Is Project falls under Mega Project category?")</td>
+                            <td style="text-align:center;">
+                                @if (item.IsProject_MegaProjectCategory.ToString() == "Y")
+                                {
+                                    @Html.DisplayName("Yes")
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("No")
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">@Html.DisplayName("(3) Is any litigation(s) related to the Project?")</td>
+                            <td style="text-align:center;">
+                                @if (item.IsLitigation_RelatedProject.ToString() == "Y")
+                                {
+                                    @Html.DisplayName("Yes")
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("No")
+                                }
+                            </td>
+                        </tr>                                                                            
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic; font-size:small; border: 1px solid #ccc">Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.</td></tr>
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic; font-size:medium;">(Authorized Signatory)</td></tr>
+            </table>                                      
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->
+
+

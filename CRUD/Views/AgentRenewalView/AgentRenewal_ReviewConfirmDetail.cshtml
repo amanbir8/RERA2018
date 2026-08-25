@@ -1,0 +1,751 @@
+﻿@model CRUD.Models.AgentRenewal.Clsprp_AgentRenewal_ReviewMaster
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-spzoom]').spzoom();
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('#Is_YesNoAgree_RenewalPermission_Flag').click(function () {
+            if ($("#Is_YesNoAgree_RenewalPermission_Flag").is(':checked')) {
+                $('#BtnApplicationMainform').removeClass('btn-outline');
+            }
+            else {
+                $('#BtnApplicationMainform').addClass('btn-outline');
+            };
+        });
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .quborder-info {
+        border-color: #00cfd5 !important;
+        /*padding: 1rem !important;*/
+        /*margin-bottom: 1rem !important;*/
+        /*border: 1px solid #e3e6ec !important;*/
+        /*background-color: #eff3f9 !important;*/
+    }
+
+    .quborder-disabled {
+        background-color: #eff3f9 !important;
+        cursor: not-allowed;
+    }
+
+    .qulinkaction-icon {
+        position: relative;
+    }
+
+        .qulinkaction-icon:before {
+            content: "\f040";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;
+        }
+
+    .qulinkaction-lock {
+        position: relative;
+    }
+
+        .qulinkaction-lock:before {
+            content: "\f09c";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;
+        }
+
+    .qulinkaction-trash {
+        position: relative;
+    }
+
+        .qulinkaction-trash:before {
+            content: "\f1f8";
+            font-family: FontAwesome;
+            position: absolute;
+            margin-left: 1.5em;
+        }
+
+    .display-btnlock {
+        display: none;
+        width: auto;
+    }
+
+    .display-btnunlock {
+        display: block;
+        width: auto;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var displayBASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a#modalRegistrationStatusOpenerButton', function (e) {
+            e.preventDefault();
+            var RenewalAgentDetailsModal = $(document).find('#myModal');
+            $(RenewalAgentDetailsModal).find('.modal-body').html('');
+            var qagentid = $('#RefAgentID').val();
+            var ptypeagent = $('#RefAgentType').val();
+            var prenewalagentid = 0;
+            var prenewalagentseq = 0;
+            var prenewalagentyr = 0;
+            var pkeyflag = 216;
+            qagentid = parseInt(qagentid);
+            ptypeagent = parseInt(ptypeagent);
+            prenewalagentid = parseInt(prenewalagentid);
+            prenewalagentseq = parseInt(prenewalagentseq);
+            prenewalagentyr = parseInt(prenewalagentyr);
+            pkeyflag = parseInt(pkeyflag);
+            var pkeysubflag = 'OtherRera';
+
+            $.ajax({
+                url: displayBASE_URL + 'AgentRenewal/AgentRenewal_ListPreviousRegistration',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'qagentid': qagentid, 'ptypeagent': ptypeagent, 'prenewalagentid': prenewalagentid, 'prenewalagentseq': prenewalagentseq, 'prenewalagentyr': prenewalagentyr, 'pkeyflag': pkeyflag, 'pkeysubflag': pkeysubflag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(RenewalAgentDetailsModal).find('.modal-body').html(response);
+                    $(RenewalAgentDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = 'Real Estate Agent (No record founds)';
+            if ($('#RefRegistrationNumber').val() != '') {
+                var diaryNo = $('#RefRegistrationNumber').val();
+            };
+            //var realestateagentName = $('#ProjectName').val();
+            $(RenewalAgentDetailsModal).find('h4.modal-title').html('Registration Details - <a href="javascript:void(0);"></a>');
+            //$(RenewalAgentDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + realestateagentName + ')');
+            $(RenewalAgentDetailsModal).find('h4.modal-title a').html(diaryNo);
+            $(RenewalAgentDetailsModal).modal('show');
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Renewal of Registration</b><br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-I: Agent Profile.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-II: Organization Member Details (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-III: Upload Document(s).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-IV: Other State/UT Registration Number Detail (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-V: Application Fee.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-VI: Review and Confirm Application Form.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Note down Diary Number for your future reference.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<script type="text/javascript">
+    @if (TempData["RenewalAgent_RegDiaryNumber_Name"].ToString() != string.Empty)
+    {
+        <text >
+            var retBASE_URL = $('body').attr('data-base-url');
+            $(document).ready(function()
+                {
+                swal({
+                title: "Message",
+                    text: "@TempData["RenewalAgent_RegDiaryNumber_Name"]",
+                    type: "success"
+                }, function () {
+                    window.location.href = retBASE_URL + "AgentRenewalView/AgentRenewal_ReviewConfirmDetail";
+                });
+            });
+        </text>
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Renewal of Registration : Review/ Confirmation Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Renewal of Registration (Form-J) : Real-estate Agent Review/ Confirmation Details
+                    <span class="pull-right">
+                        <a id="modalRegistrationStatusOpenerButton" href="javascript:void(0);" title="View Registration Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-list-ul" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("AgentRenewal_ReviewConfirmDetail", "AgentRenewalView", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                @Html.HiddenFor(model => model.Related_Agent_ID, htmlAttributes: new { @class = "control-label", @id = "RefAgentID" })
+                                @Html.HiddenFor(model => model.Related_Agent_Type, htmlAttributes: new { @class = "control-label", @id = "RefAgentType" })
+                                @Html.HiddenFor(model => model.Registration_Number, htmlAttributes: new { @class = "control-label", @id = "RefRegistrationNumber" })
+                                @Html.HiddenFor(model => model.IsPublicView, htmlAttributes: new { @class = "control-label", @id = "RefPublicView" })
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Select Option</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select Diary Number</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if ((System.Collections.IEnumerable)TempData["ReviewMasterlist"] != null)
+                                                            {
+                                                                if (TempData["SelectedReviewListValue"] != null)
+                                                                {
+                                                                    @Html.DropDownListFor(m => m.Related_AgentRenewal_ID, new SelectList((System.Collections.IEnumerable)TempData["ReviewMasterlist"], "Related_AgentRenewal_ID", "Reference_Agent_DiaryNumber", TempData["SelectedReviewListValue"].ToString()), "Select Option", new { @class = "form-control" })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DropDownListFor(m => m.Related_AgentRenewal_ID, new SelectList((System.Collections.IEnumerable)TempData["ReviewMasterlist"], "Related_AgentRenewal_ID", "Reference_Agent_DiaryNumber"), "Select Option", new { @class = "form-control" })
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownListFor(m => m.Related_AgentRenewal_ID, new SelectList(" "), "Select Option", new { @class = "form-control" })
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <input type="submit" value="Submit Detail" formaction="ReviewOption_ReviewConfirmDetail" class="btn btn-outline btn-primary" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Renewal of Registration (Form-J) Details - Review/Confirmation Status</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName("S No")
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayName("Agent Review/Confirmation Title")
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayName("Status")
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.DisplayName("Action Required")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <hr />
+                                                </div>
+                                                @{
+                                                    int sno_RnAgent = 1;
+                                                }
+                                                @if (Session["User_Type"].ToString() == "1")
+                                                {
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-1">
+                                                                @Html.DisplayName(sno_RnAgent.ToString())
+                                                            </div>
+                                                            <div class="col-md-3">                                                            
+                                                                @Html.ActionLink("Real-estate Agent Profile Detail", "AgentRenewal_IndividualProfile", "AgentRenewal")
+                                                            </div>
+                                                            @if (TempData["statusFlag_IndividualProfile"].ToString() == "Complete")
+                                                            {
+                                                                if (Convert.ToString(TempData["submitvalueFlag_IndividualProfile"]) != "Confirmed")
+                                                                {
+                                                                    <div class="col-md-3 alert-warning">
+                                                                        @TempData["status_IndividualProfile"]<br />
+                                                                        @TempData["message_IndividualProfile"]
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-md-3 alert-success">
+                                                                        @TempData["status_IndividualProfile"]
+                                                                        @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                        {
+                                                                            <a href="@Url.Action("Print_AgentRenewal_IndAgentDetail", "AgentPrintForm")" target="_blank">
+                                                                                <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                            </a>
+                                                                        }
+                                                                        <br />
+                                                                        @TempData["message_IndividualProfile"]
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-danger">
+                                                                    @TempData["status_IndividualProfile"]<br />
+                                                                    @TempData["message_IndividualProfile"]
+                                                                </div>
+                                                            }
+                                                            <div class="col-md-5">
+                                                                @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue_IndividualProfile"]" formaction="ReviewConfirmRnAgent_IndOTIndProfile" class="btn btn-default" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue_IndividualProfile"]" formaction="ReviewConfirmRnAgent_IndOTIndProfile" class="btn btn-default" />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (Session["User_Type"].ToString() == "2")
+                                                {
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-1">
+                                                                @Html.DisplayName(sno_RnAgent.ToString())
+                                                            </div>
+                                                            <div class="col-md-3">                                                            
+                                                                @Html.ActionLink("Real-estate Agent OTI Profile Detail", "AgentRenewal_OTIProfile", "AgentRenewal")
+                                                            </div>
+                                                            @if (TempData["statusFlag_OTIProfile"].ToString() == "Complete")
+                                                            {
+                                                                if (Convert.ToString(TempData["submitvalueFlag_OTIProfile"]) != "Confirmed")
+                                                                {
+                                                                    <div class="col-md-3 alert-warning">
+                                                                        @TempData["status_OTIProfile"]<br />
+                                                                        @TempData["message_OTIProfile"]
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-md-3 alert-success">
+                                                                        @TempData["status_OTIProfile"]
+                                                                        @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                        {
+                                                                            <a href="@Url.Action("Print_AgentRenewal_OtherIndAgentProfile", "AgentPrintForm")" target="_blank">
+                                                                                <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                            </a>
+                                                                        }
+                                                                        <br />
+                                                                        @TempData["message_OTIProfile"]
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-danger">
+                                                                    @TempData["status_OTIProfile"]<br />
+                                                                    @TempData["message_OTIProfile"]
+                                                                </div>
+                                                            }
+                                                            <div class="col-md-5">
+                                                                @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue_OTIProfile"]" formaction="ReviewConfirmRnAgent_IndOTIndProfile" class="btn btn-default" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue_OTIProfile"]" formaction="ReviewConfirmRnAgent_IndOTIndProfile" class="btn btn-default" />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (Session["User_Type"].ToString() == "2")
+                                                {
+                                                    if (Session["ReviewOtherMember_YN_Flag"].ToString() == "Y")
+                                                    {
+                                                        {
+                                                            sno_RnAgent = sno_RnAgent + 1;
+                                                        }
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-1">
+                                                                    @Html.DisplayName(sno_RnAgent.ToString())
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.ActionLink("Organization Member(s) Detail", "AgentRenewal_IO_OTIProfile_OrgMemberDetail", "AgentRenewal")
+                                                                </div>
+                                                                @if (TempData["statusFlag_OtherMember"].ToString() == "Complete")
+                                                                {
+                                                                    if (Convert.ToString(TempData["submitvalueFlag_OtherMember"]) != "Confirmed")
+                                                                    {
+                                                                        <div class="col-md-3 alert-warning">
+                                                                            @TempData["status_OtherMember"]<br />
+                                                                            @TempData["message_OtherMember"]
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="col-md-3 alert-success">
+                                                                            @TempData["status_OtherMember"]
+                                                                            @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                            {
+                                                                                <a href="@Url.Action("Print_AgentRenewal_OtherMemberDetail", "AgentPrintForm")" target="_blank">
+                                                                                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                                </a>
+                                                                            }
+                                                                            <br />
+                                                                            @TempData["message_OtherMember"]
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-md-3 alert-danger">
+                                                                        @TempData["status_OtherMember"]<br />
+                                                                        @TempData["message_OtherMember"]
+                                                                    </div>
+                                                                }
+
+                                                                <div class="col-md-5">
+                                                                    @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                    {
+                                                                        <input type="submit" value="@TempData["submitvalue_OtherMember"]" formaction="ReviewConfirmRnAgent_OtherMembers" class="btn btn-default" disabled="disabled" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="submit" value="@TempData["submitvalue_OtherMember"]" formaction="ReviewConfirmRnAgent_OtherMembers" class="btn btn-default" />
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                                @{
+                                                    sno_RnAgent = sno_RnAgent + 1;
+                                                }
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno_RnAgent.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.ActionLink("Document(s) Detail", "AgentRenewal_IO_Documentdetail", "AgentRenewalDocument")
+                                                        </div>
+                                                        @if (TempData["statusFlag_Document"].ToString() == "Complete")
+                                                        {
+                                                            if (Convert.ToString(TempData["submitvalueFlag_Document"]) != "Confirmed")
+                                                            {
+                                                                <div class="col-md-3 alert-warning">
+                                                                    @TempData["status_Document"]<br />
+                                                                    @TempData["message_Document"]
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-success">
+                                                                    @TempData["status_Document"]
+                                                                    @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                    {
+                                                                        <a href="@Url.Action("Print_AgentRenewal_DocumentDetail","AgentPrintForm")" target="_blank">
+                                                                            <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                        </a>
+                                                                    }
+                                                                    <br />
+                                                                    @TempData["message_Document"]
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["status_Document"]<br />
+                                                                @TempData["message_Document"]
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue_Document"]" formaction="ReviewConfirmRnAgent_Documents" class="btn btn-default" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue_Document"]" formaction="ReviewConfirmRnAgent_Documents" class="btn btn-default" />
+                                                            }
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                @if (Session["ReviewOtherRERA_YN_Flag"].ToString() == "Y")
+                                                {
+                                                    {
+                                                        sno_RnAgent = sno_RnAgent + 1;
+                                                    }
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-1">
+                                                                @Html.DisplayName(sno_RnAgent.ToString())
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.ActionLink("Other State/UT Registration(s) Detail", "AgentRenewal_IO_OtherStateUT_RERAdetail", "AgentRenewal")
+                                                            </div>
+                                                            @if (TempData["statusFlag_OtherRERA"].ToString() == "Complete")
+                                                            {
+                                                                if (Convert.ToString(TempData["submitvalueFlag_OtherRERA"]) != "Confirmed")
+                                                                {
+                                                                    <div class="col-md-3 alert-warning">
+                                                                        @TempData["status_OtherRERA"]<br />
+                                                                        @TempData["message_OtherRERA"]
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="col-md-3 alert-success">
+                                                                        @TempData["status_OtherRERA"]
+                                                                        @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                        {
+                                                                            <a href="@Url.Action("Print_AgentRenewal_OtherStateUT_RERA","AgentPrintForm")" target="_blank">
+                                                                                <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                            </a>
+                                                                        }
+                                                                        <br />
+                                                                        @TempData["message_OtherRERA"]
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-danger">
+                                                                    @TempData["status_OtherRERA"]<br />
+                                                                    @TempData["message_OtherRERA"]
+                                                                </div>
+                                                            }
+                                                            <div class="col-md-3">
+                                                                @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue_OtherRERA"]" formaction="ReviewConfirmRnAgent_OtherRERA" class="btn btn-default" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue_OtherRERA"]" formaction="ReviewConfirmRnAgent_OtherRERA" class="btn btn-default" />
+                                                                }
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @{
+                                                    sno_RnAgent = sno_RnAgent + 1;
+                                                }
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno_RnAgent.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.ActionLink("Registration Fee/Payment Detail", "AgentRenewal_IO_ApplicationPayment", "AgentRenewal")
+                                                        </div>
+                                                        @if (TempData["statusFlag_FeePayment"].ToString() == "Complete")
+                                                        {
+                                                            if (Convert.ToString(TempData["submitvalueFlag_FeePayment"]) != "Confirmed")
+                                                            {
+                                                                <div class="col-md-3 alert-warning">
+                                                                    @TempData["status_FeePayment"]<br />
+                                                                    @TempData["message_FeePayment"]
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-success">
+                                                                    @TempData["status_FeePayment"]
+                                                                    @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                                    {
+                                                                        <a href="@Url.Action("Print_AgentRenewal_FeePaymentDetail","AgentPrintForm")" target="_blank">
+                                                                            <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                        </a>
+                                                                    }
+                                                                    <br />
+                                                                    @TempData["message_FeePayment"]
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["status_FeePayment"]<br />
+                                                                @TempData["message_FeePayment"]
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-3">
+                                                            @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue_FeePayment"]" formaction="ReviewConfirmRnAgent_FeePayment" class="btn btn-default" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue_FeePayment"]" formaction="ReviewConfirmRnAgent_FeePayment" class="btn btn-default" />
+                                                            }
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Disclaimer</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12 text-justify">
+                                                            <label class="control-label">                                                                                                                               
+                                                                Disclaimer: @Html.CheckBox("Is_YesNoAgree_RenewalPermission_Flag", true) [I / We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12 text-left">
+                                                            @if (Convert.ToInt32(TempData["RnAgent_IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="I Agree" id="BtnApplicationMainform" class="btn btn-primary" formaction="BtnRnAgent_SubmitAgree" disabled="disabled" />
+
+                                                            }
+                                                            else
+                                                            {
+                                                                if (TempData["RnAgentAgree"].ToString() == "Done")
+                                                                {
+                                                                    <input type="submit" value="I Agree" id="BtnApplicationMainform" class="btn btn-primary" formaction="BtnRnAgent_SubmitAgree" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="I Agree" id="BtnApplicationMainform" class="btn btn-primary" formaction="BtnRnAgent_SubmitAgree" disabled="disabled" />
+                                                                }
+                                                            }
+                                                            <div>
+                                                                @if (TempData["RenewalAgent_RegDiaryNumber_Name"] != null)
+                                                                {
+                                                                    <b>  @TempData["RenewalAgent_RegDiaryNumber_Name"].ToString()</b>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

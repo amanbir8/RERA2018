@@ -1,0 +1,496 @@
+﻿
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script type="text/javascript">
+
+    @if (TempData["PromoterRegDiaryNumber_Name"].ToString() != "")
+    { <text >
+            $(document).ready(function()
+                {
+                swal({
+                title: "Message",
+                    text: "@TempData["PromoterRegDiaryNumber_Name"]",
+                    type: "success"
+                }, function () {
+                    window.location = "../PromoterConfirm/PromoterConfirm";
+                });
+            }); </text>
+    }    
+
+</script>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Review/ Confirm Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Promoter Profile Details - Review/ Confirm
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+
+                            @using (Html.BeginForm("PromoterConfirm", "PromoterConfirm", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Review/ Confirmation Status</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName("S No")
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayName("Promoter Profile Review/Confirmation Title")
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayName("Status")
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.DisplayName("Action Required")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <hr />
+                                                </div>
+                                                @{
+                                                    int sno = 1;
+}
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+
+                                                            @Html.DisplayName(sno.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.ActionLink("Promoter's Profile", "OptionView", "Promoter")
+                                                            @* @Html.DisplayName("Promoter's Profile")*@
+                                                        </div>
+                                                        @if (TempData["PromoterProfile"].ToString() == "Complete")
+                                                        {
+                                                            <div class="col-md-3 alert-warning">
+                                                                @TempData["PromoterProfile"]
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <a href="@Url.Action("Print_PromoterIndDetail", "PromoterPrintForm")" target="_blank">
+                                                                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                    </a>
+                                                                }
+                                                                <br />
+                                                                @TempData["message1"]
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["PromoterProfile"]<br />
+                                                                @TempData["message1"]
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue"]" formaction="PromoterProfileConfirm" class="btn btn-outline btn-primary col-md-9"  disabled = "disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue"]" formaction="PromoterProfileConfirm" class="btn btn-outline btn-primary col-md-9" />
+                                                            }
+                                                        </div>
+                                                         
+                                                    </div>
+                                                </div>
+                                                @if (Session["User_Type"].ToString() == "2")
+                                                {
+                                                    {
+                                                        sno = sno + 1;
+                                                    }
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-1">
+                                                                @Html.DisplayName(sno.ToString())
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @*@Html.DisplayName("Other Organiztion Member(s) Detail")*@
+                                                                @Html.ActionLink("Member(s) Detail", "Create_Mem", "Promoter")
+                                                            </div>
+                                                            @if (TempData["OtherMemberDetail"].ToString() == "Complete")
+                                                            {
+                                                                <div class="col-md-3 alert-warning">
+                                                                    @TempData["OtherMemberDetail"]
+                                                                    @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                    {
+                                                                        <a href="@Url.Action("Print_PromoterOrganizationMember", "PromoterPrintForm")" target="_blank">
+                                                                            <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                        </a>
+                                                                    } 
+                                                                    <br />
+                                                                    @TempData["message2"]
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-danger">
+                                                                    @TempData["OtherMemberDetail"]<br />
+                                                                    @TempData["message2"]
+                                                                </div>
+                                                            }
+
+                                                            <div class="col-md-5">
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitOtherMemeber"]" formaction="OtherMemberDetail" class="btn btn-outline btn-primary col-md-9"  disabled = "disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitOtherMemeber"]" formaction="OtherMemberDetail" class="btn btn-outline btn-primary col-md-9" />
+                                                                }
+                                                            </div>
+ 
+                                                        </div>
+                                                    </div>
+                                                    if (Session["User_ParentEntityFlag"].ToString() == "1")
+                                                    {
+                                                    <div class="row">
+                                                        @{
+                                                            sno = sno + 1;
+                                                        }
+                                                        <div class="form-group">
+                                                            <div class="col-md-1">
+                                                                @Html.DisplayName(sno.ToString())
+                                                            </div>
+                                                            <div class="col-md-3 ">
+                                                                @*@Html.DisplayName("Parent Entity(s) Detail")*@
+                                                                @Html.ActionLink("Parent Entity(s) Detail", "Create_ParentEntity", "Promoter")
+                                                            </div>
+
+                                                            @if (TempData["OtherParentEntity"].ToString() == "Complete")
+                                                            {
+                                                                <div class="col-md-3 alert-warning">
+                                                                    @TempData["OtherParentEntity"]
+                                                                    @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                    {
+                                                                        <a href="@Url.Action("Print_PromoterParentEntity", "PromoterPrintForm")" target="_blank">
+                                                                            <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                        </a>
+                                                                    }
+                                                                    <br />
+                                                                    @TempData["message3"]
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-danger">
+                                                                    @TempData["OtherParentEntity"]<br />
+                                                                    @TempData["message3"]
+                                                                </div>
+                                                            }
+
+
+                                                            <div class="col-md-5">
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitParentEntity"]" formaction="ParentEntity" class="btn btn-outline btn-primary col-md-9"  disabled = "disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitParentEntity"]" formaction="ParentEntity" class="btn btn-outline btn-primary col-md-9" />
+                                                                }
+                                                            </div>
+
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    }
+                                                 }
+                                                @if (Session["User_TrackRecordFlag"].ToString() == "1")
+                                                {
+                                                <div class="row">
+                                                    @{
+                                                        sno = sno + 1;
+                                                    }
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @*@Html.DisplayName("Track Record of the Promoter")*@
+                                                            @Html.ActionLink("Track Record of the Promoter", "Create_FiveYears", "Promoter")
+                                                        </div>
+
+                                                        @if (TempData["OtherExperince"].ToString() == "Complete")
+                                                        {
+                                                            <div class="col-md-3 alert-warning">
+                                                                @TempData["OtherExperince"]
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <a href="@Url.Action("Print_PromoterTrackRecordDetails", "PromoterPrintForm")" target="_blank">
+                                                                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                    </a>
+                                                                } 
+                                                                <br />
+                                                                @TempData["message4"]
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["OtherExperince"]<br />
+                                                                @TempData["message4"]
+                                                            </div>
+                                                        }
+
+
+
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitExperince"]" formaction="submitExperince" class="btn btn-outline btn-primary col-md-9"  disabled = "disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitExperince"]" formaction="submitExperince" class="btn btn-outline btn-primary col-md-9" />
+                                                            }
+                                                        </div>
+
+
+                                                       
+                                                    </div>
+                                                </div>
+                                                if (Session["User_Litigations"].ToString() == "1")
+                                                {
+                                                <div class="row">
+                                                    @{
+                                                        sno = sno + 1;
+                                                    }
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @*@Html.DisplayName("Promoter's Litigation(s) Detail")*@
+                                                            @Html.ActionLink("Litigation(s) Detail", "Create_Litigations", "Promoter")
+                                                        </div>
+                                                        @if (TempData["OtherLitigations"].ToString() == "Complete")
+                                                        {
+                                                            <div class="col-md-3 alert-warning">
+                                                                @TempData["OtherLitigations"]
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <a href="@Url.Action("Print_PromoterLitigationsDetails", "PromoterPrintForm")" target="_blank">
+                                                                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                    </a>
+                                                                } 
+                                                                <br />
+                                                                @TempData["message5"]
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["OtherLitigations"]<br />
+                                                                @TempData["message5"]
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitLitigations"]" formaction="LitigationsDetails" class="btn btn-outline btn-primary col-md-9"  disabled = "disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitLitigations"]" formaction="LitigationsDetails" class="btn btn-outline btn-primary col-md-9" />
+                                                            }
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </div>
+                                                }
+                                            }
+                                                <div class="row">
+                                                    @{
+                                                        sno = sno + 1;
+                                                    }
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @*@Html.DisplayName("Promoter's Document(s) Details")*@
+                                                            @Html.ActionLink("Document(s) Detail", "PromoterDoc", "PromoterDocument")
+                                                        </div>
+                                                        @if (TempData["OtherDocuments"].ToString() == "Complete")
+                                                        {
+                                                            <div class="col-md-3 alert-warning">
+                                                                @TempData["OtherDocuments"]
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <a href="@Url.Action("Print_PromoterDocumentDetails", "PromoterPrintForm")" target="_blank">
+                                                                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                    </a>
+                                                                } 
+                                                                <br />
+                                                                @TempData["message6"]
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["OtherDocuments"]<br />
+                                                                @TempData["message6"]
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitDocuments"]" formaction="DocumentsDetails" class="btn btn-outline btn-primary col-md-9"  disabled = "disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitDocuments"]" formaction="DocumentsDetails" class="btn btn-outline btn-primary col-md-9" />
+                                                            }
+                                                        </div>
+                                                         
+                                                    </div>
+                                                </div>
+                                                @if (Session["User_JointPromoter"].ToString() == "Y")
+                                                {                                                    
+                                                    <div class="row">
+                                                        @{
+                                                            sno = sno + 1;
+                                                        }
+                                                        <div class="form-group">
+                                                            <div class="col-md-1">
+                                                                @Html.DisplayName(sno.ToString())
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.ActionLink("Joint Promoter(s) Detail", "JointPromoter_ReviewConfirmDetail", "PromoterConfirm")
+                                                            </div>
+                                                            @if (TempData["OtherJointPromoters"].ToString() == "Complete")
+                                                            {
+                                                                <div class="col-md-3 alert-warning">
+                                                                    @TempData["OtherJointPromoters"]
+                                                                    @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                    {
+                                                                        <a href="@Url.Action("JointPromoter_ReviewConfirmDetail","PromoterConfirm")">
+                                                                            <img src="~/images/folder-icon.png" alt="Print" height="25" width="25" />
+                                                                        </a>
+                                                                    }
+                                                                    <br />
+                                                                    @TempData["messageJPrm"]
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-danger">
+                                                                    @TempData["OtherJointPromoters"]<br />
+                                                                    @TempData["messageJPrm"]
+                                                                </div>
+                                                            }
+                                                            <div class="col-md-5">
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitJointPromoters"]" class="btn btn-outline btn-primary col-md-9" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitJointPromoters"]" formaction="JointPromotersDetails" class="btn btn-outline btn-primary col-md-9" />
+                                                                }
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Disclaimer</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12 text-justify">
+                                                            Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                @*<div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12 text-left">
+                                                                <input type="button" value="I Agree" class="btn btn-outline btn-primary" />
+                                                            </div>
+                                                        </div>
+                                                    </div>*@
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12 text-left">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="I Agree" class="btn btn-outline btn-primary" formaction="Btn_Agree" disabled="disabled" />
+
+                                                            }
+                                                            else
+                                                                {
+                                                            if (TempData["Agree"].ToString() == "Done")
+                                                            {
+                                                                <input type="submit" value="I Agree" class="btn btn-outline btn-primary" formaction="Btn_Agree" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="I Agree" class="btn btn-outline btn-primary" formaction="Btn_Agree" disabled="disabled" />
+                                                            }
+                                                                }
+                                                            <div>
+                                                                @if (TempData["PromoterRegDiaryNumber_Name"] != null)
+                                                                {
+                                                                    <b>  @TempData["PromoterRegDiaryNumber_Name"].ToString()</b>
+                                                                }
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                             }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}

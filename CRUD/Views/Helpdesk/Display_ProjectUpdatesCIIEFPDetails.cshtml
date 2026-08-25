@@ -1,0 +1,1627 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthDesk_View_ProjectBuildingTowerBlock_Construction
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>
+    $(document).ready(function () {
+
+        var BASE_URLm = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var projectId = 0;//$.trim($(parentRow).find('input.hdnProjectID').val());
+            projectId = parseInt(projectId);
+            var criteriaCode = $(this).attr('data-criteria-code');
+            criteriaCode = parseInt(criteriaCode);
+            $.ajax({
+                url: BASE_URLm + 'Helpdesk/ProjectInfoCheckListInsert',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'criteriaCode': criteriaCode },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    //alert(1);
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            //var diaryNo = $.trim($(parentRow).find('td.project-diary-number').attr('data-diary-no'));
+            //var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            //$(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+
+        $(document).on('click', 'a.panel-accordion-toggle', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var criteriaCode = $(this).attr('data-parent');
+
+            switch (criteriaCode) {
+                case '#accordionConstructions':
+                    $("#btnAccordionConstructions").find("span").toggleClass("btn-outline");
+                    $("#btnAccordionConstructions").find("i").toggleClass("fa-expand fa-compress");
+                    break;
+                case '#accordionInventory':
+                    $("#btnAccordionInventory").find("span").toggleClass("btn-outline");
+                    $("#btnAccordionInventory").find("i").toggleClass("fa-expand fa-compress");
+                    break;                
+                case '#accordionParking':
+                    $("#btnAccordionParking").find("span").toggleClass("btn-outline");
+                    $("#btnAccordionParking").find("i").toggleClass("fa-expand fa-compress");
+                    break;
+                case '#accordionExternalFacilities':
+                    $("#btnAccordionExternalFacilities").find("span").toggleClass("btn-outline");
+                    $("#btnAccordionExternalFacilities").find("i").toggleClass("fa-expand fa-compress");
+                    break;
+                case '#accordionInternalFacilities':
+                    $("#btnAccordionInternalFacilities").find("span").toggleClass("btn-outline");
+                    $("#btnAccordionInternalFacilities").find("i").toggleClass("fa-expand fa-compress");
+                    break;
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var drpYearText = $(document).find("select#drpQYear").val();
+        var drpQuarterText = $(document).find("select#drpQName").val();            
+
+        $("#hdnQYear").val(drpYearText);
+        $("#hdnQName").val(drpQuarterText);       
+
+        $('#drpQYear').attr('disabled', true);
+        $('#drpQName').attr('disabled', true);
+
+        $('#dataTables-InternalFacilities').DataTable({
+            responsive: true,
+            "pageLength": 25,
+            "lengthMenu": [[25, 50, 75, 100], [25, 50, 75, 100]],
+            "searching": false,
+            "info": false            
+        });
+
+        $('#dataTables-ExternalFacilities').DataTable({
+            responsive: true,
+            "pageLength": 25,
+            "lengthMenu": [[25, 50, 75, 100], [25, 50, 75, 100]],
+            "searching": false,
+            "info": false
+        });
+
+        $('#dataTables-ProjectParking').DataTable({
+            responsive: true,
+            "pageLength": 25,
+            "lengthMenu": [[25, 50, 75, 100], [25, 50, 75, 100]],
+            "searching": false,
+            "info": false
+        });
+
+        $('#dataTables-ProjectConstructions').DataTable({
+            responsive: true,
+            "pageLength": 25,
+            "lengthMenu": [[25, 50, 75, 100], [25, 50, 75, 100]],
+            "searching": false,
+            "info": false,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [1]
+            }]
+        });
+
+        $('#dataTables-ProjectInventory').DataTable({
+            responsive: true,
+            "pageLength": 25,
+            "lengthMenu": [[25, 50, 75, 100], [25, 50, 75, 100]],
+            "searching": false,
+            "info": false,
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [1]
+            }]
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+
+<script>
+    function openSideScreen(projectId, documentIndexId) {
+        var baseUrl = $('body').attr('data-base-url');
+        var apiUrl = '@System.Configuration.ConfigurationManager.AppSettings["docpagesBaseURL"]';
+        $.ajax({
+            type: "GET",
+            url: baseUrl + "Helpdesk/GetPromoterProjectDoc",
+            datatype: "Json",
+            data: { 'Pid': projectId, 'docIndexID': documentIndexId },
+            beforeSend: function () {
+                startPreloader();
+            },
+            success: function (data) {
+                stopPreloader();
+                var fileUrl = '';
+                $.each(data.prpPrmProjectDocList, function (index, value) {
+                    if (value.ProjectDoc_IndexID == documentIndexId) {
+                        fileUrl = value.ProjectDoc_FilePath;
+                    }
+                });
+
+                var filename = fileUrl;
+                var extension = filename.replace(/^.*\./, '');
+                if (extension == filename) {
+                    extension = '';
+                } else {
+                    extension = extension.toLowerCase();
+                }
+                switch (extension) {
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                        $("#mySidescreenDocumentEmbed").hide();
+                        $("#mySidescreenDocumentImage").show();
+                        $("#mySidescreenDocImg").attr('src', apiUrl + fileUrl);
+                        $("#documentTypeDiscription").text('(File Type: JPEG/JPG)');
+                        break;
+                    case 'pdf':
+                        $("#mySidescreenDocumentEmbed").show();
+                        $("#mySidescreenDocumentImage").hide();
+                        $("#mySidescreenDocEmbedd").attr('src', apiUrl + fileUrl + '#view=FitH&scrollbar=0&toolbar=0&navpanes=1');
+                        $("#documentTypeDiscription").text('(File Type: PDF)');
+                        break;
+                    default:
+                        $("#mySidescreenDocumentEmbed").show();
+                        $("#mySidescreenDocumentImage").hide();
+                        $("#mySidescreenDocEmbedd").attr('src', apiUrl + fileUrl + '#view=FitH&scrollbar=0&toolbar=0&navpanes=1');
+                        $("#documentTypeDiscription").text('(File Type: Other File)');
+                        break;
+                }
+                //$("#myiframe").attr('src', apiUrl + fileUrl);
+            }
+        });
+
+        document.getElementById("mySidescreen").style.width = "40%";
+        document.getElementById("mySidescreen").style.height = "100%";
+        document.getElementById("wrapper").style.marginLeft = "40%";
+        document.getElementById("wrapper").style.transition = "0.3s";
+        document.getElementById("page-wrapper").style.marginLeft = "0px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "block";
+        //document.getElementById("myclosesideshutter").style.marginLeft = "40%";
+        document.getElementById("myclosesideshutter").style.transition = "0.3s";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function closeSideScreen() {
+        document.getElementById("mySidescreen").style.width = "0";
+        document.getElementById("wrapper").style.marginLeft = "0";
+        document.getElementById("page-wrapper").style.marginLeft = "250px";
+        document.getElementById("side-menu").style.display = "block";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "none";
+    }
+
+    function closeSideShutter() {
+        document.getElementById("mySidescreen").style.width = "250px";
+        document.getElementById("wrapper").style.marginLeft = "0";
+        document.getElementById("page-wrapper").style.marginLeft = "250px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "block";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function openSideShutter() {
+        document.getElementById("mySidescreen").style.width = "40%";
+        document.getElementById("mySidescreen").style.height = "100%";
+        document.getElementById("wrapper").style.marginLeft = "40%";
+        document.getElementById("page-wrapper").style.marginLeft = "0px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "block";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function zoominSideScreen() {
+        document.getElementById("mySidescreen").style.width = "250px";
+        document.getElementById("wrapper").style.marginLeft = "0";
+        document.getElementById("page-wrapper").style.marginLeft = "250px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "block";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function zoomoutSideScreen() {
+        document.getElementById("mySidescreen").style.width = "60%";
+        document.getElementById("mySidescreen").style.height = "100%";
+        document.getElementById("wrapper").style.marginLeft = "60%";
+        document.getElementById("page-wrapper").style.marginLeft = "0px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function openSidebarNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("mySidenav").style.height = "50%";
+        document.getElementById("mySidenav").style.marginBottom = "0";
+        document.getElementById("main").style.marginLeft = "250px";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "none";
+    }
+
+    function closeSidebarNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+        //document.getElementById("mybtnsidenav").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "none";
+    }
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        $(document).on('click', 'a.modalOpenerButtonExpandChecklist', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmCriteriaID = $(this).attr('data-criteria-code');
+            var parmCriteriaSubID = $(this).attr('data-subcriteria-code');
+            var parmCriteriaFlag = $(this).attr('data-criteria-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmCriteriaID = parseInt(parmCriteriaID);
+            parmCriteriaSubID = parseInt(parmCriteriaSubID);
+            parmCriteriaFlag = parseInt(parmCriteriaFlag);
+
+            var varDNumber = $("#zipProject_DiaryNumber").val();
+            var varProjectName = $("#zipProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectInfoCheckListDisplayLogByFlag',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'parmProjectId': parmProjectId, 'parmCriteriaID': parmCriteriaID, 'parmCriteriaSubID': parmCriteriaSubID, 'parmCriteriaFlag': parmCriteriaFlag },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Checklist History Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+        $(document).on('click', 'a.modalOpenerButtonExpandDocument', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmdocID = $(this).attr('data-document-code');
+            var parmdocSubID = $(this).attr('data-subdocument-code');
+            var parmdocFlag = $(this).attr('data-document-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmdocID = parseInt(parmdocID);
+            parmdocSubID = parseInt(parmdocSubID);
+            parmdocFlag = parseInt(parmdocFlag);
+
+            var varDNumber = $("#zipProject_DiaryNumber").val();
+            var varProjectName = $("#zipProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectInfoDocumentDisplayByFlag',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'parmProjectId': parmProjectId, 'parmdocID': parmdocID, 'parmdocSubID': parmdocSubID, 'parmdocFlag': parmdocFlag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Document Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+
+        $(document).on("click", "a.lock-construction-details", lockUnlockHandlerConstruction);
+        $(document).on("click", "a.lock-inventory-details", lockUnlockHandlerInventory);
+        $(document).on("click", "a.lock-parking-details", lockUnlockHandlerParking);
+        $(document).on("click", "a.lock-externalfac-details", lockUnlockHandlerExternalfac);
+        $(document).on("click", "a.lock-internalfac-details", lockUnlockHandlerInternalfac);
+
+        //Lock-Unlock-Loader-Handler-Construction
+        var parmLockUnlockconstruction = $.trim($(document).find('#IsDraftListConstruction').val());
+        if (parmLockUnlockconstruction == 1) { //L        
+            $("#btnLockConstructionDetails").prop('disabled', false);
+            $("#btnLockConstructionDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockConstructionDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockConstructionDetails").attr("title", "Unlock Details");
+            $("#btnLockConstructionDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockconstruction == 5) { //UL         
+            $("#btnLockConstructionDetails").prop('disabled', false);
+            $("#btnLockConstructionDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockConstructionDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockConstructionDetails").attr("title", "Lock Details");
+            $("#btnLockConstructionDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockconstruction == 6) { //PL         
+            $("#btnLockConstructionDetails").prop('disabled', true);
+            $("#btnLockConstructionDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockConstructionDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockConstructionDetails").attr("title", "Unlock Details");
+            $("#btnLockConstructionDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockConstructionDetails").prop('disabled', true);
+            $("#btnLockConstructionDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockConstructionDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockConstructionDetails").attr("title", "Lock Details");
+            $("#btnLockConstructionDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+
+        //Lock-Unlock-Loader-Handler-Inventory
+        var parmLockUnlockinventory = $.trim($(document).find('#IsDraftListInventory').val());
+        if (parmLockUnlockinventory == 1) { //L        
+            $("#btnLockInventoryDetails").prop('disabled', false);
+            $("#btnLockInventoryDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockInventoryDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockInventoryDetails").attr("title", "Unlock Details");
+            $("#btnLockInventoryDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockinventory == 5) { //UL         
+            $("#btnLockInventoryDetails").prop('disabled', false);
+            $("#btnLockInventoryDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockInventoryDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockInventoryDetails").attr("title", "Lock Details");
+            $("#btnLockInventoryDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockinventory == 6) { //PL         
+            $("#btnLockInventoryDetails").prop('disabled', true);
+            $("#btnLockInventoryDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockInventoryDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockInventoryDetails").attr("title", "Unlock Details");
+            $("#btnLockInventoryDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockInventoryDetails").prop('disabled', true);
+            $("#btnLockInventoryDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockInventoryDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockInventoryDetails").attr("title", "Lock Details");
+            $("#btnLockInventoryDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+
+        //Lock-Unlock-Loader-Handler-Parking
+        var parmLockUnlockparking = $.trim($(document).find('#IsDraftListParking').val());
+        if (parmLockUnlockparking == 1) { //L        
+            $("#btnLockParkingDetails").prop('disabled', false);
+            $("#btnLockParkingDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockParkingDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockParkingDetails").attr("title", "Unlock Details");
+            $("#btnLockParkingDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockparking == 5) { //UL         
+            $("#btnLockParkingDetails").prop('disabled', false);
+            $("#btnLockParkingDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockParkingDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockParkingDetails").attr("title", "Lock Details");
+            $("#btnLockParkingDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockparking == 6) { //PL         
+            $("#btnLockParkingDetails").prop('disabled', true);
+            $("#btnLockParkingDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockParkingDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockParkingDetails").attr("title", "Unlock Details");
+            $("#btnLockParkingDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockParkingDetails").prop('disabled', true);
+            $("#btnLockParkingDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockParkingDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockParkingDetails").attr("title", "Lock Details");
+            $("#btnLockParkingDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+
+        //Lock-Unlock-Loader-Handler-Externalfac
+        var parmLockUnlockexternalfac = $.trim($(document).find('#IsDraftListExternalfac').val());
+        if (parmLockUnlockexternalfac == 1) { //L        
+            $("#btnLockExternalFacDetails").prop('disabled', false);
+            $("#btnLockExternalFacDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockExternalFacDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockExternalFacDetails").attr("title", "Unlock Details");
+            $("#btnLockExternalFacDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockexternalfac == 5) { //UL         
+            $("#btnLockExternalFacDetails").prop('disabled', false);
+            $("#btnLockExternalFacDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockExternalFacDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockExternalFacDetails").attr("title", "Lock Details");
+            $("#btnLockExternalFacDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockexternalfac == 6) { //PL         
+            $("#btnLockExternalFacDetails").prop('disabled', true);
+            $("#btnLockExternalFacDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockExternalFacDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockExternalFacDetails").attr("title", "Unlock Details");
+            $("#btnLockExternalFacDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockExternalFacDetails").prop('disabled', true);
+            $("#btnLockExternalFacDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockExternalFacDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockExternalFacDetails").attr("title", "Lock Details");
+            $("#btnLockExternalFacDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+
+        //Lock-Unlock-Loader-Handler-Internalfac
+        var parmLockUnlockinternalfac = $.trim($(document).find('#IsDraftListInternalfac').val());
+        if (parmLockUnlockinternalfac == 1) { //L        
+            $("#btnLockInternalFacDetails").prop('disabled', false);
+            $("#btnLockInternalFacDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockInternalFacDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockInternalFacDetails").attr("title", "Unlock Details");
+            $("#btnLockInternalFacDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockinternalfac == 5) { //UL         
+            $("#btnLockInternalFacDetails").prop('disabled', false);
+            $("#btnLockInternalFacDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockInternalFacDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockInternalFacDetails").attr("title", "Lock Details");
+            $("#btnLockInternalFacDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockinternalfac == 6) { //PL         
+            $("#btnLockInternalFacDetails").prop('disabled', true);
+            $("#btnLockInternalFacDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockInternalFacDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockInternalFacDetails").attr("title", "Unlock Details");
+            $("#btnLockInternalFacDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockInternalFacDetails").prop('disabled', true);
+            $("#btnLockInternalFacDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockInternalFacDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockInternalFacDetails").attr("title", "Lock Details");
+            $("#btnLockInternalFacDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+    });
+
+    function lockUnlockHandlerConstruction() {
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmLockUnlock = $.trim($(document).find('#IsDraftListConstruction').val());
+            var parmIndexID = 0;
+            var parmQuartlyValue = '0';
+            var parmQuartlyYear = 0;
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_ProjectConstruction',
+                data: { 'parmProjectId': parmProjectId, 'parmLockUnlock': parmLockUnlock, 'parmIndexID': parmIndexID, 'parmQuartlyValue': parmQuartlyValue, 'parmQuartlyYear': parmQuartlyYear },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockConstructionDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockConstructionDetails").attr("title", "Unlock Details");
+                        $("#btnLockConstructionDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockConstructionDetails").prop('disabled', true);
+                        $("#btnLockConstructionDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockConstructionDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockConstructionDetails").attr("title", "Lock Details");
+                        $("#btnLockConstructionDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockConstructionDetails").prop('disabled', true);
+                        $("#btnLockConstructionDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+    function lockUnlockHandlerInventory() {
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmLockUnlock = $.trim($(document).find('#IsDraftListInventory').val());
+            var parmIndexID = 0;
+            var parmQuartlyValue = '0';
+            var parmQuartlyYear = 0;
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_ProjectInventory',
+                data: { 'parmProjectId': parmProjectId, 'parmLockUnlock': parmLockUnlock, 'parmIndexID': parmIndexID, 'parmQuartlyValue': parmQuartlyValue, 'parmQuartlyYear': parmQuartlyYear },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockInventoryDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockInventoryDetails").attr("title", "Unlock Details");
+                        $("#btnLockInventoryDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockInventoryDetails").prop('disabled', true);
+                        $("#btnLockInventoryDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockInventoryDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockInventoryDetails").attr("title", "Lock Details");
+                        $("#btnLockInventoryDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockInventoryDetails").prop('disabled', true);
+                        $("#btnLockInventoryDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+    function lockUnlockHandlerParking() {
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmLockUnlock = $.trim($(document).find('#IsDraftListParking').val());
+            var parmIndexID = 0;
+            var parmQuartlyValue = '0';
+            var parmQuartlyYear = 0;
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_ProjectParking',
+                data: { 'parmProjectId': parmProjectId, 'parmLockUnlock': parmLockUnlock, 'parmIndexID': parmIndexID, 'parmQuartlyValue': parmQuartlyValue, 'parmQuartlyYear': parmQuartlyYear },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockParkingDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockParkingDetails").attr("title", "Unlock Details");
+                        $("#btnLockParkingDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockParkingDetails").prop('disabled', true);
+                        $("#btnLockParkingDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockParkingDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockParkingDetails").attr("title", "Lock Details");
+                        $("#btnLockParkingDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockParkingDetails").prop('disabled', true);
+                        $("#btnLockParkingDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+    function lockUnlockHandlerExternalfac() {
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmLockUnlock = $.trim($(document).find('#IsDraftListExternalfac').val());
+            var parmIndexID = 0;
+            var parmQuartlyValue = '0';
+            var parmQuartlyYear = 0;
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_ProjectExternalFacility',
+                data: { 'parmProjectId': parmProjectId, 'parmLockUnlock': parmLockUnlock, 'parmIndexID': parmIndexID, 'parmQuartlyValue': parmQuartlyValue, 'parmQuartlyYear': parmQuartlyYear },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockExternalFacDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockExternalFacDetails").attr("title", "Unlock Details");
+                        $("#btnLockExternalFacDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockExternalFacDetails").prop('disabled', true);
+                        $("#btnLockExternalFacDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockExternalFacDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockExternalFacDetails").attr("title", "Lock Details");
+                        $("#btnLockExternalFacDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockExternalFacDetails").prop('disabled', true);
+                        $("#btnLockExternalFacDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+    function lockUnlockHandlerInternalfac() {
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmLockUnlock = $.trim($(document).find('#IsDraftListInternalfac').val());
+            var parmIndexID = 0;
+            var parmQuartlyValue = '0';
+            var parmQuartlyYear = 0;
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_ProjectInternalFacility',
+                data: { 'parmProjectId': parmProjectId, 'parmLockUnlock': parmLockUnlock, 'parmIndexID': parmIndexID, 'parmQuartlyValue': parmQuartlyValue, 'parmQuartlyYear': parmQuartlyYear },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockInternalFacDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockInternalFacDetails").attr("title", "Unlock Details");
+                        $("#btnLockInternalFacDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockInternalFacDetails").prop('disabled', true);
+                        $("#btnLockInternalFacDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockInternalFacDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockInternalFacDetails").attr("title", "Lock Details");
+                        $("#btnLockInternalFacDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockInternalFacDetails").prop('disabled', true);
+                        $("#btnLockInternalFacDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+</script>
+<script>
+
+    function rowContentwithformat(d, Index, Counter) {
+        // `d` is the original data object for the row
+        //console.log(d);
+        //console.log(Index);
+        if (Counter > 0) {
+            var i;
+            var fLen = parseInt(Counter);
+            fLen = fLen + 1;
+            var parmInvBtbName = [];
+            var parmInvAspType = [];
+            var parmInvAspAvailableforSaleNumber = [];
+            var parmInvAspAlreadySoldNumber = [];
+            var parmInvAspCarpetArea = [];
+            var parmInvAspExclusiveOpenTerraceArea = [];
+            var parmInvAspExclusiveBalconyVerandahArea = [];
+            var parmTableRows = '';
+
+            for (i = 1; i < fLen; i++) {
+                parmInvBtbName[i] = $.trim($(d).find('#hdnVarBtbName' + Index + 'arr' + i).val());
+                parmInvAspType[i] = $.trim($(d).find('#hdnVarAspType' + Index + 'arr' + i).val());
+                parmInvAspAvailableforSaleNumber[i] = $.trim($(d).find('#hdnVarAspAvailableforSaleNumber' + Index + 'arr' + i).val());
+                parmInvAspAlreadySoldNumber[i] = $.trim($(d).find('#hdnVarAspAlreadySoldNumber' + Index + 'arr' + i).val());
+                parmInvAspCarpetArea[i] = $.trim($(d).find('#hdnVarAspCarpetArea' + Index + 'arr' + i).val());
+                parmInvAspExclusiveOpenTerraceArea[i] = $.trim($(d).find('#hdnVarAspExclusiveOpenTerraceArea' + Index + 'arr' + i).val());
+                parmInvAspExclusiveBalconyVerandahArea[i] = $.trim($(d).find('#hdnVarAspExclusiveBalconyVerandahArea' + Index + 'arr' + i).val());
+
+                parmTableRows = parmTableRows +
+                    '<tr>' +
+                        '<td><b>(' + i + ')</b> Building/ Tower/ Block Name: </td>' +
+                        '<td><b>' + parmInvBtbName[i] + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(a.) Type of Apartment/Shop/Plot: </td>' +
+                        '<td><b>' + parmInvAspType[i] + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(b.) Total Number of Apartment/ Shop/ Plot: </td>' +
+                        '<td><b>' + parmInvAspAvailableforSaleNumber[i] + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(c.) Number of Apartment/Shop/Plot already sold: </td>' +
+                        '<td><b>' + parmInvAspAlreadySoldNumber[i] + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(d.) Carpet Area of Apartment/ Shop/ Plot: </td>' +
+                        '<td><b>' + parmInvAspCarpetArea[i] + '</b> (in sqr mtrs)</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(e.) Exclusive Open Terrace Area: </td>' +
+                        '<td><b>' + parmInvAspExclusiveOpenTerraceArea[i] + '</b> (in sqr mtrs)</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(f.) Area of the Exclusive Balcony or Verandah: </td>' +
+                        '<td><b>' + parmInvAspExclusiveBalconyVerandahArea[i] + '</b> (in sqr mtrs)</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td colspan="2"><br/></td>' +
+                    '</tr>';
+            }
+        }
+
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' + parmTableRows + '</table>';
+    }
+
+    function rowInventoryContentwithformat(d, Index) {
+        // `d` is the original data object for the row
+        //console.log(d);
+        //console.log(Index);
+
+        var parmAShopPlotType = $.trim($(d).find('#hdnVarASPtype' + Index).val());
+        var parmAShopPlotCarpetArea = $.trim($(d).find('#hdnVarASPcarpetArea' + Index).val());
+        var parmAShopPlotExOpenTerraceArea = $.trim($(d).find('#hdnVarASPexclusiveOpenTerraceArea' + Index).val());
+        var parmAShopPlotExBalconyVerandahArea = $.trim($(d).find('#hdnVarASPexclusiveBalconyVerandahArea' + Index).val());
+        var parmTableRows = '<tr>' +
+                                '<td>Carpet Area of Apartment/ Shop/ Plot:</td>' +
+                                '<td><b>' + parmAShopPlotCarpetArea + '</b> (in sqr mtrs)</td>' +
+                            '</tr>' +
+                            '<tr>' +
+                                '<td>Exclusive Open Terrace Area: </td>' +
+                                '<td><b>' + parmAShopPlotExOpenTerraceArea + '</b> (in sqr mtrs)</td>' +
+                            '</tr>' +
+                            '<tr>' +
+                                '<td>Area of the Exclusive Balcony or Verandah: </td>' +
+                                '<td><b>' + parmAShopPlotExBalconyVerandahArea + '</b> (in sqr mtrs)</td>' +
+                            '</tr>';
+
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' + parmTableRows + '</table>';
+    }
+
+    $(document).ready(function () {
+        $('#dataTables-ProjectConstructions tbody').on('click', 'td.details-control', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var qdataArrayIndex = $.trim($(parentRow).find('td.hdn-array-number').attr('data-array-number'));
+            var qdataSubArrayCounter = $.trim($(parentRow).find('td.hdn-array-counter').attr('data-array-counter'));
+            var mtable = $('#dataTables-ProjectConstructions').DataTable();
+
+            var tr = $(this).closest('tr');
+            var row = mtable.row(tr);
+
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                row.child(rowContentwithformat(row.data(), qdataArrayIndex, qdataSubArrayCounter)).show();
+                tr.addClass('shown');
+            }
+        });
+
+        $('#dataTables-ProjectInventory tbody').on('click', 'td.details-control', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var qdataArrayIndex = $.trim($(parentRow).find('td.hdn-inv-array-number').attr('data-inv-array-number'));
+            var mtable = $('#dataTables-ProjectInventory').DataTable();
+
+            var tr = $(this).closest('tr');
+            var row = mtable.row(tr);
+
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                row.child(rowInventoryContentwithformat(row.data(), qdataArrayIndex)).show();
+                tr.addClass('shown');
+            }
+        });
+    });
+</script>
+<style>
+    td.details-control:after {
+        font-family: FontAwesome;
+        content: "\f0fe";
+        color: grey;
+        cursor: pointer;
+    }
+
+    tr.shown td.details-control:after {
+        font-family: FontAwesome;
+        content: "\f146";
+        color: #FF4961;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).on('click', 'a.notifyOpenerButton', function (e) {
+            new PNotify({
+                title: 'Information',
+                text: 'Use expand/compress tool-bar (system tools bar) to view the squeezed details.',
+                hide: false
+            });
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project Application Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Project Updates (Building/ Tower/ Block Construction, Inventory, Internal Facilities, External Facilities, Parking) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Project /Application - ( @Html.DisplayFor(model => model.zipProject_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zipProjectName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.DisplayFor(model => model.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.HiddenFor(model => model.zipProjectName)
+                                                        @Html.HiddenFor(model => model.zipProject_DiaryNumber)
+                                                        @Html.HiddenFor(model => model.zipRelated_Project_ID)
+
+                                                        @Html.HiddenFor(model => model.IsDraftListConstruction)
+                                                        @Html.HiddenFor(model => model.IsDraftListInventory)
+                                                        @Html.HiddenFor(model => model.IsDraftListParking)
+                                                        @Html.HiddenFor(model => model.IsDraftListExternalfac)
+                                                        @Html.HiddenFor(model => model.IsDraftListInternalfac)
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipProjectLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zipProjectLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @Html.Partial("_AuthorityDeskNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">Project Updates (Building/ Tower/ Block Construction, Inventory, Internal Facilities, External Facilities, Parking) Details</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Quarterly Update Option</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        <label class="control-label mand">Select Year</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @*@Html.DropDownListFor(model => model.B_column, new SelectList(""), new { @class = "form-control" })*@
+                                                        @if (@TempData["CurrentYears"] != null)
+                                                        {
+                                                        @Html.DropDownListFor(model => model.B_column, new SelectList(ViewBag.Years, "Text", "Value", TempData["CurrentYears"]), new { @id = "drpQYear", @class = "form-control" })
+                                                        }
+                                                        else
+                                                        {
+                                                        @Html.DropDownListFor(model => model.B_column, new SelectList(ViewBag.Years, "Text", "Value"), new { @id = "drpQYear", @class = "form-control" })//, @disabled = "disabled"
+                                                        }
+                                                        @Html.HiddenFor(model => model.B_column, new { id = "hdnQYear" })
+                                                        @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label class="control-label mand">Select Quarter</label>
+                                                        @{var listItems1 = new List<SelectListItem>
+                                                {
+
+                                                    //new SelectListItem {  Text = "..." , Value=""  },
+                                                    new SelectListItem {  Text = "Registration Process" , Value="Registration Process"  },
+                                                    new SelectListItem {  Text = "First Quarter" , Value="First Quarter"  },
+                                                     new SelectListItem {  Text = "Second Quarter" , Value="Second Quarter"  },
+                                                     new SelectListItem {  Text = "Third Quarter" , Value="Third Quarter"  },
+                                                     new SelectListItem {  Text = "Fourth Quarter" , Value="Fourth Quarter"  },
+                                                };
+                                                        }
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.HiddenFor(model => model.A_column, new { id = "hdnQName" })
+                                                        @Html.DropDownListFor(model => model.A_column, new SelectList(listItems1, "Value", "Text"), new { @id = "drpQName", @class = "form-control" })
+                                                        @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-group" id="accordionConstructions">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h4 class="page-header" style="margin-top: 15px;">
+                                            <a data-criteria-code="160" class="modalOpenerButton" href="javascript:void(0);" title="Add Remarks (If Any)"><i class="fa fa-list-ul fa-fw"></i> </a>Building/ Tower/ Block Construction Details
+                                            <span class="pull-right">
+                                                <a id="btnAccordionConstructions" data-toggle="collapse" data-parent="#accordionConstructions" href="#collapseThreeConstructions" class="panel-accordion-toggle" aria-expanded="false" title="Expand/Compress Details"><span class="btn btn-primary btn-xs"><i class="fa fa-compress" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandChecklist" data-criteria-code="171" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandDocument" data-document-code="171" data-subdocument-code="0" data-document-flag="1" href="javascript:void(0);" title="View Documents"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-text" aria-hidden="true"></i></span></a>
+                                                <a class="a lock-construction-details" id="btnLockConstructionDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                            </span>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div id="collapseThreeConstructions" class="panel-collapse collapse in" aria-expanded="false" style="">
+                                    @*@{
+                                        int snoConstructions = 0;
+                                    }*@
+                                    @*@if (Model.prpongoing != null)
+                                    {
+                                        foreach (var item in Model.prpongoing)
+                                        {
+                                            //{
+                                            //    snoConstructions = snoConstructions + 1;
+                                            //}
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <fieldset class="col-md-12">
+                                                            <legend class="my"><a data-criteria-code="160" class="modalOpenerButton" href="javascript:void(0);">@Html.DisplayName("(" + snoConstructions.ToString() + ")") Building/ Tower/ Block Construction Details</a></legend>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(modelItem => item.BuildingTowerBlock_Name, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.DisplayFor(modelItem => item.BuildingTowerBlock_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(modelItem => item.CurrentlySanctioned_FloorPlotsNumber, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.DisplayFor(modelItem => item.CurrentlySanctioned_FloorPlotsNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(modelItem => item.Proposed_FloorPlotsNumber, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.DisplayFor(modelItem => item.Proposed_FloorPlotsNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.LabelFor(modelItem => item.Constructed_FloorsNumber, htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-3">
+                                                                        @Html.DisplayFor(modelItem => item.Constructed_FloorsNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }*@
+                                    @if (Model.prpongoing != null)
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-ProjectConstructions">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th><i class="fa fa-list-ol" aria-hidden="true"></i></th> 
+                                                                    <th>@Html.DisplayName("Inventory Details")</th>                                                                                                                                       
+                                                                    <th>@Html.DisplayName("Building/Tower/Block Name")</th>                                                                    
+                                                                    <th>@Html.DisplayName("Number of Floor/Plots Currently Sanctioned")</th>
+                                                                    <th>@Html.DisplayName("Number of Floor/Plots Proposed")</th>
+                                                                    <th>@Html.DisplayName("Number of Floors Constructed")</th>                                                                    
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @{
+                                                                    int snoConstructions = 0;
+                                                                    int counterInventory = 0;
+                                                                }
+                                                                @foreach (var item in Model.prpongoing)
+                                                                {
+                                                                    {
+                                                                        counterInventory = 0;
+                                                                        snoConstructions = snoConstructions + 1;
+                                                                    }
+                                                                    <tr class="odd gradeX">                                                                     
+                                                                        <td width="5%">@Html.DisplayName(snoConstructions.ToString())</td>
+                                                                        <td class="details-control"></td>                                                                        
+                                                                        <td width="25%" class="hdn-array-number" data-array-number="@snoConstructions.ToString()">
+                                                                            @Html.DisplayFor(modelItem => item.BuildingTowerBlock_Name)                                                                            
+                                                                            @foreach (var itemInventory in Model.PrpInventory)
+                                                                            {                                                                              
+                                                                                if (item.BuildingTowerBlock_Name == itemInventory.BuildingTowerBlock_Name)
+                                                                                {
+                                                                                    {
+                                                                                        counterInventory = counterInventory + 1;
+                                                                                    }
+                                                                                    @Html.HiddenFor(modelItem => itemInventory.BuildingTowerBlock_Name, new { @id = "hdnVarBtbName" + snoConstructions.ToString() + "arr" + counterInventory.ToString() })
+                                                                                    @Html.HiddenFor(modelItem => itemInventory.ApartmentShopPlot_Type, new { @id = "hdnVarAspType" + snoConstructions.ToString() + "arr" + counterInventory.ToString() })
+                                                                                    @Html.HiddenFor(modelItem => itemInventory.ApartmentShopPlot_AvailableforSaleNumber, new { @id = "hdnVarAspAvailableforSaleNumber" + snoConstructions.ToString() + "arr" + counterInventory.ToString() })
+                                                                                    @Html.HiddenFor(modelItem => itemInventory.ApartmentShopPlot_AlreadySoldNumber, new { @id = "hdnVarAspAlreadySoldNumber" + snoConstructions.ToString() + "arr" + counterInventory.ToString() })
+                                                                                    @Html.HiddenFor(modelItem => itemInventory.ApartmentShopPlot_CarpetArea, new { @id = "hdnVarAspCarpetArea" + snoConstructions.ToString() + "arr" + counterInventory.ToString() })
+                                                                                    @Html.HiddenFor(modelItem => itemInventory.ApartmentShopPlot_ExclusiveOpenTerraceArea, new { @id = "hdnVarAspExclusiveOpenTerraceArea" + snoConstructions.ToString() + "arr" + counterInventory.ToString() })
+                                                                                    @Html.HiddenFor(modelItem => itemInventory.ApartmentShopPlot_ExclusiveBalconyVerandahArea, new { @id = "hdnVarAspExclusiveBalconyVerandahArea" + snoConstructions.ToString() + "arr" + counterInventory.ToString() })
+                                                                                }
+                                                                            }                                                                            
+                                                                        </td>                                                                        
+                                                                        <td width="22%" class="hdn-array-counter" data-array-counter="@counterInventory.ToString()">
+                                                                            @Html.DisplayFor(modelItem => item.CurrentlySanctioned_FloorPlotsNumber)
+                                                                        </td>
+                                                                        <td width="24%">@Html.DisplayFor(modelItem => item.Proposed_FloorPlotsNumber)</td>
+                                                                        <td width="24%">@Html.DisplayFor(modelItem => item.Constructed_FloorsNumber)</td>                                                                        
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    No record(s) found.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="panel-group" id="accordionInventory">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h4 class="page-header" style="margin-top: 15px;">
+                                            <a data-criteria-code="160" class="modalOpenerButton" href="javascript:void(0);" title="Add Remarks (If Any)"><i class="fa fa-list-ul fa-fw"></i> </a>Building/ Tower/ Block Inventory Details
+                                            <span class="pull-right">
+                                                <a id="btnAccordionInventory" data-toggle="collapse" data-parent="#accordionInventory" href="#collapseThreeInventory" class="panel-accordion-toggle" aria-expanded="false" title="Expand/Compress Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-expand" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandChecklist" data-criteria-code="172" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandDocument" data-document-code="172" data-subdocument-code="0" data-document-flag="1" href="javascript:void(0);" title="View Documents"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-text" aria-hidden="true"></i></span></a>
+                                                <a class="a lock-inventory-details" id="btnLockInventoryDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                            </span>
+                                        </h4>
+                                    </div>
+                                </div>                                
+                                <div id="collapseThreeInventory" class="panel-collapse collapse" aria-expanded="false" style="">                                    
+                                    @if (Model.PrpInventory != null)
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-ProjectInventory">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th><i class="fa fa-list-ol" aria-hidden="true"></i></th>
+                                                                    <th>@Html.DisplayName("Details")</th>
+                                                                    <th>@Html.DisplayName("Building/ Tower/ Block Name")</th>
+                                                                    <th>@Html.DisplayName("Type of Apartment/Shop/Plot")</th>
+                                                                    <th>@Html.DisplayName("Total Number of Apartment/ Shop/ Plot")</th>
+                                                                    <th>@Html.DisplayName("Number of Apartment/Shop/Plot already sold")</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody> 
+                                                                @{
+                                                                    int snoInventorys = 0;
+                                                                }                                                               
+                                                                @foreach (var item in Model.PrpInventory)
+                                                                {
+                                                                    {
+                                                                        snoInventorys = snoInventorys + 1;
+                                                                    }
+                                                                    <tr class="odd gradeX">
+                                                                        <td width="5%">@Html.DisplayName(snoInventorys.ToString())</td>
+                                                                        <td class="details-control"></td>
+                                                                        <td width="25%">@Html.DisplayFor(modelItem => item.BuildingTowerBlock_Name)</td>
+                                                                        <td width="22%" class="hdn-inv-array-number" data-inv-array-number="@snoInventorys.ToString()">
+                                                                            @Html.DisplayFor(modelItem => item.ApartmentShopPlot_Type)
+                                                                            @Html.HiddenFor(modelItem => item.ApartmentShopPlot_Type, new { @id = "hdnVarASPtype" + snoInventorys.ToString() })
+                                                                            @Html.HiddenFor(modelItem => item.ApartmentShopPlot_CarpetArea, new { @id = "hdnVarASPcarpetArea" + snoInventorys.ToString() })
+                                                                            @Html.HiddenFor(modelItem => item.ApartmentShopPlot_ExclusiveOpenTerraceArea, new { @id = "hdnVarASPexclusiveOpenTerraceArea" + snoInventorys.ToString() })
+                                                                            @Html.HiddenFor(modelItem => item.ApartmentShopPlot_ExclusiveBalconyVerandahArea, new { @id = "hdnVarASPexclusiveBalconyVerandahArea" + snoInventorys.ToString() })
+                                                                        </td>
+                                                                        <td width="22%">@Html.DisplayFor(modelItem => item.ApartmentShopPlot_AvailableforSaleNumber)</td>
+                                                                        <td width="26%">@Html.DisplayFor(modelItem => item.ApartmentShopPlot_AlreadySoldNumber)</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    No record(s) found.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="panel-group" id="accordionParking">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h4 class="page-header" style="margin-top: 15px;">
+                                            <a data-criteria-code="160" class="modalOpenerButton" href="javascript:void(0);" title="Add Remarks (If Any)"><i class="fa fa-list-ul fa-fw"></i> </a>Parking Details
+                                            <span class="pull-right">
+                                                <a id="btnAccordionParking" data-toggle="collapse" data-parent="#accordionParking" href="#collapseThreeParking" class="panel-accordion-toggle" aria-expanded="false" title="Expand/Compress Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-expand" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandChecklist" data-criteria-code="173" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandDocument" data-document-code="173" data-subdocument-code="0" data-document-flag="1" href="javascript:void(0);" title="View Documents"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-text" aria-hidden="true"></i></span></a>
+                                                <a class="a lock-parking-details" id="btnLockParkingDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                            </span>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div id="collapseThreeParking" class="panel-collapse collapse" aria-expanded="false" style="">
+                                    @if (Model.PrpParking != null)
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-ProjectParking">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th><i class="fa fa-list-ol" aria-hidden="true"></i></th>
+                                                                    <th>@Html.DisplayName("Type of Parking")</th>
+                                                                    <th>@Html.DisplayName("Total Area of Parking Space (in sqr Mtrs)")</th>
+                                                                    <th>@Html.DisplayName("Total Number of Parking Space")</th>
+                                                                    <th>@Html.DisplayName("Number of Parking Space Booked or Sold")</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @{
+                                                                        int snoParking = 0;
+                                                                }
+                                                                @foreach (var item in Model.PrpParking)
+                                                                    {
+                                                                        {
+                                                                            snoParking = snoParking + 1;
+                                                                        }
+                                                                    <tr class="odd gradeX">
+                                                                        <td width="5%">@Html.DisplayName(snoParking.ToString())</td>
+                                                                        <td width="15%">@Html.DisplayFor(modelItem => item.ParkingType)</td>
+                                                                        <td width="30%">@Html.DisplayFor(modelItem => item.ParkingSpace_Area_Total, new { htmlAttributes = new { @class = "form-control" } })</td>
+                                                                        <td width="25%">@Html.DisplayFor(modelItem => item.ParkingSpace_AvailableforSale_Number)</td>
+                                                                        <td width="25%">@Html.DisplayFor(modelItem => item.ParkingSpace_BookedSold_Number)</td>
+                                                                    </tr>
+                                                                    }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    No record(s) found.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="panel-group" id="accordionExternalFacilities">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h4 class="page-header" style="margin-top: 15px;">
+                                            <a data-criteria-code="160" class="modalOpenerButton" href="javascript:void(0);" title="Add Remarks (If Any)"><i class="fa fa-list-ul fa-fw"></i> </a>External Infrastructure and Facilities Details
+                                            <span class="pull-right">
+                                                <a id="btnAccordionExternalFacilities" data-toggle="collapse" data-parent="#accordionExternalFacilities" href="#collapseThreeExternalFacilities" class="panel-accordion-toggle" aria-expanded="false" title="Expand/Compress Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-expand" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandChecklist" data-criteria-code="174" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandDocument" data-document-code="174" data-subdocument-code="0" data-document-flag="1" href="javascript:void(0);" title="View Documents"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-text" aria-hidden="true"></i></span></a>
+                                                <a class="a lock-externalfac-details" id="btnLockExternalFacDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                            </span>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div id="collapseThreeExternalFacilities" class="panel-collapse collapse" aria-expanded="false" style="">
+                                    @if (Model.PrpExternalFacility != null)
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-ExternalFacilities">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th><i class="fa fa-list-ol" aria-hidden="true"></i></th>
+                                                                    <th>@Html.DisplayName("Facilities Name")</th>
+                                                                    <th>@Html.DisplayName("Facilities Type")</th>
+                                                                    <th>@Html.DisplayName("Facilities Details")</th>
+                                                                    <th style="text-align:center;">@Html.DisplayName("Work Progress % Percentage")</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @{
+                                                                    int snoExFacility = 0;
+                                                                }
+                                                                @foreach (var item in Model.PrpExternalFacility)
+                                                                    {
+                                                                        {
+                                                                            snoExFacility = snoExFacility + 1;
+                                                                        }
+                                                                    <tr class="odd gradeX">
+                                                                        <td width="5%">@Html.DisplayName(snoExFacility.ToString())</td>
+                                                                        <td width="20%">@Html.DisplayFor(modelItem => item.InternalInfrastructureFacilities_Name)</td>
+                                                                        <td width="33%">
+                                                                            @Html.DisplayFor(modelItem => item.InternalInfrastructureFacilities_Type, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName("(")
+                                                                            @Html.DisplayFor(modelItem => item.ExternalAgency_LocalAuthority_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName(")")
+                                                                        </td>
+                                                                        <td width="27%">@Html.DisplayFor(modelItem => item.InternalInfrastructureFacilities_Details)</td>
+                                                                        <td style="width:15%; text-align:center;">@Html.DisplayFor(modelItem => item.WorkProgress_Percentage)</td>
+                                                                    </tr>
+                                                                    }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                No record(s) found.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="panel-group" id="accordionInternalFacilities">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h4 class="page-header" style="margin-top: 15px;">
+                                            <a data-criteria-code="160" class="modalOpenerButton" href="javascript:void(0);" title="Add Remarks (If Any)"><i class="fa fa-list-ul fa-fw"></i> </a>Internal Infrastructure and Facilities Details
+                                            <span class="pull-right">
+                                                <a id="btnAccordionInternalFacilities" data-toggle="collapse" data-parent="#accordionInternalFacilities" href="#collapseThreeInternalFacilities" class="panel-accordion-toggle" aria-expanded="false" title="Expand/Compress Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-expand" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandChecklist" data-criteria-code="175" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                                <a class="modalOpenerButtonExpandDocument" data-document-code="175" data-subdocument-code="0" data-document-flag="1" href="javascript:void(0);" title="View Documents"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-text" aria-hidden="true"></i></span></a>
+                                                <a class="a lock-internalfac-details" id="btnLockInternalFacDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                            </span>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div id="collapseThreeInternalFacilities" class="panel-collapse collapse" aria-expanded="false" style="">
+                                    @if (Model.PrpInternalFacility != null)
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-InternalFacilities">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th><i class="fa fa-list-ol" aria-hidden="true"></i></th>
+                                                                    <th>@Html.DisplayName("Facilities Name")</th>
+                                                                    <th>@Html.DisplayName("Facilities Details")</th>
+                                                                    <th style="text-align:center;">@Html.DisplayName("Work Progress % Percentage")</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @{
+                                                                        int sno = 0;
+                                                                }
+                                                                @foreach (var item in Model.PrpInternalFacility)
+                                                                    {
+                                                                        {
+                                                                            sno = sno + 1;
+                                                                        }
+                                                                    <tr class="odd gradeX">
+                                                                        <td width="8%">@Html.DisplayName(sno.ToString())</td>
+                                                                        <td>@Html.DisplayFor(modelItem => item.InternalInfrastructureFacilities_Name)</td>
+                                                                        <td>@Html.DisplayFor(modelItem => item.InternalInfrastructureFacilities_Details)</td>
+                                                                        <td style="text-align:center;">@Html.DisplayFor(modelItem => item.WorkProgress_Percentage)</td>
+                                                                    </tr>
+                                                                    }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    No record(s) found.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12 text-info small">
+                                                <a class="notifyOpenerButton" href="javascript:void(0);" title="Info"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+                                                Use expand/compress tool-bar to view the squeezed details.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.row (nested) -->
+                </div>
+            <!-- /.panel-body -->
+            </div>
+        <!-- /.panel -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<div id="mybtnsidenav" class="btn-sideprojectnav">
+    <a onclick="openSidebarNav()" class="btn-primary">View Project's Document(s)</a>
+</div>
+
+<div id="myopensideshutter" class="opensideshutter" style="display:none;" data-toggle="tooltip" data-placement="right" title="Expand side panel">
+    <a href="javascript:void(0)" onclick="openSideShutter()">
+        <i class="fa fa-angle-double-right" style="font-size: 18px;
+        background: #7bb73f;
+        color: #22247b;
+        padding: 10px 8px 10px 8px; border:none;">
+        </i>
+    </a>
+</div>
+
+<div id="mySidenav" class="sidenav">
+    <div class="titlebar-name">Project's Document(s):</div>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeSidebarNav()">&times;</a>
+    <ul style="color:#FFF;">
+        <li style="color:#064576;"><a href="javascript:void(0)"><span style="color:#7bb73f;"><b>Project Land Documents:</b></span></a></li>
+        @foreach (var item in Model.ProjectDocumentsList)
+        {
+            if (item.ProjectDoc_RelatedSectionName == "Project Land Documents")
+            {
+                <li><a href="javascript:void(0)" data-record-id="" onclick="openSideScreen(@item.Project_ID, @item.ProjectDoc_IndexID)">@Html.DisplayFor(modelItem => item.ProjectDoc_InfoName)@Html.DisplayName(" (")@Html.DisplayFor(modelItem => item.ProjectDoc_ReferenceNumber)@Html.DisplayName(")")</a></li>
+            }
+        }
+        <li class="divider" style="color:#064576;"></li>
+        <li style="color:#064576;"><a href="javascript:void(0)"><span style="color:#7bb73f;"><b>Project Approval Documents:</b></span></a></li>
+        @foreach (var item in Model.ProjectDocumentsList)
+        {
+            if (item.ProjectDoc_RelatedSectionName == "Project Approval Details")
+            {
+                <li><a href="javascript:void(0)" data-record-id="" onclick="openSideScreen(@item.Project_ID, @item.ProjectDoc_IndexID)">@Html.DisplayFor(modelItem => item.ProjectDoc_InfoName)@Html.DisplayName(" (")@Html.DisplayFor(modelItem => item.ProjectDoc_ReferenceNumber)@Html.DisplayName(")")</a></li>
+            }
+        }
+        <li class="divider" style="color:#064576;"></li>
+        <li style="color:#064576;"><a href="javascript:void(0)"><span style="color:#7bb73f;"><b>Project Documents:</b></span></a></li>
+        @foreach (var item in Model.ProjectDocumentsList)
+        {
+            if (item.ProjectDoc_RelatedSectionName == "Project Documents")
+            {
+                <li><a href="javascript:void(0)" data-record-id="" onclick="openSideScreen(@item.Project_ID, @item.ProjectDoc_IndexID)">@Html.DisplayFor(modelItem => item.ProjectDoc_InfoName)@Html.DisplayName(" (")@Html.DisplayFor(modelItem => item.ProjectDoc_ReferenceNumber)@Html.DisplayName(")")</a></li>
+            }
+        }
+    </ul>
+</div>
+
+<div id="mySidescreen" class="sidescreen">
+    <div class="titlebar-name" id="documentDiscription">Project's Document(s):</div>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeSideScreen()" data-toggle="tooltip" data-placement="bottom" title="Minimize"><b><i style="font-size:16px; background-color:white;" class="fa">&#xf2d1;</i></b></a>
+    <div class="titlebarsubscript-name" id="documentTypeDiscription"></div>
+    <div id="mySidescreenDocumentImage" style="display:none;">
+        <img id="mySidescreenDocImg" src="" class="sidescreenContainer" />
+    </div>
+    <div id="mySidescreenDocumentEmbed" style="display:none;">
+        <embed id="mySidescreenDocEmbedd" src="" class="sidescreenContainer" style="min-height:800px;" type="application/pdf" />
+    </div>
+    <button id="mySidescreenbtnZoomOut" class="btnZoomInOut" onclick="zoomoutSideScreen()" style="display:none;"><i class="fa fa-search-plus" aria-hidden="true"></i></button>
+    <button id="mySidescreenbtnZoomIn" class="btnZoomInOut" onclick="zoominSideScreen()" style="display:none;"><i class="fa fa-search-minus" aria-hidden="true"></i></button>
+    <button id="mySidescreenbtnZoomOff" class="btnZoomInOut" onclick="closeSideScreen()" style="display:none; left:80px;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+</div>
+
+<div id="myclosesideshutter" class="closesideshutter" style="display:none;" data-toggle="tooltip" data-placement="right" title="Collapse side panel">
+    <a href="javascript:void(0)" onclick="closeSideShutter()">
+        <i class="fa fa-angle-double-left" style="font-size: 18px;
+        background: #7bb73f;
+        color: #22247b;
+        padding: 10px 8px 10px 8px;">
+        </i>
+    </a>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                @*<h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>*@
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet"></link>
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+}

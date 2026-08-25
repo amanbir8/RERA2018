@@ -1,0 +1,478 @@
+﻿@model CRUD.Models.HelpdeskAdmin.ClsPrp_AdminDesk_LatestNews
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {        
+
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+
+            if ($('input[name=IsHyperlinkorFileDirectoryPath]:checked').val() == "1") {
+                $(submitButton).parents('form').submit();
+            }
+            else {
+                var files = $("#Photo_Address").get(0).files;
+                var path = $('#user_Photo').attr('src').replace('/', '');
+
+                if (files.length > 0 || path.length > 0) {
+                    $(submitButton).parents('form').submit();
+                }
+                else {
+                    alert("Bad request! Add document file to Upload!")
+                    return false;
+                }
+            }            
+        });
+
+        if ($('input[name=IsHyperlinkorFileDirectoryPath]:checked').val() == "1") {
+            $('#rowFileUpload').css('display', 'none');
+            $('#rowHyperlinkUpload').show();
+        }
+        else {
+            $('#rowFileUpload').show();
+            $('#rowHyperlinkUpload').css('display', 'none');
+        }
+
+        $("input[name='IsHyperlinkorFileDirectoryPath']").click(function () {
+            if ($('input[name=IsHyperlinkorFileDirectoryPath]:checked').val() == "1") {
+                $('#rowFileUpload').css('display', 'none');
+                $('#rowHyperlinkUpload').show();
+            }
+            else {
+                $('#rowFileUpload').show();
+                $('#rowHyperlinkUpload').css('display', 'none');
+            }
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    var baseUrl = $('body').attr('data-base-url');
+
+    function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                var selectedFile = input.files[0];
+                var imageType = 'image/jpeg';
+                if (selectedFile.type.match(imageType)) {
+                    $('#user_Photo').attr('src', e.target.result);
+                }
+                if (selectedFile.type.match('application/pdf')) {
+                    var dataURL = baseUrl + 'images/pdf-icon.gif';
+                    $('#user_Photo').attr('src', dataURL);
+                    $('#user_Photo').attr('width', '78');
+                    $('#user_Photo').attr('height', '78');
+                }
+            }
+            filerdr.readAsDataURL(input.files[0]);
+            $('#Photo_AddressShow').empty();
+            $("#Photo_AddressShow").val(input.files[0].name);
+        }
+    }
+</script>
+
+<script>
+    $(function () {
+        $('[data-spzoom]').spzoom();
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [4, 5]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    
+        $('#LatestNews_IssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, })
+    });
+</script> 
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Latest News Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Latest News Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("WebindexInfoLatestNewsDetails", "HelpdeskAdmin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.LatestNews_IndexID, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.LatestNews_ID, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.LatestNews_LanguageFlag, htmlAttributes: new { @class = "control-label" })
+                                
+                                @*@Html.HiddenFor(model => model.LatestNews_BaseUrl)
+    @Html.HiddenFor(model => model.LatestNews_Url)
+    @Html.HiddenFor(model => model.LatestNews_ExtraUrl, htmlAttributes: new { @class = "control-label" })*@
+
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Latest News Details</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">                                                            
+                                                            @Html.LabelFor(model => model.LatestNews_ReferenceNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Circular/public notice number related to uplaoding document.">
+                                                            @Html.EditorFor(model => model.LatestNews_ReferenceNumber, new { htmlAttributes = new { @class = "form-control" } })                                                            
+                                                            @Html.ValidationMessageFor(model => model.LatestNews_ReferenceNumber, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">                                                           
+                                                            @Html.LabelFor(model => model.LatestNews_IssueDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.LatestNews_IssueDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } }) 
+                                                            @Html.ValidationMessageFor(model => model.LatestNews_IssueDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">  
+                                                            @{var listItems3 = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "Tender Notice" , Value="Tender Notice"  },
+                                                                    new SelectListItem {  Text = "Recruitment Notice" , Value="Recruitment Notice"  },
+                                                                    new SelectListItem {  Text = "Circular Notice" , Value="Circular Notice"  },
+                                                                    new SelectListItem {  Text = "Public Notice" , Value="Public Notice"  },                                                                    
+                                                                };
+                                                            }                                                          
+                                                            @Html.LabelFor(model => model.LatestNews_Category, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.LatestNews_Category, new SelectList(listItems3, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.LatestNews_Category, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">  
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.LatestNews_Title, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.LatestNews_Title, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.LatestNews_Title, "", new { @class = "text-danger" })
+                                                        </div>                                                      
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.LatestNews_Description, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.LatestNews_Description, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.LatestNews_Description, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @{var listItems3punjabi = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "ਟੈਂਡਰ ਨੋਟਿਸ" , Value="ਟੈਂਡਰ ਨੋਟਿਸ"  },
+                                                                    new SelectListItem {  Text = "ਭਰਤੀ ਨੋਟਿਸ" , Value="ਭਰਤੀ ਨੋਟਿਸ"  },
+                                                                    new SelectListItem {  Text = "ਸਰਕੂਲਰ ਨੋਟਿਸ" , Value="ਸਰਕੂਲਰ ਨੋਟਿਸ"  },
+                                                                    new SelectListItem {  Text = "ਜਨਤਕ ਨੋਟਿਸ" , Value="ਜਨਤਕ ਨੋਟਿਸ"  },
+                                                                };
+                                                            }
+                                                            @Html.LabelFor(model => model.CulturePunjabi_LatestNews_Category, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.CulturePunjabi_LatestNews_Category, new SelectList(listItems3punjabi, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.CulturePunjabi_LatestNews_Category, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CulturePunjabi_LatestNews_Title, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.CulturePunjabi_LatestNews_Title, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.CulturePunjabi_LatestNews_Title, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CulturePunjabi_LatestNews_Description, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.CulturePunjabi_LatestNews_Description, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.CulturePunjabi_LatestNews_Description, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other Option(s)</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Is higher priority news? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.LatestNews_PriorityFlag, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.LatestNews_PriorityFlag, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.LatestNews_PriorityFlag, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Is valid for public view? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsPublicView, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Is external hyperlink path? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsHyperlinkorFileDirectoryPath, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.IsHyperlinkorFileDirectoryPath, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsHyperlinkorFileDirectoryPath, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                               
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowFileUpload" style="display:none;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Upload Document</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.LatestNews_ExtraUrl, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        @*<div class="col-md-3"><input type="file" id="Photo_Address" name="Photo_Address" onchange="showPhoto(this)" /></div>*@
+                                                        <div class="col-md-3">
+                                                            <div class="input-group">
+                                                                <label class="input-group-btn">
+                                                                    <span class="btn btn-primary">
+                                                                        Browse… <input type="file" id="Photo_Address" name="Photo_Address" onchange="showPhoto(this)" style="display: none;" multiple="" />
+                                                                    </span>
+                                                                </label>
+                                                                <input type="text" id="Photo_AddressShow" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="control-label col-md-3">                                                            
+                                                        </div>
+                                                        @*<div class="control-label col-md-3">
+                                                            <img id="user_Photo" height="100" width="90" style="border:solid" src="~/readwritedata/@Html.DisplayFor(model => model.DocumentType_FilePath,   new { htmlAttributes = new { @class = "form-control" } })" />
+                                                        </div>*@
+                                                        <div class="col-md-3">
+                                                            <a href="~/@Html.DisplayFor(model => model.LatestNews_Url)@Html.DisplayFor(model => model.LatestNews_ExtraUrl)" data-spzoom>
+                                                                <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/@Html.DisplayFor(model => model.LatestNews_Url)@Html.DisplayFor(model => model.LatestNews_ExtraUrl)" alt="No Image" />
+                                                            </a>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @TempData["notice"]<br />Latest News document should be in .PDF format and less than 2 MB (Two MB).
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowHyperlinkUpload" style="display:none;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">External Hyperlink Path Details</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Latest news Url?</label>                                                            
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.LatestNews_Url, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.LatestNews_Url, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Other Url? (if any)</label>                                                            
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.LatestNews_ExtraUrl, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.LatestNews_ExtraUrl, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <input type="submit" value="@TempData["submitvalueInfoLatestNews"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "WebindexInfoLatestNewsDetails", "HelpdeskAdmin", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                <div class="form-group">                                        
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.LatestNews_IssueDate)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.LatestNews_Category)
+                                                        </th>
+                                                        <th width="45%">
+                                                            @Html.DisplayNameFor(model => model.LatestNews_Title)
+                                                        </th>
+                                                        <th width="12%">
+                                                            @Html.DisplayName("Public View")
+                                                        </th>
+                                                        <th align="center">
+                                                            @Html.DisplayName("View")
+                                                        </th>
+                                                        <th align="center" width="9%">
+                                                            @Html.DisplayName("Edit| Delete")
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.prpLatestNews)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.LatestNews_IssueDate)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.LatestNews_Category)
+                                                            </td>
+                                                            <td width="45%">
+                                                                @Html.DisplayFor(modelItem => item.LatestNews_Title)
+                                                            </td>
+                                                            <td>
+                                                                @if (item.IsPublicView == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            </td>
+                                                            <td align="center">
+                                                                @if (item.IsHyperlinkorFileDirectoryPath == 1)
+                                                                {
+                                                                    var str = "http://" + item.LatestNews_Url.ToString();
+                                                                    <a href=@str target="_blank" title="View"><i class="fa fa-external-link-square"></i></a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a href="~/@Html.DisplayFor(modelItem => item.LatestNews_Url)/@Html.DisplayFor(modelItem => item.LatestNews_ExtraUrl)" target="_blank" title="View Document"><i class="fa fa-external-link-square"></i></a>
+                                                                }                                                                
+                                                            </td>
+                                                            <td align="center" width="9%">
+                                                                @Html.ActionLink("Edit", "Edit_windexInfoLatestNewsDetails", new { pIndexID = item.LatestNews_IndexID, pKeyID = item.LatestNews_ID }) @("| ")
+                                                                @Html.ActionLink("Delete", "Delete_windexInfoLatestNewsDetails", new { pIndexID = item.LatestNews_IndexID, pKeyID = item.LatestNews_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

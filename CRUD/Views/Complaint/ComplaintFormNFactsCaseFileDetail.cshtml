@@ -1,0 +1,50 @@
+﻿@model CRUD.Models.Complaint.Clsprp_ComplaintFormN_FactsCaseDocument
+
+@{
+    Layout = null;
+}
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <div class="row">                    
+                    @if (Model.FactsCaseDoc_FileFormat == ".pdf")
+                    {
+                        <div class="col-md-12" style="align-content:center">
+                            <div style="padding: 0 1% 0 1%">
+                                <embed src="~/@Html.DisplayFor(model => model.FactsCaseDoc_FilePath)" type="application/pdf" style="width:100%; height:600px" />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="panel panel-info">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        
+                                        <div class="col-md-12" style="align-content:center">
+                                            <div style="padding: 0 1% 0 1%">
+                                                Bad Request! File Not Found(s). 
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>   
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

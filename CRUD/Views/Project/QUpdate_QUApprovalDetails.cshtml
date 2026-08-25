@@ -1,0 +1,743 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_QUpdateProject_ApprovalDetails
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $(document).on('click', '#BtnDrp', function (e) {
+            e.preventDefault();
+            var proceedButton = $(this);
+            var drpProjectText = $(document).find("select#Related_ApprovalProjectRegistration_ID").val();
+            var drpYearPrjText = $(document).find("select#drpQYear").val();
+            var drpQuarterPrjText = $(document).find("select#drpQName").val();
+
+            if ($.trim(drpProjectText) == "" || $.trim(drpYearPrjText) == "" || $.trim(drpQuarterPrjText) == "NA") {
+                alert("Invalid Project/ Year/ Quarter! Please select the Project or Year or Quarter Name.")
+            }
+            else {
+                $("#idMainForm").show();
+                $(proceedButton).parents('form').submit();
+            }
+        });
+
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            var drpProjectText = $(document).find("select#Related_ApprovalProjectRegistration_ID").val();
+            var drpYearPrjText = $(document).find("select#drpQYear").val();
+            var drpQuarterPrjText = $(document).find("select#drpQName").val();
+
+            if ($.trim(drpProjectText) == "" || $.trim(drpYearPrjText) == "" || $.trim(drpQuarterPrjText) == "NA") {
+                alert("Invalid Project/ Year/ Quarter! Please select the Project or Year or Quarter Name.")
+                drpProjectText = "";
+                drpYearPrjText = "";
+                drpQuarterPrjText = "";
+                return false;
+            }
+            else {
+                //"photo address" have value on submit button
+                //and "user_photo" have value on update button
+                //so check length of control on save (files.length) and update (path.length)
+
+                var files = $("#Photo_Address").get(0).files;
+                var path = $('#user_Photo').attr('src').replace('/', '');
+
+                if (files.length > 0 || path.length > 0) {
+                    $(submitButton).parents('form').submit();
+                }
+                else {
+                    alert("Please Add Document file to Upload!")
+                    return false;
+                }               
+            }
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    var baseUrl = $('body').attr('data-base-url');
+
+    function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                //$('#user_Photo').attr('src', e.target.result);
+                var selectedFile = input.files[0];
+                var imageType = 'image/jpeg';
+                if (selectedFile.type.match(imageType)) {
+                    $('#user_Photo').attr('src', e.target.result);
+                }
+                if (selectedFile.type.match('application/pdf')) {
+                    var dataURL = baseUrl + 'images/pdf-icon.gif';
+                    $('#user_Photo').attr('src', dataURL);
+                    $('#user_Photo').attr('width', '78');
+                    $('#user_Photo').attr('height', '78');
+                }
+            }
+            filerdr.readAsDataURL(input.files[0]);
+            //$(':input[type="submit"]').prop('disabled', false);
+            //$('#Create').prop('disabled', false);
+            $('#Photo_AddressShow').empty();
+            $("#Photo_AddressShow").val(input.files[0].name);
+        }
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .quborder-info {
+        border-color: #00cfd5 !important;
+        /*padding: 1rem !important;*/
+        /*margin-bottom: 1rem !important;*/
+        /*border: 1px solid #e3e6ec !important;*/
+        /*background-color: #eff3f9 !important;*/
+    }
+
+    .quborder-disabled {
+        background-color: #eff3f9 !important;
+        cursor: not-allowed;
+    }
+
+    .qulinkaction-icon {
+        position: relative;
+    }
+
+        .qulinkaction-icon:before {
+            content: "\f040";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;
+        }
+
+    .qulinkaction-lock {
+        position: relative;
+    }
+
+        .qulinkaction-lock:before {
+            content: "\f09c";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;
+        }
+
+    .qulinkaction-trash {
+        position: relative;
+    }
+
+        .qulinkaction-trash:before {
+            content: "\f1f8";
+            font-family: FontAwesome;
+            position: absolute;
+            margin-left: 1.5em;
+        }
+
+    .display-btnlock {
+        display: none;
+    }
+
+    .display-btnunlock {
+        display: block;
+    }
+</style>
+
+<script>
+$(function() {
+    $('[data-spzoom]').spzoom();
+
+    $('table#promoter-documents-list-table').dataTable({
+        'aoColumnDefs': [{
+            'bSortable': false,
+            'aTargets': [1]
+        }],
+        "language": {
+            "info": "Showing _START_ to _END_ of _TOTAL_ records",
+            "lengthMenu": "Show _MENU_ records"
+        },
+        "pagingType": "full_numbers"
+    });
+});
+</script>
+<script>
+    $(function () {
+        var drpYearText = $(document).find("select#drpQYear").val();
+        var drpQuarterText = $(document).find("select#drpQName").val();
+
+        $("#hdnQYear").val(drpYearText);
+        $("#hdnQName").val(drpQuarterText);
+
+        $('#Date_ApplicationPlannedorExpectedReceipt').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        if ($('#DocumentType_IfOtherSpecifyName').val() != "") {
+            $('#div_otherspecifydoc').show();
+        }
+        else {
+            $('#div_otherspecifydoc').hide();
+            $('#DocumentType_IfOtherSpecifyName').val("");
+        }
+
+        $('#DocumentType_Name').change(function () {
+            if ($("#DocumentType_Name").val() != "Other Document") {
+                $('#div_otherspecifydoc').hide();
+                $('#DocumentType_IfOtherSpecifyName').val("");
+            }
+            else {
+                $('#div_otherspecifydoc').show();
+            }
+        });
+    });
+</script> 
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Quarterly Updates: Project Approval(s) of Registered Project</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Quarterly Updates of Project Approval Details :- [Select and upload approval documents which are applicable to the project w.r.t. quarterly updates section of the registered project. Example as Approvals/ modifications/ amendments/ revisions, if any, issued by the competent authority with regard to any specification, sanctioned plan, layout plan, license, permit or approval for the project.]
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm("DropdownlistProjectQUpdate_QUApprovalDetails", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Project and Quarterly Update Option(s)</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Select Project</label>
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="For quarterly updates details of registered project, Registered project of quarterly updates are required.">
+                                                @Html.DropDownListFor(m => m.Related_ApprovalProjectRegistration_ID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "--Select--", new { @class = "form-control" })
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Select Year</label>
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="For quarterly updates details of registered project, Year of quarterly updates are required.">
+                                                @if (@TempData["QUpdatesSelectedYears"] != null)
+                                                {
+                                                    @Html.DropDownListFor(model => model.QUpdateApproval_Year, new SelectList(ViewBag.Years, "Text", "Value", TempData["QUpdatesSelectedYears"]), "--Select--", new { @id = "drpQYear", @class = "form-control" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.DropDownListFor(model => model.QUpdateApproval_Year, new SelectList(ViewBag.Years, "Text", "Value"), "--Select--", new { @id = "drpQYear", @class = "form-control" })
+                                                }
+                                                @Html.ValidationMessageFor(model => model.QUpdateApproval_Year, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Select Quarter</label>
+                                                @{
+                                                    var listItems1 = new List<SelectListItem>
+                                                        {
+                                                            new SelectListItem {  Text = "--Select--" , Value="NA"  },
+                                                            new SelectListItem {  Text = "First Quarter (January-March)" , Value="FirstQTR"  },
+                                                            new SelectListItem {  Text = "Second Quarter (April-June)" , Value="SecondQTR"  },
+                                                            new SelectListItem {  Text = "Third Quarter (July-September)" , Value="ThirdQTR"  },
+                                                            new SelectListItem {  Text = "Fourth Quarter (October-December)" , Value="FourthQTR"  },
+                                                        };
+                                                }
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="For quarterly updates details of registered project, Quarter Name of quarterly updates are required.">
+                                                @Html.DropDownListFor(model => model.QUpdateApproval_QuarterName, new SelectList(listItems1, "Value", "Text"), new { @id = "drpQName", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.QUpdateApproval_QuarterName, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            <div @if (Session["Project_id"] != null) { @Html.Raw("style=''") } else { @Html.Raw("style='display: none;'") }>
+                                @using (Html.BeginForm("QUpdate_QUApprovalDetails", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(model => model.QUpdateProjectApproval_IndexID)
+                                    @Html.HiddenFor(model => model.QUpdateProjectApproval_ID)
+                                    @Html.HiddenFor(model => model.Related_ProjectApproval_IndexID)
+                                    @Html.HiddenFor(model => model.Related_ProjectApproval_ID)
+                                    @Html.HiddenFor(model => model.Related_ApprovalProjectRegistration_ID)
+                                    @Html.HiddenFor(model => model.IsQuarterlyData)
+                                    @Html.HiddenFor(model => model.IsQuarterlyDataValid)
+                                    @Html.HiddenFor(model => model.QUpdateApproval_Year)
+                                    @Html.HiddenFor(model => model.QUpdateApproval_QuarterName)
+
+                                    if (Model.prpongoing != null)
+                                    {
+                                        if (Model.IsRegisteredDiaryNumberLock != 9)
+                                        {
+                                            if (Model.IsRegisteredDiaryNumberLock != 1)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Quarterly Approval/ Document Details</legend>
+
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @{var listItemsDocTypeName = new List<SelectListItem>
+                                                                            {
+                                                                                new SelectListItem {  Text = "..." , Value=""  },
+                                                                                new SelectListItem {  Text = "AAI Height NOC from Civil Aviation Department/ Airport Authority" , Value="AAI Height NOC from Civil Aviation Department/ Airport Authority"  },
+                                                                                new SelectListItem {  Text = "Amendments or revisions in sanctioned Layout/ Sanction / Building Plan" , Value="Amendments or revisions in sanctioned Layout/ Sanction / Building Plan"  },
+                                                                                new SelectListItem {  Text = "Application for Occupancy/ Completion/ Phase Completion Certificate" , Value="Application for Occupancy/ Completion/ Phase Completion Certificate"  },
+                                                                                new SelectListItem {  Text = "Application for renewal of any of the NOCs/ Licenses" , Value="Application for renewal of any of the NOCs/ Licenses"  },
+                                                                                new SelectListItem {  Text = "Borewell Registration certificate from Central Ground Water Authority" , Value="Borewell Registration certificate from Central Ground Water Authority"  },
+                                                                                new SelectListItem {  Text = "Building Permit Issue from Municipal Authority" , Value="Building Permit Issue from Municipal Authority"  },
+                                                                                new SelectListItem {  Text = "Completion/ Phase Completion certificate from Municipal/ Competent Authority" , Value="Completion/ Phase Completion certificate from Municipal/ Competent Authority"  },
+                                                                                new SelectListItem {  Text = "Defense Clearance" , Value="Defense Clearance"  },
+
+                                                                                new SelectListItem {  Text = "Electric Substation NOC" , Value="Electric Substation NOC"  },
+                                                                                new SelectListItem {  Text = "Environment Clearance certificate/ NOC" , Value="Environment Clearance certificate/ NOC"  },
+                                                                                new SelectListItem {  Text = "License as Promoter from competent Authority" , Value="License as Promoter from competent Authority"  },
+                                                                                new SelectListItem {  Text = "NOC from Fire Department/ Chief Fire Officer" , Value="NOC from Fire Department/ Chief Fire Officer"  },
+                                                                                new SelectListItem {  Text = "NOC from Mining Department" , Value="NOC from Mining Department"  },
+                                                                                new SelectListItem {  Text = "NOC from NHAI/ PWD" , Value="NOC from NHAI/ PWD"  },
+
+                                                                                new SelectListItem {  Text = "Occupancy Certificate from Municipal/ Competent Authority" , Value="Occupancy Certificate from Municipal/ Competent Authority"  },
+                                                                                new SelectListItem {  Text = "Pollution Clearance from Punjab Pollution Control Board" , Value="Pollution Clearance from Punjab Pollution Control Board"  },
+                                                                                new SelectListItem {  Text = "Other Document" , Value="Other Document"  },
+                                                                            };
+                                                                            }
+                                                                            @Html.LabelFor(model => model.DocumentType_Name, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DropDownListFor(model => model.DocumentType_Name, new SelectList(listItemsDocTypeName, "Value", "Text"), new { @class = "form-control" })
+                                                                            @Html.ValidationMessageFor(model => model.DocumentType_Name, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @{var listItems3 = new List<SelectListItem>
+                                                                            {
+                                                                                new SelectListItem {  Text = "..." , Value=""  },
+                                                                                new SelectListItem {  Text = "Approvals" , Value="Approvals"  },
+                                                                                new SelectListItem {  Text = "Permissions" , Value="Permissions"  },
+                                                                                new SelectListItem {  Text = "Clearances" , Value="Clearances"  },
+                                                                                new SelectListItem {  Text = "Modifications" , Value="Modifications"  },
+                                                                                new SelectListItem {  Text = "Amendments" , Value="Amendments"  },
+                                                                                new SelectListItem {  Text = "Revisions" , Value="Revisions"  },
+                                                                                new SelectListItem {  Text = "Legal Documents" , Value="Legal Documents"  },
+                                                                            };
+                                                                            }
+                                                                            @Html.LabelFor(model => model.DocumentType_CategoryName, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DropDownListFor(model => model.DocumentType_CategoryName, new SelectList(listItems3, "Value", "Text"), new { @class = "form-control" })
+                                                                            @Html.ValidationMessageFor(model => model.DocumentType_CategoryName, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group" id="div_otherspecifydoc" style="display:none;">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.DocumentType_IfOtherSpecifyName, htmlAttributes: new { @class = "control-label mand" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.DocumentType_IfOtherSpecifyName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.ValidationMessageFor(model => model.DocumentType_IfOtherSpecifyName, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @{var listItems1 = new List<SelectListItem>
+                                                                            {
+                                                                                new SelectListItem {  Text = "..." , Value=""  },
+                                                                                new SelectListItem {  Text = "Applied" , Value="Applied"  },
+                                                                                new SelectListItem {  Text = "To Be Applied" , Value="To Be Applied"  },
+                                                                                new SelectListItem {  Text = "Received" , Value="Received"  },
+                                                                                new SelectListItem {  Text = "Revised" , Value="Revised"  },
+                                                                            };
+                                                                            }
+                                                                            <label class="control-label mand">Status of Approval</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DropDownListFor(model => model.DocumentType_Status, new SelectList(listItems1, "Value", "Text"), new { @class = "form-control" })
+                                                                            @Html.ValidationMessageFor(model => model.DocumentType_Status, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => model.Date_ApplicationPlannedorExpectedReceipt, htmlAttributes: new { @class = "control-label mand" })
+                                                                            @Html.HiddenFor(model => model.DocumentType_Code, new { Value = "0" })
+                                                                            @Html.ValidationMessageFor(model => model.DocumentType_Code, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.Date_ApplicationPlannedorExpectedReceipt, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                                                                            @Html.ValidationMessageFor(model => model.Date_ApplicationPlannedorExpectedReceipt, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Upload Document</legend>
+
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">@Html.LabelFor(model => model.DocumentType_FilePath, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                                        <div class="col-md-3">
+                                                                            <div class="input-group">
+                                                                                <label class="input-group-btn">
+                                                                                    <span class="btn btn-primary">
+                                                                                        Browse… <input type="file" id="Photo_Address" name="Photo_Address" onchange="showPhoto(this)" style="display: none;" multiple="" />
+                                                                                    </span>
+                                                                                </label>
+                                                                                <input type="text" id="Photo_AddressShow" class="form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="control-label col-md-3">
+                                                                            @Html.HiddenFor(model => model.DocumentType_FilePath)
+                                                                            @Html.HiddenFor(model => model.DocumentType_FileName, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <a href="~/@Html.DisplayFor(model => model.DocumentType_FilePath)@Html.DisplayFor(model => model.DocumentType_FileName)" data-spzoom>
+                                                                                <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/@Html.DisplayFor(model => model.DocumentType_FilePath)@Html.DisplayFor(model => model.DocumentType_FileName)" alt="No Image" />
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            @TempData["notice"]<br />Certificate/Document Should be in .JPG/.JPEG/.PDF format and less than 1 MB
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @if (Model.IsRegisteredDiaryNumberLock == 1 || Model.IsRegisteredDiaryNumberLock == 9)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Model.IsLock == 1 || Model.IsLock == 2)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                                    {
+                                                                        <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                                    }
+                                                                }
+                                                            }
+                                                            &nbsp;
+                                                            @Html.ActionLink("Reset", "QUpdate_QUApprovalDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <fieldset class="col-md-12">
+                                                            <legend class="my">Not Applicable</legend>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-2">
+                                                                        @Html.Label("Quarterly Updates Status", htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-9 alert alert-warning">
+                                                                        Invalid! The registration of selected quarterly update details has been closed. Try Again.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </div>                                                                                    
+                                        }                                        
+                                    }
+                                }
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <br />
+                                    </div>
+                                </div>
+                                @if (Model.prpongoing != null)
+                                {
+                                    if (Model.IsQuarterlyData != 5)
+                                    {
+                                        if (Model.IsRegisteredDiaryNumberLock != 9)
+                                        {
+                                            <div class="row">
+                                                <div class="form-group">                                        
+                                                    <div class="col-md-12">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                                <thead>
+                                                                    <tr>  
+                                                                        <th><i class="fa fa-list-ol" aria-hidden="true"></i></th>                                                          
+                                                                        <th>@Html.DisplayName("Select")</th>
+                                                                        <th>
+                                                                            @Html.DisplayNameFor(model => model.DocumentType_Name)
+                                                                        </th>
+                                                                        <th>
+                                                                            @Html.DisplayNameFor(model => model.DocumentType_CategoryName)
+                                                                        </th>
+                                                                        <th>
+                                                                            @Html.DisplayNameFor(model => model.DocumentType_Status)
+                                                                        </th>
+                                                                        <th>
+                                                                            @Html.DisplayName("Is uploaded during registration or quartely updates?")
+                                                                        </th>                                                                
+                                                                        <th>
+                                                                            @Html.DisplayNameFor(model => model.Date_ApplicationPlannedorExpectedReceipt)
+                                                                        </th>                                                               
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach (var item in Model.prpongoing)
+                                                                    {
+                                                                        <tr>
+                                                                            <td align="center">
+                                                                                <a href="~/@Html.DisplayFor(modelItem => item.DocumentType_FilePath)@Html.DisplayFor(modelItem => item.DocumentType_FileName)" target="_blank" title="View Scan Copy of Document">
+                                                                                    <b><i class="fa fa-external-link-square" aria-hidden="true"></i></b>                                                                            
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>
+                                                                                @if (item.IsQuarterlyDataValid == 1) //RL
+                                                                                {
+                                                                                    if (item.IsRegisteredDiaryNumberLock == 1) //RL
+                                                                                    {
+                                                                                        <span class="justify-content-center">
+                                                                                            <a href="javascript:void(0);" class="disabledlockunlock"><span title="Quarterly Updates Locked" class="qulinkaction-lock"></span></a>
+                                                                                            <span>&nbsp;</span>
+                                                                                            <a href="javascript:void(0);" class="disabledlockunlock"><span title="Delete Quarterly Updates" class="qulinkaction-trash"></span></a>
+                                                                                        </span>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        if (item.IsLock == 1 || item.IsLock == 2) //RL
+                                                                                        {
+                                                                                            <span class="justify-content-center">
+                                                                                                <a href="javascript:void(0);" class="disabledlockunlock"><span title="Quarterly Updates Locked" class="qulinkaction-lock"></span></a>
+                                                                                                <span>&nbsp;</span>
+                                                                                                <a href="javascript:void(0);" class="disabledlockunlock"><span title="Delete Quarterly Updates" class="qulinkaction-trash"></span></a>
+                                                                                            </span>
+                                                                                        }
+                                                                                        else //QU
+                                                                                        {
+                                                                                            if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3) //CL
+                                                                                            {
+                                                                                                <span class="justify-content-center">
+                                                                                                    <span>
+                                                                                                        @Html.ActionLink(" ", "QUpdateEdit_QUApprovalDetails", new { PRID = item.Related_ApprovalProjectRegistration_ID, quPAIndexID = item.QUpdateProjectApproval_IndexID, quPAID = item.QUpdateProjectApproval_ID, rPAIndexID = item.Related_ProjectApproval_IndexID, rPAID = item.Related_ProjectApproval_ID }, new { @class = "qulinkaction-icon", title = "Add Quarterly Updates" })
+                                                                                                    </span>
+                                                                                                    <span>&nbsp;</span>
+                                                                                                    <a href="javascript:void(0);" class="disabledlockunlock"><span title="Quarterly Updates Locked" class="qulinkaction-trash disabledlockunlock"></span></a>
+                                                                                                </span>
+                                                                                            }
+                                                                                            else //QU
+                                                                                            {
+                                                                                                if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6) //CL
+                                                                                                {
+                                                                                                    <span class="justify-content-center">
+                                                                                                        <span>
+                                                                                                            @Html.ActionLink(" ", "QUpdateEdit_QUApprovalDetails", new { PRID = item.Related_ApprovalProjectRegistration_ID, quPAIndexID = item.QUpdateProjectApproval_IndexID, quPAID = item.QUpdateProjectApproval_ID, rPAIndexID = item.Related_ProjectApproval_IndexID, rPAID = item.Related_ProjectApproval_ID }, new { @class = "qulinkaction-icon", title = "Add Quarterly Updates" })
+                                                                                                        </span>
+                                                                                                        <span>&nbsp;</span>
+                                                                                                        <a href="javascript:void(0);" class="disabledlockunlock"><span title="Quarterly Updates Locked" class="qulinkaction-trash disabledlockunlock"></span></a>
+                                                                                                    </span>
+                                                                                                }
+                                                                                                else //QU
+                                                                                                {
+                                                                                                    <span class="justify-content-center">
+                                                                                                        <span>
+                                                                                                            @Html.ActionLink(" ", "QUpdateEdit_QUApprovalDetails", new { PRID = item.Related_ApprovalProjectRegistration_ID, quPAIndexID = item.QUpdateProjectApproval_IndexID, quPAID = item.QUpdateProjectApproval_ID, rPAIndexID = item.Related_ProjectApproval_IndexID, rPAID = item.Related_ProjectApproval_ID }, new { @class = "qulinkaction-icon", title = "Add Quarterly Updates" })
+                                                                                                        </span>
+                                                                                                        <span>&nbsp;</span>
+                                                                                                        <span>
+                                                                                                            @Html.ActionLink(" ", "QUpdateDelete_QUApprovalDetails", new { PRID = item.Related_ApprovalProjectRegistration_ID, quPAIndexID = item.QUpdateProjectApproval_IndexID, quPAID = item.QUpdateProjectApproval_ID, rPAIndexID = item.Related_ProjectApproval_IndexID, rPAID = item.Related_ProjectApproval_ID }, new { @class = "qulinkaction-trash", title = "Delete Quarterly Updates", onclick = "return confirm('Are sure wants to delete?');" })
+                                                                                                        </span>
+                                                                                                    </span>
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span class="justify-content-center">
+                                                                                        <a href="javascript:void(0);" class="disabledlockunlock"><span title="Quarterly Updates Locked" class="qulinkaction-lock"></span></a>
+                                                                                        <span>&nbsp;</span>
+                                                                                        <a href="javascript:void(0);" class="disabledlockunlock"><span title="Delete Quarterly Updates Locked" class="qulinkaction-trash"></span></a>
+                                                                                    </span>
+                                                                                }                                                                                                                                                
+                                                                            </td>
+                                                                                @if (item.IsRegisteredDiaryNumberLock == 1)
+                                                                                {
+                                                                                    if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3)
+                                                                                    {
+                                                                                        <td class="hdn-prk-array-number warning" title="Quarterly updates locked">@Html.DisplayFor(modelItem => item.DocumentType_Name)</td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td class="hdn-prk-array-number success" title="Quarterly updates submitted successfully">
+                                                                                            <span><i class="fa fa-check" aria-hidden="true"></i></span>
+                                                                                            @Html.DisplayFor(modelItem => item.DocumentType_Name)
+                                                                                        </td>
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3)
+                                                                                    {
+                                                                                        <td class="hdn-prk-array-number">@Html.DisplayFor(modelItem => item.DocumentType_Name)</td>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <td class="hdn-prk-array-number success" title="Quarterly updates submitted successfully">
+                                                                                            <span><i class="fa fa-check" aria-hidden="true"></i></span>
+                                                                                            @Html.DisplayFor(modelItem => item.DocumentType_Name)
+                                                                                        </td>
+                                                                                    }
+                                                                                }
+                                                                            <td>
+                                                                                @Html.DisplayFor(modelItem => item.DocumentType_CategoryName)
+                                                                            </td>
+                                                                            <td>
+                                                                                @Html.DisplayFor(modelItem => item.DocumentType_Status)
+                                                                            </td>
+                                                                            <td>
+                                                                                @if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3)
+                                                                                {
+                                                                                    @Html.DisplayName("Uploaded during Registration")
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    @Html.DisplayName("Quarterly Updates")
+                                                                                }
+                                                                            </td>                                                                        
+                                                                            <td align="center" style="background-color:darkgray">                                                                        
+                                                                                    @Html.DisplayFor(modelItem => item.Date_ApplicationPlannedorExpectedReceipt)                                                                   
+                                                                            </td>                                                                
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+                                                             </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <fieldset class="col-md-12">
+                                                            <legend class="my">Not Applicable</legend>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-2">
+                                                                        @Html.Label("Quarterly Updates Status", htmlAttributes: new { @class = "control-label" })
+                                                                    </div>
+                                                                    <div class="col-md-9 alert alert-warning">
+                                                                        Invalid! The registration of selected quarterly update details has been closed. Try Again.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                No record(s) found.
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

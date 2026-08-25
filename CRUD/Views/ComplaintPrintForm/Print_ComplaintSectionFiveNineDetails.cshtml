@@ -1,0 +1,217 @@
+﻿@model CRUD.Models.ComplaintPrint.ClsPrp_Print_NoticeSectionFiveNine
+
+@{    
+    Layout = null;
+}
+<meta charset="utf-8" />
+<div id="wrapper">   
+    <div class="row">
+        <div class="col-lg-12">           
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">                
+                @if (Model.prpNoticeSectionFiveNine != null)
+                {
+                    foreach (var item in Model.prpNoticeSectionFiveNine)
+                    {
+                        var varDate = System.DateTime.Now.Date;                        
+                        <tr>
+                            <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                            <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                        </tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Notice /Complaint Form")</b></td></tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("COMPLAINT TO REGULATORY AUTHORITY")</b></td></tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Notices under section 59 or its related sections of the Act")</b></td></tr>                     
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("For use of Regulatory Authority(s) office:")</b></td></tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Complaint Diary No:")</td>
+                            <td width="35%">@Html.DisplayFor(modelitem => item.NoticesSectionFiveNine_IDName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Date of Institution:")</td>
+                            <td width="35%">@Html.DisplayFor(modelitem => item.NoticeDate, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Mode of Complaint Receipt:")</td>
+                            <td width="35%">@Html.DisplayFor(modelitem => item.Notice_ModeOfComplaint, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("District/Town (Complaint Relates):")</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.DistrictTown_InfoName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("IN THE REGULATORY AUTHORITIES OFFICE (Name of place)")</b></td></tr>
+                        <tr>
+                            <td colspan="2"><b>@Html.DisplayFor(modelitem => item.ProjectName, new { htmlAttributes = new { @class = "form-control" } })</b></td>
+                            <td colspan="2">@Html.DisplayName("[Real Estate Project]")</td>
+                        </tr>
+                        <tr>                            
+                            <td colspan="4">@Html.DisplayName("Address: ")@Html.DisplayFor(modelitem => item.ProjectNameWithAddressDetails, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>                        
+                        <tr>
+                            <td colspan="2"><b>@Html.DisplayFor(modelitem => item.PromoterName, new { htmlAttributes = new { @class = "form-control" } })</b></td>
+                            <td colspan="2">@Html.DisplayName("[Real Estate Promoter(s)]")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">@Html.DisplayName("Address: ")@Html.DisplayFor(modelitem => item.PromoterNameWithAddressDetails, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /></td></tr>
+                        <tr><td colspan="4"><b>@Html.DisplayName("Details of claim:")</b></td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("(1) Particulars of the complainant or applicant(s)")</h4></td></tr>
+                        <tr>
+                            <td>@Html.DisplayName("(i) Name")</td>
+                            <td colspan="3">@Html.DisplayFor(modelitem => item.Complainant_Name, new { htmlAttributes = new { @class = "form-control" } })</td>                            
+                        </tr>
+                        <tr><td colspan="4">@Html.DisplayName("(ii) Address of the existing office / residence of the complainant")</td></tr>                        
+                        <tr>
+                            <td>@Html.DisplayName("Address Line 1")</td>
+                            <td>@Html.DisplayFor(modelitem => item.OfficeResComplainant_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("Address Line 2")</td>
+                            <td>@Html.DisplayFor(modelitem => item.OfficeResComplainant_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayName("District & State")</td>
+                            <td>
+                                @Html.DisplayFor(model => model.OfficeResComplainant_AddressDistrictCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName(", ")
+                                @Html.DisplayFor(model => model.OfficeResComplainant_AddressStateCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                            <td>@Html.DisplayName("Pin Code")</td>
+                            <td>@Html.DisplayFor(modelitem => item.OfficeResComplainant_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayName("Email Address")</td>
+                            <td>@Html.DisplayFor(modelitem => item.Complainant_EmailAddress, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("Mobile Number")</td>
+                            <td>@Html.DisplayFor(modelitem => item.Complainant_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr><td colspan="4">@Html.DisplayName("(iii) Address for service of all notices")</td></tr>
+                        <tr>
+                            <td>@Html.DisplayName("Address Line 1")</td>
+                            <td>@Html.DisplayFor(modelitem => item.ServiceNoticesComplainant_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("Address Line 2")</td>
+                            <td>@Html.DisplayFor(modelitem => item.ServiceNoticesComplainant_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.DisplayName("District & State")</td>
+                            <td>
+                                @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressDistrictCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName(", ")
+                                @Html.DisplayFor(model => model.ServiceNoticesComplainant_AddressStateCodeName, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                            <td>@Html.DisplayName("Pin Code")</td>
+                            <td>@Html.DisplayFor(modelitem => item.ServiceNoticesComplainant_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>                        
+                        <tr><td colspan="4"><h4>@Html.DisplayName("(2) Notice/ Complaint Status Details [Complaint Description]")</h4></td></tr>
+                        <tr>
+                            <td colspan="4" style="text-align:justify;">
+                                @Html.DisplayName("Description: ")@Html.DisplayFor(modelitem => item.RemarksIfAny, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align:justify;">
+                                @Html.DisplayName("Status Remarks, If Any: ")@Html.DisplayFor(modelitem => item.CurrentStatusWithRemarks, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>                        
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found [Form-N Details].</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }                
+                @{
+                    int snumber = 0;
+                }
+                @if (Model.eCourtHearingRecords != null)
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4"><h4>@Html.DisplayName("(3) List of Hearing Records [Specify the details]")</h4></td></tr>
+                    <tr>
+                        <td width="25%">                            
+                            <span style="font-style: italic;">
+                                @Html.DisplayName("Next Hearing Date")                                
+                            </span>
+                        </td>
+                        <td width="25%">
+                            <span style="font-style: italic;">
+                                @Html.DisplayName("Hearing Bench")
+                            </span>
+                        </td>
+                        <td width="25%">
+                            <span style="font-style: italic;">
+                                @Html.DisplayName("Fixed For")
+                            </span>
+                        </td>
+                        <td width="25%">
+                            <span style="font-style: italic;">
+                                @Html.DisplayName("Remarks (If Any)")
+                            </span>
+                        </td>
+                    </tr>
+                    foreach (var item in Model.eCourtHearingRecords)
+                    {
+                        {
+                            snumber = snumber + 1;
+                        }
+                        <tr>
+                            <td width="25%">
+                                @Html.DisplayName("(" + snumber.ToString() + ") ")
+                                @Html.DisplayFor(modelitem => item.Bench_HearingDate, new { htmlAttributes = new { @class = "form-control" } })
+                                <br />
+                                <span style="font-style: italic;">
+                                    @Html.DisplayName("(Time: ")
+                                    @Html.DisplayFor(modelItem => item.Bench_HearingTime)
+                                    @Html.DisplayName(")")
+                                </span>
+                            </td>
+                            <td width="25%">
+                                @Html.DisplayFor(modelItem => item.HearingBench_Name)
+                            </td>
+                            <td width="25%">
+                                @Html.DisplayFor(modelItem => item.HearingBench_FixedFor_Name)
+                            </td>                            
+                            <td width="25%">
+                                @Html.DisplayName("Remarks: ")
+                                @if (item.Remarks_IfAny != string.Empty)
+                                {
+                                    @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("NA")
+                                }
+                                <br />
+                                <span style="font-style: italic;">
+                                    @Html.DisplayName("(Bussiness On Date: ")
+                                    @Html.DisplayFor(modelItem => item.HearingBench_BussinesOnDate_ProceedingDate)
+                                    @Html.DisplayName(" )")
+                                </span>
+                            </td>
+                        </tr>                        
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found [Hearing Record(s)].</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }                
+                <tr><td colspan="4" style="font-style: italic;"><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic;">Place:</td></tr>
+                <tr><td colspan="4" style="font-style: italic;">Date:</td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic;">Signature of the applicant(s)</td></tr>
+            </table>                                      
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->
+
+

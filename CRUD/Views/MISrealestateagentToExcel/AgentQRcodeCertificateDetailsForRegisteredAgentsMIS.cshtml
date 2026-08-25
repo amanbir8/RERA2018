@@ -1,0 +1,115 @@
+﻿@model CRUD.Models.MISrealestateagentToExcel.Clsprp_MIS_AgentQRcodeCertificateDetails
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Agent Details</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Agent_Organization_Name, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Agent_Organization_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Agent_Father_AuthorizedPerson_Name, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Agent_Father_AuthorizedPerson_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                        
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressDistrictCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressStateCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">                                
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RERAnumberRegistration, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                        
+                    </fieldset>
+                </div>
+            </div>
+        </div>     
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">QR Code Image</legend> 
+                        <div class="row" style="align-content:center;">
+                            <div class="form-group">
+                                @*<div class="col-md-3">
+                                    @Html.LabelFor(model => model.QRcodeImage_A, htmlAttributes: new { @class = "control-label" })
+                                </div>*@
+                                <div class="col-md-12">
+                                    <img width="350" height="350" src="@Url.Action("GenerateQrCodeByRegisteredAgentID", "MISrealestateagentToExcel", new { qrRERAnumber = Model.RERAnumberRegistration, qrValidUptoDate = Model.RERAnumberRegUptoDate, qrAgentName = Model.Agent_Organization_Name, qrAgentType = Model.Agent_Type, qrAgentFatherAuthPerson = Model.Agent_Father_AuthorizedPerson_Name, qrAddressLine1 = Model.BusinessPlace_AddressLine1, qrAddressLine2 = Model.BusinessPlace_AddressLine2, qrDistrictName = Model.BusinessPlace_AddressDistrictCode, qrStateName = Model.BusinessPlace_AddressStateCode })" />
+                                </div>                               
+                            </div>
+                        </div>                        
+                    </fieldset>
+                </div>
+            </div>
+        </div>       
+
+    </div>
+</div>

@@ -1,0 +1,947 @@
+﻿@model CRUD.Models.ProjectPrintForm.ClsPrp_PrmProject_Print_ConsolidatedReport
+@using System.Linq
+<link href="@Url.Content("~/css/font-awesome-4.7.0/css/font-awesome.min.css")" rel="stylesheet" />
+@{
+    var StrcallBaseURL = System.Configuration.ConfigurationManager.AppSettings["imagewebBaseURL"].ToString();
+    var diaryDetails = Model.Registration.prpProjectDiaryNumberDetails?.FirstOrDefault();
+}
+<div id="projectDocSelectionWrapper"
+     data-diary-number="@(diaryDetails.PromoterRegDiaryNumber_Name)"
+     data-project-name="@(diaryDetails.zipProjectName)"
+     style="display:none;">
+</div>
+
+<style>
+    /* =========================
+       Project Document Actions
+       ========================= */
+
+    #projectDocTable,
+    #promoterDocTable,
+    #projectQuarterlyDocTable {
+        margin-bottom: 20px;
+    }
+
+    .document-table thead th {
+        vertical-align: middle !important;
+    }
+
+    .document-table tbody td {
+        vertical-align: middle !important;
+    }
+
+    .document-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+
+        .document-table tbody tr:hover {
+            background-color: #f7fbfd;
+        }
+
+    .document-action-cell {
+        width: 17.5%;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* Download button */
+    .doc-action-download {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        height: 32px;
+        padding: 5px 10px;
+        border: 1px solid #074c75;
+        border-radius: 4px !important;
+        background: #fff;
+        color: #074c75;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+        .doc-action-download:hover,
+        .doc-action-download:focus {
+            background: #074c75;
+            color: #fff;
+        }
+
+        .doc-action-download .caret {
+            margin-left: 3px;
+        }
+
+    /* Dropdown */
+    .document-action-dropdown {
+        display: inline-block;
+        margin-left: 5px;
+    }
+
+        .document-action-dropdown .dropdown-menu {
+            min-width: 205px;
+            padding: 5px 0;
+            border-radius: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.18);
+            border: 1px solid #ddd;
+        }
+
+            .document-action-dropdown .dropdown-menu > li > a {
+                padding: 9px 15px;
+                font-size: 13px;
+                color: #333;
+            }
+
+                .document-action-dropdown .dropdown-menu > li > a:hover {
+                    background: #f3f8fb;
+                    color: #074c75;
+                }
+
+                .document-action-dropdown .dropdown-menu > li > a i {
+                    width: 20px;
+                    margin-right: 5px;
+                    text-align: center;
+                }
+
+    .download-zip-icon {
+        color: #074c75;
+    }
+
+    .download-trash-icon {
+        color: #d9534f;
+    }
+
+    /* Header */
+    .document-section-header {
+        background: #074c75;
+        color: white;
+        font-weight: bold;
+        text-align: left;
+        padding: 8px 10px;
+    }
+
+    .document-section-header-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .document-section-title {
+        font-size: 14px;
+    }
+
+    .document-section-pdf {
+        color: white !important;
+        text-decoration: none !important;
+        font-size: 17px;
+    }
+
+        .document-section-pdf:hover {
+            opacity: 0.8;
+        }
+
+    /* S.No */
+    .document-sno {
+        width: 8%;
+        text-align: center;
+    }
+
+    /* Review */
+    .document-review {
+        width: 67%;
+    }
+
+    /* Actions */
+    .document-actions {
+        width: 25%;
+        text-align: center;
+    }
+</style>
+
+
+<!-- #region Project -->
+<!-- Project Details Table -->
+@*<table class="table table-bordered align-middle" id="projectDocTable">
+        <thead>
+            <tr>
+                <td colspan="5" style="background:#074c75; color:white; font-weight:bold; text-align:left; padding:8px 10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Project Details</span>
+                        <a class="button" title="View Single Project PDF" href="@Url.Action("Print_ProjectConsolidatedReport", "ProjectPrintForm", new { reportType = "Project" })" target="_blank" style="color:white; text-decoration:none;">
+                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:10%;">S.No</th>
+                <th style="width:60%;">Project Review</th>
+                <th style="width:20%; text-align:center;">Pdf</th>
+                <th style="width:10%; text-align:center;">Zip</th>
+                <th style="width:10%; text-align:center;">Trash-Zip</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int projectSno = 0; }
+            <tr>
+                <td>@(++projectSno)</td>
+                <td>Project Registration</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectRegistrationDetails", "ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++projectSno)</td>
+                <td>Project Land Details</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectLandDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++projectSno)</td>
+                <td>Khasra (Project Land) Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectKhasraAreaDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++projectSno)</td>
+                <td>Litigations Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectLitigations","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++projectSno)</td>
+                <td>Approval(s) Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectApprovalDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">
+                    <a href="javascript:void(0);" id="btnDownloadApprovalZip" style="cursor:pointer;">
+                        <img src="~/images/winrar.png" alt="ZIP" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++projectSno)</td>
+                <td>Special Bank Account Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectSpecialBankAccountDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++projectSno)</td>
+                <td>Document(s) Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectDocumentDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">
+                    <a href="javascript:void(0);" id="btnDownloadProjectZip" style="cursor:pointer;">
+                        <img src="~/images/winrar.png" alt="ZIP" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">
+                    <a href="javascript:void(0);" id="btnDownloadTrashProjectZip" style="cursor:pointer;">
+                        <img src="~/images/winrar.png" alt="ZIP" height="25" width="25" />
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>@(++projectSno)</td>
+                <td>Payment Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectPaymentDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+                <td style="text-align:center;">-</td>
+            </tr>
+        </tbody>
+    </table>*@
+
+<!-- #endregion -->
+<!-- Project Details Table -->
+<table class="table table-bordered align-middle document-table" id="projectDocTable">
+    <thead>
+        <tr>
+            <td colspan="4" class="document-section-header">
+                <div class="document-section-header-inner">
+                    <span class="document-section-title"><i class="fa fa-folder-open-o"></i> Project Details</span>
+                    <a href="@Url.Action("Print_ProjectConsolidatedReport","ProjectPrintForm", new { reportType = "Project" })" target="_blank" title="View Complete Project PDF" class="document-section-pdf">
+                        <i class="fa fa-file-pdf-o"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th class="document-sno">S.No</th>
+            <th class="document-review">Project Review</th>
+            <th style="width:15%; text-align:center;">PDF</th>
+            <th style="width:15%; text-align:center;">Download</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int projectSno = 0;
+        }
+        <!-- 1. Project Registration -->
+        <tr>
+            <td class="document-sno">
+                @(++projectSno)
+            </td>
+            <td>
+                Project Registration
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectRegistrationDetails","ProjectPrintForm")" target="_blank" title="View Project Registration PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 2. Project Land Details -->
+        <tr>
+            <td class="document-sno">
+                @(++projectSno)
+            </td>
+            <td>
+                Project Land Details
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectLandDetails","ProjectPrintForm")" target="_blank" title="View Project Land PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 3. Khasra -->
+        <tr>
+            <td class="document-sno">
+                @(++projectSno)
+            </td>
+            <td>
+                Khasra (Project Land) Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectKhasraAreaDetails","ProjectPrintForm")" target="_blank" title="View Khasra PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 4. Litigations -->
+        <tr>
+            <td class="document-sno">
+                @(++projectSno)
+            </td>
+            <td>
+                Litigations Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectLitigations","ProjectPrintForm")" target="_blank" title="View Litigations PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 5. Approval Details -->
+        <tr>
+            <td class="document-sno">
+                @(++projectSno)
+            </td>
+            <td>
+                Approval(s) Detail
+            </td>
+            <td class="document-action-cell">
+                <!-- PDF -->
+                <a href="@Url.Action("Print_ProjectApprovalDetails","ProjectPrintForm")" target="_blank" title="View Approval PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td>
+                <!-- ZIP Dropdown -->
+                <div class="dropdown document-action-dropdown">
+                    <button type="button" class="btn doc-action-download dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-download"></i>Download<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a href="javascript:void(0);" id="btnDownloadApprovalZip">
+                                <i class="fa fa-file-archive-o download-zip-icon"></i>Download ZIP
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <!-- 6. Special Bank Account -->
+        <tr>
+            <td class="document-sno">
+                @(++projectSno)
+            </td>
+            <td>
+                Special Bank Account Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectSpecialBankAccountDetails","ProjectPrintForm")" target="_blank" title="View Special Bank Account PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 7. Documents -->
+        <tr>
+            <td class="document-sno">
+                @(++projectSno)
+            </td>
+            <td>
+                Document(s) Detail
+            </td>
+            <td class="document-action-cell">
+                <!-- PDF -->
+                <a href="@Url.Action("Print_ProjectDocumentDetails","ProjectPrintForm")" target="_blank" title="View Project Documents PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td>
+                <!-- Download Dropdown -->
+                <div class="dropdown document-action-dropdown">
+                    <button type="button" class="btn doc-action-download dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-download"></i>Download<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a href="javascript:void(0);" id="btnDownloadProjectZip">
+                                <i class="fa fa-file-archive-o download-zip-icon"></i>Download ZIP
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" id="btnDownloadTrashProjectZip">
+                                <i class="fa fa-trash download-trash-icon"></i>Download Trash ZIP
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <!-- 8. Payment -->
+        <tr>
+            <td class="document-sno">@(++projectSno)</td>
+            <td>Payment Detail</td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectPaymentDetails","ProjectPrintForm")" target="_blank" title="View Payment PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+    </tbody>
+
+</table>
+@if (Model.Documents != null && Model.Documents.prpongoing != null)
+{
+    foreach (var doc in Model.Documents.prpongoing.Where(x => !string.IsNullOrWhiteSpace(x.ProjectDoc_FileName)))
+    {
+        string fileUrl = StrcallBaseURL + "/" + doc.ProjectDoc_FilePath.Replace("\\", "/").TrimStart('/');
+        <span class="project-file-url" data-url="@fileUrl" style="display:none;"></span>
+    }
+}
+@if (Model.ApprovalDocuments != null && Model.ApprovalDocuments.prpongoing != null)
+{
+    foreach (var doc in Model.ApprovalDocuments.prpongoing.Where(x => !string.IsNullOrWhiteSpace(x.DocumentType_FileName)))
+    {
+        string fileUrl = StrcallBaseURL + "/" + doc.DocumentType_FileName.Replace("\\", "/").TrimEnd('/') + "/" + doc.DocumentType_FilePath.TrimStart('/');
+        string docName = !string.IsNullOrWhiteSpace(doc.DocumentType_Name) ? doc.DocumentType_Name : "Document";
+        <span class="approval-file-url" data-url="@fileUrl" data-name="@docName" style="display:none;"></span>
+    }
+}
+@if (Model.TrashDocuments != null && Model.TrashDocuments.prpongoing != null)
+{
+    foreach (var doc in Model.TrashDocuments.prpongoing.Where(x => !string.IsNullOrWhiteSpace(x.ProjectDoc_FileName)))
+    {
+        string fileUrl = StrcallBaseURL + "/" + doc.ProjectDoc_FilePath.Replace("\\", "/").TrimStart('/');
+        <span class="projecttrash-file-url" data-url="@fileUrl" style="display:none;"></span>
+    }
+}
+
+
+<!-- #region Quaterly -->
+<!-- Quaterly Details Table -->
+@*<table class="table table-bordered align-middle" id="projectDocTable">
+        <thead>
+            <tr>
+                <td colspan="3" style="background:#074c75; color:white; font-weight:bold; text-align:left;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Quaterly Details</span>
+                        <a class="button" title="View Single Project PDF" href="@Url.Action("Print_ProjectConsolidatedReport", "ProjectPrintForm", new { reportType = "Quaterly" })" target="_blank" style="color:white; text-decoration:none;">
+                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:10%;">S.No</th>
+                <th style="width:60%;">Project(Quarter Wise) Review</th>
+                <th style="width:30%; text-align:center;">Pdf</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int quaterlySno = 0;
+            }
+
+            <tr>
+                <td>@(++quaterlySno)</td>
+                <td>Building/ Tower/ Block Construction Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectConstructionDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>@(++quaterlySno)</td>
+                <td>Building/ Tower/ Block Inventory Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectInventoryDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>@(++quaterlySno)</td>
+                <td>Internal Infrastructure and Facilities Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectInternalFacilitiesDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>@(++quaterlySno)</td>
+                <td>Project Parking Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectParkingDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>@(++quaterlySno)</td>
+                <td>Project Professional Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectProfessionalsDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>@(++quaterlySno)</td>
+                <td>External Development Work Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectExternalFacilitiesDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>@(++quaterlySno)</td>
+                <td>Photograph of Construction Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_ProjectPhotographDetails","ProjectPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>*@
+<!-- #endregion -->
+<!-- Quarterly Details Table -->
+<table class="table table-bordered align-middle document-table" id="projectQuarterlyDocTable">
+    <thead>
+        <!-- Section Header -->
+        <tr>
+            <td colspan="3" class="document-section-header">
+                <div class="document-section-header-inner">
+                    <span class="document-section-title"><i class="fa fa-bar-chart"></i> Quarterly Details</span>
+                    <a href="@Url.Action("Print_ProjectConsolidatedReport","ProjectPrintForm",new { reportType = "Quaterly" })" target="_blank" title="View Complete Quarterly PDF" class="document-section-pdf">
+                        <i class="fa fa-file-pdf-o"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        <!-- Column Header -->
+        <tr>
+            <th class="document-sno">
+                S.No
+            </th>
+            <th class="document-review">
+                Project (Quarter Wise) Review
+            </th>
+            <th class="document-actions">
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int quaterlySno = 0;
+        }
+        <!-- 1. Construction -->
+        <tr>
+            <td class="document-sno">
+                @(++quaterlySno)
+            </td>
+            <td>
+                Building/ Tower/ Block Construction Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectConstructionDetails","ProjectPrintForm")" target="_blank" title="View Construction Details PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+        </tr>
+        <!-- 2. Inventory -->
+        <tr>
+            <td class="document-sno">
+                @(++quaterlySno)
+            </td>
+            <td>
+                Building/ Tower/ Block Inventory Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectInventoryDetails","ProjectPrintForm")" target="_blank" title="View Inventory Details PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+        </tr>
+        <!-- 3. Internal Infrastructure -->
+        <tr>
+            <td class="document-sno">
+                @(++quaterlySno)
+            </td>
+            <td>
+                Internal Infrastructure and Facilities Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectInternalFacilitiesDetails","ProjectPrintForm")" target="_blank" title="View Internal Infrastructure PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+        </tr>
+        <!-- 4. Parking -->
+        <tr>
+            <td class="document-sno">
+                @(++quaterlySno)
+            </td>
+            <td>
+                Project Parking Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectParkingDetails","ProjectPrintForm")" target="_blank" title="View Parking Details PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+        </tr>
+        <!-- 5. Professionals -->
+        <tr>
+            <td class="document-sno">
+                @(++quaterlySno)
+            </td>
+            <td>
+                Project Professional Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectProfessionalsDetails","ProjectPrintForm")" target="_blank" title="View Professional Details PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+        </tr>
+        <!-- 6. External Development -->
+        <tr>
+            <td class="document-sno">
+                @(++quaterlySno)
+            </td>
+            <td>
+                External Development Work Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectExternalFacilitiesDetails","ProjectPrintForm")" target="_blank" title="View External Development PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+        </tr>
+        <!-- 7. Photographs -->
+        <tr>
+            <td class="document-sno">
+                @(++quaterlySno)
+            </td>
+            <td>
+                Photograph of Construction Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_ProjectPhotographDetails","ProjectPrintForm")" target="_blank" title="View Construction Photograph PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<!-- #region Promoter -->
+<!-- Promoter Details Table -->
+@*<table class="table table-bordered align-middle" id="promoterDocTable">
+        <thead>
+            <tr>
+                <td colspan="4" style="background:#074c75; color:white; font-weight:bold; text-align:left; padding:8px 10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Promoter Details</span>
+                        <a class="button" title="View Single Promoter PDF" href="@Url.Action("Print_ProjectConsolidatedReport", "ProjectPrintForm", new { reportType = "Promoter" })" target="_blank" style="color:white; text-decoration:none;">
+                            <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th style="width:10%;">S.No</th>
+                <th style="width:60%;">Document</th>
+                <th style="width:20%; text-align:center;">Pdf</th>
+                <th style="width:10%; text-align:center;">Zip</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int promoterSno = 0; }
+            <tr>
+                <td>@(++promoterSno)</td>
+                <td>Promoter's Profile</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_PromoterIndDetail", "PromoterPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++promoterSno)</td>
+                <td>Member(s) Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_PromoterOrganizationMember", "PromoterPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++promoterSno)</td>
+                <td>Parent Entity(s) Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_PromoterParentEntity", "PromoterPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++promoterSno)</td>
+                <td>Track Record of the Promoter</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_PromoterTrackRecordDetails", "PromoterPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++promoterSno)</td>
+                <td>Litigation(s) Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_PromoterLitigationsDetails", "PromoterPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">-</td>
+            </tr>
+            <tr>
+                <td>@(++promoterSno)</td>
+                <td>Document(s) Detail</td>
+                <td style="text-align:center;">
+                    <a href="@Url.Action("Print_PromoterDocumentDetails", "PromoterPrintForm")" target="_blank">
+                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                    </a>
+                </td>
+                <td style="text-align:center;">
+                    <a href="javascript:void(0);" id="btnDownloadPromoterZip" style="cursor:pointer;">
+                        <img src="~/images/winrar.png" alt=" ZIP" height="25" width="25" />
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>*@
+<!-- #endregion -->
+<!-- Promoter Details Table -->
+<table class="table table-bordered align-middle document-table" id="promoterDocTable">
+    <thead>
+        <!-- Section Header -->
+        <tr>
+            <td colspan="4" class="document-section-header">
+                <div class="document-section-header-inner">
+                    <span class="document-section-title"><i class="fa fa-user-o"></i> Promoter Details</span>
+                    <a href="@Url.Action("Print_ProjectConsolidatedReport","ProjectPrintForm",new { reportType = "Promoter" })" target="_blank" title="View Complete Promoter PDF" class="document-section-pdf">
+                        <i class="fa fa-file-pdf-o"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        <!-- Column Header -->
+        <tr>
+            <th class="document-sno">S.No</th>
+            <th class="document-review">Document</th>
+            <th style="width:15%; text-align:center;">PDF</th>
+            <th style="width:15%; text-align:center;">Download</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int promoterSno = 0;
+        }
+        <!-- 1. Promoter Profile -->
+        <tr>
+            <td class="document-sno">
+                @(++promoterSno)
+            </td>
+            <td>
+                Promoter's Profile
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_PromoterIndDetail","PromoterPrintForm")" target="_blank" title="View Promoter Profile PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 2. Member Details -->
+        <tr>
+            <td class="document-sno">
+                @(++promoterSno)
+            </td>
+            <td>
+                Member(s) Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_PromoterOrganizationMember","PromoterPrintForm")" target="_blank" title="View Member Details PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 3. Parent Entity -->
+        <tr>
+            <td class="document-sno">
+                @(++promoterSno)
+            </td>
+            <td>
+                Parent Entity(s) Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_PromoterParentEntity","PromoterPrintForm")" target="_blank" title="View Parent Entity Details PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 4. Track Record -->
+        <tr>
+            <td class="document-sno">
+                @(++promoterSno)
+            </td>
+            <td>
+                Track Record of the Promoter
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_PromoterTrackRecordDetails","PromoterPrintForm")" target="_blank" title="View Promoter Track Record PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 5. Litigation -->
+        <tr>
+            <td class="document-sno">
+                @(++promoterSno)
+            </td>
+            <td>
+                Litigation(s) Detail
+            </td>
+            <td class="document-action-cell">
+                <a href="@Url.Action("Print_PromoterLitigationsDetails","PromoterPrintForm")" target="_blank" title="View Promoter Litigation PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td style="text-align:center;">-</td>
+        </tr>
+        <!-- 6. Documents -->
+        <tr>
+            <td class="document-sno">
+                @(++promoterSno)
+            </td>
+            <td>
+                Document(s) Detail
+            </td>
+            <td class="document-action-cell">
+                <!-- PDF -->
+                <a href="@Url.Action("Print_PromoterDocumentDetails","PromoterPrintForm")" target="_blank" title="View Promoter Documents PDF">
+                    <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                </a>
+            </td>
+            <td>
+                <!-- ZIP Dropdown -->
+                <div class="dropdown document-action-dropdown">
+                    <button type="button" class="btn doc-action-download dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-download"></i>Download<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a href="javascript:void(0);" id="btnDownloadPromoterZip">
+                                <i class="fa fa-file-archive-o download-zip-icon"></i>Download ZIP
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+@if (Model.PromoterDocuments != null && Model.PromoterDocuments.prpongoing != null)
+{
+    foreach (var doc in Model.PromoterDocuments.prpongoing.Where(x => !string.IsNullOrWhiteSpace(x.PromoterDoc_FileName)))
+    {
+        string fileUrl = StrcallBaseURL + "/" + doc.PromoterDoc_FilePath.Replace("\\", "/").TrimStart('/');
+        <span class="promoter-file-url" data-url="@fileUrl" style="display:none;"></span>
+    }
+}

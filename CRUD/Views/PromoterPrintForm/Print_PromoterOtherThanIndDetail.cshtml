@@ -1,0 +1,222 @@
+﻿@model CRUD.Models.PromoterPrint.Clsprp_PrmPromoter_Print_PromoterOtherThanIndPrintForm
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.zipPromoter_DiaryNumber != null)
+                {
+                    var varDate = System.DateTime.Now.Date;
+                    <tr>
+                        <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                        <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                    </tr>
+                    <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Application Form (Promoter Registration - Other Than Individual Details)")</b></td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Promoter Diary Number")</td>
+                            <td width="35%">@Html.DisplayFor(model => model.zipPromoter_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.zipPromoterName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(model => model.zipPromoterName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.LabelFor(model => model.zipPromoterLastModifiedOn, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>
+                                @Html.DisplayFor(model => model.zipPromoterLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Promoter Registration - Other Than Individual Details")</h4></td></tr>
+
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+            </table>
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.Org_Name != null)
+                {                
+                    <tr>
+                        <td>@Html.LabelFor(model => model.Org_Name, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>
+                            @Html.DisplayFor(model => model.Org_Name, new { htmlAttributes = new { @class = "form-control" } })                            
+                        </td>
+                        <td>@Html.LabelFor(model => model.Org_Type, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>
+                            @if (Html.DisplayFor(model => model.Org_Type).ToString() == "1")
+                            {
+                                @Html.DisplayName("Private Limited Company")
+                            }
+                            @if (Html.DisplayFor(model => model.Org_Type).ToString() == "2")
+                            {
+                                @Html.DisplayName("Public Limited Company")
+                            }
+                            @if (Html.DisplayFor(model => model.Org_Type).ToString() == "3")
+                            {
+                                @Html.DisplayName("Undivided Hindu Family")
+                            }
+                            @if (Html.DisplayFor(model => model.Org_Type).ToString() == "4")
+                            {
+                                @Html.DisplayName("Partnerships")
+                            }
+                            @if (Html.DisplayFor(model => model.Org_Type).ToString() == "5")
+                            {
+                                @Html.DisplayName("Co-operative Societies")
+                            }
+                            @if (Html.DisplayFor(model => model.Org_Type).ToString() == "6")
+                            {
+                                @Html.DisplayName("Limited Liabilities Partnership")
+                            }
+                            @if (Html.DisplayFor(model => model.Org_Type).ToString() == "7")
+                            {
+                                @Html.DisplayName("Development Authorities")
+                            }
+                            @if (Html.DisplayFor(model => model.Org_Type).ToString() == "8")
+                            {
+                                @Html.DisplayName("Others")
+                            }
+
+                        </td>
+                    </tr>                    
+                    <tr>
+                        <td>@Html.LabelFor(model => model.Org_Objects, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.Org_Objects, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td>@Html.DisplayName("Joint Promoters, If Any?")</td>
+                        <td>
+                            @if (Model.Org_Reg_Certificate != null)
+                            {
+                                if (Model.Org_Reg_Certificate == "Y")
+                                {
+                                    @Html.DisplayName("Yes")
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("No")
+                                }
+                            }
+                            else
+                            {
+                                @Html.DisplayName("No")
+                            }
+                        </td>
+                    </tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4"><h4>@Html.DisplayName("Organization Registered Address Details")</h4></td></tr>
+                    <tr>
+                        <td style="width:25%;">@Html.DisplayName("Address Line 1")</td>
+                        <td>@Html.DisplayFor(model => model.Org_Address_Line1, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td style="width:25%;">@Html.DisplayName("Address Line 2")</td>
+                        <td>@Html.DisplayFor(model => model.Org_Address_Line2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayName("District & State")</td>
+                        <td>
+                            @Html.DisplayFor(model => model.Org_District, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.DisplayName(", ")
+                            @Html.DisplayFor(model => model.Org_State, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                        <td>@Html.DisplayName("Pin Code")</td>
+                        <td>@Html.DisplayFor(model => model.Org_Pin_Code, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4"><h4>@Html.DisplayName("Details of Authorised signatory, who will sign Form-B and Application Form")</h4></td></tr>
+                    <tr>
+                        <td>@Html.LabelFor(model => model.First_Name, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.First_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td>@Html.DisplayName("PAN Number of Authorized Person")</td>
+                        <td>@Html.DisplayFor(model => model.PAN_No, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(model => model.Mobile_no, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.Mobile_no, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td>@Html.LabelFor(model => model.Phone_No, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.Phone_No, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>                    
+                    <tr>
+                        <td>@Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td>@Html.LabelFor(model => model.WebLink_Promoter_website, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.WebLink_Promoter_website, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>                   
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4"><h4>@Html.DisplayName("Past Experience (If Any) Details")</h4></td></tr>
+                    <tr>
+                        <td>@Html.LabelFor(model => model.Past_Exp_Punjab, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.Past_Exp_Punjab, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.DisplayName(" years")</td>
+                        <td>@Html.LabelFor(model => model.Past_Exp_Other_States, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>
+                            @Html.DisplayFor(model => model.Past_Exp_Other_States, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.DisplayName(" years")
+                        </td>
+                    </tr>                  
+                    
+                    <tr>
+                        <td>@Html.LabelFor(model => model.Ind_Org_CompltdProj_FiveYrs, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.Ind_Org_CompltdProj_FiveYrs, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                        <td>@Html.LabelFor(model => model.Ind_Org_TotalArea_Constructed, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>
+                            @Html.DisplayFor(model => model.Ind_Org_TotalArea_Constructed, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.DisplayName(" sqr mtrs")
+                        </td>
+                    </tr>                                       
+                    <tr>
+                        <td>@Html.LabelFor(model => model.Ind_Org_OngoingProjects, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>@Html.DisplayFor(model => model.Ind_Org_OngoingProjects, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                        <td>@Html.LabelFor(model => model.Ind_Org_AreaToBe_Constructed, htmlAttributes: new { @class = "control-label" })</td>
+                        <td>
+                            @Html.DisplayFor(model => model.Ind_Org_AreaToBe_Constructed, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.DisplayName(" sqr mtrs")
+                        </td>
+                    </tr>                  
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4"><h4>@Html.DisplayName("Official Communication Address Details")</h4></td></tr>
+                    <tr>
+                        <td>@Html.DisplayName("Address Line 1")</td>
+                        <td>@Html.DisplayFor(model => model.Address_Line1, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td>@Html.DisplayName("Address Line 2")</td>
+                        <td>@Html.DisplayFor(model => model.Address_Line2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayName("District & State")</td>
+                        <td>
+                            @Html.DisplayFor(model => model.District, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.DisplayName(", ")
+                            @Html.DisplayFor(model => model.State, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                        <td>@Html.DisplayName("Pin Code")</td>
+                        <td>@Html.DisplayFor(model => model.Pin_Code, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                }
+                else
+                {
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+
+            </table>
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic; font-size:small; border: 1px solid #ccc">Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.</td></tr>
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic; font-size:medium;">(Authorized Signatory)</td></tr>
+            </table>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+</div>
+

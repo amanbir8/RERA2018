@@ -1,0 +1,430 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_UserManagerList
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<link href="@Url.Content("~/dist/css/rera-toggleshow.css")" rel="stylesheet" />
+<!-- DataTables JavaScript -->
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+<script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+<!-- Custom Theme JavaScript -->
+<script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script> 
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+        var getUrlCPvalue;
+
+        $(document).on('click', 'a.modalDownloadExcelButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            window.location = BASE_URL + 'HelpdeskControlPanel/ExportUserManagementWebPortalToExcel';
+            $('input[type=text]').each(function () {
+                $(this).val('');
+            });
+        });
+
+        @if (TempData["returnUrlCPvalue"].ToString() != "")
+        {
+            <text>
+                getUrlCPvalue = '@TempData["returnUrlCPvalue"]';
+            </text>
+        }
+
+        $(document).on('click', 'a.controlpanelHomeButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + getUrlCPvalue;
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Web-Portal Users</b><br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> Only User can add /confirm /refuse Phone Number/Two-Factor Authentification.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> IT Manager can lock/unlock user or confirm/disconfirm email.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .bg-border-show {
+        position: relative !important;
+    }
+
+    .border-left-danger {
+        border-left: .15rem solid #FF4961 !important;
+    }
+
+    .border-left-warning {
+        border-left: .25rem solid #f6c23e !important;
+    }
+
+    .bg-exclamation-triangle-warning {
+        color: #FF4961 !important;
+        display: inline-block !important;
+    }
+
+    .bg-exclamation-triangle-none {
+        display: none !important;
+    }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        var vcheckoptionvalue = $("input[name='IsApplicationDateFlag']:checked").val();
+        if (vcheckoptionvalue == '21') {
+            $("#rowSearchEmail").addClass('show').removeClass('hide');
+            $("#rowSearchUName").addClass('hide').removeClass('show');
+        }
+        else {
+            $("#rowSearchEmail").addClass('hide').removeClass('show');
+            $("#rowSearchUName").addClass('show').removeClass('hide');
+        };
+
+        $(document).on('click', '.radio-actionvalue', function (e) {
+            if (this.value == '21') {
+                $("#rowSearchEmail").addClass('show').removeClass('hide');
+                $("#rowSearchUName").addClass('hide').removeClass('show');
+            }
+            else {
+                $("#rowSearchEmail").addClass('hide').removeClass('show');
+                $("#rowSearchUName").addClass('show').removeClass('hide');
+            };
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var BASE_URLm = $('body').attr('data-base-url');
+        $(document).on('click', 'a.modalSearchUserRecordsButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var userRecordsModal = $(document).find('#myModal');
+            $(userRecordsModal).find('.modal-body').html('');
+            var varUValue = 0;
+            var varRNam = 'Promoter/ Real-estate Agent/ Complainant';
+            $.ajax({
+                url: BASE_URLm + 'HelpdeskControlPanel/UserManagementViewReferenceRecords',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'userValue': varUValue },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(userRecordsModal).find('.modal-body').html(response);
+                }
+            });
+            $(userRecordsModal).find('h4.modal-title').html('Web-Portal User Search : <a href="javascript:void(0);"></a>');
+            $(userRecordsModal).find('.modal-title a').html('(' + varRNam + ')');
+            $(userRecordsModal).modal('show');
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Control Panel</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Control Panel : CP 1.2 User Management: List of User Details
+                    <span class="pull-right">
+                        <a class="modalSearchUserRecordsButton" href="javascript:void(0);" title="Search User Records"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-search" aria-hidden="true"></i></span></a>
+                        <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>                        
+                        <a class="controlpanelHomeButton" href="javascript:void(0);" title="Home"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-home" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("UserManagementListInfoDesk", "HelpdeskControlPanel", FormMethod.Post, new { enctype = "multipart/form-data", @id = "WebPortalUserListInfoDesk" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Options</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Search For</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "51", new { @class = "radio-usertypename", @checked = "checked" }) Promoter
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "52", new { @class = "radio-usertypename" }) Real-Estate Agent
+                                                    @Html.RadioButtonFor(model => model.IsApplicationModeFlag, "53", new { @class = "radio-usertypename" }) Complainant
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsApplicationModeFlag, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                <label class="control-label mand">Search Option</label>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsApplicationDateFlag, "21", new { @class = "radio-actionvalue", @checked = "checked" }) Email ID
+                                                    @Html.RadioButtonFor(model => model.IsApplicationDateFlag, "22", new { @class = "radio-actionvalue" }) User Name
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsApplicationDateFlag, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row show" id="rowSearchEmail">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                @Html.LabelFor(model => model.InputEntry_EmailAddress, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.InputEntry_EmailAddress, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @onfocus = "this.value=''" } })
+                                                @Html.ValidationMessageFor(model => model.InputEntry_EmailAddress, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="submit" id="ViewDetail" value="View Details" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row hide" id="rowSearchUName">
+                                        <div class="form-group">
+                                            <div class="col-md-2">
+                                                @Html.LabelFor(model => model.InputEntry_UserName, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.InputEntry_UserName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @onfocus = "this.value=''" } })
+                                                @Html.ValidationMessageFor(model => model.InputEntry_UserName, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="submit" id="ViewDetail" value="View Details" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            <div class="row">
+                                <br />
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive">
+                                        <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                            <thead>
+                                                <tr>
+                                                    <th>@Html.DisplayName("SNo")</th>
+                                                    <th>@Html.DisplayNameFor(model => model.usersUserName)</th>
+                                                    <th>@Html.DisplayNameFor(model => model.rolesName)</th>
+                                                    <th>@Html.DisplayNameFor(model => model.usersEmail)</th>
+                                                    <th>@Html.DisplayNameFor(model => model.usersPhoneNumber)</th>
+                                                    <th>@Html.DisplayName("Email Confirmed (Yes/No)?")</th>
+                                                    <th>@Html.DisplayName("Phone Number Confirmed (Yes/No)?")</th>
+                                                    <th>@Html.DisplayName("Two-Factor Authentication (Yes/No)?")</th>
+                                                    <th>@Html.DisplayName("Locked Enabled (Yes/No)?")</th>
+                                                    <th>@Html.DisplayName("Locked till Date")</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int sno = 0;
+                                                    string lockendtogglebtnID = string.Empty;
+                                                    string lockendtogglestatusID = string.Empty;
+                                                    string emailontogglebtnID = string.Empty;
+                                                    string emailontogglestatusID = string.Empty;
+                                                }
+                                                @foreach (var item in Model.prpongoing)
+                                                {
+                                                    {
+                                                        sno = sno + 1;
+                                                    }
+                                                    <tr class="odd gradeX">
+                                                        <td>@Html.DisplayName(sno.ToString())</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.usersUserName)</td>
+                                                        <td>@Html.DisplayFor(modelItem => item.rolesName)</td>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.usersEmail)
+                                                            @Html.HiddenFor(modelItem => item.userrolesRoleId, new { @class = "hdnRoleID" })
+                                                            @Html.HiddenFor(modelItem => item.userrolesUserId, new { @class = "hdnUserID" })
+                                                            @Html.HiddenFor(modelItem => item.usersUserName, new { @class = "hdnUserNam" })
+                                                            @Html.HiddenFor(modelItem => item.usersLockoutEnabled, new { @class = "hdnLockoutEnabledFlag" })
+                                                        </td>
+                                                        <td>@Html.DisplayFor(modelItem => item.usersPhoneNumber)</td>
+                                                        <td class="text-center">
+                                                            @if (Model.RoleAccessFlag == "PR")
+                                                            {
+                                                                if (item.usersEmailConfirmed == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (item.usersEmailConfirmed == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            }
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (item.usersPhoneNumberConfirmed == 1)
+                                                            {
+                                                                @Html.DisplayName("Yes")
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DisplayName("No")
+                                                            }
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (item.usersTwoFactorEnabled == 1)
+                                                            {
+                                                                @Html.DisplayName("Yes")
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DisplayName("No")
+                                                            }
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (Model.RoleAccessFlag == "PR")
+                                                            {
+                                                                if (item.usersLockoutEnabled == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (item.usersLockoutEnabled == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (item.usersLockoutEnabled == 1)
+                                                            {
+                                                                @Html.DisplayFor(modelItem => item.usersLockoutEndDateUtc)
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DisplayName("NA")
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>                                
+                            </div>
+                            <!-- /.row (nested) -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel = "stylesheet" />
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $('table#dataTables-example').DataTable({
+                responsive: true,
+                "pageLength": 50,
+                "lengthMenu": [[50, 100, 150, 200, 250], [50, 100, 150, 200, 250]],
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [8, 9]
+                }],
+                "language": {
+                    "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                    "lengthMenu": "Show _MENU_ records"
+                },
+                "pagingType": "full_numbers"
+            });
+        });
+    </script>
+}

@@ -1,0 +1,126 @@
+﻿@model CRUD.Models.ProjectExtPrint.ClsPrp_PrmProjectExt_Print_ProjectExtensionPayment
+
+@{
+    Layout = null;
+}
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.prpProjectExtFormDiaryNumberDetails != null)
+                {
+                    foreach (var item in Model.prpProjectExtFormDiaryNumberDetails)
+                    {
+                        var varDate = System.DateTime.Now.Date;
+                        <tr>
+                            <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                            <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                        </tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Form-E (Project Extension Payments Details)")</b></td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Form-E Diary Number")</td>
+                            <td width="35%">@Html.DisplayFor(modelitem => item.ProjectExtForm_RegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.zipProjectName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.DisplayName("District")</td>
+                            <td>
+                                @Html.DisplayFor(modelitem => item.zipProjectDistrictName, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.zipPromoterName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.zipPromoterName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+                @{
+                    int sno = 0;
+                }
+                @if (Model.prpongoing != null)
+                {
+                    foreach (var item in Model.prpongoing)
+                    {
+                        {
+                            sno = sno + 1;
+                        }
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("(" + sno.ToString() + ") Details regarding Project Extension Payments")</h4></td></tr>
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.ProjectPayment_TitleName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">@Html.DisplayFor(modelitem => item.ProjectPayment_TitleName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.Payment_Mode, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">@Html.DisplayFor(modelitem => item.Payment_Mode, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.Registration_Fee, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">@Html.DisplayFor(modelitem => item.Registration_Fee, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>                        
+                        <tr>
+                            <td colspan="2">@Html.Label("Date of Extension Payment/ Fees", htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">@Html.DisplayFor(modelitem => item.Date_of_Payment_RegistrationFee, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.DD_BankersCheque_Number, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">@Html.DisplayFor(modelitem => item.DD_BankersCheque_Number, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">@Html.LabelFor(modelitem => item.DD_BankersCheque_Amount, htmlAttributes: new { @class = "control-label" })</td>
+                            <td colspan="2">@Html.DisplayFor(modelitem => item.DD_BankersCheque_Amount, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Bank Address Details")</h4></td></tr>
+                        <tr>
+                            <td>@Html.LabelFor(modelitem => item.Bank_Name, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.Bank_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.LabelFor(modelitem => item.Branch_Name, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(modelitem => item.Branch_Name, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        </tr>                        
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Scan copy of DD/ Bankers Cheque")</h4></td></tr>
+                        <tr>
+                            <td colspan="4" style="text-align:left;">
+                                @{
+                                    var StrPathImg1 = item.ImageDDorBankersCheque_FilePath;
+                                    var StrPathImg2 = item.ImageDDorBankersCheque_FileName;
+                                    var StrPathImg = StrPathImg1 + StrPathImg2;
+                                }
+                                <itext creationdate="@DateTime.Now.ToString()" producer="RazorPDF">
+                                    <img height="200" width="500" style="border:1px solid;" src="@Context.Server.MapPath("~/" + StrPathImg)" />
+                                </itext>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic; font-size:small; border: 1px solid #ccc">Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.</td></tr>
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic; font-size:medium;">(Authorized Signatory)</td></tr>
+            </table>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.wrapper -->

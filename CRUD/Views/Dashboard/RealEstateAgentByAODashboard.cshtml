@@ -1,0 +1,977 @@
+﻿@model CRUD.Models.Dashboard.ClsPrp_DashboardDesk_FactsFigure
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script src="@Url.Content("~/js-highcharts/highcharts.js")"></script>
+<script src="@Url.Content("~/js-highcharts/data.js")"></script>
+<script src="@Url.Content("~/js-highcharts/drilldown.js")"></script>
+<script src="@Url.Content("~/js-highcharts/variable-pie.js")"></script>
+
+<link href="@Url.Content("~/dist/css/fixed-plugin.css")" rel="stylesheet" />
+
+<script>$.uiBackCompat = false;</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-spzoom]').spzoom();
+    });
+</script>
+
+<script>
+    $(function () {
+
+        var baseUrl = $('body').attr('data-base-url');
+
+        (function (H) {
+            //DATALABELS
+            H.wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
+                var css = this.chart.options.drilldown.activeDataLabelStyle;
+                proceed.call(this);
+            
+                css.textDecoration = 'none !important';
+                css.fontWeight = 'normal';
+                css.cursor = 'default';
+                css.color = 'black !important';
+            
+            
+                H.each(this.points, function (point) {
+               
+                    if (point.drilldown && point.dataLabel) {
+                        point.dataLabel
+                            .css(css)
+                            .on('click', function () {
+                                return false;
+                            });
+                    }
+                });
+            });
+        
+            //For X-axis labels
+            H.wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
+                var point = proceed.call(this, series, options, x),
+                    chart = series.chart,
+                    tick = series.xAxis && series.xAxis.ticks[x],
+                    tickLabel = tick && tick.label;
+                console.log("series");
+                console.log(series);
+
+                if (point.drilldown) {
+
+                    // Add the click event to the point label
+                    H.addEvent(point, 'click', function () {
+                        point.doDrilldown();
+                    });
+
+                    // Make axis labels clickable
+                    if (tickLabel) {
+                        if (!tickLabel._basicStyle) {
+                            tickLabel._basicStyle = tickLabel.element.getAttribute('style');
+                        }
+                        tickLabel.addClass('highcharts-drilldown-axis-label').css({
+                            'text-decoration': 'none !important',
+                            'font-weight': 'normal !important',
+                            'cursor': 'auto',
+                            'color': 'black !important'
+
+                        }).on('click', function () {
+                            if (point.doDrilldown) {
+                                return false;
+                            }
+                        });
+                    }
+                } else if (tickLabel && tickLabel._basicStyle) {
+                }
+
+                return point;
+            });
+        })(Highcharts);
+
+        //For Agents DATA        
+        $.ajax({
+            type: "POST",
+            url: baseUrl + "Dashboard/GetRealEstateAgentLiveReportsDataByAOdetails",
+            datatype: "Json",
+            data: { IndexId: "0" },
+            success: function (data) {
+                drawBarChartRealEstateAgentsByAO(data);
+                //console.log(data.LiveReportProjectsDrilldownData[0].data);
+                displayListRealEstateAgentsByAO(data);
+            },
+            error: function (data) {
+                alert('Bad Request! Invalid Data Details.');
+            }
+        });
+
+        //For Agents PieCharts DATA        
+        $.ajax({
+            type: "POST",
+            url: baseUrl + "Dashboard/GetPieChartRealEstateAgentLiveReportsDataByAOdetails",
+            datatype: "Json",
+            data: { IndexId: "0" },
+            success: function (data) {
+                //drawPieChartRealEstateAgentsByAO(data);
+                drawPieChartDistrictwiseRealEstateAgentsByAO(data);
+            },
+            error: function (data) {
+                alert('Bad Request! Invalid Data Details.');
+            }
+        });
+
+        $(document).on("click", "a.info-help-details", infohelpHandlerRealEstateAgentdetails);
+    });
+
+    function drawBarChartRealEstateAgentsByAO(data) {
+        var myChart = Highcharts.chart('realestateagents-livereport-container', {
+            chart: {
+                type: 'column',
+                events: {
+                    drilldown: function (e) {
+                        if (e.point.name == 'New Applications') {
+                            this.xAxis[0].update({
+                                title: {
+                                    text: "Date of Application"
+                                }
+                            });
+                        }
+                        if (e.point.name == 'In-Process Applications') {
+                            this.xAxis[0].update({
+                                title: {
+                                    text: "Date of Last Action By RERA"
+                                }
+                            });
+                        }
+                        if (e.point.name == 'In-Complete Applications') {
+                            this.xAxis[0].update({
+                                title: {
+                                    text: "Date of Application"
+                                }
+                            });
+                        }
+                        if (e.point.name == 'ReSubmitted Applications') {
+                            this.xAxis[0].update({
+                                title: {
+                                    text: "Date of ReSubmitted Application"
+                                }
+                            });
+                        }
+                        if (e.point.name == 'Due for Agents Renewal') {
+                            this.xAxis[0].update({
+                                title: {
+                                    text: "Date of Registration Valid upto"
+                                }
+                            });
+                        }
+                        if (e.point.name == 'Renewal Applications') {
+                            this.xAxis[0].update({
+                                title: {
+                                    text: "Date of Renewal"
+                                }
+                            });
+                        }
+                        if (e.point.name == 'Registered Agents') {
+                            this.xAxis[0].update({
+                                title: {
+                                    text: "Date of Approval/ Registration"
+                                }
+                            });
+                        }
+                    },
+                    drillup: function (e) {
+                        this.xAxis[0].update({
+                            title: false
+                        });
+                    }
+                }
+            },
+            title: false,
+            subtitle: false,
+            xAxis: {
+                type: 'category',
+                labels: {
+                    style: {
+                        color: 'black !important',
+                        textDecoration: "none !important"
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Number of Applications'
+                },
+                labels: {
+                    style: {
+                        color: 'black !important',
+                        textDecoration: "none !important"
+                    }
+                }
+
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y:.f}',
+                        style: {
+                            color: 'black !important',
+                            textDecoration: "none !important"
+                        }
+                    }
+                }
+            },
+
+            tooltip: {
+                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.f}</b><br/>'
+            },
+
+            series: [
+                {
+                    name: "Realestate Agents",
+                    colorByPoint: true,
+                    data: data.LiveReportAgentsData
+                }
+            ],
+            drilldown: {
+                series: [
+                    {
+                        name: data.LiveReportAgentsDrilldownData[0].name,
+                        id: data.LiveReportAgentsDrilldownData[0].id,
+                        data: JSON.parse(data.LiveReportAgentsDrilldownData[0].data)
+                    },
+                    {
+                        name: data.LiveReportAgentsDrilldownData[1].name,
+                        id: data.LiveReportAgentsDrilldownData[1].id,
+                        data: JSON.parse(data.LiveReportAgentsDrilldownData[1].data)
+                    },
+                    {
+                        name: data.LiveReportAgentsDrilldownData[2].name,
+                        id: data.LiveReportAgentsDrilldownData[2].id,
+                        data: JSON.parse(data.LiveReportAgentsDrilldownData[2].data)
+                    },
+                    {
+                        name: data.LiveReportAgentsDrilldownData[3].name,
+                        id: data.LiveReportAgentsDrilldownData[3].id,
+                        data: JSON.parse(data.LiveReportAgentsDrilldownData[3].data)
+                    },
+                    {
+                        name: data.LiveReportAgentsDrilldownData[4].name,
+                        id: data.LiveReportAgentsDrilldownData[4].id,
+                        data: JSON.parse(data.LiveReportAgentsDrilldownData[4].data)
+                    },
+                    {
+                        name: data.LiveReportAgentsDrilldownData[5].name,
+                        id: data.LiveReportAgentsDrilldownData[5].id,
+                        data: JSON.parse(data.LiveReportAgentsDrilldownData[5].data)
+                    },
+                    {
+                        name: data.LiveReportAgentsDrilldownData[6].name,
+                        id: data.LiveReportAgentsDrilldownData[6].id,
+                        data: JSON.parse(data.LiveReportAgentsDrilldownData[6].data)
+                    }
+                ]
+            }
+        });
+    }
+
+    function drawPieChartRealEstateAgentsByAO(data) {
+        var myPieChart = Highcharts.chart('zone-pie-chart-container', {
+            chart: {
+                type: 'variablepie'
+            },
+            //-- title: false,
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'Note: The data shown in the chart excludes the pending uploads under offline registered realestate agents.'
+            },
+            tooltip: {
+                headerFormat: '',
+                pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}</b><br/>' +
+                    'Population Percentage (%): <b>{point.y}</b><br/>' +
+                    'Real Estate Agents (per zone): <b>{point.z}</b>' 
+            },
+            
+            series: [{
+                minPointSize: 40,
+                innerSize: '45%',
+                zMin: 0,
+                name: 'realestateagents-zone',
+                data: data.LiveReportAgentsPieChartsData
+            }]
+        });
+    }
+
+    function drawPieChartDistrictwiseRealEstateAgentsByAO(data) {
+        var myPieChart = Highcharts.chart('districtwithagents-pie-chart-container', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: 'Note: The data shown in the chart excludes the offline registered realestate agents records.'
+            },
+            tooltip: {
+                pointFormat: '{series.name} (%age): <b>{point.percentage:.1f}%</b><br/>' +
+                            'Number of Agents (per district): <b>{point.agents}</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>', //'<b>{point.name}</b>: {point.percentage:.1f}%'
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Real Estate Agents',
+                colorByPoint: true,
+                data: data.LiveReportAgentsPieChartsData                
+            }]
+        });       
+    }
+
+    function displayListRealEstateAgentsByAO(data) {
+        var result = data.SummaryStatusAgentsData;
+        //console.log(result);
+        $('#displayTotalAgents').text(result[12].value);       
+        $('#displayNewApplications').text(result[0].value);
+        $('#displayInProcessApplications').text(result[1].value);
+        $('#displayChecklistPreparedApplications').text(result[2].value);
+        $('#displayReviewChecklistApplications').text(result[3].value);
+
+        $('#displayApprovedApplications').text(result[4].value);
+        $('#displayRejectedApplications').text(result[5].value);
+        $('#displayWithdrawnApplications').text(result[6].value);
+        $('#displayOfflineRegdAgentsShiftedPublicView').text(result[7].value);
+        $('#displayOfflineRegdAgentsPendingUploads').text(result[8].value);
+        
+        $('#displayPublicViewAgents').text(result[9].value);
+        $('#displayPublicViewAgentsWebPage').text(result[10].value);
+        $('#displayAgentRenewalApplications').text(result[11].value);
+        // Display up-POP
+        $('#displayTotalAgentsupPop').text(result[12].value);
+        $('#displayNewApplicationsupPop').text(result[0].value);
+        $('#displayInProcessApplicationsupPop').text(result[1].value);
+        $('#displayChecklistPreparedApplicationsupPop').text(result[2].value);
+        $('#displayReviewChecklistApplicationsupPop').text(result[3].value);
+
+        $('#displayApprovedApplicationsupPop').text(result[4].value);
+        $('#displayRejectedApplicationsupPop').text(result[5].value);
+        $('#displayWithdrawnApplicationsupPop').text(result[6].value);
+        $('#displayOfflineRegdAgentsShiftedPublicViewupPop').text(result[7].value);
+        $('#displayOfflineRegdAgentsPendingUploadsupPop').text(result[8].value);
+
+        $('#displayPublicViewAgentsupPop').text(result[9].value);
+        $('#displayPublicViewAgentsWebPageupPop').text(result[10].value);
+        $('#displayAgentRenewalApplicationsupPop').text(result[11].value);
+    }
+
+    function infohelpHandlerRealEstateAgentdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>District Information</b><br/> <i class="fa fa-check-square" style="color:#064576"></i> Amritsar<br/> <i class="fa fa-check-square" style="color:#064576"></i> Barnala<br/> <i class="fa fa-check-square" style="color:#064576"></i> Bathinda<br/> <i class="fa fa-check-square" style="color:#064576"></i> Faridkot<br/> <i class="fa fa-check-square" style="color:#064576"></i> Fatehgarh Sahib<br/> <i class="fa fa-check-square" style="color:#064576"></i> Firozpur' +
+                '<br/> <i class="fa fa-check-square" style="color:#064576"></i> Gurdaspur<br/> <i class="fa fa-check-square" style="color:#064576"></i> Hoshiarpur<br/> <i class="fa fa-check-square" style="color:#064576"></i> Jalandhar<br/> <i class="fa fa-check-square" style="color:#064576"></i> Kapurthala<br/> <i class="fa fa-check-square" style="color:#064576"></i> Ludhiana<br/> <i class="fa fa-check-square" style="color:#064576"></i> Mansa<br/> <i class="fa fa-check-square" style="color:#064576"></i> Moga' +
+                '<br/> <i class="fa fa-check-square" style="color:#064576"></i> Muktsar<br/> <i class="fa fa-check-square" style="color:#064576"></i> Patiala<br/> <i class="fa fa-check-square" style="color:#064576"></i> Rupnagar (Ropar)<br/> <i class="fa fa-check-square" style="color:#064576"></i> SAS Nagar (Mohali)<br/> <i class="fa fa-check-square" style="color:#064576"></i> Sangrur<br/> <i class="fa fa-check-square" style="color:#064576"></i> SBS Nagar (Nawanshahr)' + 
+                '<br/> <i class="fa fa-check-square" style="color:#064576"></i> Tarn Taran<br/> <i class="fa fa-check-square" style="color:#064576"></i> Pathankot<br/> <i class="fa fa-check-square" style="color:#064576"></i> Fazilka<br/> <i class="fa fa-check-square" style="color:#064576"></i> Others',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $().ready(function () {
+
+            window_width = $(window).width();
+
+            if (window_width > 767) {
+                //if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+                //    $('.fixed-plugin .dropdown').addClass('open');
+                //}
+                if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+                    $('.fixed-plugin .dropdown').removeClass("open");
+                }
+            }
+
+            $('.fixed-plugin a').click(function (event) {
+                if ($(this).hasClass('switch-trigger')) {                    
+                    if (event.stopPropagation) {
+                        event.stopPropagation();
+                    } else if (window.event) {
+                        window.event.cancelBubble = true;
+                    }
+                }
+            });
+
+            $('.fixed-plugin .badge').click(function () {
+                var elem = $(this);
+                var parentBadge = $(elem).attr('data-color');
+
+                $(".fa-dot-circle-o").removeClass('icon-cog-purple');
+                $(".fa-dot-circle-o").removeClass('icon-cog-azure');
+                $(".fa-dot-circle-o").removeClass('icon-cog-green');
+                $(".fa-dot-circle-o").removeClass('icon-cog-orange');
+                $(".fa-dot-circle-o").removeClass('icon-cog-danger');
+                $(".fa-dot-circle-o").removeClass('icon-cog-rose');
+
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-purple');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-azure');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-green');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-orange');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-danger');
+                $(".dashboard-filter-strong").removeClass('dashboard-filter-text-rose');
+
+                if (parentBadge == "purple") {                    
+                    $(".fa-dot-circle-o").addClass('icon-cog-purple');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-purple');
+                }
+                if (parentBadge == "azure") {                    
+                    $(".fa-dot-circle-o").addClass('icon-cog-azure');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-azure');
+                }
+                if (parentBadge == "green") {
+                    $(".fa-dot-circle-o").addClass('icon-cog-green');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-green');
+                }
+                if (parentBadge == "orange") {
+                    $(".fa-dot-circle-o").addClass('icon-cog-orange');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-orange');
+                }
+                if (parentBadge == "danger") {
+                    $(".fa-dot-circle-o").addClass('icon-cog-danger');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-danger');
+                }
+                if (parentBadge == "rose") {                   
+                    $(".fa-dot-circle-o").addClass('icon-cog-rose');
+                    $(".dashboard-filter-strong").addClass('dashboard-filter-text-rose');
+                }
+            });
+        });
+    });
+</script>
+<style>
+    .icon-cog-purple {
+        color: purple;
+    }
+    .icon-cog-azure {
+        color: deepskyblue;
+    }
+    .icon-cog-green {
+        color: green;
+    }
+    .icon-cog-orange {
+        color: darkslategrey;
+    }
+    .icon-cog-danger {
+        color: red;
+    }
+    .icon-cog-rose {
+        color: maroon;
+    }
+    .dashboard-filter-strong {
+        font-weight: bold;
+    }
+    .dashboard-filter-text-purple {
+        color: purple;
+    }
+    .dashboard-filter-text-azure {
+        color: deepskyblue;
+    }
+    .dashboard-filter-text-green {
+        color: green;
+    }
+    .dashboard-filter-text-orange {
+        color: darkslategrey;
+    }
+    .dashboard-filter-text-danger {
+        color: red;
+    }
+    .dashboard-filter-text-rose {
+        color: maroon;
+    }
+
+    .dashboard-barcharts-frame {
+        min-width: 240px;
+        height: 300px;
+        margin: 0 auto;
+        /*background: url('../images/dashboard-loader-gears-animation.gif');*/
+        background: url('../images/dashboard-loading-animation.gif');
+        background-repeat: no-repeat;
+    }
+    .dashboard-piecharts-frame {
+        background: url('../images/dashboard-loading-animation.gif');
+        background-repeat: no-repeat;
+        /*background-position: center;*/
+    }
+</style>
+<style>
+    .myhoverdata {
+        display: none;
+    }
+
+    a.list-group-item:hover > .myhoverdata {
+        display: inline-block;
+        position: absolute;
+        display: inline-block;
+        position: absolute;
+        background: #ffffff;
+        font-weight: bold;
+        padding: 0.75em 1em;
+        border: 1px solid #7cb5ec;
+        box-shadow: 1px 1px 5px 0px;
+        z-index: 3;
+        color: #202223;
+        padding: 9px 11px 9px 9px;
+        margin-left: 22px;
+    }
+</style>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Dashboard</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_RegisteredProjects)+</div>
+                                <div>Registered Projects</div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <a href="@Url.Action("ProjectByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_RegisteredAgents)+</div>
+                                <div>Registered Agents</div>
+                            </div>
+                            <!--  <div class="col-xs-5">
+                                <img src="images/icon1.png">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="@Url.Action("RealEstateAgentByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_SectionThreeOneComplaints)+</div>
+                                <div>Complaints (Section 31)</div>
+                            </div>
+
+                            <!--  <div class="col-xs-5">
+                                <img src="images/icon1.png">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="@Url.Action("ProjectByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-red">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_SectionFiveNineComplaints)+</div>
+                                <div>Notices (Section 59)</div>
+                            </div>
+                            <!--  <div class="col-xs-5">
+                                <img src="images/icon1.png">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="@Url.Action("SectionFiveNineByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- /.row Header-->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <i class="fa fa-clock-o fa-lg" aria-hidden="true"></i> Live Report - Real Estate Agents
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                     <div id="realestateagents-livereport-container" class="dashboard-barcharts-frame"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.highchartds-container -->                
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-8 -->
+            <!-- /.col-lg-4 -->
+        </div>
+        <!-- /.row Live Report-->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <i class="fa fa-pie-chart fa-lg" aria-hidden="true"></i> Region /District Wise Number of Real Estate Agents
+                        <span class="pull-right">
+                            <a class="a info-help-details" id="infohelpHandlerDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                        </span>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        @*<div class="flot-chart">                            
+                            <div id="zone-pie-chart-container"></div>
+                        </div>*@
+                        <div class="flot-chart dashboard-piecharts-frame">
+                            <div id="districtwithagents-pie-chart-container"></div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+
+            <div class="col-lg-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <i class="fa fa-list fa-lg"></i> Real Estate Agents Summary Filters
+                        <span class="pull-right">
+                            @String.Format("{0:dddd, MMMM d, yyyy}", DateTime.Now)
+                        </span>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="list-group">
+                            <a href="javascript:void(0);" class="list-group-item">                                
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Total Realestate Agent(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayTotalAgents" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayTotalAgentsupPop" class="dashboard-filter-strong">0</span> 
+                                </span>
+                            </a>
+                            <a href="@Url.Action("AgentInfoDeskNewApplication", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> New Application(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayNewApplications" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayNewApplicationsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="@Url.Action("AgentInfoDesk", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw icon-cog-red"></i> In process Application(s)
+                                <span class="pull-right text-danger small">
+                                    <span id="displayInProcessApplications" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayInProcessApplicationsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="@Url.Action("AgentInfoDeskCheckList", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Checklist Prepared Application(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayChecklistPreparedApplications" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayChecklistPreparedApplicationsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="@Url.Action("AgentInfoDeskReviewCL", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Review Checklist Application(s)
+                                <span class="pull-right text-dark small">
+                                    <span id="displayReviewChecklistApplications" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayReviewChecklistApplicationsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="@Url.Action("AgentInfoDeskApproved", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Approved Application(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayApprovedApplications" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayApprovedApplicationsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="@Url.Action("AgentInfoDeskRejected", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Rejected Application(s)
+                                <span class="pull-right text-warning small">
+                                    <span id="displayRejectedApplications" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayRejectedApplicationsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="@Url.Action("AgentInfoDeskWithdrawn", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Withdrawn Application(s)
+                                <span class="pull-right text-warning small">
+                                    <span id="displayWithdrawnApplications" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayWithdrawnApplicationsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                            <a href="@Url.Action("AgentInfoDeskRegisteredOfflineExistingRERAwithList", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Offline Registered Agent(s) [Shifted to Public View]
+                                <span class="pull-right text-dark small">
+                                    <span id="displayOfflineRegdAgentsShiftedPublicView" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayOfflineRegdAgentsShiftedPublicViewupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Offline Registered Agent(s) [Pending Uploads]
+                                <span class="pull-right text-dark small">
+                                    <span id="displayOfflineRegdAgentsPendingUploads" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayOfflineRegdAgentsPendingUploadsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>                            
+
+                            <a href="@Url.Action("AgentInfoDeskRegRERAnumberDetails", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Public View Realestate Agent(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayPublicViewAgents" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayPublicViewAgentsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="@Url.Action("AgentInfoDeskRegRERAnumberDetails", "HelpdeskAgent")" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Public View Realestate Agent(s) [Web-Page]
+                                <span class="pull-right text-success small">
+                                    <span id="displayPublicViewAgentsWebPage" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">
+                                    <span id="displayPublicViewAgentsWebPageupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);" class="list-group-item">
+                                <i class="fa fa-dot-circle-o fa-fw"></i> Realestate Agents Renewal Application(s)
+                                <span class="pull-right text-success small">
+                                    <span id="displayAgentRenewalApplications" class="dashboard-filter-strong">0</span>
+                                </span>
+                                <span class="myhoverdata">                                    
+                                    <span id="displayAgentRenewalApplicationsupPop" class="dashboard-filter-strong">0</span>
+                                </span>
+                            </a>
+                        </div>
+                        <!-- /.list-group -->
+
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+
+                <!-- /.panel -->
+                <!-- /.panel -->
+                <!-- /.panel .chat-panel -->
+            </div>
+            <!-- /.col-lg-8 -->
+            <!-- /.col-lg-4 -->
+        </div>
+            <!-- /.row -->
+    }
+</div>
+<!-- /.wrapper -->
+
+<div class="fixed-plugin">
+    <div class="dropdown show-dropdown open">
+        <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-cog fa-2x"> </i>
+        </a>
+        <ul class="dropdown-menu" x-placement="top-start" style="position: absolute; top: -47px; left: -303px; will-change: top, left;">
+            <li class="header-title"> Dashboard Filters</li>
+            <li class="adjustments-line">
+                <a href="javascript:void(0)" class="switch-trigger active-color">
+                    <div class="badge-colors ml-auto mr-auto text-center">
+                        <span class="badge filter badge-purple" data-color="purple"></span>
+                        <span class="badge filter badge-azure" data-color="azure"></span>
+                        <span class="badge filter badge-green" data-color="green"></span>
+                        <span class="badge filter badge-warning active" data-color="orange"></span>
+                        <span class="badge filter badge-danger" data-color="danger"></span>
+                        <span class="badge filter badge-rose" data-color="rose"></span>
+                    </div>
+                    <div class="clearfix"></div>
+                </a>
+            </li>
+            <li class="header-title">Full Screen Map</li>
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-success btn-block disabled" style="background-color:#7bb73f; font-size:small; font-weight:Normal;">
+                    Real Estate Agent Renewal Charts
+                </a>
+            </li>            
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-default btn-block disabled" style="background-color:#064576; font-size:small; font-weight:Normal;">
+                    Real Estate Agent Payment Charts
+                </a>
+            </li> 
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-success btn-block disabled" style="background-color:#7bb73f; font-size:small; font-weight:Normal;">
+                    View Calendar
+                </a>
+            </li> 
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-default btn-block disabled" style="background-color:#064576; font-size:small; font-weight:Normal;">
+                    View Documentation
+                </a>
+            </li>
+            <li class="header-title">Thank you for visiting geo location map!</li>
+            <li class="button-container text-center">
+                <div class="form-group">
+                    <button id="twitter" class="btn btn-round btn-twitter sharrre"><i class="fa fa-twitter"></i></button>
+
+                    <a href="https://www.facebook.com/MGSIPA/photos/a.2032773913682452/2032774290349081/?type=3&theater" target="_blank">
+                        <span class="btn btn-round btn-facebook sharrre">
+                            <i class="fa fa-facebook-f"></i>
+                        </span>
+                    </a>
+                </div>
+                <br>
+                <br>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

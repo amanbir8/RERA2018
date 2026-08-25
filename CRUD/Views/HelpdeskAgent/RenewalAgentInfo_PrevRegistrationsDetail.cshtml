@@ -1,0 +1,1005 @@
+﻿@model CRUD.Models.HelpDeskAgent.ClsPrp_AuthDesk_View_RenewalAgent_PrevRegistrations
+
+@{
+    Layout = null;
+}
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+        
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    @if (Model.AgentPrevRegistrations != null)
+                    {
+                        foreach (var item in Model.AgentPrevRegistrations)
+                        {
+                            if (item.Related_Agent_Type == 1)
+                            {
+                                @Html.DisplayName("Real Estate Agent (Individual Profile) Registration Details")
+                            }
+                            else if (item.Related_Agent_Type == 2)
+                            {
+                                @Html.DisplayName("Real Estate Agent (Other Than Individual Profile) Registration Details")
+                            }
+                            else
+                            {
+                                @Html.DisplayName("Real Estate Agent (Company/ Proprietorship Firm/ Societies/ Partnership Firm/ Competent Authority etc) Details")
+                            }
+                        }
+                    }
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @if (Model.AgentPrevRegistrations != null)
+                            {
+                                foreach (var item in Model.AgentPrevRegistrations)
+                                {
+                                    if (item.Agent_Format_CODE == 101)
+                                    {
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my"><a href="javascript:void(0);">Agent Registration Details</a></legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.Agent_Name, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.Agent_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.Agent_Type, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.Agent_Type, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>                                                                                                                               
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.Agent_Reference_DiaryNumber, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.Agent_Reference_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div> 
+                                                                
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.Mode_RegistrationNumber, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.Mode_RegistrationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>                                                                
+                                                            </div>
+                                                        </div>                                                        
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my"><a href="javascript:void(0);">Registration Number Details</a></legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.Related_RERAnumberRegistration, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.Related_RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.Related_RERAnumberIssueDate, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.Related_RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.Related_RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.Related_RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>                                                        
+                                                        <hr /> 
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-12">
+                                                                    <strong>Current information or Latest Registration Number Detail</strong>
+                                                                </div>                                                                
+                                                            </div>
+                                                        </div>                                                       
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.RERAregistration_IssueDate, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.RERAregistration_IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.RERAregistration_ExpiryDate, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.RERAregistration_ExpiryDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my"><a href="javascript:void(0);">Contact Details</a></legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-12">
+                                                                    @Html.DisplayFor(model => item.BComm_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my"><a href="javascript:void(0);">Registered Address of Organization/ Permanent Address</a></legend>
+                                                        <div class="row">
+                                                            <div class="form-group">                                                                
+                                                                <div class="col-md-12">
+                                                                    @Html.DisplayFor(model => item.RegOfficeOrPermanent_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>                                                                
+                                                            </div>
+                                                        </div>                                                        
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my"><a href="javascript:void(0);">Address for Place of Business</a></legend>
+                                                        <div class="row">
+                                                            <div class="form-group">                                                                
+                                                                <div class="col-md-12">
+                                                                    @Html.DisplayFor(model => item.BusinessPlace_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div> 
+                                                                                                                               
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">                                                                
+                                                                <div class="col-md-12">
+                                                                    @Html.DisplayFor(model => model.BusinessPlace_AddressSubDivisionName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        if (item.Agent_Format_CODE == 102 || item.Agent_Format_CODE == 111 || item.Agent_Format_CODE == 122)
+                                        {
+                                            if (item.Related_Agent_Type == 2)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Agent Registration Details</a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Organization_Name, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Organization_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.Label("Organization Type", htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @if (item.Organization_TypeCode.ToString() == "0")
+                                                                            {
+                                                                                @Html.DisplayName("Public Limited Company")
+                                                                            }
+                                                                            @if (item.Organization_TypeCode.ToString() == "1")
+                                                                            {
+                                                                                @Html.DisplayName("Undivided Hindu Family")
+                                                                            }
+                                                                            @if (item.Organization_TypeCode.ToString() == "2")
+                                                                            {
+                                                                                @Html.DisplayName("Partnerships")
+                                                                            }
+                                                                            @if (item.Organization_TypeCode.ToString() == "3")
+                                                                            {
+                                                                                @Html.DisplayName("Co-operative Societies")
+                                                                            }
+                                                                            @if (item.Organization_TypeCode.ToString() == "4")
+                                                                            {
+                                                                                @Html.DisplayName("Limited Liabilities Partnership")
+                                                                            }
+                                                                            @if (item.Organization_TypeCode.ToString() == "5")
+                                                                            {
+                                                                                @Html.DisplayName("Development Authorities")
+                                                                            }
+                                                                            @if (item.Organization_TypeCode.ToString() == "6")
+                                                                            {
+                                                                                @Html.DisplayName("Others")
+                                                                            }
+                                                                            @if (item.Organization_TypeCode.ToString() == "7")
+                                                                            {
+                                                                                @Html.DisplayName("Private Limited Company")
+                                                                            }
+                                                                            @if (item.Organization_TypeCode.ToString() == "8")
+                                                                            {
+                                                                                @Html.DisplayName("Sole Proprietorship")
+                                                                            }
+                                                                            @*@Html.DisplayFor(model => item.Organization_TypeCode)*@
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label ">Other State/UT RERA (Yes/No)</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="form-group">
+                                                                                @if (item.IsOtherStateUT_RERAregistration == "Y")
+                                                                                {
+                                                                                    @Html.DisplayName("Yes")
+                                                                                }
+                                                                                @if (item.IsOtherStateUT_RERAregistration == "N")
+                                                                                {
+                                                                                    @Html.DisplayName("No")
+                                                                                }
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Organization_PAN_Number, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Organization_PAN_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                                
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Registration Number Details</a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Related_RERAnumberRegistration, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Related_RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Related_RERAnumberIssueDate, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Related_RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Related_RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Related_RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <hr />
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            <strong>Current information or Latest Registration Number Detail</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RERAregistration_IssueDate, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RERAregistration_IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RERAregistration_ExpiryDate, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RERAregistration_ExpiryDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Registered Address of Organization</a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RegOfficeOrPermanent_AddressLine1, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RegOfficeOrPermanent_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RegOfficeOrPermanent_AddressLine2, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RegOfficeOrPermanent_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <Label class="control-Label">District & State</Label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => model.P_AddressDist, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName(", ")
+                                                                            @Html.DisplayFor(model => model.P_AddressState, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RegOfficeOrPermanent_AddressPIN, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RegOfficeOrPermanent_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Address for Place of Business</a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.BusinessPlace_AddressLine1, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.BusinessPlace_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.BusinessPlace_AddressLine2, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.BusinessPlace_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <Label class="control-Label">District & State</Label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => model.BusinessPlace_AddressDistrict, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName(", ")
+                                                                            @Html.DisplayFor(model => model.BusinessPlace_AddressState, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.BusinessPlace_AddressPIN, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.BusinessPlace_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <hr />
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <Label class="control-Label">Sub Division (Place of Business)</Label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => model.BusinessPlace_AddressSubDivision, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Authorized Signatory Details</a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.AuthorizedSignatory_FirstName, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.AuthorizedSignatory_FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName(" ")
+                                                                            @Html.DisplayFor(model => item.AuthorizedSignatory_MiddleName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.AuthorizedSignatory_LastName, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.AuthorizedSignatory_LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.MobileNumber, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.PhoneNumber_Number, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.PhoneNumber_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.PAN_Number, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.PAN_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Aadhaar_Number, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Aadhaar_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.EmailAddress, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Agent Registration Details</a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Agent_FirstName, htmlAttributes: new { @class = "control-label " })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Agent_FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName(" ")
+                                                                            @Html.DisplayFor(model => item.Agent_MiddleName, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Agent_LastName, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Agent_LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Father_FirstName, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Father_FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName(" ")
+                                                                            @Html.DisplayFor(model => item.Father_MiddleName, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Father_LastName, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Father_LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Individual_PAN_Number, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Individual_PAN_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Individual_Aadhaar_Number, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Individual_Aadhaar_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.MobileNumber, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.PhoneNumber_Number, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.PhoneNumber_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label ">Other State/UT RERA (Yes/No)</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="form-group">
+                                                                                @if (item.IsOtherStateUT_RERAregistration == "Y")
+                                                                                {
+                                                                                    @Html.DisplayName("Yes")
+                                                                                }
+                                                                                @if (item.IsOtherStateUT_RERAregistration == "N")
+                                                                                {
+                                                                                    @Html.DisplayName("No")
+                                                                                }
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Registration Number Details</a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Related_RERAnumberRegistration, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Related_RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Related_RERAnumberIssueDate, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Related_RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.Related_RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.Related_RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <hr />
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            <strong>Current information or Latest Registration Number Detail</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RERAregistration_IssueDate, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RERAregistration_IssueDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RERAregistration_ExpiryDate, htmlAttributes: new { @class = "control-Label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RERAregistration_ExpiryDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Permanent Residence Address</a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RegOfficeOrPermanent_AddressLine1, htmlAttributes: new { @class = "control-label " })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RegOfficeOrPermanent_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RegOfficeOrPermanent_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RegOfficeOrPermanent_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.Label("District & State", htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => model.P_AddressDist, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName(", ")
+                                                                            @Html.DisplayFor(model => model.P_AddressState, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.RegOfficeOrPermanent_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.RegOfficeOrPermanent_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Address for Place of Business</a></legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.BusinessPlace_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.BusinessPlace_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.BusinessPlace_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.BusinessPlace_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.Label("District & State", htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => model.BusinessPlace_AddressDistrict, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName(", ")
+                                                                            @Html.DisplayFor(model => model.BusinessPlace_AddressState, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.BusinessPlace_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.BusinessPlace_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <hr />
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <Label class="control-Label">Sub Division (Place of Business)</Label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => model.BusinessPlace_AddressSubDivision, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my"><a href="javascript:void(0);">Address for Official Communication</a></legend>
+
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.BComm_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.BComm_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.BComm_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.BComm_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            @Html.Label("District & State", htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => model.BComm_AddressDistrict, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            @Html.DisplayName(", ")
+                                                                            @Html.DisplayFor(model => model.BComm_AddressState, new { htmlAttributes = new { @class = "form-control" } })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.LabelFor(model => item.BComm_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.DisplayFor(model => item.BComm_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayName("No Record(s) Found. Error! Unknown Value (Real Estate Agent) Detail")
+                                        }
+                                    }
+                                }
+                            }                            
+
+                            @if (Model.AgentPrevRegistrations_OtherMember != null)
+                            {
+                                if (Model.AgentPrevRegistrations_OtherMember.Count != 0)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <h4 class="page-header" style="margin-top: 15px;"><a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>Organization Members Details</h4>
+                                        </div>
+                                    </div>
+                                }
+                                int orgmembernumber = 0;
+                                foreach (var item in Model.AgentPrevRegistrations_OtherMember)
+                                {
+                                    {
+                                        orgmembernumber = orgmembernumber + 1;
+                                    }
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my"><a href="javascript:void(0);">@Html.DisplayName("(" + orgmembernumber.ToString() + ")") Organization Member Details</a></legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.OtherMember_Name, htmlAttributes: new { @class = "control-Label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.OtherMember_Name, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.Designation, htmlAttributes: new { @class = "control-Label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.Designation, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.OtherMember_PAN_Number, htmlAttributes: new { @class = "control-Label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.OtherMember_PAN_Number, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.OtherMember_Aadhaar_Number, htmlAttributes: new { @class = "control-Label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.OtherMember_Aadhaar_Number, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.MobileNumber, htmlAttributes: new { @class = "control-Label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                            </div>
+
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.PhoneNumber_Number, htmlAttributes: new { @class = "control-Label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.PhoneNumber_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.Image_FileName, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.HiddenFor(model => item.Image_FileName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                                @Html.HiddenFor(model => item.Image_FilePath)
+                                                                <a href="~/@Html.DisplayFor(model => item.Image_FilePath)@Html.DisplayFor(model => item.Image_FileName)" data-spzoom>
+                                                                    <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/@Html.DisplayFor(model => item.Image_FilePath)@Html.DisplayFor(model => item.Image_FileName)" alt="No Image" />
+                                                                </a>
+                                                            </div>
+
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => item.EmailAddress, htmlAttributes: new { @class = "control-Label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DisplayFor(model => item.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <fieldset class="col-md-12">
+                                                        <legend class="my"><a data-criteria-code="511" class="modalOpenerButton" href="javascript:void(0);">Residential/ Communication Address Details</a></legend>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.OfficeComm_AddressLine1, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.OfficeComm_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.OfficeComm_AddressLine2, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.OfficeComm_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    <Label class="control-Label">District & State</Label>
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.OfficeComm_AddressDistName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    @Html.DisplayName(", ")
+                                                                    @Html.DisplayFor(model => item.OfficeComm_AddressStateName, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => item.OfficeComm_AddressPIN, htmlAttributes: new { @class = "control-Label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DisplayFor(model => item.OfficeComm_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

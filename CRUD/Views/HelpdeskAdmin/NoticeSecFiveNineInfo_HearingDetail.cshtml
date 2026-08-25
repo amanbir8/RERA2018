@@ -1,0 +1,170 @@
+﻿@model CRUD.Models.HelpdeskAdmin.ClsPrp_AdminDesk_NoticeSectionFiveNineByLA_HearingDetails
+
+@{
+    Layout = null;
+}
+
+<script>
+    $(function () {
+        var baseUrl = $('body').attr('data-base-url');
+        $(document).on('click', 'a.deletefivenineButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var flagmove = confirm('Are you sure want to delete?');
+            if (flagmove) {
+                var parentRow = $(elem).closest('tr');
+                var inFN_IndexID = $.trim($(parentRow).find('input.hdnHearingDateIndexID').val());
+                var inFN_ID = $.trim($(parentRow).find('input.hdnHearingDateID').val());
+                var inFN_HearingID = $.trim($(parentRow).find('input.hdnHearingFiveNineID').val());
+                var inFN_HearingCode = $.trim($(parentRow).find('input.hdnHearingFiveNineCode').val());
+
+                inFN_IndexID = parseInt(inFN_IndexID);
+                inFN_ID = parseInt(inFN_ID);
+                inFN_HearingID = parseInt(inFN_HearingID);
+                $.ajax({
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    url: baseUrl + 'HelpdeskAdmin/Delete_NoticeFiveNine_HearingDetailByPS',
+                    type: 'GET',
+                    data: { 'inFNIndexID': inFN_IndexID, 'inFNID': inFN_ID, 'inFNHearingID': inFN_HearingID, 'inFNHearingCode': inFN_HearingCode },
+                    success: function (d) {
+                        if (d) {
+                            $.trim($(parentRow).css("background-color", "#ff6347").fadeOut(3000, function () {
+                                $.trim($(parentRow).remove());
+                            }));
+                        }
+                    },
+                    error: function () {
+                        alert("oops! Something went wrong")
+                    }
+                });
+            }
+        });
+    });
+</script>
+<style>
+    .bg-border-show {
+        position: relative !important;
+    }
+
+    .border-show-content {
+        padding-right: 5px;
+    }
+
+    .border-left-danger {
+        /*text-shadow: 2px 2px 5px red;*/
+        border-left: .25rem solid #FF4961 !important;
+    }
+
+    .border-left-warning {
+        /*text-shadow: 2px 2px 5px #fd7e14;*/
+        border-left: .25rem solid #f6c23e !important;
+    }
+
+    .bg-exclamation-triangle-warning {
+        color: #FF4961 !important;
+        display: inline-block !important;
+    }
+
+    .bg-exclamation-triangle-none {
+        display: none !important;
+    }
+
+    table#dataTables-fivenine-list tr td a.button {
+        display: none;
+    }
+
+    table#dataTables-fivenine-list tr:hover td a.button {
+        display: inline-block;
+    }
+
+    .bg-plus-square-glow-show {
+        /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
+        /*box-shadow: 0 0 10px #FF4961;*/
+        color: green;
+    }
+
+    .bg-pdf-glow-show {
+        /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
+        /*box-shadow: 0 0 10px #FF4961;*/
+        color: #7bb73f;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" style="width: 100%;" id="dataTables-fivenine-list">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Bench_HearingDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.Bench_HearingTime)</th>
+                        <th>@Html.DisplayNameFor(model => model.HearingBench_Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.HearingBench_FixedFor_Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.TypeOfComplaintHearing)</th>
+                        <th>@Html.DisplayNameFor(model => model.HearingBench_BussinesOnDate_ProceedingDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.Remarks_IfAny)</th>
+                        <th>@Html.DisplayName("Date of Upload")</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int snofivenine = 0;
+                    }
+                    @foreach (var item in Model.prpNoticeFiveNineHearingDetail)
+                    {
+                        {
+                            snofivenine = snofivenine + 1;
+                        }
+                        <tr>
+                            @*<td>@Html.DisplayName(snofivenine.ToString())</td>*@
+                            <td>
+                                @if (item.Bench_HearingDate != DateTime.MinValue)
+                                {
+                                    @Html.DisplayFor(modelItem => item.Bench_HearingDate)
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("--")
+                                }
+                                @if (Model.E_column == "7802")
+                                {
+                                    <span class="bg-border-show">
+                                        <span class="pull-left">
+                                            <a class="button" href="@Url.Action("Print_ComplaintSectionFiveNineDetails", "ComplaintPrintForm", new { IndexID = item.BenchHearingDate_IndexID, FormSFN = item.Related_ComplaintNoticesSectionFiveNine_ID, FormSFNcode = item.Related_ComplaintNoticesSectionFiveNine_Code })" target="_blank" title="View PDF"><i class="fa fa-clone fa-fw bg-plus-square-glow-show" aria-hidden="true"></i></a>
+                                            <a class="deletefivenineButton button" href="javascript:void(0);" title="Delete Hearing Detail"><i class="fa fa-trash-o fa-fw bg-plus-square-glow-show" aria-hidden="true"></i></a>                                            
+                                        </span>
+                                    </span> 
+                                }
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Bench_HearingTime)
+                                @Html.HiddenFor(modelItem => item.BenchHearingDate_IndexID, new { @class = "hdnHearingDateIndexID" })
+                                @Html.HiddenFor(modelItem => item.BenchHearingDate_ID, new { @class = "hdnHearingDateID" })
+                                @Html.HiddenFor(modelItem => item.Related_ComplaintNoticesSectionFiveNine_ID, new { @class = "hdnHearingFiveNineID" })
+                                @Html.HiddenFor(modelItem => item.Related_ComplaintNoticesSectionFiveNine_Code, new { @class = "hdnHearingFiveNineCode" })
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.HearingBench_Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.HearingBench_FixedFor_Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TypeOfComplaintHearing)</td>
+                            <td>@Html.DisplayFor(modelItem => item.HearingBench_BussinesOnDate_ProceedingDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>
+                            @if (item.CreatedOn != DateTime.MinValue)
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CreatedOn)
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @Html.DisplayName("--")
+                                </td>
+                            }                            
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

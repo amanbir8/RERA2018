@@ -1,0 +1,40 @@
+﻿
+/* Report PDF Print */
+.rpt-pdf-display-font-bold {
+    font-weight: bold;
+}
+
+.rpt-pdf-display-border-box {
+    padding: 9px;
+    border: 1px solid #4CAF50;
+    text-align: justify;
+    font-size: 15px;
+}
+
+.rpt-pdf-display-border-inner-box-shadow {
+    padding: 6px;
+    font-size: 14px;
+    background-color: lightgrey;
+    font-style: italic;
+}
+
+.rpt-pdf-display-border-top-box {
+    padding: 9px 9px 9px 9px;
+    font-size: 15px;
+    background-color: lightgrey;
+}
+
+.rpt-pdf-display-border-title-box {
+    padding: 9px 9px 9px 9px;
+    border: 1px solid #ccc;
+    font-weight: bold;
+    font-size: 15px;
+    /*border-bottom: 1px solid #ddd;*/
+    /*background-color: lightgrey;*/
+}
+
+.rpt-pdf-display-norecordsfound {
+    font-style: italic;
+    font-size: medium;
+    border: 1px solid #ccc;
+}

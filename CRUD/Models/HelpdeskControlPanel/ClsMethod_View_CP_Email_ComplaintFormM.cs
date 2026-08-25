@@ -1,0 +1,253 @@
+﻿using System.Linq;
+using System.Web;
+using MySql.Data.MySqlClient;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Data;
+using System;
+using System.Collections.Generic;
+
+namespace CRUD.Models.HelpdeskControlPanel
+{
+    public class ClsMethod_View_CP_Email_ComplaintFormM
+    {
+        private MySqlConnection con;
+        private void connection()
+        {
+            string constring = ConfigurationManager.ConnectionStrings["reraConn"].ToString();
+            con = new MySqlConnection(constring);
+        }
+
+        public List<ClsPrp_ControlPanel_View_Email_ComplaintFormM> Display_CP_FormMcomplaintDetailsForEmailAddress_ByID(string pRegistrationNumber, string pUserRole)
+        {
+            connection();
+            List<ClsPrp_ControlPanel_View_Email_ComplaintFormM> CPregistrationList = new List<ClsPrp_ControlPanel_View_Email_ComplaintFormM>();
+
+            MySqlCommand cmd = new MySqlCommand("Display_RERA_CP_complaint_formm_details_ByID", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("p_RegistrationNumber", pRegistrationNumber);
+            cmd.Parameters.AddWithValue("p_UserRole", pUserRole);
+            MySqlDataAdapter sd = new MySqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                CPregistrationList.Add(
+                    new ClsPrp_ControlPanel_View_Email_ComplaintFormM
+                    {
+                        ComplaintFormM_ID = Convert.ToInt64(dr["ComplaintFormM_ID"]),
+                        ComplaintFormM_Code = Convert.ToString(dr["ComplaintFormM_Code"]),
+                        Profile_ID = Convert.ToInt64(dr["Profile_ID"]),
+                        User_ID = Convert.ToString(dr["User_ID"]),
+                        ComplaintType_MN = Convert.ToString(dr["ComplaintType_MN"]),
+
+                        Complaint_DiaryNumber_Name = Convert.ToString(dr["ComplaintRegDiaryNumber_Name"]),
+                        IsComplaintTransferFromTo = Convert.ToString(dr["IScompaintTransferFromTo"]),
+                        Complaint_TransferDiaryNumber_Name = Convert.ToString(dr["Complaint_TransferDiaryNumber_Name"]),
+
+                        Complainant_Name = Convert.ToString(dr["Complainant_Name"]),
+                        OfficeResComplainant_AddressLine1 = Convert.ToString(dr["OfficeResComplainant_AddressLine1"]),
+                        OfficeResComplainant_AddressLine2 = Convert.ToString(dr["OfficeResComplainant_AddressLine2"]),
+                        OfficeResComplainant_AddressStateCode = Convert.ToInt32(dr["OfficeResComplainant_AddressStateCode"]),
+                        OfficeResComplainant_AddressDistrictCode = Convert.ToInt32(dr["OfficeResComplainant_AddressDistrictCode"]),
+                        OfficeResComplainant_AddressPIN = Convert.ToString(dr["OfficeResComplainant_AddressPIN"]),
+
+                        AuthorizedRepresentativeCounsel_Name = Convert.ToString(dr["AuthorizedRepresentativeCounsel_Name"]),
+                        RelatesComplaint_ComplaintAgainstType = Convert.ToString(dr["RelatesComplaint_ComplaintAgainstType"]),
+                        RelatesComplaint_ProjectAgent_RERA_RegNumber = Convert.ToString(dr["RelatesComplaint_ProjectAgent_RERA_RegNumber"]),
+                        RelatesComplaint_ProjectAgent_Name = Convert.ToString(dr["RelatesComplaint_ProjectAgent_Name"]),
+                        Respondent_Name = Convert.ToString(dr["Respondent_Name"]), 
+                    });
+            }
+            return CPregistrationList;
+        }
+        
+        public List<ClsPrp_ControlPanel_View_Email_ComplaintFormM> Display_CP_EmailsAll_ForRegisteredComplaintFormM_ByID(string pRegistrationNumber, string pUserRole)
+        {
+            connection();
+            List<ClsPrp_ControlPanel_View_Email_ComplaintFormM> CPregistrationList = new List<ClsPrp_ControlPanel_View_Email_ComplaintFormM>();
+
+            MySqlCommand cmd = new MySqlCommand("Display_RERA_CP_EmailsComplaintMFormAddressAllDetails_ByID", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("p_RegistrationNumber", pRegistrationNumber);
+            cmd.Parameters.AddWithValue("p_UserRole", pUserRole);
+            MySqlDataAdapter sd = new MySqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            con.Open();
+            sd.Fill(dt);
+            con.Close();
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                CPregistrationList.Add(
+                    new ClsPrp_ControlPanel_View_Email_ComplaintFormM
+                    {
+                        AdditionalEmailFormM_IndexID = Convert.ToInt64(dr["AdditionalEmailFormM_IndexID"]),
+                        AdditionalEmailFormM_ID = Convert.ToInt64(dr["AdditionalEmailFormM_ID"]),
+                        ComplaintFormM_ID = Convert.ToInt64(dr["ComplaintFormM_ID"]),
+                        ComplaintFormM_Code = Convert.ToString(dr["ComplaintFormM_Code"]),
+                        Profile_ID = Convert.ToInt64(dr["Profile_ID"]),
+                        User_ID = Convert.ToString(dr["User_ID"]),
+                        ComplaintType_MN = Convert.ToString(dr["ComplaintType_MN"]),
+                        Complaint_DiaryNumber_Name = Convert.ToString(dr["Complaint_DiaryNumber_Name"]),
+                        IsComplaintTransferFromTo = Convert.ToString(dr["IsComplaintTransferFromTo"]),
+                        Complaint_TransferDiaryNumber_Name = Convert.ToString(dr["Complaint_TransferDiaryNumber_Name"]),
+
+                        Complainant_Name = Convert.ToString(dr["Complainant_Name"]),
+                        OfficeResComplainant_AddressLine1 = Convert.ToString(dr["OfficeResComplainant_AddressLine1"]),
+                        OfficeResComplainant_AddressLine2 = Convert.ToString(dr["OfficeResComplainant_AddressLine2"]),
+                        OfficeResComplainant_AddressStateCode = Convert.ToInt32(dr["OfficeResComplainant_AddressStateCode"]),
+                        OfficeResComplainant_AddressDistrictCode = Convert.ToInt32(dr["OfficeResComplainant_AddressDistrictCode"]),
+                        OfficeResComplainant_AddressPIN = Convert.ToString(dr["OfficeResComplainant_AddressPIN"]),
+
+                        AuthorizedRepresentativeCounsel_Name = Convert.ToString(dr["AuthorizedRepresentativeCounsel_Name"]),
+                        RelatesComplaint_ComplaintAgainstType = Convert.ToString(dr["RelatesComplaint_ComplaintAgainstType"]),
+                        RelatesComplaint_ProjectAgent_RERA_RegNumber = Convert.ToString(dr["RelatesComplaint_ProjectAgent_RERA_RegNumber"]),
+                        RelatesComplaint_ProjectAgent_Name = Convert.ToString(dr["RelatesComplaint_ProjectAgent_Name"]),
+                        Respondent_Name = Convert.ToString(dr["Respondent_Name"]),                       
+
+                        AE_ContactName = Convert.ToString(dr["AE_ContactName"]),
+                        AE_Designation = Convert.ToString(dr["AE_Designation"]),
+                        AE_ReferenceName = Convert.ToString(dr["AE_ReferenceName"]),
+                        AE_ReferenceDate = Convert.ToDateTime(dr["AE_ReferenceDate"]),
+                        AE_EmailType = Convert.ToString(dr["AE_EmailType"]),
+                        AE_EmailAddress = Convert.ToString(dr["AE_EmailAddress"]),
+
+                        RemarksIfAny = Convert.ToString(dr["RemarksIfAny"]),
+                        Extra1 = Convert.ToString(dr["Extra1"]),
+                        Extra2 = Convert.ToString(dr["Extra2"]),
+                        Extra3 = Convert.ToString(dr["Extra3"]),
+
+                        IsActive = Convert.ToInt32(dr["IsActive"]),
+                        IsDraft = Convert.ToInt32(dr["IsDraft"]),
+                        IsLock = Convert.ToInt32(dr["IsLock"]),
+                        IsApproval = Convert.ToInt32(dr["IsApproval"]),
+                        IsVerified = Convert.ToInt32(dr["IsVerified"]),
+                        IsPublicView = Convert.ToInt32(dr["IsPublicView"]),
+
+                        CreatedBy = Convert.ToString(dr["CreatedBy"]),
+                        CreatedOn = Convert.ToDateTime(dr["CreatedOn"]),
+                        ModifyBy = Convert.ToString(dr["ModifyBy"]),
+                        ModifyOn = Convert.ToDateTime(dr["ModifyOn"]),
+                    });
+            }
+            return CPregistrationList;
+        }
+
+        public Int32 Update_LockUnlockHandler_CP_EmailAddressAll_ForRegisteredComplaintMFormByIndex(string RequestID, string RelatedRefIndexID, string RelatedRefID, string RelatedCode, string LockUnlockCode, string ByUserName, string ByUserID, string RelatedRemarksIfAny, string RelatedPVMsg)
+        {
+            connection();
+            MySqlCommand cmd = new MySqlCommand("usp_cp_setlockunlock_complaintmformemailaddressByIndex", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            #region Parameters
+            cmd.Parameters.AddWithValue("p_InputRequestID", RequestID);
+            cmd.Parameters.AddWithValue("p_InputRefIndexID", RelatedRefIndexID);
+            cmd.Parameters.AddWithValue("p_InputRefID", RelatedRefID);
+            cmd.Parameters.AddWithValue("p_InputCode", RelatedCode);
+            cmd.Parameters.AddWithValue("p_InputLockUnlockValue", LockUnlockCode);
+            cmd.Parameters.AddWithValue("p_ByUserName", ByUserName);
+            cmd.Parameters.AddWithValue("p_ByUserID", ByUserID);
+            cmd.Parameters.AddWithValue("p_RelatedRemarksIfAny", RelatedRemarksIfAny);
+            cmd.Parameters.AddWithValue("p_RelatedPVMsg", RelatedPVMsg);
+            cmd.Parameters.AddWithValue("p_A_Column", string.Empty);
+            cmd.Parameters.AddWithValue("p_B_Column", string.Empty);
+            #endregion
+
+            MySqlParameter AppPar = new MySqlParameter("p_valIsFlagReturn", MySqlDbType.Int32);
+            AppPar.Direction = ParameterDirection.Output;
+            cmd.Parameters.Add(AppPar);
+
+            con.Open();
+            int i = cmd.ExecuteNonQuery();
+            Int32 AppId = Convert.ToInt32(AppPar.Value);
+            con.Close();
+
+            if (i >= 1)
+                return AppId;
+            else
+                return 999;
+        }
+
+        public Tuple<bool, string> Add_ComplaintFormM_EmailAddress(ClsPrp_ControlPanel_View_Email_ComplaintFormM smodel, string User_Name, Int64 sFormM_ID, string sFormM_Code, string sFormM_DiaryNumber, string sUID)
+        {
+            connection();
+            MySqlCommand cmd = new MySqlCommand("usp_insert_CP_tbl_rera_complaint_formm_additionalemailaddress", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            DateTime dtvalue = new DateTime(0001, 1, 1);
+
+            #region Parameters
+            cmd.Parameters.AddWithValue("p_AdditionalEmailFormM_IndexID", (smodel.AdditionalEmailFormM_IndexID == 0) ? 0 : smodel.AdditionalEmailFormM_IndexID);
+            cmd.Parameters.AddWithValue("p_AdditionalEmailFormM_ID", (smodel.AdditionalEmailFormM_ID == 0) ? 0 : smodel.AdditionalEmailFormM_ID);
+            cmd.Parameters.AddWithValue("p_ComplaintFormM_ID", sFormM_ID);
+            cmd.Parameters.AddWithValue("p_ComplaintFormM_Code", sFormM_Code);
+            cmd.Parameters.AddWithValue("p_Profile_ID", (smodel.Profile_ID == 0) ? 0 : smodel.Profile_ID);
+            cmd.Parameters.AddWithValue("p_User_ID", sUID);
+            cmd.Parameters.AddWithValue("p_ComplaintType_MN", String.IsNullOrEmpty(smodel.ComplaintType_MN) ? string.Empty : smodel.ComplaintType_MN);
+
+            cmd.Parameters.AddWithValue("p_Complaint_DiaryNumber_Name", String.IsNullOrEmpty(smodel.Complaint_DiaryNumber_Name) ? string.Empty : smodel.Complaint_DiaryNumber_Name);
+            cmd.Parameters.AddWithValue("p_IsComplaintTransferFromTo", String.IsNullOrEmpty(smodel.IsComplaintTransferFromTo) ? string.Empty : smodel.IsComplaintTransferFromTo);
+            cmd.Parameters.AddWithValue("p_Complaint_TransferDiaryNumber_Name", String.IsNullOrEmpty(smodel.Complaint_TransferDiaryNumber_Name) ? string.Empty : smodel.Complaint_TransferDiaryNumber_Name);
+
+            cmd.Parameters.AddWithValue("p_Complainant_Name", String.IsNullOrEmpty(smodel.Complainant_Name) ? string.Empty : smodel.Complainant_Name);
+            cmd.Parameters.AddWithValue("p_OfficeResComplainant_AddressLine1", String.IsNullOrEmpty(smodel.OfficeResComplainant_AddressLine1) ? string.Empty : smodel.OfficeResComplainant_AddressLine1);
+            cmd.Parameters.AddWithValue("p_OfficeResComplainant_AddressLine2", String.IsNullOrEmpty(smodel.OfficeResComplainant_AddressLine2) ? string.Empty : smodel.OfficeResComplainant_AddressLine2);
+            cmd.Parameters.AddWithValue("p_OfficeResComplainant_AddressStateCode", (smodel.OfficeResComplainant_AddressStateCode == 0) ? 0 : smodel.OfficeResComplainant_AddressStateCode);
+            cmd.Parameters.AddWithValue("p_OfficeResComplainant_AddressDistrictCode", (smodel.OfficeResComplainant_AddressDistrictCode == 0) ? 0 : smodel.OfficeResComplainant_AddressDistrictCode);
+            cmd.Parameters.AddWithValue("p_OfficeResComplainant_AddressPIN", String.IsNullOrEmpty(smodel.OfficeResComplainant_AddressPIN) ? string.Empty : smodel.OfficeResComplainant_AddressPIN);
+            cmd.Parameters.AddWithValue("p_AuthorizedRepresentativeCounsel_Name", String.IsNullOrEmpty(smodel.AuthorizedRepresentativeCounsel_Name) ? string.Empty : smodel.AuthorizedRepresentativeCounsel_Name);
+            cmd.Parameters.AddWithValue("p_RelatesComplaint_ComplaintAgainstType", String.IsNullOrEmpty(smodel.RelatesComplaint_ComplaintAgainstType) ? string.Empty : smodel.RelatesComplaint_ComplaintAgainstType);
+            cmd.Parameters.AddWithValue("p_RelatesComplaint_ProjectAgent_RERA_RegNumber", String.IsNullOrEmpty(smodel.RelatesComplaint_ProjectAgent_RERA_RegNumber) ? string.Empty : smodel.RelatesComplaint_ProjectAgent_RERA_RegNumber);
+            cmd.Parameters.AddWithValue("p_RelatesComplaint_ProjectAgent_Name", String.IsNullOrEmpty(smodel.RelatesComplaint_ProjectAgent_Name) ? string.Empty : smodel.RelatesComplaint_ProjectAgent_Name);
+            cmd.Parameters.AddWithValue("p_Respondent_Name", String.IsNullOrEmpty(smodel.Respondent_Name) ? string.Empty : smodel.Respondent_Name);
+
+            cmd.Parameters.AddWithValue("p_AE_ContactName", String.IsNullOrEmpty(smodel.AE_ContactName) ? string.Empty : smodel.AE_ContactName);
+            cmd.Parameters.AddWithValue("p_AE_Designation", String.IsNullOrEmpty(smodel.AE_Designation) ? string.Empty : smodel.AE_Designation);
+            cmd.Parameters.AddWithValue("p_AE_ReferenceName", String.IsNullOrEmpty(smodel.AE_ReferenceName) ? string.Empty : smodel.AE_ReferenceName);
+            cmd.Parameters.AddWithValue("p_AE_ReferenceDate", smodel.AE_ReferenceDate.HasValue ? smodel.AE_ReferenceDate.Value : dtvalue);// DateTime.MinValue);
+            cmd.Parameters.AddWithValue("p_AE_EmailType", String.IsNullOrEmpty(smodel.AE_EmailType) ? string.Empty : smodel.AE_EmailType);
+            cmd.Parameters.AddWithValue("p_AE_EmailAddress", String.IsNullOrEmpty(smodel.AE_EmailAddress) ? string.Empty : smodel.AE_EmailAddress);
+            cmd.Parameters.AddWithValue("p_RemarksIfAny", String.IsNullOrEmpty(smodel.RemarksIfAny) ? string.Empty : smodel.RemarksIfAny);
+
+            cmd.Parameters.AddWithValue("p_Extra1", String.IsNullOrEmpty(smodel.Extra1) ? string.Empty : smodel.Extra1);
+            cmd.Parameters.AddWithValue("p_Extra2", String.IsNullOrEmpty(smodel.Extra2) ? string.Empty : smodel.Extra2);
+            cmd.Parameters.AddWithValue("p_Extra3", String.IsNullOrEmpty(smodel.Extra3) ? string.Empty : smodel.Extra3);
+
+            cmd.Parameters.AddWithValue("p_IsActive", 1);
+            cmd.Parameters.AddWithValue("p_IsDraft", 1);
+            cmd.Parameters.AddWithValue("p_IsLock", 0);
+            cmd.Parameters.AddWithValue("p_IsApproval", 0);
+            cmd.Parameters.AddWithValue("p_IsVerified", (smodel.IsVerified == 0) ? 0 : smodel.IsVerified);
+            cmd.Parameters.AddWithValue("p_IsPublicView", (smodel.IsPublicView == 0) ? 0 : smodel.IsPublicView);
+
+            cmd.Parameters.AddWithValue("p_CreatedBy", User_Name);
+            cmd.Parameters.AddWithValue("p_CreatedOn", DateTime.Now);
+            cmd.Parameters.AddWithValue("p_ModifyBy", User_Name);
+            cmd.Parameters.AddWithValue("p_ModifyOn", DateTime.Now);
+            #endregion
+
+            MySqlParameter AppPar = new MySqlParameter("p_valreturn", MySqlDbType.VarChar, 120);
+            AppPar.Direction = ParameterDirection.Output;
+            cmd.Parameters.Add(AppPar);
+
+            con.Open();
+            int i = cmd.ExecuteNonQuery();
+            string AppId = string.Empty;
+            AppId = Convert.ToString(AppPar.Value);
+            con.Close();
+            cmd.Dispose();
+
+            if (i >= 1)
+                return Tuple.Create(false, AppId);
+            else
+                return Tuple.Create(true, AppId);
+        }
+
+    }
+}

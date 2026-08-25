@@ -1,0 +1,252 @@
+﻿@model CRUD.Models.HelpDeskAgent.ClsPrp_RenewalAuthorityDesk_AgentRenewalRERAnumberDiaryNumber
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+
+    .icon-cert-lock {        
+        color: #428bca;
+    }
+
+    .icon-disabled {
+        cursor: not-allowed;
+    }
+
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+
+    .border-left-danger {
+        border-left: .15rem solid #FF4961 !important;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>
+    $(function () {
+        $('[data-spzoom]').spzoom();
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Real-Estate Agents (Registration Revocation/Cancellation) Application Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Renewal of Registration (Renewal History) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Real-Estate Agent - ( @Html.DisplayFor(model => model.zipAgentRegistrationNumberName, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipAgentName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-4 real-estate-agent-name">
+                                                        @Html.DisplayFor(model => model.zipAgentName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipAgent_DiaryNumber, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        @Html.DisplayFor(model => model.zipRevocationCancellation_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.DisplayName(" of ")
+                                                        @Html.DisplayFor(model => model.zipAgent_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityRevokeAgentDeskNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>
+                                        Renewal of Registration of Real-Estate Agent (Renewal History) Details
+                                    </h4>
+                                </div>
+                            </div>
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                @Html.HiddenFor(model => model.AgentRegRenewal_DiaryNumber_IndexID)
+                                @Html.HiddenFor(model => model.AgentRegRenewal_DiaryNumber_ID)
+                                @Html.HiddenFor(m => m.RelatedAgent_ID)
+                                @Html.HiddenFor(m => m.RelatedRenewalAgent_ID)
+                                @Html.HiddenFor(m => m.RelatedRenewalAgent_Year)
+
+                            }
+                            <div class="row">
+                                <div class="form-group">                                        
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            @Html.DisplayName("SNo")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RelatedAgentDiaryNumber_Name)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Diary Number (Renewal of Registration)")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RERAnumberRegistration)
+                                                        </th>                                                        
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RERAnumberIssueDate)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RERAnumberRegUptoDate)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RenewalAgentRegistrationIssueDate)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.RenewalAgentRegistrationRegUptoDate)
+                                                        </th>                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        int snoRLRC = 0;                                                        
+                                                    }
+                                                    @foreach (var item in Model.prpongoing)
+                                                    {
+                                                        {
+                                                            snoRLRC = snoRLRC + 1;
+                                                        }
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DisplayName(snoRLRC.ToString())
+                                                            </td>
+                                                            <td>                                                                
+                                                                @Html.DisplayFor(modelItem => item.RelatedAgentDiaryNumber_Name)                                                                
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RelatedRenewalAgentRegDiaryNumber_Name)                                                                
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RERAnumberRegistration)
+                                                            </td>                                                            
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RERAnumberIssueDate)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RERAnumberRegUptoDate)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RenewalAgentRegistrationIssueDate)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.RenewalAgentRegistrationRegUptoDate)
+                                                            </td>                                                            
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>                
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('table#promoter-documents-list-table').dataTable({
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [7]
+                }],
+                "language": {
+                    "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                    "lengthMenu": "Show _MENU_ records"
+                },
+                "pagingType": "full_numbers"
+            });
+        });
+    </script>
+}
+

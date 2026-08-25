@@ -1,0 +1,414 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_Project_ProfessionalDetails
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script type="text/javascript">
+    $(function () {
+
+        var drpYearText = $(document).find("select#drpQYear").val();
+        var drpQuarterText = $(document).find("select#drpQName").val();
+
+        $("#hdnQYear").val(drpYearText);
+        $("#hdnQName").val(drpQuarterText);
+
+        //$('#drpQYear').attr('disabled', true);
+        //$('#drpQName').attr('disabled', true);
+        //$('#A_column').attr('readonly', false);
+        //$('#B_column').attr('readonly', true);
+
+
+        $('#OfficialComm_AddressStateCode').change(function () {
+
+            $('#OfficialComm_AddressDistrictCode').empty();
+            var baseUrl = $('body').attr('data-base-url');
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "Project/GetDistrictByStateId",
+                datatype: "Json",
+                data: { StateId: $('#OfficialComm_AddressStateCode').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#OfficialComm_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                    });
+                }
+            });
+        });
+
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [3, 4]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+
+    });
+</script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(document).on('click', '#BtnDrp', function (e) {
+                e.preventDefault();
+                var proceedButton = $(this);
+                var drpText = $(document).find("select#ProjectProfessionalRelated_ProjectRegistration_ID").val();
+                //alert(drpText)
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                    // $("#idMainForm").hide();
+                }
+                else {
+                    $("#idMainForm").show();
+                    $(proceedButton).parents('form').submit();
+                }
+            });
+
+            $(document).on('click', '#BtnMainform', function (e) {
+                var submitButton = $(this);
+                e.preventDefault();
+                var drpText = $(document).find("select#ProjectProfessionalRelated_ProjectRegistration_ID").val();
+                if ($.trim(drpText) == "") {
+                    alert("Please select the Project")
+                    //$("#idMainForm").hide();
+                    drpText = "";
+                    return false;
+                }
+                else {
+                    $(submitButton).parents('form').submit();
+                    // $("#idMainForm").show();
+                }
+
+
+            });
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+        });
+    </script>
+<script>
+   //    $(function () {
+   //        var startYear = 2001;
+   //        var endYear = 2050;
+   //        var defaultValue = 'select'
+   //        $('#B_column').append('<option value="' + defaultValue + '">' + defaultValue + '</option>');
+   //        for (var i = startYear; i <= endYear; i++)
+   //            $('#B_column').append('<option value="' + i + '">' + i + '</option>');
+
+
+   //});
+</script>
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Quarterly Updates: Information relating to Escrow Account of Registered Project</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Information relating to Escrow Account of Registered Project
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("DropdownlistProjectProfessionalDetails", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Project</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label">Select Project</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownListFor(m => m.ProjectProfessionalRelated_ProjectRegistration_ID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "Select Project", new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                            }
+                            <div @if (Session["Project_id"] != null) { @Html.Raw("style=''")        } else { @Html.Raw("style='display: none;'")        }>
+                                @using (Html.BeginForm())
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(model => model.ProjectProfessional_IndexID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.HiddenFor(model => model.ProjectProfessional_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.HiddenFor(model => model.ProjectProfessionalRelated_ProjectRegistration_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                                    @*<label class="control-label col-md-2">Select Project</label>
+                @Html.DropDownListFor(m => m.ProjectProfessionalRelated_ProjectRegistration_ID, new SelectList(ViewBag.list, "ProjectRegistration_ID", "Project_Name"), "Select Project", new { @class = "form-control" })*@
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Select Quarterly Update Option</legend>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Select Year</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @if (@TempData["CurrentYears"] != null)
+                                                                {
+                                                                    @Html.DropDownListFor(model => model.B_column, new SelectList(ViewBag.Years, "Text", "Value", TempData["CurrentYears"]), new { @id = "drpQYear", @class = "form-control" })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DropDownListFor(model => model.B_column, new SelectList(ViewBag.Years, "Text", "Value"), new { @id = "drpQYear", @class = "form-control" })
+                                                                }
+                                                                @Html.HiddenFor(model => model.B_column, new { id = "hdnQYear" })
+                                                                @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            @*<div class="col-md-3">
+                                            @Html.DropDownListFor(model => model.B_column, new SelectList(""), new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })
+                                        </div>*@
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Select Quarter</label>
+                                                                @{
+                                                                    var listItems2 = new List<SelectListItem>
+                                                                    {
+                                                                        new SelectListItem {  Text = "--Select--" , Value="Registration Process"  },
+                                                                        new SelectListItem {  Text = "First Quarter (January-March)" , Value="First Quarter"  },
+                                                                        new SelectListItem {  Text = "Second Quarter (April-June)" , Value="Second Quarter"  },
+                                                                        new SelectListItem {  Text = "Third Quarter (July-September)" , Value="Third Quarter"  },
+                                                                        new SelectListItem {  Text = "Fourth Quarter (October-December)" , Value="Fourth Quarter"  },
+                                                                    };
+                                                                }
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.A_column, new SelectList(listItems2, "Value", "Text"), new { @id = "drpQName", @class = "form-control" })
+                                                                @Html.HiddenFor(model => model.A_column, new { id = "hdnQName" })
+                                                                @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Balance of the quarter for project Details</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Opening balance at the beginning of the quarter (INR)</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Balance at the end of the quarter (INR)</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                    
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Amount deposited and withdrawn for project Details</legend>                                                    
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">(a) Amount deposited in Escrow Account during the quarter (INR)</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })                                                                
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">(b) Amount deposited in Escrow Account till date (INR)</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">(c) Amount Withdraw during the quarter (INR)</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })                                                                
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">(d) Amount Withdrawn till date (INR)</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                    
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                @if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                {
+                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                }
+                                                &nbsp;
+                                                @Html.ActionLink("Reset", "Create_ProfessionalDetailsQ", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                @Html.DisplayName("S No")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayName("Quarterly Year")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayName("Quarter Name")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayName("Opening balance at the beginning of the quarter (In Lakhs)")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayName("Amount deposited during the quarter (In Lakhs)")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayName("Amount withdrawn during the quarter (In Lakhs)")
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayName("Balance at the end of the quarter (In Lakhs)")
+                                                            </th>
+                                                            <th>@Html.DisplayName("Edit|Delete")</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var item in Model.prpongoing)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.DisplayName("1")
+                                                                </td>
+                                                                <td>
+                                                                   @Html.DisplayName("2019")
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayName("First Quarter (January-March)")
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayName("2100")
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayName("200")
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayName("101")
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayName("2199")
+                                                                </td>
+                                                                <td>
+                                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                                    @*@if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                                    {
+                                                                        @Html.ActionLink("Select", "Edit_ProfessionalDetailsQ", new { ProjectRegistration_ID = item.ProjectProfessionalRelated_ProjectRegistration_ID, ProjectProfessional_IndexID = item.ProjectProfessional_IndexID })
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.ActionLink("Edit", "Edit_ProfessionalDetailsQ", new { ProjectRegistration_ID = item.ProjectProfessionalRelated_ProjectRegistration_ID, ProjectProfessional_IndexID = item.ProjectProfessional_IndexID }) @("| ")
+                                                                        @Html.ActionLink("Delete", "Delete_ProfessionalDetailsQ", new { ProjectProfessionalDetailsRelated_ProjectRegistration_ID = item.ProjectProfessionalRelated_ProjectRegistration_ID, ProjectProfessionalDetails_IndexID = item.ProjectProfessional_IndexID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                                    }*@
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                                                    }
+                                @*<div>
+                @Html.ActionLink("Back to List", "Create_ProfessionalDetails")
+            </div>*@
+
+                                
+                            </div>
+                                            </div>
+                                            <!-- /.row (nested) -->
+                                        </div>
+                                        <!-- /.panel-body -->
+                                    </div>
+            <!-- /.panel -->
+        </div>
+                <!-- /.col-lg-12 -->
+                        </div>
+            <!-- /.row -->
+        </div>
+    </div>
+    <!-- /.wrapper -->
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    }

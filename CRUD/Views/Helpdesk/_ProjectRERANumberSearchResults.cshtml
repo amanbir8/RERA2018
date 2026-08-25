@@ -1,0 +1,119 @@
+﻿@*@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_ProjectRERAnumberDetails*@
+@model CRUD.Models.HelpDesk.searchhelpdesk
+
+@*<script>
+        $(document).on('click', 'a#modalOpenerButton', function (e) {
+                e.preventDefault();
+                var elem = $(this);
+                var parentRow = $(elem).parents('tr');
+                var projectDetailsModal = $(document).find('#myModal');
+                $(projectDetailsModal).find('.modal-body').html('');
+                // ajax to fetch data corresponding to projectId
+                var projectId = $.trim($(parentRow).find('input.hdnProjectID').val());
+                projectId = parseInt(projectId);
+                $.ajax({
+                    url: BASE_URL + 'Helpdesk/ProjectInfoEventLog',
+                    dataType: 'HTML',
+                    type: 'GET',
+                    data: { 'projectId': projectId },
+                    beforeSend: function () {
+                        startPreloader();
+                    },
+                    success: function (response) {
+                        stopPreloader();
+                        $(projectDetailsModal).find('.modal-body').html(response);
+                        $(projectDetailsModal).find('table').DataTable({
+                            responsive: true
+                        });
+                    }
+                });
+                var diaryNo = $.trim($(parentRow).find('td.project-diary-number').attr('data-diary-no'));
+                var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+                $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+                $(projectDetailsModal).modal('show');
+            });
+    </script>*@
+
+
+
+@{
+    int sno = 0;
+}
+
+@foreach (var item in Model.prpongoing)
+{
+    sno++;
+    <tr>
+        <td>@sno</td>
+        <td class="project-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.Reg_PromoterRegDiaryNumber_Name)">@Html.DisplayFor(modelItem => item.Reg_PromoterRegDiaryNumber_Name)</td>
+        <td class="project-name" data-project-name="@Html.DisplayFor(modelItem => item.Project_Name)">@Html.DisplayFor(modelItem => item.Project_Name)</td>
+
+        <td>
+            @item.Promoter_Name
+            @Html.HiddenFor(modelItem => item.Project_ID, new { @class = "hdnProjectID" })
+            @Html.HiddenFor(modelItem => item.Promoter_ID)
+        </td>
+        <td>@item.Project_AddressDistrictName</td>
+
+
+        @*@if (item.EventAction_Type.ToString() == "110022")
+        {
+            <td class="info" title="Pending registration number (Offline RERA registered project) with registration upto date.">@Html.DisplayName("--")</td>
+            <td class="info" title="Pending registration number (Offline RERA registered project) with registration upto date.">@Html.DisplayName("--")</td>
+            <td class="info" title="Pending registration number (Offline RERA registered project) with registration upto date.">@Html.DisplayName("--")</td>
+        }*@
+        @if (!string.IsNullOrEmpty(item.RERAnumberRegistration))
+        {
+            <td title="Offline RERA registered project">@Html.DisplayFor(modelItem => item.RERAnumberRegistration)</td>
+            <td title="Offline RERA registered project">@Html.DisplayFor(modelItem => item.RERAnumberIssueDate)</td>
+            if (item.RERAnumberRegUptoDate != DateTime.MinValue)
+            {
+                <td title="Offline RERA registered project">@Html.DisplayFor(modelItem => item.RERAnumberRegUptoDate)</td>
+            }
+            else
+            {
+                <td title="Offline RERA registered project">@Html.DisplayName("--")</td>
+            }
+        }
+        else if (string.IsNullOrEmpty(item.RERAnumberRegistration))
+        {
+            @*<td class="warning">@Html.DisplayName("--")</td>*@
+            <td class="warning" title="Pending registration number (web-portal) with registration upto date.">@Html.DisplayName("--")</td>
+            <td class="warning" title="Pending registration number (web-portal) with registration upto date.">@Html.DisplayName("--")</td>
+            <td class="warning" title="Pending registration number (web-portal) with registration upto date.">@Html.DisplayName("--")</td>
+        }
+        else
+        {
+            @*<td class="success">@Html.DisplayFor(modelItem => item.Project_Name)</td>*@
+            <td class="success" title="RERA registered project (web-portal)">@Html.DisplayFor(modelItem => item.RERAnumberRegistration)</td>
+            <td class="success" title="RERA registered project (web-portal)">@Html.DisplayFor(modelItem => item.RERAnumberIssueDate)</td>
+            if (item.RERAnumberRegUptoDate != DateTime.MinValue)
+            {
+                <td class="success" title="RERA registered project (web-portal)">@Html.DisplayFor(modelItem => item.RERAnumberRegUptoDate)</td>
+            }
+            else
+            {
+                <td class="success" title="RERA registered project (web-portal)">@Html.DisplayName("--")</td>
+            }
+        }
+        <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+        <td class="center">
+            <a id="modalOpenerButton" href="javascript:void(0);"><i class="fa fa-eye"></i></a>
+        </td>
+        @if (string.IsNullOrEmpty(item.rcdProjectRERAcertFilePath) || string.IsNullOrEmpty(item.rcdProjectRERAcertFileName))
+        {
+            <td class="center">
+                @Html.DisplayName("--")
+            </td>
+        }
+        else
+        {
+            <td class="center">
+                <a href="~/@Html.DisplayFor(modelItem => item.rcdProjectRERAcertFilePath)@Html.DisplayFor(modelItem => item.rcdProjectRERAcertFileName)" target="_blank"><i class="fa fa-external-link-square"></i></a>
+            </td>
+        }
+        <td class="center">
+            @Html.ActionLink("View", "ProjectInfoEventInsertAction", new { ProjectDiaryNumber = item.ProjectRegDiaryNumber_Name, ProjectName = item.Project_Name, ProjectID = item.Project_ID, LastModifiedOn = item.EventAction_IdentifiedOn, PromoterID = item.Promoter_ID })
+        </td>
+    </tr>
+}

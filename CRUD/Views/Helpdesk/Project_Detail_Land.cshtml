@@ -1,0 +1,110 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_Helpdesk
+
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Project_Detail_Land</title>
+</head>
+<body>
+    <div class="form-horizontal col-md-10" style="position:relative;margin-left:5%;">
+        @foreach (var item in Model.List_Project_LandDetails)
+        {
+            <center><h2 style="color:darkblue">PROJECT LAND DETAILS</h2><hr /></center>
+            <center><h4 style="color:maroon">Location Detail</h4></center><hr />
+
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">Area Total To be Developed</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedLand_TobeDeveloped_Area_Total.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                    <div class="col-md-3">Residential Group Housing</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedLand_Area_ResidentialGroupHousing.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">Residential Plotted</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedLand_Area_ResidentialPlotted.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                    <div class="col-md-3">Commercial Area</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedLand_Area_Commercial.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">Industrial Area</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedLand_Area_Industrial.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                    <div class="col-md-3">Name of Villages</div>
+                    <div class="col-md-3">@Html.Label(item.Name_of_Villages.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                </div>
+            </div>
+            <center><h4 style="color:maroon">Total Area To be Developed</h4></center><hr />
+
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">Open Area</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedLand_TobeDeveloped_TotalOpenArea.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">Covered Area</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedLand_TobeDeveloped_TotalCoveredArea.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                </div>
+            </div>
+
+            <center><h4 style="color:maroon">Lattitude and longitude of start and end points of proposed project</h4></center><hr />
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">Start Point Longitude</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedProjectLand_StartPoint_Longitude.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                    <div class="col-md-3">Start Point Latitude</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedProjectLand_StartPoint_Latitude.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <div class="col-md-3">End Point Longitude</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedProjectLand_EndPoint_Longitude.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                    <div class="col-md-3">End Point Latitude</div>
+                    <div class="col-md-3">@Html.Label(item.ProposedProjectLand_EndPoint_Latitude.ToString(), htmlAttributes: new { @class = "control-label" }) </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <table class="table">
+                        <tr>
+                            <th>Khasra Number</th>
+                            <th>Area Under Each Khasra Number</th>
+                        </tr>
+
+                        @foreach (var itemK in Model.List_Project_KhasraAreaDetails)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => itemK.KhasraNumber_ProposedLand_TobeDeveloped)</td>
+                                <td>@Html.DisplayFor(modelItem => itemK.Area_ProposedLand_EachKhasraNumber)</td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</body>
+</html>

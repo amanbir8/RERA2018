@@ -1,0 +1,471 @@
+﻿@model CRUD.Models.MIScomplaintToExcel.ClsprpMIS_FormMInCompleteRemindersSchedulerEmails
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.prpongoing != null)
+        {
+            if (Model.prpongoing.Count != 0)
+            {
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Complaint Form Details</legend>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.RelatedComplaintFormM_DiaryNumber, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.DisplayFor(model => model.RelatedComplaintFormM_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">                                        
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.ApplicationDateFormM, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.ApplicationDateFormM, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.ComplaintType_MN, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.ComplaintType_MN, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Complainant_Name, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.DisplayFor(model => model.Complainant_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>                             
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Complainant_Email_ID, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.Complainant_Email_ID, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Complainant_Mobile_Number, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.Complainant_Mobile_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Respondent_Name, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.DisplayFor(model => model.Respondent_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (Model.IsTransferCase == 1)
+                                {
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.TransferTypeOption, htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DisplayFor(model => model.TransferTypeOption, new { htmlAttributes = new { @class = "form-control" } })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.TransferDate, htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DisplayFor(model => model.TransferDate, new { htmlAttributes = new { @class = "form-control" } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                }                                
+                                <div class="row">
+                                    <div class="form-group">                                        
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Event_IdentifiedOnDate, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.Event_IdentifiedOnDate, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">In-Complete File Status Details</legend>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-9">
+                                            @Html.Label("Number of In-Complete Status (Complaint Form return to complainant by RERA)", htmlAttributes: new { @class = "control-label" })                                            
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.C_Column, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Email Reminder Details</legend>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.Label("Reminder Type", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("Status of Email Reminder", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("Date of Email", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("Remarks, If Any", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.Label("(I) Email Notification", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (Model.RFourFlag == 2)
+                                            {
+                                                @Html.DisplayName("Email Sent")
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayName("Submitted")
+                                            }
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (Model.RFourFlag == 2)
+                                            {
+                                                @Html.DisplayFor(model => model.DateRFour, new { htmlAttributes = new { @class = "form-control" } })
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(model => model.Event_IdentifiedOnDate, new { htmlAttributes = new { @class = "form-control" } })
+                                            }
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("--", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.Label("(II) Email Reminder", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (Model.ROneFlag == 2)
+                                            {
+                                                @Html.DisplayName("Email Sent")
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayName("Email Not Sent")
+                                            }
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (Model.ROneFlag == 2)
+                                            {
+                                                @Html.DisplayFor(model => model.DateROne, new { htmlAttributes = new { @class = "form-control" } })
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayName("Email Not Sent")
+                                            }
+                                        </div>
+                                        <div class="col-md-3">
+                                               @Html.Label("--", htmlAttributes: new { @class = "control-label" })                                         
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row hide">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.Label("(III) Second Reminder", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (Model.RTwoFlag == 2)
+                                            {
+                                                @Html.DisplayName("Email Sent")
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayName("Email Not Sent")
+                                            }
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (Model.RTwoFlag == 2)
+                                            {
+                                                @Html.DisplayFor(model => model.DateRTwo, new { htmlAttributes = new { @class = "form-control" } })
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayName("Email Not Sent")
+                                            }
+                                        </div>
+                                        <div class="col-md-3">
+                                               @Html.Label("--", htmlAttributes: new { @class = "control-label" })                                           
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="row hide">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.Label("(IV) Final Reminder", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (Model.RThreeFlag == 2)
+                                            {
+                                                @Html.DisplayName("Email Sent")
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayName("Email Not Sent")
+                                            }                                            
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (Model.RThreeFlag == 2)
+                                            {
+                                                @Html.DisplayFor(model => model.DateRThree, new { htmlAttributes = new { @class = "form-control" } })
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayName("Email Not Sent")
+                                            }                                            
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("--", htmlAttributes: new { @class = "control-label" })                                                                                 
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Email/SMS Reminder Details</legend>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">No record(s) found.</div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <fieldset class="col-md-12">
+                            <legend class="my">Email/SMS Reminder Details</legend>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">No record(s) found.</div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.prpSchedulerSMSgateway != null)
+        {
+            if (Model.prpSchedulerSMSgateway.Count != 0)
+            {
+                foreach (var item in Model.prpSchedulerSMSgateway)
+                {
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <fieldset class="col-md-12">
+                                    <legend class="my">SMS Reminder Details</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.Label("Reminder Type", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("Status of SMS Reminder", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("Date of SMS", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("Remarks, If Any", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr /> 
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.Label("(I) SMS Notification", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.RFourFlag == 2)
+                                                {
+                                                    @Html.DisplayName("SMS Sent")
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayName("Submitted")
+                                                }                                                
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.RFourFlag == 2)
+                                                {
+                                                    @Html.DisplayFor(model => model.DateRFour, new { htmlAttributes = new { @class = "form-control" } })
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayFor(model => model.Event_IdentifiedOnDate, new { htmlAttributes = new { @class = "form-control" } })
+                                                }                                                
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("--", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                        </div>
+                                    </div>                                   
+                                    <div class="row hide">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.Label("(II) SMS Reminder", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (item.ROneFlag == 2)
+                                                {
+                                                    @Html.DisplayName("SMS Sent")
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayName("SMS Not Sent")
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (item.ROneFlag == 2)
+                                                {
+                                                    @Html.DisplayFor(model => item.DateROne, new { htmlAttributes = new { @class = "form-control" } })
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayName("SMS Not Sent")
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("--", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row hide">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.Label("(III) Second Reminder", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (item.RTwoFlag == 2)
+                                                {
+                                                    @Html.DisplayName("SMS Sent")
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayName("SMS Not Sent")
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (item.RTwoFlag == 2)
+                                                {
+                                                    @Html.DisplayFor(model => item.DateRTwo, new { htmlAttributes = new { @class = "form-control" } })
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayName("SMS Not Sent")
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("--", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row hide">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.Label("(IV) Final Reminder", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (item.RThreeFlag == 2)
+                                                {
+                                                    @Html.DisplayName("SMS Sent")
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayName("SMS Not Sent")
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (item.RThreeFlag == 2)
+                                                {
+                                                    @Html.DisplayFor(model => item.DateRThree, new { htmlAttributes = new { @class = "form-control" } })
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayName("SMS Not Sent")
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("--", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+    </div>
+</div>

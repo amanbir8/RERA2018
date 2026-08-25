@@ -1,0 +1,1837 @@
+﻿@model CRUD.Models.Promoter.ClsPrp_Project_Registration
+
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<style>
+    .popover {
+        background-color: #064576;
+        color: #fff;
+        font-size: 12px;
+    }
+    .popover>.arrow{
+        border-right-color: #064576;
+    }
+
+    .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+    border-bottom-width: 0px;
+    }
+
+</style>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+<script type="text/javascript">
+    $(
+
+        function () {
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // popover
+            $('[data-toggle="popover"]').popover({ trigger: "manual", html: true, animation: false, container: 'body' })
+               .on("mouseenter", function () {
+                   var _this = this;
+                   $(this).popover("show");
+                   $(".popover").on("mouseleave", function () {
+                       $(_this).popover('hide');
+                   });
+               }).on("mouseleave", function () {
+                   var _this = this;
+                   setTimeout(function () {
+                       if (!$(".popover:hover").length) {
+                           $(_this).popover("hide");
+                       }
+                   }, 300);
+               });
+            
+
+            if ($('#ProjectRegistrationProvided_Duration').val() != "") {
+                $('#ProjectRegistrationProvided_Duration').attr('readonly', true);
+            }
+            else {
+                $('#ProjectRegistrationProvided_Duration').attr('readonly', false);
+            }
+
+
+            if ($('#A_column').val() == "0" || $('#A_column').val() == "" || $('#A_column').val() == "0.00") {
+                $('#A_column').val("NA");
+            }
+
+
+            $('#Project_AddressStateCode').change(function () {
+
+                $('#Project_AddressDistrictCode').empty();
+                var baseUrl = $('body').attr('data-base-url');
+                $.ajax({
+                    type: "POST",
+                    url: baseUrl + "Project/GetDistrictByStateId",
+                    datatype: "Json",
+                    data: { StateId: $('#Project_AddressStateCode').val() },
+                    success: function (data) {
+                        $.each(data, function (index, value) {
+                            $('#Project_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                        });
+                    }
+                });
+            });
+            $("input[name='IsAlready_RERANumber']").click(function () {
+                //debugger;
+                if ($("#chkYes").is(":checked")) {
+                    $("#idReraNo").show();                    
+                    //$('#Project_Name').val("");
+                    //$('#Existing_RERANumber').val("");
+                    $('#Existing_RERANumber').attr('readonly', false);
+                    $('#Project_Name').attr('readonly', false);
+                }
+
+                else {
+                    $("#idReraNo").hide();
+                    //$('#Project_Name').val("");
+                    $('#Project_Name').attr('readonly', false);
+                    //$('#Existing_RERANumber').val("0");
+                }
+            });
+
+            if ($("#chkYes").is(":checked")) {
+                $("#idReraNo").show();
+                //$('#Project_Name').val("");
+                //$('#Existing_RERANumber').val("");
+                $('#Existing_RERANumber').attr('readonly', false);
+                $('#Project_Name').attr('readonly', false);
+            }
+            else {
+                $("#idReraNo").hide();
+                //$('#Project_Name').val("");
+                $('#Project_Name').attr('readonly', false);
+                $('#Existing_RERANumber').attr('readonly', false);
+                $('#Existing_RERANumber').val("");
+            }
+
+            $("input[name='IsProposedProjectDetail_OthersIfAny']").click(function () {
+                
+                if ($('input[name=IsProposedProjectDetail_OthersIfAny]:checked').val() == "Y") {
+                //if ($("#chkYesProposedProject").is(":checked")) {
+                    $('#idIsProposedProjectDetail').show();
+                    $('#idIsProposedProjectDetail_name').show();
+                        $('#ProposedProjectDetail_OthersIfAnyName').focus();
+                        $('#ProposedProjectDetail_OthersIfAny').focus();
+                }
+                else {
+                    $('#idIsProposedProjectDetail').hide();
+                    $('#idIsProposedProjectDetail_name').hide();                       
+                }
+            });
+
+            if ($('input[name=IsProposedProjectDetail_OthersIfAny]:checked').val() == "Y") {
+                $('#idIsProposedProjectDetail').show();
+                $('#idIsProposedProjectDetail_name').show();
+            }
+            else {
+                $('#idIsProposedProjectDetail').hide();
+                $('#idIsProposedProjectDetail_name').hide();               
+            }
+
+
+            if ($('input[name=IsProForma_AOS_RERAformat_AnnexureA]:checked').val() == "N") {
+                    $('#RERA_format_No_IsApproved').show();
+                }
+                else {
+                    $('#RERA_format_No_IsApproved').hide();
+                }
+
+
+            $("input[name='IsProForma_AOS_RERAformat_AnnexureA']").click(function () {
+                if ($('input[name=IsProForma_AOS_RERAformat_AnnexureA]:checked').val() == "N") {
+
+                    //if ($("#chkIsProForma_AOS1").is(":checked")) {
+
+                    $('#RERA_format_No_IsApproved').show();
+                    //$('#IsProForma_AOS_RERAformat_No_IsApproved').prop('checked', false);
+
+                    //$('#ProposedProjectDetail_OthersIfAnyName').focus();
+                    //$('#ProposedProjectDetail_OthersIfAny').focus();
+                }
+
+                else {
+
+                    $('#RERA_format_No_IsApproved').hide();
+
+                    //$('#ProposedProjectDetail_OthersIfAnyName').val("0");
+                    //$('#ProposedProjectDetail_OthersIfAny').val("0");
+                }
+                //}
+            });
+
+
+            $('table#promoter-documents-list-table').dataTable({
+                'aoColumnDefs': [{
+                    'bSortable': false,
+                    'aTargets': [5]
+                }],
+                "language": {
+                    "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                    "lengthMenu": "Show _MENU_ records"
+                },
+                "pagingType": "full_numbers"
+            });
+
+        });
+</script>
+<script type="text/javascript">
+    $(
+        function () {
+            $('#AuthorizedPerson_AddressStateCode').on('change', function () {
+                $('#AuthorizedPerson_AddressDistrictCode').empty();
+                var baseUrl = $('body').attr('data-base-url');
+                $.ajax({
+                    type: "POST",
+                    url: baseUrl + "Project/GetDistrictByStateId",
+                    datatype: "Json",
+                    data: { StateId: $('#AuthorizedPerson_AddressStateCode').val() },
+                    success: function (data) {
+                        $.each(data, function (index, value) {
+                            $('#AuthorizedPerson_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                        });
+                    }
+                });
+            });
+
+        }
+    );
+</script>
+<script type="text/javascript">
+    $(
+        function () {
+            $('#Project_AddressDistrictCode').change(function () {
+                $('#Project_AddressSubDivisionCode').empty();
+                var baseUrl = $('body').attr('data-base-url');
+                $.ajax({
+                    type: "POST",
+                    url: baseUrl + "Project/GetSubdivisionByDistId",
+                    datatype: "Json",
+                    data: { Distid: $('#Project_AddressDistrictCode').val() },
+                    success: function (data) {
+                        $.each(data, function (index, value) {
+                            $('#Project_AddressSubDivisionCode').append('<option value="' + value.SubDivision_Code + '">' + value.SubDivision_Name + '</option>');
+                        });
+                    }
+                });
+            });
+        }
+        );
+</script>
+<script>
+          $(
+        function ()
+        {
+            if ($('#ProjectDelayReason_IfAny').val() != "") {                
+                $('#div_reasonfordelay').show();
+            }
+            else {
+                $('#div_reasonfordelay').hide();
+                $('#ProjectDelayReason_IfAny').val("");
+            }
+
+            //if ($('#ProjectDelayReason_IfAny').val() == "0")
+            //{
+            //    $('#div_reasonfordelay').hide();
+            //    $('#ProjectDelayReason_IfAny').val("0");
+            //}
+
+
+            //$('#ProjectStart_Date').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, minDate: 0 });
+            //$('#ProjectCompletion_ProposedDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, minDate: 0 });
+            //$('#ProjectCompletion_OriginalDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, minDate: 0 });
+
+            //$("#ProjectStart_Date").datepicker("setDate", new Date());
+            //$("#ProjectCompletion_ProposedDate").datepicker("setDate", new Date());
+            //$("#ProjectCompletion_OriginalDate").datepicker("setDate", new Date());
+
+            // $('#ProjectStart_Date').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+            // $('#ProjectCompletion_ProposedDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, minDate: 0});
+            //$('#ProjectCompletion_OriginalDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+
+
+            // $('#ProjectStart_Date').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+            // $('#ProjectCompletion_ProposedDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, minDate: 0});
+            //$('#ProjectCompletion_OriginalDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+
+
+            $("#ProjectStart_Date").datepicker({
+                dateFormat: 'dd-M-yy',
+                changeMonth: true,
+                changeYear: true,
+                numberOfMonths: 1,
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate() + 1);
+                    $("#ProjectCompletion_OriginalDate").datepicker("option", "minDate", dt);
+                }
+            });
+
+            $("#ProjectCompletion_OriginalDate").datepicker({
+                dateFormat: 'dd-M-yy',
+                changeMonth: true,
+                changeYear: true,
+                onSelect: function (selected) {
+                    var projStartDate = $("#ProjectStart_Date").val();
+                    if (projStartDate == '') {
+                        alert('Please select Project Start Date first!');
+                        $("#ProjectCompletion_OriginalDate").val('');
+                        return false;
+                    }
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate());
+                    $("#ProjectStart_Date").datepicker("option", "maxDate", dt);
+                    //$("#ProjectCompletion_ProposedDate").datepicker("option", "minDate", dt);
+                    CalculateDiff();
+                }
+            });
+
+            $("#ProjectCompletion_ProposedDate").datepicker({
+                dateFormat: 'dd-M-yy',
+                changeMonth: true,
+                changeYear: true,
+                minDate: new Date(2017, 5 - 1, 01),
+                onSelect: function (selected) {
+                    var compOrigDate = $("#ProjectCompletion_OriginalDate").val();
+                    if (compOrigDate == '') {
+                        alert('Please select Original Date of Project Completion first!');
+                        $("#ProjectCompletion_ProposedDate").val('');
+                        return false;
+                    }
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate());
+                    // $("#ProjectCompletion_OriginalDate").datepicker("option", "maxDate", dt);
+                    CalculateDiff();
+                }
+            });
+
+        });
+          // To calulate difference b/w two dates
+          //function CalculateDiff()
+          //{
+          //    //debugger;
+          //    if ($("#ProjectCompletion_ProposedDate").val() != "" && $("#ProjectCompletion_OriginalDate").val() != "") {
+          //        //console.log;
+          //        var From_date = new Date($("#ProjectCompletion_ProposedDate").val());
+          //        var To_date = new Date($("#ProjectCompletion_OriginalDate").val());
+          //        var Start_date = new Date($("#ProjectStart_Date").val());
+          //        var diff_date = To_date - From_date;
+          //        var diff_Sdate_PDate =From_date- Start_date ;
+                  
+
+          //        var years = Math.floor(diff_date / 31536000000);
+          //        var months = Math.floor((diff_date % 31536000000) / 2628000000);
+          //        var days = Math.floor(((diff_date % 31536000000) % 2628000000) / 86400000);
+
+          //        // to calculate year month,day for start date and proposed date 
+          //        //var years1 = Math.floor(diff_Sdate_PDate / 31536000000);
+          //        //var months1 = Math.floor((diff_Sdate_PDate % 31536000000) / 2628000000);
+          //        //var days1 = Math.floor(((diff_Sdate_PDate % 31536000000) % 2628000000) / 86400000);
+
+          //        $("#ProjectRegistrationProvided_Duration").val(Math.floor(diff_Sdate_PDate / 31536000000) + " year(s) " + Math.floor((diff_Sdate_PDate % 31536000000) / 2628000000) + " month(s) " + Math.floor(((diff_Sdate_PDate % 31536000000) % 2628000000) / 86400000) + "day(s)");
+          //       //alert(
+          //        //$("#Result").html(years + " year(s) " + months + " month(s) " + days + " and day(s)");
+
+          //        if(days>0||years>0||months>0)
+          //        {
+          //           // alert(years + " year(s) " + months + " month(s) " + days + " and day(s)");
+          //            $('#div_reasonfordelay').show();
+          //        }
+          //        else
+          //        {
+          //            $('#div_reasonfordelay').hide();
+          //            $('#ProjectDelayReason_IfAny').val("0");
+          //        }
+
+          //    }
+          //    else {
+          //        //alert("Please select dates");
+          //        return false;
+          //    }
+          //}
+          function CalculateDiff() {
+              // debugger;
+              if ($("#ProjectCompletion_ProposedDate").val() != "") {
+
+                  var From_date = new Date($("#ProjectCompletion_ProposedDate").val());
+                  var To_date = new Date($("#ProjectCompletion_OriginalDate").val());
+                  // var Start_date = new Date();//GetTodayDate();//new Date($("#ProjectStart_Date").val()); // commneted on jun. 27
+                  var Start_date = new Date($("#ProjectCompletion_OriginalDate").val());
+                  // Start_date.setDate(Start_date.getDate() - 2); // commneted on jun. 27
+                  Start_date.setDate(Start_date.getDate() - 1);
+                  var diff_date = To_date - From_date;
+                  var diff_Sdate_PDate = From_date - (Start_date);
+
+
+
+                  var years = Math.floor(diff_date / 31536000000);
+                  var months = Math.floor((diff_date % 31536000000) / 2628000000);
+                  var days = Math.floor(((diff_date % 31536000000) % 2628000000) / 86400000);
+
+
+                  var YearSPDate = Math.floor(diff_Sdate_PDate / 31536000000);
+                  var MonthSPDate = Math.floor((diff_Sdate_PDate % 31536000000) / 2628000000);
+                  var DaySPDate = Math.floor(((diff_Sdate_PDate % 31536000000) % 2628000000) / 86400000);
+
+                  if (DaySPDate > 0 || YearSPDate > 0 || MonthSPDate > 0) {
+                      $("#ProjectRegistrationProvided_Duration").val(YearSPDate + " year(s) " + MonthSPDate + " month(s) " + DaySPDate + " day(s)");
+                      //$('#ProjectRegistrationProvided_Duration').attr('readonly', true);
+                  }
+                  else {
+                      alert("Please Enter Valid Proposed Date of Project Completion");
+                      $("#ProjectCompletion_ProposedDate").val('');
+                      $("#ProjectRegistrationProvided_Duration").val('');
+                      //$('#ProjectRegistrationProvided_Duration').attr('readonly', false);
+                      return false;
+                      //$("#ProjectRegistrationProvided_Duration").val(0 + " year(s) " + 0 + " month(s) " + 0 + "day(s)");
+                  }
+                  //$("#Result").html(years + " year(s) " + months + " month(s) " + days + " and day(s)");
+
+                  if (days > 0 || years > 0 || months > 0) {
+                      // alert(years + " year(s) " + months + " month(s) " + days + " and day(s)");
+                      //$('#div_reasonfordelay').show();
+                      $('#div_reasonfordelay').hide();
+                      $('#ProjectDelayReason_IfAny').val("");
+                      $('#div_reasonfordelayaddreasons').hide();
+                  }
+                  else {
+                      //$('#div_reasonfordelay').hide();
+                      //$('#ProjectDelayReason_IfAny').val("");
+                      if (From_date > To_date) {
+                          $('#div_reasonfordelay').show();
+                          $('#div_reasonfordelayaddreasons').show();
+                      }
+                  }
+
+              }
+              else {
+                  //alert("Please select dates");
+                  return false;
+              }
+          }
+
+</script>
+<script type="text/javascript">
+
+
+        function Get_Rear_Number() {
+
+            //$('#Existing_RERANumber').change(function () {
+            var baseUrl = $('body').attr('data-base-url');
+                    $.ajax({
+                    type: "POST",
+                    url: baseUrl + "Project/GetReraExistingNumber",
+                    datatype: "Json",
+                    data: { StateId: $('#Existing_RERANumber').val() },
+                    success: function (data) {
+                        $.each(data, function (index, value) {
+                            //$('#ProposedProjectDetail_Structure').val("0");
+                            $('#Project_Name').val(value.ProjectName);                            
+                            $('#Existing_RERANumber').attr('readonly', true);
+                            $('#Project_Name').attr('readonly', true);
+                            //$('#Project_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                        });
+                    }
+                });
+            };
+
+
+</script>
+@*<script type="text/javascript">
+$(function () {
+var msg = '@ViewData["resultMessageShown"]';
+    if (msg == '1') {
+        alert("User Details Inserted Successfully");
+        window.location.href = "@Url.Action("Insert_project_Detail", "Project")";
+    }
+    else
+    {
+        alert("User Details Inserted Successfully");
+        window.location.href = "@Url.Action("Insert_project_Detail", "Project")";
+    }
+});
+</script>*@
+<script>
+    $(document).ready(function () {
+
+        $(document).on('click', 'a#addreasonsOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            $("#div_reasonfordelayaddreasons").show();
+        });
+
+        $('#chkYes1').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Delay in acquisition of project land, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                //$('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes2').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Letter of Intent to develop society or colony, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                //$('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes3').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'CLU certificate, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                //$('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes4').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'License to develop society or colony, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                //$('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes5').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'License as promoter from the competent Authority, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                //$('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes6').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Delay in carry out construction activities , ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                //$('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes7').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Delay in obtaining regulatory clearances, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                //$('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes8').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Services from utilities, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                //$('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes9').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Cost Overrun or lack of funds, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                //$('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes10').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Inappropriate and inadequate procurement , ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                //$('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes11').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Ineffective planning and scheduling of project, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                //$('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+        $('#chkYes12').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Shortage of construction materials, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                //$('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+
+        $('#chkYes13').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Shortage of labors, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                //$('#chkYes13').prop('checked', false);
+                $('#chkYes14').prop('checked', false);
+            }
+        });
+
+
+        $('#chkYes14').on("click", function () {
+            if ($(this).is(':checked')) {
+                varGetvalues = $("#ProjectDelayReason_IfAny").val();
+                $("#ProjectDelayReason_IfAny").val('');
+                $("#ProjectDelayReason_IfAny").val(varGetvalues + 'Weather effect on construction activities, ');
+            } else {
+                $("#ProjectDelayReason_IfAny").val('');
+                $('#chkYes1').prop('checked', false);
+                $('#chkYes2').prop('checked', false);
+                $('#chkYes3').prop('checked', false);
+                $('#chkYes4').prop('checked', false);
+                $('#chkYes5').prop('checked', false);
+                $('#chkYes6').prop('checked', false);
+                $('#chkYes7').prop('checked', false);
+                $('#chkYes8').prop('checked', false);
+                $('#chkYes9').prop('checked', false);
+                $('#chkYes10').prop('checked', false);
+                $('#chkYes11').prop('checked', false);
+                $('#chkYes12').prop('checked', false);
+                $('#chkYes13').prop('checked', false);
+                //$('#chkYes14').prop('checked', false);
+            }
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+
+        var vcheckextravalue = $("input[name='IsYes_RegularizationCertificate']:checked").val();
+        if (vcheckextravalue == 'NREGC') {
+            $("#rowspecifyRegularizationCertificate").attr("style", "display:none");
+        }
+        else if (vcheckextravalue == 'YREGC') {
+            $("#rowspecifyRegularizationCertificate").attr("style", "display:block");
+        }
+
+        $(document).on('click', '.radio-regularizationcertificate', function (e) {
+            if (this.value == 'NREGC') {
+                $("#rowspecifyRegularizationCertificate").attr("style", "display:none");
+            }
+            else if (this.value == 'YREGC') {
+                $("#rowspecifyRegularizationCertificate").attr("style", "display:block");
+            }
+        });
+
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#Existing_RERANumber").inputmask({ mask: function () { return ["AAAAAA-AAA99-AA9999"]; } });
+	});
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Project(s) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+
+        @using (Html.BeginForm()) 
+        {
+            @Html.AntiForgeryToken()        
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" }) 
+            @Html.HiddenFor(model => model.ProjectRegistration_IndexID, htmlAttributes: new { @class = "control-label" })
+            @Html.HiddenFor(model => model.ProjectRegistration_ID, htmlAttributes: new { @class = "control-label" })
+            @*<h3>@ViewBag.resultmessageshown</h3>*@  
+            @*if (TempData["resultmessageshown"] != null)
+            {
+                <strong>@TempData["resultmessageshown"]</strong>            
+            }*@
+                <div id="row" class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Select Option</legend>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            <label class="control-label mand">Select Option</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            @*<label for="chkNo">
+                                                <input type="radio" id="chkNo" name="IsAlready_RERANumber" value="N" />
+                                                New Project
+                                            </label>
+                                            <label for="chkYes">
+                                                <input type="radio" id="chkYes" name="IsAlready_RERANumber" value="Y" />
+                                                Existing RERA Project
+                                            </label>*@
+                                            <label class="form-group">
+                                                @Html.RadioButtonFor(model => model.IsAlready_RERANumber, "Y", new { id = "chkYes" }) Existing PB-RERA Project
+                                                @Html.RadioButtonFor(model => model.IsAlready_RERANumber, "N", new { id = "chkNo" }) New Project
+                                            </label>
+                                            @Html.ValidationMessageFor(model => model.IsAlready_RERANumber, "", new { @class = "text-danger" })
+                                                @*<label class="form-group">
+                                                    <input type="radio"
+                                                    @Html.RadioButtonFor(model => model.IsAlready_RERANumber, "Yes", true,new { id= "chkYes" }) Existing RERA Project
+                                                    @Html.RadioButtonFor(model => model.IsAlready_RERANumber, "No", false, new { id = "chkNo" }) New Project
+                                                </label>*@
+                                    </div>
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Project Registration Details</legend>
+                                <div class="row">
+                                    <div id="idReraNo" class="form-group" style="display:none">
+                                        @*<div class="col-md-3">
+                                                @Html.LabelFor(model => model.IsAlready_RERANumber, htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.IsAlready_RERANumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.IsAlready_RERANumber, "", new { @class = "text-danger" })
+                                                    @Html.TextAreaFor(model => model.Project_Amenities, 4, 25, new { htmlAttributes = new { @class = "form-control" } })
+                                            </div>*@
+
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Existing_RERANumber, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.EditorFor(model => model.Existing_RERANumber, new { htmlAttributes = new { @class = "form-control", onChange = "Get_Rear_Number(this);" } })
+                                            @Html.ValidationMessageFor(model => model.Existing_RERANumber, "", new { @class = "text-danger" })
+
+                                            @*@Html.EditorFor(model => model.Existing_RERANumber, new { htmlAttributes = new { @class = "form-control", onChange = "Get_Rear_Number(this);" } })*@
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Project_Name, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Name of Project for which RERA Registration is required. For phase wise approval of project add Phase No. with the project name. Example: ABC Phase 1, XYZ Phase 2 etc.">
+                                            @Html.EditorFor(model => model.Project_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Project_Name, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Project_Amenities, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-3" data-toggle="tooltip" data-placement="left" title="A note explaining the salient features of the proposed project including access to the project, design for electric supply including street lighting, water supply arrangements and site for disposal and treatment of storm and drainage water, any other facilities and amenities or public health services proposed to be provided in the project.">
+                                            @Html.EditorFor(model => model.Project_Amenities, new { htmlAttributes = new { @class = "form-control" } })
+                                            @*@Html.TextAreaFor(model => model.Project_Amenities, 4, 25, new { htmlAttributes = new { @class = "form-control" } })*@
+                                            @Html.ValidationMessageFor(model => model.Project_Amenities, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>             
+                <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Specification Details of Proposed Project as per the Brochure/ Prospectus</legend>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProposedProjectDetail_Structure, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Comma separated multiple information may be provided as per the brochure. Eg. RCC, Earthquake Resistant, masonary walls, Marble Flooring, Wooden Flooring, Wallpaper, Brand Name of Fittings, Modular etc. For plotted development Not Applicable (NA) is to be mentioned.">
+                                                @Html.EditorFor(model => model.ProposedProjectDetail_Structure, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.ProposedProjectDetail_Structure, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProposedProjectDetail_Flooring, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.ProposedProjectDetail_Flooring, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.ProposedProjectDetail_Flooring, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProposedProjectDetail_WallFinishing, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.ProposedProjectDetail_WallFinishing, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.ProposedProjectDetail_WallFinishing, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProposedProjectDetail_SanitaryFittings, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.ProposedProjectDetail_SanitaryFittings, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.ProposedProjectDetail_SanitaryFittings, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProposedProjectDetail_ElectricalFittings, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.ProposedProjectDetail_ElectricalFittings, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.ProposedProjectDetail_ElectricalFittings, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProposedProjectDetail_Kitchen, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.ProposedProjectDetail_Kitchen, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.ProposedProjectDetail_Kitchen, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @*<label class="col-md-3">7. Others, If Any?</label>*@
+                                                @Html.LabelFor(model => model.IsProposedProjectDetail_OthersIfAny, htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsProposedProjectDetail_OthersIfAny, "Y", new { id = "chkYesProposedProject" }) Yes
+                                                    @Html.RadioButtonFor(model => model.IsProposedProjectDetail_OthersIfAny, "N", new { id = "chkNoProposedProject" }) No
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsProposedProjectDetail_OthersIfAny, "", new { @class = "text-danger" })
+                                                @*<label for="chkYes">
+                                                    <input type="radio" id="chkYesProposedProject" name="IsProposedProjectDetail" value="Y" />
+                                                    Yes
+                                                </label>
+                                                <label for="chkNo">
+                                                    <input type="radio" id="chkNoProposedProject" name="IsProposedProjectDetail" value="N" checked="checked" />
+                                                    No
+                                                </label>*@
+                                                </div>
+
+                                                @*<div class="col-md-2">
+                <label class="form-group">
+                    @Html.RadioButtonFor(model => model.IsProposedProjectDetail_OthersIfAny, "Yes", true) Yes
+                    @Html.RadioButtonFor(model => model.IsProposedProjectDetail_OthersIfAny, "No", false) No
+                </label>
+            </div>*@
+                                            </div>
+                                    </div>
+                                    <div class="row">
+                                        <div id="idIsProposedProjectDetail_name" style="display:none">
+                                            <div class="form-group">
+                                                @*<div class="col-md-3">
+                    @Html.LabelFor(model => model.IsProposedProjectDetail_OthersIfAny, htmlAttributes: new { @class = "control-label" })
+                </div>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.IsProposedProjectDetail_OthersIfAny, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.IsProposedProjectDetail_OthersIfAny, "", new { @class = "text-danger" })
+                </div>*@
+
+
+                                                <div class="col-md-3">
+                                                    @Html.LabelFor(model => model.ProposedProjectDetail_OthersIfAnyName, htmlAttributes: new { @class = "control-label" })
+                                                </div>
+                                                <div class="col-md-3">
+                                                    @Html.EditorFor(model => model.ProposedProjectDetail_OthersIfAnyName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.ProposedProjectDetail_OthersIfAnyName, "", new { @class = "text-danger" })
+                                                </div>
+
+                                                <div id="idIsProposedProjectDetail" style="display:none">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.ProposedProjectDetail_OthersIfAny, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.ProposedProjectDetail_OthersIfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.ProposedProjectDetail_OthersIfAny, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+
+
+                                                @*<div class="col-md-3">
+                    @Html.LabelFor(model => model.Project_Status, htmlAttributes: new { @class = "control-label" })
+                </div>
+                <div class="col-md-3">
+                    @Html.EditorFor(model => model.Project_Status, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Project_Status, "", new { @class = "text-danger" })
+                </div>*@
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>                  
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Type of Project (Check relevant components of the Project for which registration is required)</legend>
+                                @Html.ValidationMessageFor(model => model.CommercialBuildingTower, "", new { @class = "text-danger" })
+                                <div class="row">                                    
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            1. @Html.LabelFor(model => model.Commercial, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.CheckBoxFor(m => m.CommercialBuildingTower)                                            
+                                            @Html.LabelFor(model => model.CommercialBuildingTower, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.CheckBoxFor(m => m.CommercialPlottedDevelopment)
+                                            @Html.ValidationMessageFor(model => model.CommercialPlottedDevelopment, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.CommercialPlottedDevelopment, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            2. @Html.LabelFor(model => model.Residential, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.CheckBoxFor(m => m.ResidentialBuildingTower)
+                                            @Html.ValidationMessageFor(model => model.ResidentialBuildingTower, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.ResidentialBuildingTower, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.CheckBoxFor(m => m.ResidentialPlottedDevelopment)
+                                            @Html.ValidationMessageFor(model => model.ResidentialPlottedDevelopment, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.ResidentialPlottedDevelopment, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            3. @Html.LabelFor(model => model.Industrial, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.CheckBoxFor(m => m.IndustrialBuildingTower)
+                                            @Html.ValidationMessageFor(model => model.IndustrialBuildingTower, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.IndustrialBuildingTower, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.CheckBoxFor(m => m.IndustrialPlottedDevelopment)
+                                            @Html.ValidationMessageFor(model => model.IndustrialPlottedDevelopment, "", new { @class = "text-danger" })
+                                            @Html.LabelFor(model => model.IndustrialPlottedDevelopment, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                    </div>
+                                </div>                               
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Project Status Details</legend>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            @{var listItems11 = new List<SelectListItem>
+                                                {
+
+                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                    new SelectListItem {  Text = "On-going" , Value="On-going"  },
+                                                    new SelectListItem {  Text = "New" , Value="Complete"  },
+                                                };
+                                            }
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.Project_Status, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownListFor(model => model.Project_Status, new SelectList(listItems11, "Value", "Text"), new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.Project_Status, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.A_column, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Total Estimated Cost of the Real Estate Project in INR including Land Cost, Development Cost or Cost of Construction as submitted in the Form 3 - CA Certificate of General Regulations.">
+                                                @Html.EditorFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProjectStart_Date, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Date of start/ launch of the project as per the License to develop the society/colony.">
+                                                @Html.EditorFor(model => model.ProjectStart_Date, new { htmlAttributes = new { @class = "form-control" } })@*, onChange = "CalculateDiff(this);" } })*@
+                                                @Html.ValidationMessageFor(model => model.ProjectStart_Date, "", new { @class = "text-danger" })
+                                            </div>
+                                            
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProjectCompletion_OriginalDate, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Date of Completion of Project proposed at the time of Project Launch and as per Brochure.">
+                                                @Html.EditorFor(model => model.ProjectCompletion_OriginalDate, new { htmlAttributes = new { @class = "form-control", onChange = "CalculateDiff(this);" } })
+                                                @Html.ValidationMessageFor(model => model.ProjectCompletion_OriginalDate, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProjectCompletion_ProposedDate, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Expected Date of Project Completion when the Phase Completion/ Completion Certificate will be received.">
+                                                @Html.EditorFor(model => model.ProjectCompletion_ProposedDate, new { htmlAttributes = new { @class = "form-control", onChange = "CalculateDiff(this);" } })
+                                                @Html.ValidationMessageFor(model => model.ProjectCompletion_ProposedDate, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                @*@Html.LabelFor(model => model.ProjectRegistrationProvided_Duration, htmlAttributes: new { @class = "control-label mand" })*@
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.HiddenFor(model => model.ProjectRegistrationProvided_Duration, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.ProjectRegistrationProvided_Duration, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group" id="div_reasonfordelay" style="display:none;">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ProjectDelayReason_IfAny, htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.ProjectDelayReason_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.ProjectDelayReason_IfAny, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                <br />
+                                                <a id="addreasonsOpenerButton" href="javascript:void(0);">Add Reasons...</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group" id="div_reasonfordelayaddreasons" style="display:none">
+                                            <div class="col-md-3">
+                                            </div>
+                                            <div class="col-md-9">
+                                                <label class="control-label">
+                                                    &nbsp;<input type="checkbox" id="chkYes1" />&nbsp;Delay in acquisition of project land<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes2" />&nbsp;Delay in obtaining Letter of Intent to develop society/ colony<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes3" />&nbsp;Delay in obtaining CLU certificate<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes4" />&nbsp;Delay in obtaining License to develop society/ colony<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes5" />&nbsp;Delay in obtaining License as promoter from the competent Authority<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes6" />&nbsp;Delay in carry out construction activities<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes7" />&nbsp;Delay in obtaining regulatory clearances like Fire NOC, Environment NOC, Mining NOC etc.<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes8" />&nbsp;Delay in providing services from utilities<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes9" />&nbsp;Cost Overrun - lack of funds to carry out construction activities<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes10" />&nbsp;Due to inappropriate and inadequate procurement<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes11" />&nbsp;Ineffective planning and scheduling of project<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes12" />&nbsp;Shortage of construction materials<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes13" />&nbsp;Shortage of labors<br />
+                                                    &nbsp;<input type="checkbox" id="chkYes13" />&nbsp;Weather effect on construction activities<br />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    
+                <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <fieldset class="col-md-12">
+                                        <legend class="my">Project Address Details</legend>
+
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-3">
+                                                    @Html.LabelFor(model => model.Project_AddressLine1, htmlAttributes: new { @class = "control-label mand" })
+                                                </div>
+                                                <div class="col-md-3">
+                                                    @Html.EditorFor(model => model.Project_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.Project_AddressLine1, "", new { @class = "text-danger" })
+                                                </div>
+                                                <div class="col-md-3">
+                                                    @Html.LabelFor(model => model.Project_AddressLine2, htmlAttributes: new { @class = "" })
+                                                </div>
+                                                <div class="col-md-3">
+                                                    @Html.EditorFor(model => model.Project_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.Project_AddressLine2, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-3">
+                                                    <label class="control-label mand">Select State</label>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    @Html.DropDownListFor(m => m.Project_AddressStateCode, new SelectList(ViewBag.statePunjab, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(model => model.Project_AddressStateCode, "", new { @class = "text-danger" })
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="control-label mand">Select District</label>
+                                                </div>                                               
+                                                @if (Model.districtMaster != null)
+                                                {
+                                                    <div class="col-md-3">
+                                                        @Html.DropDownListFor(model => model.Project_AddressDistrictCode, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                        @Html.ValidationMessageFor(model => model.Project_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="col-md-3">
+                                                        @Html.DropDownListFor(model => model.Project_AddressDistrictCode, new SelectList(" "), "Select District", new { @class = "form-control" })
+                                                        @Html.ValidationMessageFor(model => model.Project_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                @*<div>
+                                                        @{var listItemsPAdistrict = new List<SelectListItem>
+                                                                                        {
+
+                                                                                            new SelectListItem {  Text = "..." , Value=""  },
+                                                                                            new SelectListItem {  Text = "Amritsar" , Value="39"  },
+
+
+                                                                                        };
+                                                        }
+                                                        @Html.LabelFor(model => model.Project_AddressDistrictCode, htmlAttributes: new { @class = "control-label col-md-2" })
+                                                        <div class="col-md-10">
+                                                            @Html.DropDownListFor(model => model.Project_AddressDistrictCode, new SelectList(listItemsPAdistrict, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Project_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>*@
+
+
+                                                @*<div class="col-md-3">
+                                                        @Html.LabelFor(model => model.Project_AddressDistrictCode, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.Project_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.Project_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                    </div>*@
+
+
+                                                <div class="col-md-3">
+                                                    <label class="control-label mand">Select Sub Division</label>
+                                                </div>
+                                                @*<div class="col-md-3">
+                                                    @Html.DropDownListFor(model => model.Project_AddressSubDivisionCode, new SelectList(" "), "Select Division", new { @class = "form-control" })
+                                                </div>*@
+                                                @if (Model.SubdivMaster != null)
+                                                {
+                                                    <div class="col-md-3">
+                                                        @Html.DropDownListFor(model => model.Project_AddressSubDivisionCode, new SelectList(Model.SubdivMaster, "SubDivision_Code", "SubDivision_Name"), "Select Division", new { @class = "form-control" })
+                                                        @Html.ValidationMessageFor(model => model.Project_AddressSubDivisionCode, "", new { @class = "text-danger" })
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="col-md-3">
+                                                        @Html.DropDownListFor(model => model.Project_AddressSubDivisionCode, new SelectList(" "), "Select Division", new { @class = "form-control" })
+                                                        @Html.ValidationMessageFor(model => model.Project_AddressSubDivisionCode, "", new { @class = "text-danger" })
+                                                    </div>
+                                                }
+                                                @*<div class="col-md-3">
+                                                        @Html.LabelFor(model => model.Project_AddressSubDivisionCode, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.Project_AddressSubDivisionCode, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.Project_AddressSubDivisionCode, "", new { @class = "text-danger" })
+                                                    </div>*@
+                                                <div class="col-md-3">
+                                                    @Html.LabelFor(model => model.Project_AddressPIN, htmlAttributes: new { @class = "control-label mand" })
+                                                </div>
+                                                <div class="col-md-3">
+                                                    @Html.EditorFor(model => model.Project_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.Project_AddressPIN, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="form-group">
+                                                @{var listItems111 = new List<SelectListItem>
+                                                        {
+                                                            new SelectListItem {  Text = "..." , Value=""  },
+                                                            new SelectListItem {Text = "Zone 1" , Value="1"},
+                                                            new SelectListItem {Text = "Zone 2" , Value="2"},
+                                                            new SelectListItem {Text = "Zone 3" , Value="3"},
+                                                            new SelectListItem {Text = "Zone 4" , Value="4"},
+                                                            new SelectListItem {Text = "Zone 5" , Value="5"},
+                                                            new SelectListItem {Text = "Zone 6" , Value="6"},
+                                                            new SelectListItem {Text = "Zone 7" , Value="7"},
+                                                            new SelectListItem {Text = "Zone 8" , Value="8"},
+                                                        };
+                                                }
+                                                <div class="col-md-3">
+                                                    @Html.LabelFor(model => model.Project_PotentialZoneCode, htmlAttributes: new { @class = "control-label mand" })
+                                                </div>
+                                                <div class="col-md-3" data-toggle="popover" data-placement="right" data-content="<strong>Zone 1</strong> - Master Plan Area of S.A.S. Nagar, New Chandigarh and Zirakpur.<br/><strong>Zone 2</strong> - Master Plan Area of Kharar, Dera Bassi and Banur.<br/><strong>Zone 3</strong> - Ludhiana (within and outside municipal limits upto 15 Kms.)<br/><strong>Zone 4</strong> - Jalandhar (within and outside municipal limits upto 10 Kms.)<br/><strong>Zone 5</strong> - Amritsar, Patiala, Khanna, Rajpura, Mandi Gobindgarh, Sirhind and Phagwara within and outside municipal limits upto 7 Kms and NH-1 upto 2 Kms on both sides, outside the potential zone.<br/><strong>Zone 6</strong> – Bathinda, Moga, Batala, Pathankot, Barnala, Malerkotla, Morinda, Hoshiarpur, within and outside municipal limits upto 5 Kms.<br/><strong>Zone 7</strong> – Sangrur, Sunam Udham Singh Wala, Nabha, Faridkot, Kotkapura, Ferozepur, Malout, Abohar, Sri Muktsar Sahib, Kapurthala, Nawanshahr, Rupnagar, Taran Taran, Gurdaspur, Samana, Jagraon, Mansa, Lalru, Kurali within and outside municipal limits upto 3 Kms and all other NH (except NH 1)/SH/Scheduled Roads upto 1 Kms both sides, outside the potential zone.<br/><strong>Zone 8</strong> – Rest of Punjab.">
+                                                    @Html.DropDownListFor(model => model.Project_PotentialZoneCode, new SelectList(listItems111, "Value", "Text"), new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(model => model.Project_PotentialZoneCode, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-3">
+                                                    @Html.LabelFor(model => model.ProjectWebsite_WebLink, htmlAttributes: new { @class = "control-label" })
+                                                </div>
+                                                <div class="col-md-3">
+                                                    @Html.EditorFor(model => model.ProjectWebsite_WebLink, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.ProjectWebsite_WebLink, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Contact Person/ Person for Communication with regards to Project</legend>
+
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_FirstName, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Name of Authorized Person for receiving and responding to the project registration application approval process related notifications and alerts.">
+                                                        @Html.EditorFor(model => model.AuthorizedPerson_FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.AuthorizedPerson_FirstName, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_MiddleName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.AuthorizedPerson_MiddleName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.AuthorizedPerson_MiddleName, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_LastName, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.AuthorizedPerson_LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.AuthorizedPerson_LastName, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_AddressLine1, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.AuthorizedPerson_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.AuthorizedPerson_AddressLine1, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.AuthorizedPerson_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.AuthorizedPerson_AddressLine2, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_AddressStateCode, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DropDownListFor(m => m.AuthorizedPerson_AddressStateCode, new SelectList(ViewBag.state, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                        @* @Html.EditorFor(model => model.AuthorizedPerson_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                        @Html.ValidationMessageFor(model => model.AuthorizedPerson_AddressStateCode, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_AddressDistrictCode, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>                                                  
+                                                        @if (Model.districtMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.AuthorizedPerson_AddressDistrictCode, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.AuthorizedPerson_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.AuthorizedPerson_AddressDistrictCode, new SelectList(" "), "Select District", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.AuthorizedPerson_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                        @*@Html.DropDownListFor(model => model.AuthorizedPerson_AddressDistrictCode, new SelectList(" "), "Select District", new { @class = "form-control" })*@
+                                                        @*@Html.EditorFor(model => model.AuthorizedPerson_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_AddressPIN, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.AuthorizedPerson_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.AuthorizedPerson_AddressPIN, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_EmailAddress, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Email Id of Authorized Person for receiving and responding to the project registration application approval process related notifications and alerts.">
+                                                        @Html.EditorFor(model => model.AuthorizedPerson_EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.AuthorizedPerson_EmailAddress, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.AuthorizedPerson_MobileNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.AuthorizedPerson_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.AuthorizedPerson_MobileNumber, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                    @*<div class="col-md-3">
+                                                            @Html.LabelFor(model => model.IsProForma_AOS_RERAformat_AnnexureA, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.IsProForma_AOS_RERAformat_AnnexureA, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.IsProForma_AOS_RERAformat_AnnexureA, "", new { @class = "text-danger" })
+                                                        </div>*@
+                                                </div>
+                                            </div>
+
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+
+                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other Details</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">
+                                                            <label class="control-label mand">Is the proforma for Agreement of Sale as per prescribed format of the RERA Act, 2016 “Form-Q”?</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @*<label class="form-group">
+                                                                    <input type="radio" id="chkIsProForma_AOS1" name="IsProForma_AOS_RERAformat_AnnexureA" value="Y" />Yes
+                                                                    <input type="radio" id="chkIsProForma_AOSNO1" name="IsProForma_AOS_RERAformat_AnnexureA" value="N" />No
+
+                                                                </label>*@
+                                                                <label class="form-group">
+
+                                                                    @Html.RadioButtonFor(model => model.IsProForma_AOS_RERAformat_AnnexureA, "Y", new { id = "chkYes" }) Yes
+                                                                    @Html.RadioButtonFor(model => model.IsProForma_AOS_RERAformat_AnnexureA, "N", new { id = "chkNo" }) No
+                                                                </label>
+                                                                @Html.ValidationMessageFor(model => model.IsProForma_AOS_RERAformat_AnnexureA, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                                <div class="row" style="display:none">
+                                                    <div id="RERA_format_No_IsApproved" style="display:none">
+                                                        <div class="form-group">
+                                                            <div class="col-md-6">
+                                                                <label class="control-label mand">If No, then Are the changes approved by RERA Punjab?</label>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="form-group">
+                                                                        @Html.RadioButtonFor(model => model.IsProForma_AOS_RERAformat_No_IsApproved, "Y", new { id = "chkIsProForma_AOS" }) Yes
+                                                                        @Html.RadioButtonFor(model => model.IsProForma_AOS_RERAformat_No_IsApproved, "N", new { id = "chkIsProForma_AOSNO" }) No
+
+                                                                        @*<input type="radio" id="chkIsProForma_AOS" name="IsProForma_AOS_RERAformat_No_IsApproved" value="Y" />Yes
+                                                                        <input type="radio" id="chkIsProForma_AOSNO" name="IsProForma_AOS_RERAformat_No_IsApproved" value="N" />No*@
+
+                                                                    </label>
+                                                                </div>
+
+
+                                                                @*<div class="form-group  modal-header">
+                <label class="col-md-2">Is ProForma AOS RERA format No IsApproved?</label>
+                <div class="col-md-2">
+                    <label class="form-group">
+
+                        @Html.RadioButtonFor(model => model.IsProForma_AOS_RERAformat_No_IsApproved, "Yes", true) Yes
+                        @Html.RadioButtonFor(model => model.IsProForma_AOS_RERAformat_No_IsApproved, "No", false) No
+                    </label>
+                </div>
+            </div>*@
+                                                                @*<div class="col-md-3">
+                @Html.LabelFor(model => model.IsProForma_AOS_RERAformat_No_IsApproved, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.IsProForma_AOS_RERAformat_No_IsApproved, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IsProForma_AOS_RERAformat_No_IsApproved, "", new { @class = "text-danger" })
+            </div>*@
+
+
+                                                                @*<div class="col-md-3">
+                @Html.LabelFor(model => model.IsProject_MegaProjectCategory, htmlAttributes: new { @class = "control-label" })
+            </div>
+            <div class="col-md-3">
+                @Html.EditorFor(model => model.IsProject_MegaProjectCategory, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IsProject_MegaProjectCategory, "", new { @class = "text-danger" })
+            </div>*@
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Is Project falls under Mega Project category?</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsProject_MegaProjectCategory, "Y", true) Yes
+                                                                @Html.RadioButtonFor(model => model.IsProject_MegaProjectCategory, "N", false) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsProject_MegaProjectCategory, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Is any pending litigation(s) related to the Project?</label>
+                                                        </div>                                                        
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsLitigation_RelatedProject, "Y", true) Yes
+                                                                @Html.RadioButtonFor(model => model.IsLitigation_RelatedProject, "N", false) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsLitigation_RelatedProject, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Is any regularization certificate issued related to the Project?</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsYes_RegularizationCertificate, "YREGC", new { @class = "radio-regularizationcertificate" }) Yes
+                                                                @Html.RadioButtonFor(model => model.IsYes_RegularizationCertificate, "NREGC", new { @class = "radio-regularizationcertificate" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsYes_RegularizationCertificate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="rowspecifyRegularizationCertificate" style="display:none;">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">If Yes, then Specify details of related regularization certificate documents?</label>
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="The provisional regularization certificates issued details as Issusing Authority, Reference Number and Reference Date etc. which relates to the project.">
+                                                            @Html.EditorFor(model => model.RegularizationCertificateInformation, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RegularizationCertificateInformation, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @*<div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                             @Html.LabelFor(model => model.IsLitigation_RelatedProject, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                             @Html.EditorFor(model => model.IsLitigation_RelatedProject, new { htmlAttributes = new { @class = "form-control" } })
+                                                             @Html.ValidationMessageFor(model => model.IsLitigation_RelatedProject, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>*@
+
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                //@if(M.ProjectWebsite_WebLink)
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                            {
+                                <input type="submit" value="@TempData["Submitvalue"]" class="btn btn-outline btn-primary" disabled = "disabled" />
+                            }
+                            else
+                            {
+                                <input type="submit" value="@TempData["Submitvalue"]" class="btn btn-outline btn-primary" />
+                            }
+                            &nbsp;
+                            @Html.ActionLink("Reset", "Insert_project_Detail", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                        </div>
+                    </div>
+                </div>
+
+                if (ViewBag.HideGrid != "gridHide")
+                {
+                        <div class="row">
+                            <div class="form-group">                            
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                            <thead>
+                                                <tr>                                                    
+                                                    <th>
+                                                        @Html.DisplayNameFor(model => model.Project_Name)
+                                                    </th>                                                    
+                                                    <th>
+                                                        @Html.DisplayNameFor(model => model.Existing_RERANumber)
+                                                    </th>                                                    
+                                                    <th>
+                                                        @Html.DisplayNameFor(model => model.Project_Status)
+                                                    </th>
+                                                    <th>
+                                                        @Html.DisplayNameFor(model => model.ProjectStart_Date)
+                                                    </th>                                                   
+                                                    <th>
+                                                        @Html.DisplayNameFor(model => model.ProjectCompletion_OriginalDate)
+                                                    </th>
+                                                    <th>@Html.DisplayName("Edit|View")</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.prpongoing)
+                                                {
+                                                    <tr>                                                        
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.Project_Name)
+                                                        </td>                                                        
+                                                        <td>
+                                                            @if (item.IsAlready_RERANumber == "Y")
+                                                            {
+                                                            @Html.DisplayFor(modelItem => item.Existing_RERANumber)
+                                                            }
+                                                            else
+                                                            {
+                                                            @Html.DisplayName("--")
+                                                            }
+                                                        </td>                                                        
+                                                        <td>
+                                                            @if (item.Project_Status == "Complete")
+                                                            {
+                                                                @Html.DisplayName("New")
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DisplayFor(modelItem => item.Project_Status)
+                                                            }                                                        
+                                                        </td>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.ProjectStart_Date)
+                                                        </td>                                                        
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.ProjectCompletion_OriginalDate)
+                                                        </td>
+                                                        <td>
+                                                            @if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                            {
+                                                                @Html.ActionLink("View", "Edit_project_Detail", new { ProjectRegistration_ID = item.ProjectRegistration_ID, id = item.ProjectRegistration_IndexID })                                                        
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.ActionLink("Edit", "Edit_project_Detail", new { ProjectRegistration_ID = item.ProjectRegistration_ID, id = item.ProjectRegistration_IndexID })                                                                
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                         </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                }
+
+            }
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+}

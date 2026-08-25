@@ -1,0 +1,2255 @@
+﻿@using System.Linq
+<link href="@Url.Content("~/css/font-awesome-4.7.0/css/font-awesome.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/css/bootstrap-5.3.3-dist/js/bootstrap.bundle.js")"></script>
+@model CRUD.Models.ProjectPrintForm.ClsPrp_PrmProject_Print_ConsolidatedReport
+@{
+    Layout = null;
+
+    string reportType = ViewBag.ReportType as string ?? "All";
+
+    bool showProject = reportType == "Project" || reportType == "All";
+
+    bool showPromoter = reportType == "Promoter" || reportType == "All";
+
+    bool showQuaterly = reportType == "Quaterly" || reportType == "All";
+
+    // Promoter type
+    int promoterType = 0;
+    if (ViewBag.PromoterType != null)
+    {
+        promoterType = Convert.ToInt32(ViewBag.PromoterType);
+    }
+
+    bool isIndividualPromoter = promoterType == 1;
+    bool isOtherThanIndividualPromoter = promoterType == 2;
+
+
+    var StrcallBaseURL = System.Configuration.ConfigurationManager.AppSettings["imagewebBaseURL"].ToString();
+
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .rpt-pdf-display-border-top-box {
+            padding: 9px 9px 9px 9px;
+            font-size: 15px;
+            background-color: lightgrey;
+            border: 1px solid white;
+        }
+
+        .rpt-pdf-display-border-box {
+            padding: 9px;
+            border: 1px solid #4CAF50;
+            text-align: justify;
+            /*font-size: 15px;*/
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px;
+            color: #000000;
+            line-height: 1.4;
+        }
+
+        .pagebreak {
+            page-break-before: always;
+        }
+
+        a {
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .section-table {
+            width: 100%;
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        .header-cell {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .label-cell {
+            width: 35%;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <table style="width: 100%; text-align:center;" cellpadding="0" cellspacing="0">
+        <tr><td style="margin-bottom:0; font-size: 1.3em;font-weight: bold;">REAL ESTATE REGULATORY AUTHORITY, PUNJAB</td></tr>
+        <tr><td style="margin-bottom:0; font-size: 1em;font-weight: bold;">Plot No.3, Block B, 1<sup>st</sup> Floor, Madhya Marg, Sector 18A, Chandigarh</td></tr>
+    </table>
+
+    <div class="header">
+        <h2> Form-A</h2>
+    </div>
+
+    @* ===================== PROJECT SECTION (reportType == "Project" or "All") ===================== *@
+    @if (showProject && Model.Registration != null && Model.Registration.prpongoing != null && Model.Registration.prpongoing.Count > 0)
+    {
+        var proj = Model.Registration.prpongoing.FirstOrDefault();
+        var land = Model.Land != null && Model.Land.prpongoing != null ? Model.Land.prpongoing.FirstOrDefault() : null;
+        var diary = Model.Registration.prpProjectDiaryNumberDetails != null ? Model.Registration.prpProjectDiaryNumberDetails.FirstOrDefault() : null;
+
+        Func<int?, string> getZoneName = z =>
+        {
+            switch (z)
+            {
+                case 1: return "Zone 1 - Master Plan Area of S.A.S. Nagar, New Chandigarh and Zirakpur.";
+                case 2: return "Zone 2 - Master Plan Area of Kharar, Dera Bassi and Banur.";
+                case 3: return "Zone 3 - Ludhiana (within and outside municipal limits upto 15 Kms.)";
+                case 4: return "Zone 4 - Jalandhar (within and outside municipal limits upto 10 Kms.)";
+                case 5: return "Zone 5 - Amritsar, Patiala, Khanna, Rajpura, Mandi Gobindgarh, Sirhind and Phagwara within and outside municipal limits upto 7 Kms and NH-1 upto 2 Kms on both sides, outside the potential zone.";
+                case 6: return "Zone 6 - Bathinda, Moga, Batala, Pathankot, Barnala, Malerkotla, Morinda, Hoshiarpur, within and outside municipal limits upto 5 Kms.";
+                case 7: return "Zone 7 - Sangrur, Sunam Udham Singh Wala, Nabha, Faridkot, Kotkapura, Ferozepur, Malout, Abohar, Sri Muktsar Sahib, Kapurthala, Nawanshahr, Rupnagar, Taran Taran, Gurdaspur, Samana, Jagraon, Mansa, Lalru, Kurali within and outside municipal limits upto 3 Kms and all other NH (except NH 1)/SH/Scheduled Roads upto 1 Kms both sides, outside the potential zone.";
+                case 8: return "Zone 8 - Rest of Punjab.";
+                default: return z != null ? z.ToString() : "NA";
+            }
+        };
+
+
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Project details</td>
+
+            </tr>
+            <tr>
+                <td colspan="2" class="header-cell">General Details</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Application Reference Number (ARN):</td>
+                <td>@(diary != null ? diary.PromoterRegDiaryNumber_Name : "NA")</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Project Name:</td>
+                <td>@proj.Project_Name</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Existing/New Registration:</td>
+                <td>
+                    @if (proj.IsAlready_RERANumber != null && proj.IsAlready_RERANumber.ToString() == "Y")
+                    {
+                        @(proj.Existing_RERANumber + " (Registered Project)")
+                    }
+                    else
+                    {
+                        @:New Project Registration
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="label-cell">Project Description:</td>
+                <td>@proj.Project_Amenities</td>
+            </tr>
+
+            @{
+                var projectTypes = "";
+
+                if (Model.Registration.ProjectType_Registration != null)
+                {
+                    projectTypes = string.Join("<br/>",
+                        Model.Registration.ProjectType_Registration
+                            .Select(x => x.ProjectType_Name + " - " +
+                                         x.ProjectType_SubType_Name)
+                            .Distinct());
+                }
+            }
+            <tr>
+                <td class="label-cell">Project Type:</td>
+                <td>@Html.Raw(projectTypes)</td>
+            </tr>
+
+            <tr>
+                <td class="label-cell">Project Location:</td>
+                <td>@proj.Project_AddressLine1 @proj.Project_AddressLine2</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Sub District / Tehsil / City:</td>
+                <td>@proj.Project_AddressSubDivisionCode</td>
+            </tr>
+            <tr>
+                <td class="label-cell">State:</td>
+                <td>@proj.Project_AddressStateCode</td>
+            </tr>
+            <tr>
+                <td class="label-cell">District:</td>
+                <td>@proj.Project_AddressDistrictCode</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Pin Code:</td>
+                <td>@proj.Project_AddressPIN</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Potential Zone:</td>
+                <td>@getZoneName(proj.Project_PotentialZoneCode)</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Project Website:</td>
+                <td>@(!string.IsNullOrWhiteSpace(proj.ProjectWebsite_WebLink) ? proj.ProjectWebsite_WebLink : "NA")</td>
+            </tr>
+            @if (land != null)
+            {
+                <tr>
+                    <td class="label-cell">Latitude:</td>
+                    <td>@land.ProposedProjectLand_StartPoint_Latitude</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Longitude:</td>
+                    <td>@land.ProposedProjectLand_StartPoint_Longitude</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Type of Project Land:</td>
+                    <td>
+                        @(land.IsProjectLand_Status_OwnedByPromoter == "Y" ? "Owned By Promoter" : land.IsProjectLand_Status_OwnedByPromoter == "N" ? "Not Owned By Promoter" : land.IsProjectLand_Status_OwnedByPromoter == "A" ? "Both (Owned and Not Owned) By Promoter" : "NA")
+                    </td>
+                </tr>
+
+            }
+        </table>
+
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Specification Details (as per Brochure/Prospectus)</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Structure:</td>
+                <td>@proj.ProposedProjectDetail_Structure</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Flooring:</td>
+                <td>@proj.ProposedProjectDetail_Flooring</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Wall Finishing:</td>
+                <td>@proj.ProposedProjectDetail_WallFinishing</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Sanitary Fittings:</td>
+                <td>@proj.ProposedProjectDetail_SanitaryFittings</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Electrical Fittings:</td>
+                <td>@proj.ProposedProjectDetail_ElectricalFittings</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Kitchen:</td>
+                <td>@proj.ProposedProjectDetail_Kitchen</td>
+            </tr>
+            @if (proj.IsProposedProjectDetail_OthersIfAny != null && proj.IsProposedProjectDetail_OthersIfAny.ToString() == "Y")
+            {
+                <tr>
+                    <td class="label-cell">Others (@proj.ProposedProjectDetail_OthersIfAnyName):</td>
+                    <td>@proj.ProposedProjectDetail_OthersIfAny</td>
+                </tr>
+            }
+        </table>
+
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td colspan="2" class="header-cell">Timelines (Project Status: @proj.Project_Status)</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Expected Start Date:</td>
+                <td>@(proj.ProjectStart_Date != null ? Convert.ToDateTime(proj.ProjectStart_Date).ToString("dd/MM/yyyy") : "NA")</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Original Completion Date:</td>
+                <td>@(proj.ProjectCompletion_OriginalDate != null ? Convert.ToDateTime(proj.ProjectCompletion_OriginalDate).ToString("dd/MM/yyyy") : "NA")</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Expected End Date:</td>
+                <td>@(proj.ProjectCompletion_ProposedDate != null ? Convert.ToDateTime(proj.ProjectCompletion_ProposedDate).ToString("dd/MM/yyyy") : "NA")</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Reason for Delay, if any:</td>
+                <td>@(proj.ProjectDelayReason_IfAny != null && proj.ProjectDelayReason_IfAny.ToString() != "0" && !string.IsNullOrWhiteSpace(proj.ProjectDelayReason_IfAny.ToString()) ? proj.ProjectDelayReason_IfAny.ToString() : "NA")</td>
+            </tr>
+        </table>
+
+        if (land != null)
+        {
+            <table cellpadding="8" cellspacing="0" class="section-table">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Project Specifications</td>
+
+                </tr>
+                <tr>
+                    <td colspan="2" class="header-cell">Area Details (sq. mt.)</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Land Area (Sq.meter.):</td>
+                    <td>@land.ProposedLand_TobeDeveloped_Area_Total</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Total Open Area:</td>
+                    <td>@land.ProposedLand_TobeDeveloped_TotalOpenArea sqr mtrs</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Total Covered Area:</td>
+                    <td>@land.ProposedLand_TobeDeveloped_TotalCoveredArea sqr mtrs</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="header-cell">Area of Land Under Various Components (sq. mt.)</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Residential Group Housing:</td>
+                    <td>@land.ProposedLand_Area_ResidentialGroupHousing sqr mtrs</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Residential Plotted:</td>
+                    <td>@land.ProposedLand_Area_ResidentialPlotted sqr mtrs</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Commercial:</td>
+                    <td>@land.ProposedLand_Area_Commercial sqr mtrs</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Industrial:</td>
+                    <td>@land.ProposedLand_Area_Industrial sqr mtrs</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Other Component (B):</td>
+                    <td>@land.ProposedLand_Area_B_column sqr mtrs</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Other Component (C):</td>
+                    <td>@land.ProposedLand_Area_C_column sqr mtrs</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Other Component (A):</td>
+                    <td>@land.ProposedLand_Area_A_column sqr mtrs</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="header-cell">Boundary Points</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Start Point (Lat / Long):</td>
+                    <td>@land.ProposedProjectLand_StartPoint_Latitude / @land.ProposedProjectLand_StartPoint_Longitude</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">End Point (Lat / Long):</td>
+                    <td>@land.ProposedProjectLand_EndPoint_Latitude / @land.ProposedProjectLand_EndPoint_Longitude</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Name of Villages/ Mohalla/ Towns:</td>
+                    <td>@land.Name_of_Villages</td>
+                </tr>
+            </table>
+        }
+
+        if (Model.Khasra != null && Model.Khasra.prpongoing != null && Model.Khasra.prpongoing.Count > 0)
+        {
+            <div class="pagebreak"></div>
+            <table cellpadding="8" cellspacing="0" class="section-table">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="4" style="font-weight:bold; text-align:center;">Khasra Number(s) of Land Proposed to be Developed</td>
+                </tr>
+                <tr>
+                    <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">S.No</td>
+                    <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Khasra Number</td>
+                    <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Area (Sq. Mtr.)</td>
+                    <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Village/Mohalla/Town &amp; Land Status</td>
+                </tr>
+                @{
+                    int khasraSno = 0;
+                }
+                @foreach (var kh in Model.Khasra.prpongoing)
+                {
+                    khasraSno++;
+                    <tr>
+                        <td>@khasraSno</td>
+                        <td>@kh.KhasraNumber_ProposedLand_TobeDeveloped</td>
+                        <td>@kh.Area_ProposedLand_EachKhasraNumber</td>
+                        <td>@kh.A_column (@(kh.B_column == "Y" ? "Owned By Promoter" : "Not Owned By Promoter"))</td>
+                    </tr>
+                }
+            </table>
+        }
+
+        if (Model.Registration.prpongoing != null)
+        {
+            <div class="pagebreak"></div>
+            <table cellpadding="8" cellspacing="0" class="section-table">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Contact Person for Communication with Regards to Project</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Contact Person:</td>
+                    <td>@proj.AuthorizedPerson_FirstName @proj.AuthorizedPerson_MiddleName @proj.AuthorizedPerson_LastName</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Address:</td>
+                    <td>@proj.AuthorizedPerson_AddressLine1 @proj.AuthorizedPerson_AddressLine2</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">District / State:</td>
+                    <td>@proj.AuthorizedPerson_AddressDistrictCode, @proj.AuthorizedPerson_AddressStateCode</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Pin Code:</td>
+                    <td>@proj.AuthorizedPerson_AddressPIN</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Email Address:</td>
+                    <td>@proj.AuthorizedPerson_EmailAddress</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Mobile Number:</td>
+                    <td>@proj.AuthorizedPerson_MobileNumber</td>
+                </tr>
+            </table>
+        }
+        <div class="pagebreak"></div>
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Cost & Estimations</td>
+
+            </tr>
+            <tr>
+                <td class="label-cell">Total Cost of Project (In lakhs):</td>
+                <td>@proj.A_column</td>
+            </tr>
+        </table>
+    }
+
+    @if (showProject)
+    {
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Project Approval</td>
+
+            </tr>
+            <tr>
+                <td colspan="2" class="header-cell">Encumbrance / Non Encumbrance Details</td>
+            </tr>
+            <tr>
+                <td class="label-cell">Do you have Non Encumbrance Certificate?:</td>
+                <td>@(Model.Land != null && Model.Land.prpongoing != null && Model.Land.prpongoing.Any() ? Model.Land.prpongoing.FirstOrDefault().IsLandEncumbrances_IfAny : "NA")</td>
+            </tr>
+            @if (Model.Registration != null && Model.Registration.prpongoing != null && Model.Registration.prpongoing.Count > 0)
+            {
+                var declProj = Model.Registration.prpongoing.FirstOrDefault();
+                <tr>
+                    <td colspan="2" class="header-cell">Other Declarations</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Agreement of Sale as per RERA Form-Q format?:</td>
+                    <td>@(declProj.IsProForma_AOS_RERAformat_AnnexureA != null && declProj.IsProForma_AOS_RERAformat_AnnexureA.ToString() == "Y" ? "Yes" : "No")</td>
+                </tr>
+                if (declProj.IsProForma_AOS_RERAformat_AnnexureA != null && declProj.IsProForma_AOS_RERAformat_AnnexureA.ToString() == "NotApplicable")
+                {
+                    <tr>
+                        <td class="label-cell">If No, changes approved by RERA Punjab?:</td>
+                        <td>@(declProj.IsProForma_AOS_RERAformat_No_IsApproved != null && declProj.IsProForma_AOS_RERAformat_No_IsApproved.ToString() == "Y" ? "Yes" : "No")</td>
+                    </tr>
+                }
+                <tr>
+                    <td class="label-cell">Falls under Mega Project category?:</td>
+                    <td>@(declProj.IsProject_MegaProjectCategory != null && declProj.IsProject_MegaProjectCategory.ToString() == "Y" ? "Yes" : "No")</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Any litigation(s) related to the Project?:</td>
+                    <td>@(declProj.IsLitigation_RelatedProject != null && declProj.IsLitigation_RelatedProject.ToString() == "Y" ? "Yes" : "No")</td>
+                </tr>
+            }
+        </table>
+    }
+
+    @if (showProject && Model.Bank != null && Model.Bank.prpongoing != null && Model.Bank.prpongoing.Count > 0)
+    {
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Special (RERA) Bank Account Details</td>
+            </tr>
+            @foreach (var bank in Model.Bank.prpongoing)
+            {
+                <tr>
+                    <td class="label-cell">Bank Name:</td>
+                    <td>@bank.Bank_Name</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Branch Name:</td>
+                    <td>@bank.Branch_Name</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Account Number:</td>
+                    <td>@bank.Bank_AccountNumber</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Account Type:</td>
+                    <td>@(!string.IsNullOrWhiteSpace(bank.A_column) ? bank.A_column : "--")</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">IFSC Code:</td>
+                    <td>@bank.Bank_IFSC_Code</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Bank Address:</td>
+                    <td>@bank.Bank_AddressLine1 @bank.Bank_AddressLine2, @bank.Bank_AddressDistrictCode, @bank.Bank_AddressStateCode - @bank.Bank_AddressPIN</td>
+                </tr>
+            }
+        </table>
+    }
+
+    @* ===================== QUATERLY SECTION (reportType == "Quaterly" or "All") ===================== *@
+    @if (showQuaterly && Model.InternalFacilities != null && Model.InternalFacilities.prpongoing != null && Model.InternalFacilities.prpongoing.Count > 0)
+    {
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="3" style="font-weight:bold; text-align:center;">Facilities & Amenties</td>
+            </tr>
+            <tr>
+                <td colspan="1" class="header-cell">Proposed Common (Internal) Facilities</td>
+            </tr>
+            <tr>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Facility Name</td>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Work Progress %</td>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Details</td>
+            </tr>
+            @foreach (var fac in Model.InternalFacilities.prpongoing)
+            {
+                <tr>
+                    <td class="label-cell">@fac.InternalInfrastructureFacilities_Name</td>
+                    <td>@fac.WorkProgress_Percentage</td>
+                    <td>@fac.InternalInfrastructureFacilities_Details</td>
+                </tr>
+            }
+        </table>
+    }
+
+    @if (showQuaterly && Model.ExternalFacilities != null && Model.ExternalFacilities.prpongoing != null && Model.ExternalFacilities.prpongoing.Count > 0)
+    {
+        <div class="pagebreak"></div>
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="4" style="font-weight:bold; text-align:center;">External Infrastructure & Facilities</td>
+            </tr>
+            <tr>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Facility Name</td>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Type / Agency</td>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Work Progress %</td>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Details</td>
+            </tr>
+            @foreach (var ext in Model.ExternalFacilities.prpongoing)
+            {
+                <tr>
+                    <td>@ext.InternalInfrastructureFacilities_Name</td>
+                    <td>@ext.InternalInfrastructureFacilities_Type (@ext.ExternalAgency_LocalAuthority_Name)</td>
+                    <td>@ext.WorkProgress_Percentage</td>
+                    <td>@ext.InternalInfrastructureFacilities_Details</td>
+                </tr>
+            }
+        </table>
+    }
+
+    @if (showQuaterly && Model.Parking != null && Model.Parking.prpongoing != null && Model.Parking.prpongoing.Count > 0)
+    {
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="4" style="font-weight:bold; text-align:center;">Parking Details</td>
+            </tr>
+            <tr>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Parking Type</td>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Available for Sale</td>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Area (Sq. Mtr.)</td>
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold;">Booked/Sold</td>
+            </tr>
+            @foreach (var item in Model.Parking.prpongoing)
+            {
+                <tr>
+                    <td>@item.ParkingType</td>
+                    <td>@item.ParkingSpace_AvailableforSale_Number</td>
+                    <td>@String.Format("{0:N3}", item.ParkingSpace_Area_Total)</td>
+                    <td>@item.ParkingSpace_BookedSold_Number</td>
+                </tr>
+            }
+        </table>
+    }
+
+
+    @if (showQuaterly)
+    {
+        <div class="pagebreak"></div>
+
+
+        if (Model.Construction != null && Model.Construction.prpongoing != null && Model.Construction.prpongoing.Count > 0)
+        {
+            <table cellpadding="8" cellspacing="0" class="section-table" style="margin-bottom: 0px;">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Building/Apartment /Construction Details</td>
+
+                </tr>
+                <tr>
+                    <td class="label-cell">Quarter / Year:</td>
+                    <td>
+                        @string.Join(", ", Model.Construction.prpongoing.Select(x => x.A_column).Distinct()) / @string.Join(", ", Model.Construction.prpongoing.Select(x => x.B_column).Distinct())
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label-cell">No of Tower:</td>
+                    <td>@Model.Construction.prpongoing.Count</td>
+                </tr>
+            </table>
+
+            foreach (var tower in Model.Construction.prpongoing)
+            {
+                <table cellpadding="8" cellspacing="0" class="section-table" style="margin-top: 15px;">
+                    <tr>
+                        <td colspan="2" class="header-cell">Building Information</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Name of Block/Tower:</td>
+                        <td>@tower.BuildingTowerBlock_Name</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Number of Floors Proposed:</td>
+                        <td>@tower.Proposed_FloorPlotsNumber</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Number of Floors Currently Sanctioned:</td>
+                        <td>@tower.CurrentlySanctioned_FloorPlotsNumber</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Number of Floors Constructed:</td>
+                        <td>@tower.Constructed_FloorsNumber</td>
+                    </tr>
+                </table>
+            }
+        }
+    }
+    @if (showQuaterly && Model.Inventory != null && Model.Inventory.prpongoing != null && Model.Inventory.prpongoing.Count > 0)
+    {
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="7" style="font-weight:bold; text-align:center;">Apartment Information</td>
+
+            </tr>
+            <tr>
+                @*<td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Building/Tower/Block</td>
+        <td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Apartment/Shop/Space Type</td>
+        <td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Carpet Area(Sq.mtr)</td>
+        <td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Exclusive Open Terrace Area</td>
+        <td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Exclusive Balcony/Verandah Area</td>
+        <td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Available for Sale</td>
+        <td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Already Sold</td>*@
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 14%;">
+                    Building/Tower/Block
+                </td>
+
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 15%;">
+                    Apartment/Shop/Space Type
+                </td>
+
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 12%;">
+                    Carpet Area(Sq.mtr)
+                </td>
+
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 17%;">
+                    Exclusive Open Terrace Area
+                </td>
+
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 18%;">
+                    Exclusive Balcony/Verandah Area
+                </td>
+
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 12%;">
+                    Available for Sale
+                </td>
+
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 12%;">
+                    Already Sold
+                </td>
+            </tr>
+            @foreach (var inv in Model.Inventory.prpongoing)
+            {
+                <tr>
+                    <td>@inv.BuildingTowerBlock_Name</td>
+                    <td>@inv.ApartmentShopPlot_Type</td>
+                    <td>@inv.ApartmentShopPlot_CarpetArea</td>
+                    <td>@inv.ApartmentShopPlot_ExclusiveOpenTerraceArea</td>
+                    <td>@inv.ApartmentShopPlot_ExclusiveBalconyVerandahArea</td>
+                    <td>@inv.ApartmentShopPlot_AvailableforSaleNumber</td>
+                    <td>@inv.ApartmentShopPlot_AlreadySoldNumber</td>
+                </tr>
+            }
+        </table>
+    }
+
+    @if (showQuaterly && Model.Professionals != null && Model.Professionals.prpongoing != null && Model.Professionals.prpongoing.Count > 0)
+    {
+        <div class="pagebreak"></div>
+        <table cellpadding="8" cellspacing="0" class="section-table" style="width: 100%; margin-bottom: 0px; page-break-inside: avoid;">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="4" style="font-weight:bold; text-align:center;">Project Professionals (Architects, Engineers, etc.)</td>
+
+            </tr>
+            <tr>
+                @*<td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Name</td>
+        <td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Role</td>
+        <td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Email</td>
+        <td class="rpt-pdf-display-border-top-box" style="font-weight: bold;">Ref Number/Registration Number.</td>*@
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 22%;">
+                    Name
+                </td>
+
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 15%;">
+                    Role
+                </td>
+
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 28%;">
+                    Email
+                </td>
+
+                <td class="rpt-pdf-display-border-top-box" style="font-weight:bold; width: 35%;">
+                    Ref Number/Registration Number.
+                </td>
+            </tr>
+            @foreach (var prof in Model.Professionals.prpongoing)
+            {
+                <tr>
+                    <td style="padding: 8px;">@prof.Name_of_Professional</td>
+                    <td style="padding: 8px;">@prof.Associated_Consultant_Type</td>
+                    <td style="padding: 8px;">@prof.Email_ID</td>
+                    <td style="padding: 8px;">@(!string.IsNullOrWhiteSpace(prof.RERA_ID_IfAgent) ? prof.RERA_ID_IfAgent : "NA")</td>
+                </tr>
+            }
+            <tr>
+                <td colspan="4">
+                    <hr />
+                </td>
+            </tr>
+        </table>
+
+        foreach (var prof in Model.Professionals.prpongoing)
+        {
+            <table cellpadding="8" cellspacing="0" class="section-table" style="margin-top: 15px;">
+                <tr>
+                    <td colspan="2" class="header-cell">@prof.Name_of_Professional (@prof.Associated_Consultant_Type) - Additional Details</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Name & Year of Establishment:</td>
+                    <td>@prof.Name_and_Year_of_Establishment_of_Promoter</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Key Projects Completed:</td>
+                    <td>@prof.Name_and_Profile_of_Key_ProjectsCompleted</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Official Communication Address:</td>
+                    <td>@prof.OfficialComm_AddressLine1 @prof.OfficialComm_AddressLine2, @prof.OfficialComm_AddressDistrictCode, @prof.OfficialComm_AddressStateCode - @prof.OfficialComm_AddressPIN</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Mobile Number:</td>
+                    <td>@prof.MobileNumber</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">Phone Number:</td>
+                    <td>@prof.Phone_Number</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <hr />
+                    </td>
+                </tr>
+            </table>
+
+        }
+    }
+
+    @* ===================== PROJECT SECTION continued: Litigations / Documents / Approvals / Payments ===================== *@
+    @if (showProject)
+    {
+        <div class="pagebreak"></div>
+        if (Model.Litigations != null && Model.Litigations.prpongoing != null && Model.Litigations.prpongoing.Count > 0)
+        {
+            <table cellpadding="8" cellspacing="0" class="section-table" style="width: 100%; margin-bottom: 25px; page-break-inside: avoid;">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="3" style="font-weight:bold; text-align:center;">Project Litigations Details</td>
+                </tr>
+                <tr>
+                    <td class="rpt-pdf-display-border-top-box" style="font-weight: bold; width: 40%;">Case Title</td>
+                    <td class="rpt-pdf-display-border-top-box" style="font-weight: bold; width: 30%;">Case Number</td>
+                    <td class="rpt-pdf-display-border-top-box" style="font-weight: bold; width: 30%;">Authority / Forum Name</td>
+                </tr>
+                @foreach (var lit in Model.Litigations.prpongoing)
+                {
+                    <tr>
+                        <td style="padding: 8px;">@(!string.IsNullOrWhiteSpace(lit.Case_Title) ? lit.Case_Title : "N/A")</td>
+                        <td style="padding: 8px;">@(!string.IsNullOrWhiteSpace(lit.Case_Number) ? lit.Case_Number : "N/A")</td>
+                        <td style="padding: 8px;">@(!string.IsNullOrWhiteSpace(lit.AuthorityForumName_CasePendingResolved) ? lit.AuthorityForumName_CasePendingResolved : "N/A")</td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <table cellpadding="8" cellspacing="0" class="section-table" style="width: 100%; margin-bottom: 25px; page-break-inside: avoid;">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" style="font-weight:bold; text-align:center;">Project Litigations Details</td>
+                </tr>
+                <tr>
+                    <td class="rpt-pdf-display-border-box" style="padding: 8px; text-align: center; font-style: italic; color: black;">
+                        No litigation details reported for this project.
+                    </td>
+                </tr>
+            </table>
+        }
+        <div class="pagebreak"></div>
+        if (Model.Documents != null && Model.Documents.prpongoing != null && Model.Documents.prpongoing.Count > 0)
+        {
+            <table cellpadding="8" cellspacing="0" class="section-table" style="width: 100%; margin-bottom: 25px; page-break-inside: avoid;">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="4" style="font-weight:bold; text-align:center;">Project Documents</td>
+                </tr>
+                <tr>
+                    <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 20%; padding: 12px 15px;">
+                        Documents
+                    </th>
+                    <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 35%; padding: 12px 15px;">
+                        Reference Number / Date
+                    </th>
+                    <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 25%; padding: 12px 15px;">
+                        Remarks
+                    </th>
+                    <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 20%; padding: 12px 15px;">
+                        Links
+                    </th>
+                </tr>
+                @foreach (var group in Model.Documents.prpongoing.GroupBy(x => x.ProjectDoc_InfoName))
+                {
+                    var groupFirst = group.FirstOrDefault();
+                    <tr>
+                        <td style="vertical-align: top; padding: 15px;">
+                            @group.Key
+                        </td>
+                        <td style="vertical-align: top; padding: 15px;">
+                            @(groupFirst != null && !string.IsNullOrWhiteSpace(groupFirst.ProjectDoc_ReferenceNumber) ? groupFirst.ProjectDoc_ReferenceNumber : "NA")
+                            @(groupFirst != null && groupFirst.ProjectDoc_IssueDate != null ? " / " + Convert.ToDateTime(groupFirst.ProjectDoc_IssueDate).ToString("dd/MM/yyyy") : "")
+                        </td>
+                        <td style="vertical-align: top; padding: 15px;">
+                            @(groupFirst != null && !string.IsNullOrWhiteSpace(groupFirst.Remarks_IfAny) ? groupFirst.Remarks_IfAny : "NA")
+                        </td>
+                        <td class="label-cell" style="vertical-align: top; padding: 15px;">
+                            @{
+                                // Get only the items in this group that actually have a file attached
+                                var validFiles = group.Where(x => !string.IsNullOrWhiteSpace(x.ProjectDoc_FileName)).ToList();
+                            }
+                            @if (validFiles.Any())
+                            {
+                                int totalFiles = validFiles.Count;
+
+                                for (int i = 0; i < totalFiles; i++)
+                                {
+                                    var doc = validFiles[i];
+
+                                    @*<a href="@Url.Content("~/" + doc.ProjectDoc_FilePath.Replace("\\", "/").TrimEnd('/') + "/" + doc.ProjectDoc_FileName.TrimStart('/'))"
+                                           target="_blank">
+                                            View
+                                        </a>*@
+                                    <a href="@StrcallBaseURL/@doc.ProjectDoc_FilePath.Replace("\\", "/").TrimStart('/')" target="_blank">View</a>
+
+                                    if (i < totalFiles - 1)
+                                    {
+                                        <br />
+                                        <br />
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <span>Not Uploaded</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        if (Model.Approvals != null && Model.Approvals.prpongoing != null && Model.Approvals.prpongoing.Count > 0)
+        {
+
+
+            <table cellpadding="8" cellspacing="0"
+                   class="section-table" style="width:100%; table-layout:fixed;">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="5" style="font-weight:bold; text-align:center;">Project Approvals, Performa & Other Documents</td>
+                </tr>
+                <tr>
+                    @*<th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 30%; padding: 12px 15px;">Documents</th>
+                        <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; padding: 12px 15px;">Category</th>
+                        <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; padding: 12px 15px;">Status</th>
+                        <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; padding: 12px 15px;">Expected/Planned Date of Receipt</th>
+                        <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 20%; padding: 12px 15px;">Links</th>*@
+                    <th class="rpt-pdf-display-border-top-box"
+                        style="font-weight:bold; text-align:left; width: 20%; padding: 12px 15px;">
+                        Documents
+                    </th>
+
+                    <th class="rpt-pdf-display-border-top-box"
+                        style="font-weight:bold; text-align:left; width: 15%; padding: 12px 15px;">
+                        Category
+                    </th>
+
+                    <th class="rpt-pdf-display-border-top-box"
+                        style="font-weight:bold; text-align:left; width: 15%; padding: 12px 15px;">
+                        Status
+                    </th>
+
+                    <th class="rpt-pdf-display-border-top-box"
+                        style="font-weight:bold; text-align:left; width: 30%; padding: 12px 15px;">
+                        Expected/Planned Date of Receipt
+                    </th>
+
+                    <th class="rpt-pdf-display-border-top-box"
+                        style="font-weight:bold; text-align:left; width: 20%; padding: 12px 15px;">
+                        Links
+                    </th>
+                </tr>
+                @foreach (var app in Model.Approvals.prpongoing)
+                {
+                    <tr>
+                        <td style="word-wrap:break-word;">
+                            @app.DocumentType_Name
+                        </td>
+                        <td style="word-wrap:break-word;">@app.DocumentType_CategoryName</td>
+                        <td style="word-wrap:break-word;">@app.DocumentType_Status</td>
+                        <td style="word-wrap:break-word;">@(app.Date_ApplicationPlannedorExpectedReceipt?.ToString("dd/MM/yyyy"))</td>
+                        <td style="word-wrap:break-word;">
+                            @if (!string.IsNullOrWhiteSpace(app.DocumentType_FileName))
+                            {
+                                @*<a href="@Url.Content("~/" + app.DocumentType_FilePath.Replace("\\", "/") + app.DocumentType_FilePath)"
+
+                                       target="_blank">
+                                        View
+                                    </a>*@
+                                <a href="@StrcallBaseURL/@app.DocumentType_FileName.Replace("\\", "/").TrimEnd('/')/@app.DocumentType_FilePath.TrimStart('/')"
+                                   target="_blank">
+                                    View
+                                </a>
+                            }
+                            else
+                            {
+                                <span>Not Uploaded</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+
+
+        }
+    }
+
+    @* ===================== QUATERLY SECTION continued: Photographs ===================== *@
+    @if (showQuaterly && Model.Photographs != null && Model.Photographs.prpongoing != null && Model.Photographs.prpongoing.Count > 0)
+    {
+        <div class="pagebreak"></div>
+
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="5" style="font-weight:bold; text-align:center;">Uploaded Project Images</td>
+            </tr>
+            <tr>
+                @*<th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 25%; padding: 12px 15px;">Building/Tower/Block</th>
+                    <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; padding: 12px 15px;">Description</th>
+                    <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; padding: 12px 15px;">Title</th>
+                    <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; padding: 12px 15px;">Date of Upload</th>
+                    <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; padding: 12px 15px;">Links</th>*@
+                <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 20%; padding: 12px 15px;">Building/Tower/Block</th>
+                <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 30%; padding: 12px 15px;">Description</th>
+                <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 20%; padding: 12px 15px;">Title</th>
+                <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 20%; padding: 12px 15px;">Date of Upload</th>
+                <th class="rpt-pdf-display-border-top-box" style="font-weight:bold; text-align:left; width: 10%; padding: 12px 15px;">Links</th>
+            </tr>
+            @*@{
+                    var StrcallBaseURL = System.Configuration.ConfigurationManager.AppSettings["imagewebBaseURL"].ToString();
+                }*@
+            @foreach (var photo in Model.Photographs.prpongoing)
+            {
+                <tr>
+                    <td class="label-cell" style=" padding: 15px;">
+                        @{
+                            string name = photo.TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Name;
+                        }
+                        @(name != null ? name : "NA")
+                    </td>
+                    <td style="padding: 15px;">
+                        @if (!string.IsNullOrWhiteSpace(photo.BuildingTowerBlock_PhotographType))
+                        {
+                            if (!string.IsNullOrWhiteSpace(photo.BuildingTowerBlock_InfoName))
+                            {
+                                @(photo.BuildingTowerBlock_InfoName + ", ")
+                            }
+                            @:Floor: @photo.BuildingTowerBlock_FloorsNumber, @photo.BuildingTowerBlock_PhotographType
+                        }
+                        else
+                        {
+                            @:NA
+                        }
+                    </td>
+                    <td style="padding: 15px;">@photo.Photographs_Title</td>
+                    <td class="label-cell">
+                        @(photo.Photographs_ClickDate != null ? Convert.ToDateTime(photo.Photographs_ClickDate).ToString("dd/MM/yyyy") : "NA")
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(photo.Photographs_FileName) && !string.IsNullOrWhiteSpace(photo.Photographs_FilePath))
+                        {
+                            string fileUrl = StrcallBaseURL + "/" + photo.Photographs_FilePath.Replace("\\", "/");
+
+                            <a href="@fileUrl" target="_blank">View</a>
+                        }
+                        else
+                        {
+                            <span>No Image Available</span>
+                        }
+                    </td>
+                </tr>
+                if (!string.IsNullOrWhiteSpace(photo.Remarks_IfAny))
+                {
+                    <tr>
+                        <td colspan="5" style="padding: 5px 15px; font-style:italic;">Remarks: @photo.Remarks_IfAny</td>
+                    </tr>
+                }
+            }
+        </table>
+    }
+
+    @* ===================== PROJECT SECTION continued: Payments ===================== *@
+    @if (showProject && Model.Payments != null && Model.Payments.prpongoing != null && Model.Payments.prpongoing.Count > 0)
+    {
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Payment Details</td>
+            </tr>
+
+            @foreach (var pay in Model.Payments.prpongoing)
+            {
+                <tr>
+                    <td class="label-cell">Payment Title:</td>
+                    <td>@pay.ProjectPayment_TitleName</td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Payment Mode:</td>
+                    <td>@pay.Payment_Mode</td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Registration Fee:</td>
+                    <td>@pay.Registration_Fee</td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Other Fee:</td>
+                    <td>@pay.Other_Fee</td>
+                </tr>
+
+                if (pay.Payment_Mode == "Online Payment")
+                {
+                    var tran = Model.Payments.prpProjectPaymentIntegrationDetails.FirstOrDefault(x => x.RelatedPayment_ID == pay.ProjectPayment_ID);
+
+                    if (tran != null)
+                    {
+                        <tr>
+                            <td class="label-cell">Total Amount (INR):</td>
+                            <td>@tran.PG_Amount_INR</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Payment Date:</td>
+                            <td>
+                                @(tran.PG_Date != null ? Convert.ToDateTime(tran.PG_Date).ToString("dd/MM/yyyy") : "NA")
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Transaction ID:</td>
+                            <td>@tran.PG_Transaction_ID</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">PayU ID:</td>
+                            <td>@tran.PG_PayU_ID</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Bank Reference Number:</td>
+                            <td>@tran.PG_Bank_Reference_No</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Payment Type:</td>
+                            <td>@tran.PG_Payment_Type</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Product Info:</td>
+                            <td>@tran.PG_Product_Info</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Payment Status:</td>
+                            <td>@tran.PG_Status</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Brief Summary:</td>
+                            <td>@tran.ProjectPm_BriefSummary</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td class="label-cell">Payment Date:</td>
+                        <td>@(pay.Date_of_Payment_RegistrationFee!=null?Convert.ToDateTime(pay.Date_of_Payment_RegistrationFee).ToString("dd/MM/yyyy"):"NA")</td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-cell">DD/Banker's Cheque Number:</td>
+                        <td>@pay.DD_BankersCheque_Number</td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-cell">DD/Banker's Cheque Amount:</td>
+                        <td>@pay.DD_BankersCheque_Amount</td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-cell">Bank Name:</td>
+                        <td>@pay.Bank_Name</td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-cell">Branch Name:</td>
+                        <td>@pay.Branch_Name</td>
+                    </tr>
+
+                    if (!string.IsNullOrWhiteSpace(pay.ImageDDorBankersCheque_FileName))
+                    {
+                        <tr>
+                            <td class="label-cell">Scan Copy of DD/Banker's Cheque:</td>
+                            <td>
+                                <a href="@StrcallBaseURL/@pay.ImageDDorBankersCheque_FileName.Replace("\\", "/").TrimEnd('/')/@pay.ImageDDorBankersCheque_FilePath.TrimStart('/')"
+                                   target="_blank">
+                                    View
+                                </a>
+
+
+                            </td>
+                        </tr>
+                    }
+                }
+
+                @*<tr>
+                        <td colspan="2" style="height:10px;"></td>
+                    </tr>*@
+                <tr>
+                    <td colspan="2">
+                        <hr />
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+
+    @* ===================== PROMOTER SECTION ===================== *@
+    @if (showPromoter)
+    {
+        @*<div class="pagebreak"></div>*@
+
+        @* =========================================================
+            PROMOTER GENERAL / DIARY DETAILS
+            ========================================================= *@
+
+        <table cellpadding="8" cellspacing="0" class="section-table">
+            <tr>
+                <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Promoter Details</td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="header-cell">General Details</td>
+            </tr>
+
+            <tr>
+                <td class="label-cell">Promoter Type:</td>
+                <td>
+                    @(isIndividualPromoter ? "Individual" : "Other Than Individual")
+                </td>
+            </tr>
+
+            @if (Model.PromoterDiaryNumberDetails != null &&
+                 Model.PromoterDiaryNumberDetails.prpongoing != null &&
+                 Model.PromoterDiaryNumberDetails.prpongoing.Count > 0)
+            {
+                var promoterDiary = Model.PromoterDiaryNumberDetails.prpongoing.FirstOrDefault();
+
+                if (promoterDiary != null)
+                {
+                    <tr>
+                        <td class="label-cell">Promoter Diary Number:</td>
+                        <td>@promoterDiary.PromoterRegDiaryNumber_Name</td>
+                    </tr>
+                }
+            }
+        </table>
+
+
+        @* =========================================================
+            INDIVIDUAL PROMOTER
+            ========================================================= *@
+
+        if (isIndividualPromoter && Model.PromoterProfile != null)
+        {
+            var promoter = Model.PromoterProfile;
+
+            <table cellpadding="8" cellspacing="0" class="section-table">
+
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Promoter Registration - Individual Details</td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Promoter Name:</td>
+                    <td>
+                        @promoter.First_Name
+                        @promoter.Middle_Name
+                        @promoter.Last_Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Father's Name:</td>
+                    <td>
+                        @promoter.Fath_First_Name
+                        @promoter.Fath_Middle_Name
+                        @promoter.Fath_Last_Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Mobile Number:</td>
+                    <td>
+                        @promoter.Mobile_no
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Phone Number:</td>
+                    <td>
+                        @promoter.Phone_No
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Email:</td>
+                    <td>
+                        @promoter.Email
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Promoter Website:</td>
+                    <td>
+                        @promoter.WebLink_Promoter_website
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">PAN Number:</td>
+                    <td>
+                        @promoter.PAN_No
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Aadhaar Number:</td>
+                    <td>
+                        @promoter.Aadhaar
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Occupation:</td>
+                    <td>
+                        @promoter.Occupation
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Joint Promoters:</td>
+                    <td>
+                        @(promoter.Org_Reg_Certificate == "Y" ? "Yes" : "No")
+                    </td>
+                </tr>
+            </table>
+
+
+            @* ===================== INDIVIDUAL ADDRESS ===================== *@
+
+            <table cellpadding="8" cellspacing="0" class="section-table">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Address Details</td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Address Line 1:</td>
+                    <td>
+                        @promoter.Address_Line1
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Address Line 2:</td>
+                    <td>
+                        @promoter.Address_Line2
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">District:</td>
+                    <td>
+                        @promoter.District
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">State:</td>
+                    <td>
+                        @promoter.State
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">Pin Code:</td>
+                    <td>
+                        @promoter.Pin_Code
+                    </td>
+                </tr>
+            </table>
+
+
+            @* ===================== INDIVIDUAL EXPERIENCE ===================== *@
+
+            <table cellpadding="8" cellspacing="0" class="section-table">
+
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Past Experience Details</td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Experience in Punjab:
+                    </td>
+                    <td>
+                        @promoter.Past_Exp_Punjab years
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Experience in Other States:
+                    </td>
+                    <td>
+                        @promoter.Past_Exp_Other_States years
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Projects Completed in Last Five Years:
+                    </td>
+                    <td>
+                        @promoter.Ind_Org_CompltdProj_FiveYrs
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Total Area Constructed:
+                    </td>
+                    <td>
+                        @promoter.Ind_Org_TotalArea_Constructed sqr mtrs
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Ongoing Projects:
+                    </td>
+                    <td>
+                        @promoter.Ind_Org_OngoingProjects
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Area to be Constructed:
+                    </td>
+                    <td>
+                        @promoter.Ind_Org_AreaToBe_Constructed sqr mtrs
+                    </td>
+                </tr>
+            </table>
+        }
+
+
+        @* =========================================================
+            OTHER THAN INDIVIDUAL PROMOTER
+            ========================================================= *@
+
+        if (isOtherThanIndividualPromoter && Model.PromoterOtherMemberDetails != null)
+        {
+            var promoter = Model.PromoterOtherMemberDetails;
+
+
+            @* ===================== ORGANIZATION DETAILS ===================== *@
+
+            <table cellpadding="8" cellspacing="0" class="section-table">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">Promoter Registration - Other Than Individual Details</td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Organization Name:
+                    </td>
+                    <td>
+                        @promoter.Org_Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Organization Type:
+                    </td>
+                    <td>
+                        @{
+                            string orgTypeName = "NA";
+
+                            switch (Convert.ToString(promoter.Org_Type))
+                            {
+                                case "1":
+                                    orgTypeName = "Private Limited Company";
+                                    break;
+                                case "2":
+                                    orgTypeName = "Public Limited Company";
+                                    break;
+                                case "3":
+                                    orgTypeName = "Undivided Hindu Family";
+                                    break;
+                                case "4":
+                                    orgTypeName = "Partnerships";
+                                    break;
+                                case "5":
+                                    orgTypeName = "Co-operative Societies";
+                                    break;
+                                case "6":
+                                    orgTypeName = "Limited Liabilities Partnership";
+                                    break;
+                                case "7":
+                                    orgTypeName = "Development Authorities";
+                                    break;
+                                case "8":
+                                    orgTypeName = "Others";
+                                    break;
+                            }
+                        }
+
+                        @orgTypeName
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Organization Objects:
+                    </td>
+                    <td>
+                        @promoter.Org_Objects
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Joint Promoters:
+                    </td>
+                    <td>
+                        @(promoter.Org_Reg_Certificate == "Y" ? "Yes" : "No")
+                    </td>
+                </tr>
+            </table>
+
+
+            @* ===================== REGISTERED ADDRESS ===================== *@
+
+            <table cellpadding="8"
+                   cellspacing="0"
+                   class="section-table">
+
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">
+                        Organization Registered Address
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Address Line 1:
+                    </td>
+                    <td>
+                        @promoter.Org_Address_Line1
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Address Line 2:
+                    </td>
+                    <td>
+                        @promoter.Org_Address_Line2
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        District:
+                    </td>
+                    <td>
+                        @promoter.Org_District
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        State:
+                    </td>
+                    <td>
+                        @promoter.Org_State
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Pin Code:
+                    </td>
+                    <td>
+                        @promoter.Org_Pin_Code
+                    </td>
+                </tr>
+            </table>
+
+
+            @* ===================== AUTHORIZED SIGNATORY ===================== *@
+
+            <table cellpadding="8" cellspacing="0" class="section-table">
+
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">
+                        Authorized Signatory Details
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Authorized Person:
+                    </td>
+                    <td>
+                        @promoter.First_Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        PAN Number:
+                    </td>
+                    <td>
+                        @promoter.PAN_No
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Mobile Number:
+                    </td>
+                    <td>
+                        @promoter.Mobile_no
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Phone Number:
+                    </td>
+                    <td>
+                        @promoter.Phone_No
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Email:
+                    </td>
+                    <td>
+                        @promoter.Email
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Promoter Website:
+                    </td>
+                    <td>
+                        @promoter.WebLink_Promoter_website
+                    </td>
+                </tr>
+            </table>
+
+
+            @* ===================== PAST EXPERIENCE ===================== *@
+
+            <table cellpadding="8" cellspacing="0" class="section-table">
+
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">
+                        Past Experience / Track Record
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Experience in Punjab:
+                    </td>
+                    <td>
+                        @promoter.Past_Exp_Punjab years
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Experience in Other States:
+                    </td>
+                    <td>
+                        @promoter.Past_Exp_Other_States years
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Projects Completed in Last Five Years:
+                    </td>
+                    <td>
+                        @promoter.Ind_Org_CompltdProj_FiveYrs
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Total Area Constructed:
+                    </td>
+                    <td>
+                        @promoter.Ind_Org_TotalArea_Constructed sqr mtrs
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Ongoing Projects:
+                    </td>
+                    <td>
+                        @promoter.Ind_Org_OngoingProjects
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Area to be Constructed:
+                    </td>
+                    <td>
+                        @promoter.Ind_Org_AreaToBe_Constructed sqr mtrs
+                    </td>
+                </tr>
+            </table>
+
+
+            @* ===================== OFFICIAL COMMUNICATION ADDRESS ===================== *@
+
+            <table cellpadding="8" cellspacing="0" class="section-table">
+
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">
+                        Official Communication Address
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Address Line 1:
+                    </td>
+                    <td>
+                        @promoter.Address_Line1
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Address Line 2:
+                    </td>
+                    <td>
+                        @promoter.Address_Line2
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        District:
+                    </td>
+                    <td>
+                        @promoter.District
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        State:
+                    </td>
+                    <td>
+                        @promoter.State
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label-cell">
+                        Pin Code:
+                    </td>
+                    <td>
+                        @promoter.Pin_Code
+                    </td>
+                </tr>
+            </table>
+
+
+            @* =========================================================
+                ORGANIZATION MEMBERS
+                ========================================================= *@
+
+            if (promoter.prpMem != null && promoter.prpMem.Count > 0)
+            {
+                <table cellpadding="8" cellspacing="0" class="section-table">
+
+                    <tr>
+                        <td class="rpt-pdf-display-border-box"
+                            colspan="2"
+                            style="font-weight:bold; text-align:center;">
+                            Organization Members
+                        </td>
+                    </tr>
+
+                    @{
+                        int memberSno = 0;
+                    }
+
+                    @foreach (var member in promoter.prpMem)
+                    {
+                        memberSno++;
+
+                        <tr>
+                            <td class="label-cell">S.No</td>
+                            <td>@memberSno</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Member Name</td>
+                            <td>@member.Member_Names</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Designation</td>
+                            <td>@member.Designation</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">PAN Number</td>
+                            <td>@member.PAN_No</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Aadhaar Number</td>
+                            <td>@member.Aadhar_No</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Mobile</td>
+                            <td>@member.Mobile_no</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Email</td>
+                            <td>@member.Email</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Address Line 1</td>
+                            <td>@member.Address_Line1</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">Address Line 2</td>
+                            <td>@member.Address_Line2</td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                <hr />
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            }
+
+
+            @* =========================================================
+                PARENT ENTITY
+                ========================================================= *@
+
+            if (promoter.Prpparententity != null && promoter.Prpparententity.Count > 0)
+            {
+                <table cellpadding="8" cellspacing="0" class="section-table">
+                    <tr>
+                        <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">
+                            Parent Entity Details
+                        </td>
+                    </tr>
+
+                    @{
+                        int parentSno = 0;
+                    }
+
+                    @foreach (var parent in promoter.Prpparententity)
+                    {
+                        parentSno++;
+
+                        <tr>
+                            <td colspan="2" class="header-cell">
+                                (@parentSno) Parent Entity
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Name of Parent Entity:
+                            </td>
+                            <td>
+                                @parent.Name_of_Parent_Entity
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Type of Enterprise:
+                            </td>
+                            <td>
+                                @{
+                                    string parentTypeName = "NA";
+
+                                    switch (Convert.ToString(parent.Type_of_Enterprise))
+                                    {
+                                        case "1":
+                                            parentTypeName = "Private Limited Company";
+                                            break;
+                                        case "2":
+                                            parentTypeName = "Public Limited Company";
+                                            break;
+                                        case "3":
+                                            parentTypeName = "Undivided Hindu Family";
+                                            break;
+                                        case "4":
+                                            parentTypeName = "Partnerships";
+                                            break;
+                                        case "5":
+                                            parentTypeName = "Co-operative Societies";
+                                            break;
+                                        case "6":
+                                            parentTypeName = "Limited Liabilities Partnership";
+                                            break;
+                                        case "7":
+                                            parentTypeName = "Development Authorities";
+                                            break;
+                                        case "8":
+                                            parentTypeName = "Others";
+                                            break;
+                                    }
+                                }
+
+                                @parentTypeName
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Main Objects:
+                            </td>
+                            <td>
+                                @parent.Main_Objects_of_Parent_Entity
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Experience in Real Estate - Punjab:
+                            </td>
+                            <td>
+                                @parent.Number_of_years_of_experience_of_the_Parent_Entity_in_real_estate_Punjab years
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Experience in Real Estate - Other State/UT:
+                            </td>
+                            <td>
+                                @parent.Number_of_years_of_experience_of_the_Parent_Entity_in_real_estate_UT_State years
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Registered Address:
+                            </td>
+                            <td>
+                                @parent.RegisteredAddress
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Address Line 2:
+                            </td>
+                            <td>
+                                @parent.Address_Line2
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+
+
+            @* =========================================================
+                TRACK RECORD
+                ========================================================= *@
+
+            if (promoter.prpTrackRecord != null &&
+                promoter.prpTrackRecord.Count > 0)
+            {
+                <table cellpadding="8" cellspacing="0" class="section-table">
+
+                    <tr>
+                        <td class="rpt-pdf-display-border-box" colspan="2" style="font-weight:bold; text-align:center;">
+                            Past Experience / Track Record of Promoter
+                        </td>
+                    </tr>
+
+                    @{
+                        int trackSno = 0;
+                    }
+
+                    @foreach (var track in promoter.prpTrackRecord)
+                    {
+                        trackSno++;
+
+                        <tr>
+                            <td colspan="2"
+                                class="header-cell">
+                                (@trackSno) Track Record Details
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Project Name:
+                            </td>
+                            <td>
+                                @track.Projectname
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Project Status:
+                            </td>
+                            <td>
+                                @track.ProjectStatus
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Project Type:
+                            </td>
+                            <td>
+                                @{
+                                    string projectTypeName = "NA";
+
+                                    switch (Convert.ToString(track.ProjectType))
+                                    {
+                                        case "1":
+                                            projectTypeName = "Residential";
+                                            break;
+                                        case "2":
+                                            projectTypeName = "Commercial";
+                                            break;
+                                        case "3":
+                                            projectTypeName = "Industrial";
+                                            break;
+                                        case "4":
+                                            projectTypeName = "Mixed Development";
+                                            break;
+                                    }
+                                }
+
+                                @projectTypeName
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Type of Land:
+                            </td>
+                            <td>
+                                @{
+                                    string landTypeName = "NA";
+
+                                    switch (Convert.ToString(track.TypeLandofProject))
+                                    {
+                                        case "0":
+                                            landTypeName = "Promoter Owned";
+                                            break;
+                                        case "1":
+                                            landTypeName = "Leased";
+                                            break;
+                                        case "2":
+                                            landTypeName = "Joint Development";
+                                            break;
+                                    }
+                                }
+
+                                @landTypeName
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Area of Project:
+                            </td>
+                            <td>
+                                @track.AreaConUProject
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                Project Start Date:
+                            </td>
+                            <td>
+                                @track.ProjectStartDate
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                OC Date:
+                            </td>
+                            <td>
+                                @track.OCDateProject
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label-cell">
+                                ACD:
+                            </td>
+                            <td>
+                                @track.ACDProject
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+
+
+            @* =========================================================
+                PROMOTER LITIGATIONS
+                ========================================================= *@
+
+            if (promoter.prpLitigations != null &&
+                promoter.prpLitigations.Count > 0)
+            {
+                <table cellpadding="8"
+                       cellspacing="0"
+                       class="section-table">
+
+                    <tr>
+                        <td class="rpt-pdf-display-border-box" colspan="3" style="font-weight:bold; text-align:center;">Promoter Litigations Related to Projects</td>
+                    </tr>
+
+                    <tr>
+                        <th>S.No</th>
+                        <th>Case Title</th>
+                        <th>Case Number / Authority</th>
+                    </tr>
+
+                    @{
+                        int litigationSno = 0;
+                    }
+
+                    @foreach (var litigation in promoter.prpLitigations)
+                    {
+                        litigationSno++;
+
+                        <tr>
+                            <td>
+                                @litigationSno
+                            </td>
+
+                            <td>
+                                @litigation.Case_Title
+                            </td>
+
+                            <td>
+                                Case Number:
+                                @litigation.Case_Number
+                                <br />
+
+                                Authority / Forum:
+                                @litigation.Authority_ForumName_CasePendingResolved
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <table cellpadding="8" cellspacing="0" class="section-table">
+                    <tr>
+                        <td class="rpt-pdf-display-border-box" style="font-weight:bold; text-align:center;">Promoter Litigations Related to Projects</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:10px;text-align:center;font-style:italic;">
+                            No litigation details reported.
+                        </td>
+                    </tr>
+                </table>
+            }
+        }
+
+
+        @* =========================================================
+            PROMOTER DOCUMENTS - COMMON
+            ========================================================= *@
+
+        if (Model.PromoterDocuments != null && Model.PromoterDocuments.prpongoing != null && Model.PromoterDocuments.prpongoing.Count > 0)
+        {
+            <div class="pagebreak"></div>
+            <table cellpadding="8" cellspacing="0" class="section-table">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" colspan="6" style="font-weight:bold; text-align:center;">Promoter Document(s)</td>
+                </tr>
+                <tr>
+                    <th class="rpt-pdf-display-border-top-box">S.No</th>
+                    <th class="rpt-pdf-display-border-top-box">Document Name</th>
+                    <th class="rpt-pdf-display-border-top-box">Reference Number</th>
+                    <th class="rpt-pdf-display-border-top-box">Date</th>
+                    <th class="rpt-pdf-display-border-top-box">Remarks</th>
+                    <th class="rpt-pdf-display-border-top-box">View</th>
+                </tr>
+
+                @{
+                    int promoterDocSno = 0;
+                }
+
+                @foreach (var doc in Model.PromoterDocuments.prpongoing)
+                {
+                    promoterDocSno++;
+
+                    <tr>
+                        <td>
+                            @promoterDocSno
+                        </td>
+
+                        <td>
+                            @doc.PromoterDoc_InfoName
+                        </td>
+
+                        <td>
+                            @doc.PromoterDoc_ReferenceNumber
+                        </td>
+
+                        <td>
+                            @((doc.PromoterDoc_IssueDate)?.ToString("dd-MMM-yyyy"))
+                        </td>
+
+                        <td>
+                            @doc.Remarks_IfAny
+                        </td>
+                        <td>
+                            <a href="@StrcallBaseURL/@doc.PromoterDoc_FilePath.Replace("\\", "/").TrimStart('/')"target="_blank">View</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <table cellpadding="8" cellspacing="0" class="section-table">
+                <tr>
+                    <td class="rpt-pdf-display-border-box" style="font-weight:bold; text-align:center;">
+                        Promoter Document(s)
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:10px;text-align:center;font-style:italic;">
+                        No promoter documents available.
+                    </td>
+                </tr>
+            </table>
+        }
+
+
+        @* =========================================================
+            PROMOTER DISCLAIMER
+            ========================================================= *@
+
+        @*<table border="0" cellpadding="8" cellspacing="0" style="width:100%; margin-top:20px;">
+                <tr>
+                    <td style="font-style:italic; font-size:small; border:1px solid #ccc;">
+                        Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height:30px;"></td>
+                </tr>
+
+                <tr>
+                    <td style="text-align:right; font-style:italic; font-size:medium;">
+                        (Authorized Signatory)
+                    </td>
+                </tr>
+
+            </table>*@
+    }
+</body>
+</html>

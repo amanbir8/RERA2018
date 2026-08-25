@@ -1,0 +1,130 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="2600" height="1900" viewBox="0 0 2600 1900">
+  <defs>
+    <style>
+      .title { font: 700 30px Arial, sans-serif; fill:#0f172a; }
+      .hdr { fill:#e2e8f0; stroke:#475569; stroke-width:1.5; }
+      .cell { fill:#ffffff; stroke:#94a3b8; stroke-width:1; }
+      .htext { font: 700 15px Arial, sans-serif; fill:#0f172a; }
+      .ctext { font: 13px Arial, sans-serif; fill:#111827; }
+      .small { font: 12px Arial, sans-serif; fill:#1f2937; }
+    </style>
+  </defs>
+
+  <text x="1300" y="45" text-anchor="middle" class="title">Form-M Debug Table (SVG)</text>
+
+  <!-- Column x positions -->
+  <!-- 20, 260, 600, 900, 1270, 1950, 2580 -->
+
+  <!-- Header -->
+  <rect class="hdr" x="20" y="70" width="240" height="50"/>
+  <rect class="hdr" x="260" y="70" width="340" height="50"/>
+  <rect class="hdr" x="600" y="70" width="300" height="50"/>
+  <rect class="hdr" x="900" y="70" width="370" height="50"/>
+  <rect class="hdr" x="1270" y="70" width="680" height="50"/>
+  <rect class="hdr" x="1950" y="70" width="630" height="50"/>
+
+  <text class="htext" x="140" y="102" text-anchor="middle">Button/Link</text>
+  <text class="htext" x="430" y="102" text-anchor="middle">View</text>
+  <text class="htext" x="750" y="102" text-anchor="middle">JS/Event</text>
+  <text class="htext" x="1085" y="102" text-anchor="middle">Controller Action</text>
+  <text class="htext" x="1610" y="102" text-anchor="middle">Core Helper/Method Calls</text>
+  <text class="htext" x="2265" y="102" text-anchor="middle">Next/Result</text>
+
+  <!-- Row helper function approximated manually -->
+
+  <!-- Row 1 -->
+  <rect class="cell" x="20" y="120" width="240" height="90"/>
+  <rect class="cell" x="260" y="120" width="340" height="90"/>
+  <rect class="cell" x="600" y="120" width="300" height="90"/>
+  <rect class="cell" x="900" y="120" width="370" height="90"/>
+  <rect class="cell" x="1270" y="120" width="680" height="90"/>
+  <rect class="cell" x="1950" y="120" width="630" height="90"/>
+  <text class="ctext" x="30" y="145">Open Form-M</text>
+  <text class="small" x="270" y="145">RegComplaintFormM.cshtml</text>
+  <text class="ctext" x="610" y="145">Page GET</text>
+  <text class="ctext" x="910" y="145">RegComplaintFormM()</text>
+  <text class="small" x="1280" y="145">DisplayComplaintProfileDetail, Display_ComplaintFormM_Registration_StepI,</text>
+  <text class="small" x="1280" y="164">Display_ComplaintFormM_FactsOfTheCase_UploadedFileExtract_ByProfileID_StepI,</text>
+  <text class="small" x="1280" y="183">fnExtractSubStringUnRegdComplaint</text>
+  <text class="ctext" x="1960" y="145">Step-1 form loaded</text>
+
+  <!-- Row 2 -->
+  <rect class="cell" x="20" y="210" width="240" height="120"/>
+  <rect class="cell" x="260" y="210" width="340" height="120"/>
+  <rect class="cell" x="600" y="210" width="300" height="120"/>
+  <rect class="cell" x="900" y="210" width="370" height="120"/>
+  <rect class="cell" x="1270" y="210" width="680" height="120"/>
+  <rect class="cell" x="1950" y="210" width="630" height="120"/>
+  <text class="ctext" x="30" y="235">Save/Update Step-1</text>
+  <text class="small" x="270" y="235">RegComplaintFormM.cshtml</text>
+  <text class="small" x="610" y="235">submit BtnMainform</text>
+  <text class="small" x="910" y="235">POST RegComplaintFormM(smodel)</text>
+  <text class="small" x="1280" y="235">Verify_ComplaintFormM_FactsOfTheCase_Documents_ByProfileID,</text>
+  <text class="small" x="1280" y="254">fnSaveSubStringUnRegdComplaint, Add_/Update_ComplaintFormM_Registration_StepI,</text>
+  <text class="small" x="1280" y="273">Get_ComplaintFormM_FlagStep</text>
+  <text class="ctext" x="1960" y="235">Redirect Step1/2/3/4</text>
+
+  <!-- Row 3 -->
+  <rect class="cell" x="20" y="330" width="240" height="80"/><rect class="cell" x="260" y="330" width="340" height="80"/><rect class="cell" x="600" y="330" width="300" height="80"/><rect class="cell" x="900" y="330" width="370" height="80"/><rect class="cell" x="1270" y="330" width="680" height="80"/><rect class="cell" x="1950" y="330" width="630" height="80"/>
+  <text class="ctext" x="30" y="355">Reset Step-1</text><text class="small" x="270" y="355">RegComplaintFormM.cshtml</text><text class="ctext" x="610" y="355">ActionLink</text><text class="ctext" x="910" y="355">RegComplaintFormM()</text><text class="ctext" x="1280" y="355">Normal GET load</text><text class="ctext" x="1960" y="355">Reload Step-1</text>
+
+  <!-- Row 4 -->
+  <rect class="cell" x="20" y="410" width="240" height="100"/><rect class="cell" x="260" y="410" width="340" height="100"/><rect class="cell" x="600" y="410" width="300" height="100"/><rect class="cell" x="900" y="410" width="370" height="100"/><rect class="cell" x="1270" y="410" width="680" height="100"/><rect class="cell" x="1950" y="410" width="630" height="100"/>
+  <text class="ctext" x="30" y="435">Add/View Complainant</text><text class="small" x="270" y="435">RegComplaintFormM.cshtml</text><text class="small" x="610" y="435">click #modalOpenerButton</text><text class="ctext" x="910" y="435">RegAdditionalComplaintFormM()</text><text class="small" x="1280" y="435">Display_Complainant_Detail, Display_ComplaintFormM_Flag_RegStep</text><text class="ctext" x="1960" y="435">Modal opens</text>
+
+  <!-- Row 5 -->
+  <rect class="cell" x="20" y="510" width="240" height="100"/><rect class="cell" x="260" y="510" width="340" height="100"/><rect class="cell" x="600" y="510" width="300" height="100"/><rect class="cell" x="900" y="510" width="370" height="100"/><rect class="cell" x="1270" y="510" width="680" height="100"/><rect class="cell" x="1950" y="510" width="630" height="100"/>
+  <text class="ctext" x="30" y="535">Save complainants</text><text class="small" x="270" y="535">RegAdditionalComplaintFormM.cshtml</text><text class="small" x="610" y="535">click #saveOrder</text><text class="small" x="910" y="535">SaveComplainantFormMDetail(order[])</text><text class="ctext" x="1280" y="535">Add_FormM_Complainant (loop)</text><text class="ctext" x="1960" y="535">JSON success/fail</text>
+
+  <!-- Row 6 -->
+  <rect class="cell" x="20" y="610" width="240" height="90"/><rect class="cell" x="260" y="610" width="340" height="90"/><rect class="cell" x="600" y="610" width="300" height="90"/><rect class="cell" x="900" y="610" width="370" height="90"/><rect class="cell" x="1270" y="610" width="680" height="90"/><rect class="cell" x="1950" y="610" width="630" height="90"/>
+  <text class="ctext" x="30" y="635">Delete complainant</text><text class="small" x="270" y="635">RegAdditionalComplaintFormM.cshtml</text><text class="small" x="610" y="635">click #deleteButton</text><text class="small" x="910" y="635">Delete_AdditionalComplaintFormM(...)</text><text class="ctext" x="1280" y="635">Delete_FormM_Complainant</text><text class="ctext" x="1960" y="635">Row removed</text>
+
+  <!-- Row 7 -->
+  <rect class="cell" x="20" y="700" width="240" height="100"/><rect class="cell" x="260" y="700" width="340" height="100"/><rect class="cell" x="600" y="700" width="300" height="100"/><rect class="cell" x="900" y="700" width="370" height="100"/><rect class="cell" x="1270" y="700" width="680" height="100"/><rect class="cell" x="1950" y="700" width="630" height="100"/>
+  <text class="ctext" x="30" y="725">Add/View Respondent</text><text class="small" x="270" y="725">RegComplaintFormM.cshtml</text><text class="small" x="610" y="725">click #modalOpenerRespButton</text><text class="ctext" x="910" y="725">RegAdditionalRespondentFormM()</text><text class="small" x="1280" y="725">Display_Respondent_Detail, Display_ComplaintFormM_Flag_RegStep</text><text class="ctext" x="1960" y="725">Modal opens</text>
+
+  <!-- Row 8 -->
+  <rect class="cell" x="20" y="800" width="240" height="100"/><rect class="cell" x="260" y="800" width="340" height="100"/><rect class="cell" x="600" y="800" width="300" height="100"/><rect class="cell" x="900" y="800" width="370" height="100"/><rect class="cell" x="1270" y="800" width="680" height="100"/><rect class="cell" x="1950" y="800" width="630" height="100"/>
+  <text class="ctext" x="30" y="825">Save respondents</text><text class="small" x="270" y="825">RegAdditionalRespondentFormM.cshtml</text><text class="small" x="610" y="825">click #saveOrder</text><text class="small" x="910" y="825">SaveRespondentFormMDetail(order[])</text><text class="ctext" x="1280" y="825">Add_FormM_Respondent (loop)</text><text class="ctext" x="1960" y="825">JSON success/fail</text>
+
+  <!-- Row 9 -->
+  <rect class="cell" x="20" y="900" width="240" height="90"/><rect class="cell" x="260" y="900" width="340" height="90"/><rect class="cell" x="600" y="900" width="300" height="90"/><rect class="cell" x="900" y="900" width="370" height="90"/><rect class="cell" x="1270" y="900" width="680" height="90"/><rect class="cell" x="1950" y="900" width="630" height="90"/>
+  <text class="ctext" x="30" y="925">Delete respondent</text><text class="small" x="270" y="925">RegAdditionalRespondentFormM.cshtml</text><text class="small" x="610" y="925">click #deleteButton</text><text class="small" x="910" y="925">Delete_AdditionalRespondentFormM(...)</text><text class="ctext" x="1280" y="925">Delete_FormM_Respondent</text><text class="ctext" x="1960" y="925">Row removed</text>
+
+  <!-- Row 10 -->
+  <rect class="cell" x="20" y="990" width="240" height="100"/><rect class="cell" x="260" y="990" width="340" height="100"/><rect class="cell" x="600" y="990" width="300" height="100"/><rect class="cell" x="900" y="990" width="370" height="100"/><rect class="cell" x="1270" y="990" width="680" height="100"/><rect class="cell" x="1950" y="990" width="630" height="100"/>
+  <text class="ctext" x="30" y="1015">Facts upload</text><text class="small" x="270" y="1015">RegComplaintFormM.cshtml</text><text class="small" x="610" y="1015">AJAX POST</text><text class="small" x="910" y="1015">FactsCase_FormM_DocumentUpload(...)</text><text class="ctext" x="1280" y="1015">SaveComplaintFormM_FactsCase_Documents</text><text class="ctext" x="1960" y="1015">statusCode JSON</text>
+
+  <!-- Row 11 -->
+  <rect class="cell" x="20" y="1090" width="240" height="90"/><rect class="cell" x="260" y="1090" width="340" height="90"/><rect class="cell" x="600" y="1090" width="300" height="90"/><rect class="cell" x="900" y="1090" width="370" height="90"/><rect class="cell" x="1270" y="1090" width="680" height="90"/><rect class="cell" x="1950" y="1090" width="630" height="90"/>
+  <text class="ctext" x="30" y="1115">Facts view/delete/download</text><text class="small" x="270" y="1115">RegComplaintFormM.cshtml</text><text class="small" x="610" y="1115">AJAX clicks</text><text class="small" x="910" y="1115">ComplaintFormMFactsCase* / Delete_* / Download_*</text><text class="ctext" x="1280" y="1115">File detail + delete + base64 download</text><text class="ctext" x="1960" y="1115">Modal/download</text>
+
+  <!-- Row 12 -->
+  <rect class="cell" x="20" y="1180" width="240" height="90"/><rect class="cell" x="260" y="1180" width="340" height="90"/><rect class="cell" x="600" y="1180" width="300" height="90"/><rect class="cell" x="900" y="1180" width="370" height="90"/><rect class="cell" x="1270" y="1180" width="680" height="90"/><rect class="cell" x="1950" y="1180" width="630" height="90"/>
+  <text class="ctext" x="30" y="1205">Open Step-2 docs</text><text class="small" x="270" y="1205">RegComplaintEncldocM.cshtml</text><text class="ctext" x="610" y="1205">Page GET</text><text class="ctext" x="910" y="1205">RegComplaintEncldocM()</text><text class="ctext" x="1280" y="1205">Display_ComplaintFormM_Documents_ByComplaintFormM_ID</text><text class="ctext" x="1960" y="1205">Step-2 loaded</text>
+
+  <!-- Row 13 -->
+  <rect class="cell" x="20" y="1270" width="240" height="110"/><rect class="cell" x="260" y="1270" width="340" height="110"/><rect class="cell" x="600" y="1270" width="300" height="110"/><rect class="cell" x="900" y="1270" width="370" height="110"/><rect class="cell" x="1270" y="1270" width="680" height="110"/><rect class="cell" x="1950" y="1270" width="630" height="110"/>
+  <text class="ctext" x="30" y="1295">Upload enclosure</text><text class="small" x="270" y="1295">RegComplaintEncldocM.cshtml</text><text class="small" x="610" y="1295">AJAX POST</text><text class="small" x="910" y="1295">ComplaintFormMDocumentFormUpload(...)</text><text class="small" x="1280" y="1295">Display_Master_Complaint_DocumentsByComplaintFormID,</text><text class="small" x="1280" y="1314">Display_ComplaintFormM_Documents_ByDocCodeInfo_*, RegexRemove,</text><text class="small" x="1280" y="1333">SaveComplaintFormDocuments, Add_ComplaintFormM_Documents</text><text class="ctext" x="1960" y="1295">statusCode JSON</text>
+
+  <!-- Row 14 -->
+  <rect class="cell" x="20" y="1380" width="240" height="90"/><rect class="cell" x="260" y="1380" width="340" height="90"/><rect class="cell" x="600" y="1380" width="300" height="90"/><rect class="cell" x="900" y="1380" width="370" height="90"/><rect class="cell" x="1270" y="1380" width="680" height="90"/><rect class="cell" x="1950" y="1380" width="630" height="90"/>
+  <text class="ctext" x="30" y="1405">Delete enclosure</text><text class="small" x="270" y="1405">RegComplaintEncldocM.cshtml</text><text class="ctext" x="610" y="1405">ActionLink</text><text class="small" x="910" y="1405">Delete_ComplaintEncldocMDocument(...)</text><text class="ctext" x="1280" y="1405">Delete_ComplaintFormM_Document</text><text class="ctext" x="1960" y="1405">Redirect Step-2</text>
+
+  <!-- Row 15 -->
+  <rect class="cell" x="20" y="1470" width="240" height="100"/><rect class="cell" x="260" y="1470" width="340" height="100"/><rect class="cell" x="600" y="1470" width="300" height="100"/><rect class="cell" x="900" y="1470" width="370" height="100"/><rect class="cell" x="1270" y="1470" width="680" height="100"/><rect class="cell" x="1950" y="1470" width="630" height="100"/>
+  <text class="ctext" x="30" y="1495">Proceed Step-2</text><text class="small" x="270" y="1495">RegComplaintEncldocM.cshtml</text><text class="small" x="610" y="1495">submit FormProceed</text><text class="ctext" x="910" y="1495">RegComplaintEncldocFormM()</text><text class="ctext" x="1280" y="1495">Update_Check_ComplaintFormM_Documents</text><text class="small" x="1960" y="1495">Complete -> Step-3 payment, else same page with message</text>
+
+  <!-- Row 16 -->
+  <rect class="cell" x="20" y="1570" width="240" height="80"/><rect class="cell" x="260" y="1570" width="340" height="80"/><rect class="cell" x="600" y="1570" width="300" height="80"/><rect class="cell" x="900" y="1570" width="370" height="80"/><rect class="cell" x="1270" y="1570" width="680" height="80"/><rect class="cell" x="1950" y="1570" width="630" height="80"/>
+  <text class="ctext" x="30" y="1595">Step-3 Payment</text><text class="small" x="270" y="1595">Payment module view</text><text class="ctext" x="610" y="1595">Redirect</text><text class="small" x="910" y="1595">ComplaintPayment/RequestPaymentFormM</text><text class="ctext" x="1280" y="1595">Payment controller flow</text><text class="ctext" x="1960" y="1595">Payment done</text>
+
+  <!-- Row 17 -->
+  <rect class="cell" x="20" y="1650" width="240" height="90"/><rect class="cell" x="260" y="1650" width="340" height="90"/><rect class="cell" x="600" y="1650" width="300" height="90"/><rect class="cell" x="900" y="1650" width="370" height="90"/><rect class="cell" x="1270" y="1650" width="680" height="90"/><rect class="cell" x="1950" y="1650" width="630" height="90"/>
+  <text class="ctext" x="30" y="1675">Step-4 Verify open</text><text class="small" x="270" y="1675">RegComplaintVerificationM.cshtml</text><text class="ctext" x="610" y="1675">Page GET</text><text class="ctext" x="910" y="1675">RegComplaintVerificationM()</text><text class="ctext" x="1280" y="1675">Display_ComplaintFormM_Flag_RegStep</text><text class="ctext" x="1960" y="1675">Verify screen</text>
+
+  <!-- Row 18 -->
+  <rect class="cell" x="20" y="1740" width="240" height="120"/><rect class="cell" x="260" y="1740" width="340" height="120"/><rect class="cell" x="600" y="1740" width="300" height="120"/><rect class="cell" x="900" y="1740" width="370" height="120"/><rect class="cell" x="1270" y="1740" width="680" height="120"/><rect class="cell" x="1950" y="1740" width="630" height="120"/>
+  <text class="ctext" x="30" y="1765">Final Submit</text><text class="small" x="270" y="1765">RegComplaintVerificationM.cshtml</text><text class="small" x="610" y="1765">submit BtnMainform</text><text class="small" x="910" y="1765">POST RegComplaintVerificationM(smodel)</text><text class="small" x="1280" y="1765">ValidateComplaintFormM_AgreeDetails, UpdateComplaintFormM_AgreeDetails,</text><text class="small" x="1280" y="1784">UserManager.SendEmailAsync, Display_ComplaintFormM_Flag_RegStep</text><text class="ctext" x="1960" y="1765">Diary number + final state</text>
+</svg>

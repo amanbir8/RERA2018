@@ -1,0 +1,988 @@
+﻿@model CRUD.Models.HelpDeskAgent.ClsPrp_AuthorityDesk_AgentRERAnumberDetails
+
+@*<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+    <script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>*@
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<link rel="stylesheet" href="@Url.Content("~/dist/css/daterangepicker.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+<script src="@Url.Content("~/dist/js/moment.js")"></script>
+<script src="@Url.Content("~/dist/js/daterangepicker.js")"></script>
+
+<style>
+    .modal {
+        overflow-y: auto;
+    }
+
+    #searchNumberModal {
+        z-index: 1050;
+    }
+
+    #myModal {
+        z-index: 1060;
+    }
+
+        #searchNumberModal .modal-body,
+        #myModal .modal-body {
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+    #searchNumberModal .search-modal-dialog {
+        width: 85vw; /*96vw;*/
+        max-width: 1400px; /*none;*/
+        margin: 20px auto;
+    }
+
+    #searchNumberModal .modal-body {
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    #searchResultsTable {
+        width: 100% !important;
+        min-width: 1600px;
+        white-space: nowrap;
+    }
+
+    #searchResultsTable_wrapper {
+        width: 100%;
+    }
+
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        position: relative;
+    }
+
+    #filterToggleBtn.active {
+        background: #337ab7;
+        color: #fff;
+    }
+
+    .filter-panel {
+        position: absolute;
+        top: 36px;
+        right: 0;
+        width: 260px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 14px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        display: none;
+        z-index: 999;
+        overflow: visible;
+        animation: fadeIn 0.2s ease;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .filter-section {
+        margin-bottom: 14px;
+    }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-section label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            cursor: pointer;
+        }
+
+    /*.filter-panel input[type="radio"] {
+        margin-right: 6px;
+    }*/
+
+    .filter-panel .form-control {
+        height: 30px;
+        font-size: 12px;
+        border-radius: 4px;
+    }
+
+    /*.btn-xs {
+        padding: 4px 8px;
+        font-size: 12px;
+    }*/
+    .header-actions .btn-xs {
+        padding: 1px 5px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+    }
+
+    .filter-summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 5px 10px;
+        border: 1px solid #2e6da4;
+        border-radius: 5px;
+        background: linear-gradient(180deg, #d9edf7 0%, #d9edf7 100%);
+        color: #2e6da4;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+        height: 24px;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+        .filter-summary i {
+            color: #2e6da4;
+            font-size: 12px;
+        }
+
+        .filter-summary .summary-caret {
+            margin-left: 4px;
+            color: #2e6da4;
+            /*transition: transform 0.2s ease;*/
+        }
+
+        .filter-summary.open .summary-caret {
+            transform: rotate(180deg);
+        }
+    /*#dateRangeWrapper,
+    #yearWrapper {
+        margin-top: 6px;
+    }*/
+    #dateRangeWrapper {
+        margin-top: 6px;
+    }
+
+    #customDateRangePicker {
+        cursor: pointer;
+        background-color: #fff;
+    }
+
+    .daterangepicker {
+        z-index: 99999 !important;
+    }
+
+        .daterangepicker .drp-calendar {
+            max-width: none;
+        }
+
+        .daterangepicker.show-calendar .drp-calendar.left,
+        .daterangepicker.show-calendar .drp-calendar.right {
+            display: block !important;
+            float: left !important;
+        }
+
+        .daterangepicker.show-calendar {
+            min-width: 700px;
+        }
+
+    /*@@media (max-width: 767px) {
+        .daterangepicker {
+            left: 8px !important;
+            right: 8px !important;
+            width: auto !important;
+            max-width: none !important;
+        }*/
+    @@media (max-width: 767px) {
+        .panel-heading {
+            overflow: hidden;
+            padding-right: 10px;
+        }
+
+            .panel-heading .header-actions {
+                display: flex;
+                flex-wrap: nowrap;
+                max-width: 100%;
+                gap: 6px;
+            }
+
+            .panel-heading .filter-summary {
+                max-width: calc(100vw - 130px);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .panel-heading #filterSummaryText {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                /*display: inline-block;*/
+                /*max-width: 100%;*/
+                font-size: 11px;
+                line-height: 1.2;
+            }
+
+        .daterangepicker {
+            left: 8px !important;
+            right: 8px !important;
+            width: auto !important;
+            max-width: none !important;
+        }
+
+            .daterangepicker.show-calendar {
+                min-width: 0 !important;
+            }
+
+                .daterangepicker.show-calendar .drp-calendar.left,
+                .daterangepicker.show-calendar .drp-calendar.right {
+                    float: none !important;
+                    display: block !important;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+
+            .daterangepicker .ranges {
+                float: none !important;
+                width: 100% !important;
+            }
+
+            .daterangepicker .drp-buttons {
+                clear: both;
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                padding: 8px;
+            }
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+        stopPreloader();
+
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 50,
+            "lengthMenu": [[50, 100, 150, 200, 250], [50, 100, 150, 200, 250]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [8, 9]
+            }]
+        });
+
+
+        $(document).on('click', '.modalDownloadExcelButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + 'HelpdeskAgent/RealEstateAgentsInPublicView_ExportToExcel';
+        });
+
+
+        $(document).on('click', '.info-help-details', infohelpHandlerRegistrationdetails);
+
+        $('#filterSummaryTrigger').on('click', function (e) {
+            e.preventDefault();
+            var picker = $('#customDateRangePicker').data('daterangepicker');
+            if (picker) {
+                var isOpen = $('#filterSummaryTrigger').attr('data-open') === '1';
+                if (isOpen) {
+                    picker.hide();
+                    $('#filterSummaryTrigger').removeClass('open').attr('data-open', '0');
+                } else {
+                    $(this).addClass('open').attr('data-open', '1');
+                    picker.show();
+                    positionPickerNearFilterButton(picker);
+                }
+            }
+        });
+
+        $('#filterPanel').on('click', function (e) {
+            e.stopPropagation();
+        });
+
+        // CHANGED: ensureDateFilter
+        function ensureDateFilter() {
+            $('#dateRangeWrapper').show();
+
+            var picker = $('#customDateRangePicker').data('daterangepicker');
+
+            // ADDED: special handling for All
+            if (isAllSelected()) {
+                $('#customDateRangePicker').val('All');
+                $('#filterSummaryText').text('All');
+
+                // keep picker on a valid date, but do NOT use it as a real filter
+                if (picker) {
+                    var dummy = moment().startOf('year');
+                    picker.setStartDate(dummy);
+                    picker.setEndDate(dummy);
+                    picker.chosenLabel = 'All'; // ADDED: force label in picker
+                }
+
+                return;
+            }
+
+            // CHANGED: default to this year only when not All
+            var currentYear = moment().year();
+            var start = moment(currentYear, "YYYY").startOf('year');
+            var end = moment(currentYear, "YYYY").endOf('year');
+
+            if (!$('#fromDate').val() || !$('#toDate').val()) {
+                $('#fromDate').val(start.format('YYYY-MM-DD'));
+                $('#toDate').val(end.format('YYYY-MM-DD'));
+            }
+
+            $('#approvalYear').val(moment($('#fromDate').val(), 'YYYY-MM-DD').year());
+
+            setText(
+                moment($('#fromDate').val(), 'YYYY-MM-DD'),
+                moment($('#toDate').val(), 'YYYY-MM-DD')
+            );
+
+            updateFilterSummary();
+
+            if (picker) {
+                picker.setStartDate(moment($('#fromDate').val(), 'YYYY-MM-DD'));
+                picker.setEndDate(moment($('#toDate').val(), 'YYYY-MM-DD'));
+                picker.move();
+            }
+        }
+        ensureDateFilter();
+
+        var from = $('#fromDate').val()
+            ? moment($('#fromDate').val(), 'YYYY-MM-DD')
+            : moment().startOf('year');
+
+        var to = $('#toDate').val()
+            ? moment($('#toDate').val(), 'YYYY-MM-DD')
+            : moment().endOf('year');
+
+        $('#customDateRangePicker').daterangepicker({
+            autoUpdateInput: false,
+            showDropdowns: true,
+            startDate: from,
+            endDate: to,
+            //minDate: moment('2018-01-01', 'YYYY-MM-DD'),
+            maxSpan: { days: 90 },
+            parentEl: 'body',
+            opens: 'left',
+            drops: 'down',
+            locale: {
+                format: 'DD MMM YYYY',
+                customRangeLabel: 'Custom Range'
+            },
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'This Year': [moment().startOf('year'), moment().endOf('year')],
+                'All': [moment().startOf('year'), moment().endOf('year')] // ADDED: dummy range only
+            }
+        });
+        var drp = $('#customDateRangePicker').data('daterangepicker');
+        if (drp) {
+            drp.move = function () {
+                positionPickerNearFilterButton(drp);
+            };
+        }
+
+        // CHANGED: getLabel
+        function getLabel(start, end) {
+
+            // ADDED: All should always win over date comparison
+            if (isAllSelected()) {
+                return 'All';
+            }
+
+            if (start.isSame(moment().startOf('year'), 'day') &&
+                end.isSame(moment().endOf('year'), 'day')) {
+                return 'This Year';
+            }
+
+            if (start.isSame(moment(), 'day') && end.isSame(moment(), 'day')) {
+                return 'Today';
+            }
+
+            if (start.isSame(moment().subtract(1, 'days'), 'day') &&
+                end.isSame(moment().subtract(1, 'days'), 'day')) {
+                return 'Yesterday';
+            }
+
+            return null;
+        }
+
+        function isAllSelected() {
+            return $('#filterType').val() === 'all' || $('#selectedRangeLabel').val() === 'All';
+        }
+
+        function setText(start, end) {
+            var label = getLabel(start, end);
+
+            if (label) {
+                $('#customDateRangePicker').val(label);
+            } else {
+                $('#customDateRangePicker').val(
+                    start.format('DD MMM YYYY') + ' - ' + end.format('DD MMM YYYY')
+                );
+            }
+        }
+
+        function updateFilterSummary() {
+            // ADDED: show All directly
+            if (isAllSelected()) {
+                $('#filterSummaryText').text('All');
+                return;
+            }
+            var start = $('#fromDate').val() ? moment($('#fromDate').val(), 'YYYY-MM-DD') : moment().startOf('year');
+            var end = $('#toDate').val() ? moment($('#toDate').val(), 'YYYY-MM-DD') : moment().endOf('year');
+            var label = getLabel(start, end);
+            if (label === 'Today' || label === 'Yesterday') {
+                $('#filterSummaryText').text(label);
+            } else {
+                $('#filterSummaryText').text(start.format('DD MMM YYYY') + ' - ' + end.format('DD MMM YYYY'));
+            }
+        }
+
+        setText(from, to);
+        updateFilterSummary();
+        // CHANGED: keep the correct range highlighted when the picker opens
+        $('#customDateRangePicker').on('show.daterangepicker', function (ev, picker) {
+
+            var label = isAllSelected()
+                ? 'All'
+                : (picker.chosenLabel || $('#selectedRangeLabel').val() || 'Custom Range');
+
+            picker.container.find('.ranges li').removeClass('active');
+
+            var $active = picker.container.find('.ranges li[data-range-key="' + label + '"]');
+            if ($active.length) {
+                $active.addClass('active');
+            }
+        });
+        $('#customDateRangePicker').on('hide.daterangepicker', function () {
+            $('#filterSummaryTrigger').removeClass('open');
+        });
+
+        function positionPickerNearFilterButton(picker) {
+            var $btn = $('#filterSummaryTrigger');
+            var btnOffset = $btn.offset();
+            if (!btnOffset) return;
+
+            var top = btnOffset.top + $btn.outerHeight() + 6;
+            var containerWidth = picker.container.outerWidth() || 700;
+            var viewportWidth = $(window).width();
+            var left = btnOffset.left - (containerWidth - $btn.outerWidth());
+            var minLeft = 8;
+            var maxLeft = viewportWidth - containerWidth - 8;
+            if (maxLeft < minLeft) {
+                left = minLeft;
+            } else {
+                if (left < minLeft) left = minLeft;
+                if (left > maxLeft) left = maxLeft;
+            }
+            picker.container.css({
+                top: top + 'px',
+                left: left + 'px',
+                right: 'auto'
+            });
+        }
+
+        $('#customDateRangePicker').on('apply.daterangepicker', function (ev, picker) {
+            if (picker.chosenLabel === 'All') {
+                $('#filterType').val('all');
+                $('#fromDate').val('');
+                $('#toDate').val('');
+                $('#approvalYear').val('');
+                $('#selectedRangeLabel').val('All');
+
+                $('#customDateRangePicker').val('All');
+                $('#filterSummaryText').text('All');
+
+                startPreloader();
+                $('#publicViewAgentFilterForm').submit();
+                return;
+            }
+
+            $('#filterType').val('daterange');
+            $('#fromDate').val(picker.startDate.format('YYYY-MM-DD'));
+            $('#toDate').val(picker.endDate.format('YYYY-MM-DD'));
+            $('#approvalYear').val(picker.startDate.year());
+            $('#selectedRangeLabel').val(picker.chosenLabel || 'Custom Range');
+
+            setText(picker.startDate, picker.endDate);
+            updateFilterSummary();
+            positionPickerNearFilterButton(picker);
+
+
+            startPreloader();
+            $('#publicViewAgentFilterForm').submit();
+        });
+
+        $(document).on('click', 'a#modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var AgentId = $.trim($(parentRow).find('input.hdnAgentID').val());
+            AgentId = parseInt(AgentId);
+            $.ajax({
+                url: BASE_URL + 'HelpdeskAgent/AgentInfoEventLog',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'AgentId': AgentId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.agent-diary-number').attr('data-diary-no'));
+            var agentName = $.trim($(parentRow).find('td.agent-name').attr('data-agent-name'));
+            $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + agentName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+    });
+
+
+    $(document).on('show.bs.modal', '.modal', function () {
+        var zIndex = 1050 + (10 * $('.modal:visible').length);
+
+        $(this).css('z-index', zIndex);
+
+        setTimeout(function () {
+            $('.modal-backdrop')
+                .not('.modal-stack')
+                .css('z-index', zIndex - 1)
+                .addClass('modal-stack');
+        }, 0);
+    });
+
+    $('body').on('hidden.bs.modal', '.modal', function () {
+        if ($('.modal:visible').length) {
+            $('body').addClass('modal-open');
+        }
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Color Code</b><br/> <i class="fa fa-check-square" style="color:yellow"></i> Pending RERA registration number (web-portal) and registration upto date.<br/> <i class="fa fa-check-square" style="color:#BCECAC"></i> RERA registered real estate agents (web-portal).',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+
+<script>
+    var searchTable = null;
+
+    function destroySearchTable() {
+        if (searchTable) {
+            searchTable.clear().destroy();
+            searchTable = null;
+        } else if ($.fn.DataTable.isDataTable('#searchResultsTable')) {
+            $('#searchResultsTable').DataTable().clear().destroy();
+        }
+    }
+
+    function initSearchTable() {
+        destroySearchTable();
+
+        searchTable = $('#searchResultsTable').DataTable({
+            pageLength: 10,
+            searching: true,
+            paging: true,
+            info: true,
+            ordering: true,
+            autoWidth: false,
+            scrollX: true,
+            scrollCollapse: true,
+            language: {
+                emptyTable: "No data available"
+            },
+            columnDefs: [
+                { orderable: false, targets: [9, 10, 11] }
+            ]
+        });
+
+        searchTable.columns.adjust().draw(false);
+    }
+
+    function performSearch() {
+        var searchType = $('#searchType').val();
+        var searchNumber = $.trim($('#searchNumber').val());
+
+        if (searchNumber === '') {
+            alert('Please enter a value.');
+            return;
+        }
+
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $.ajax({
+            url: BASE_URL + "HelpdeskAgent/AgentInfoDeskRegRERAnumberDetailsss",
+            type: 'POST',
+            data: {
+                searchType: searchType,
+                searchNumber: searchNumber
+            },
+            beforeSend: function () {
+                startPreloader();
+            },
+            success: function (res) {
+                stopPreloader();
+
+                destroySearchTable();
+
+                // Replace old rows completely
+                $('#searchResultsTable tbody').empty().html(res);
+
+                // Rebuild DataTable with fresh data
+                initSearchTable();
+            },
+            error: function () {
+                stopPreloader();
+                alert('Search failed.');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        $(document).on('click', '#btnSearchNumber', function () {
+            initSearchTable();
+
+            $('#searchNumberModal').modal('show');
+
+            setTimeout(function () {
+                $('#searchNumber').focus();
+            }, 200);
+        });
+
+        $(document).on('shown.bs.modal', '#searchNumberModal', function () {
+            if ($.fn.DataTable.isDataTable('#searchResultsTable')) {
+                $('#searchResultsTable').DataTable().columns.adjust().draw(false);
+            }
+        });
+
+        $(document).on('click', '#btnDoSearch', function () {
+            performSearch();
+        });
+
+        $(document).on('keydown', '#searchNumber', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+
+        $(document).on('change', '#searchType', function () {
+            var type = $(this).val();
+            var placeholder = 'Enter value';
+
+            if (type === 'diary') placeholder = 'Enter Diary Number';
+            else if (type === 'rera') placeholder = 'Enter RERA Number';
+            else if (type === 'name') placeholder = 'Enter Agent Name';
+            else if (type === 'district') placeholder = 'Enter District';
+
+            $('#searchNumber').attr('placeholder', placeholder);
+        });
+
+        $(document).on('hidden.bs.modal', '#searchNumberModal', function () {
+            $('#searchNumber').val('');
+            $('#searchResultsTable tbody').empty();
+            destroySearchTable();
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">List of Real Estate Agents : RERA Number Registration(s) and Certificate(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    List of Real Estate Agents : RERA Number Registration(s) and Certificate(s) Details
+                    <div class="pull-right header-actions">
+                        <div class="filter-summary" id="filterSummaryTrigger">
+                            @*title="Select Date Range"*@
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            <span id="filterSummaryText"></span>
+                            <i class="fa fa-chevron-down summary-caret" aria-hidden="true"></i>
+                        </div>
+
+                        @*<div id="filterPanel" class="filter-panel">*@
+
+                        <div id="filterPanel" class="filter-panel" style="display:none !important;">
+                            @using (Html.BeginForm("AgentInfoDeskRegRERAnumberDetails", "HelpdeskAgent", FormMethod.Post, new { id = "publicViewAgentFilterForm" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" id="filterType" name="filterType" value="daterange" />
+                                <input type="hidden" id="approvalYear" name="approvalyear" value="@ViewBag.SelectedApprovalYear" />
+                                <input type="hidden" id="selectedRangeLabel" name="rangelabel" value="@ViewBag.SelectedRangeLabel" />
+                                <input type="hidden" id="fromDate" name="fromDate" value="@ViewBag.FromDate" />
+                                <input type="hidden" id="toDate" name="toDate" value="@ViewBag.ToDate" />
+
+                                <div class="filter-section">
+                                    <label>Select Date Range</label>
+                                    <div id="dateRangeWrapper" style="display:none;">
+                                        <input type="text" id="customDateRangePicker" class="form-control input-sm" placeholder="Select Date Range" readonly />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <button type="button" id="btnSearchNumber" class="btn btn-outline btn-primary btn-xs" title="Search Project">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i> </span></a>
+                    </div>
+
+
+
+
+
+
+
+                    @*<span class="pull-right">
+                            <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+                            <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                        </span>*@
+                    @*<div class="pull-right header-actions">
+                            <div class="filter-summary">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                <span id="filterSummaryText"></span>
+                            </div>
+                            <button id="filterToggleBtn" class="btn btn-outline btn-primary btn-xs" title="Filter">
+                                <i class="fa fa-filter"></i>
+                            </button>
+
+                            <div id="filterPanel" class="filter-panel">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { id = "" }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden" id="filterType" name="filterType" value="year" />
+                                    <input type="hidden" id="selectedRangeLabel" name="rangelabel" value="@ViewBag.SelectedRangeLabel" />
+                                    <input type="hidden" id="fromDate" name="fromDate" value="@ViewBag.FromDate" />
+                                    <input type="hidden" id="toDate" name="toDate" value="@ViewBag.ToDate" />
+
+                                    <div class="filter-section">
+                                        <label>Select Option:</label>
+                                        <label>
+                                            <input type="radio" name="filterMode" value="year" checked> Year
+                                        </label>
+                                        <div id="yearWrapper">
+                                            @Html.DropDownList("approvalYear", new SelectList(ViewBag.Years, "Value", "Text", ViewBag.SelectedApprovalYear), new { @class = "form-control input-sm" })
+                                        </div>
+                                    </div>
+
+                                    <div class="filter-section">
+                                        <label>
+                                            <input type="radio" name="filterMode" value="date"> Date Range
+                                        </label>
+                                        <div id="dateRangeWrapper" style="display:none;">
+                                            <input type="text" id="customDateRangePicker" class="form-control input-sm" placeholder="Select Date Range" readonly />
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+                            <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i> </span></a>
+                        </div>*@
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.DisplayName("SNo")</th>
+                                            <th>@Html.DisplayNameFor(model => model.AgentRegDiaryNumber_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Agent_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Agent_AddressDistrictName)</th>
+                                            <th>@Html.DisplayName("RERA Number")</th>
+                                            <th>@Html.DisplayName("Issue Date")</th>
+                                            <th>@Html.DisplayName("Registration Upto Date")</th>
+                                            <th>@Html.DisplayName("Last Modified Date")</th>
+                                            <th>@Html.DisplayName("View Status")</th>
+                                            <th>@Html.DisplayName("View Certificate")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int sno = 0;
+                                        }
+                                        @foreach (var item in Model.prpongoing)
+                                        {
+                                            {
+                                                sno = sno + 1;
+                                            }
+                                            <tr class="odd gradeX">
+                                                <td>@Html.DisplayName(sno.ToString())</td>
+                                                <td class="agent-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.AgentRegDiaryNumber_Name)">@Html.DisplayFor(modelItem => item.AgentRegDiaryNumber_Name)</td>
+                                                <td class="agent-name" data-agent-name="@Html.DisplayFor(modelItem => item.Agent_Name)">@Html.DisplayFor(modelItem => item.Agent_Name)</td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Agent_AddressDistrictName)
+                                                    @Html.HiddenFor(modelItem => item.Agent_ID, new { @class = "hdnAgentID" })
+                                                </td>
+                                                @if (item.RERAnumberRegistration.ToString() == "NA")
+                                                {
+                                                    <td class="warning" title="Pending registration number (web-portal) with registration upto date.">@Html.DisplayName("--")</td>
+                                                    <td class="warning" title="Pending registration number (web-portal) with registration upto date.">@Html.DisplayName("--")</td>
+                                                    <td class="warning" title="Pending registration number (web-portal) with registration upto date.">@Html.DisplayName("--")</td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="success" title="RERA registered real estate agents (web-portal)">@Html.DisplayFor(modelItem => item.RERAnumberRegistration)</td>
+                                                    <td class="success" title="RERA registered real estate agents (web-portal)">@Html.DisplayFor(modelItem => item.RERAnumberIssueDate)</td>
+                                                    <td class="success" title="RERA registered real estate agents (web-portal)">@Html.DisplayFor(modelItem => item.RERAnumberRegUptoDate)</td>
+                                                }
+                                                <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+                                                <td class="center">
+                                                    <a id="modalOpenerButton" href="javascript:void(0);"><i class="fa fa-eye"></i></a>
+                                                </td>
+                                                @if (item.AgentRERAcert_FilePath.ToString() == string.Empty)
+                                                {
+                                                    <td class="center">
+                                                        @Html.DisplayName("--")
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="center">
+                                                        <a href="~/@Html.DisplayFor(modelItem => item.AgentRERAcert_FilePath)@Html.DisplayFor(modelItem => item.AgentRERAcert_FileName)" target="_blank"><i class="fa fa-external-link-square"></i></a>
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*SEARCH MODAL*@
+<div class="modal fade" id="searchNumberModal" tabindex="-1" role="dialog" aria-labelledby="searchNumberModalLabel">
+    @*<div class="modal-dialog modal-lg" role="document">*@
+    <div class="modal-dialog search-modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="searchNumberModalLabel">Search Project</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-inline" style="margin-bottom:20px;">
+                    <select id="searchType" class="form-control input-sm" style="min-width:180px;">
+                        <option value="diary">Diary Number</option>
+                        <option value="rera">RERA Number</option>
+                        <option value="name">Agent Name</option>
+                        <option value="district">District</option>
+                    </select>
+                    <div class="input-group input-group-sm" style="width:320px;">
+                        <input type="text" id="searchNumber" class="form-control" placeholder="Enter Diary Number" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                        <span class="input-group-btn">
+                            <button type="button" id="btnDoSearch" class="btn btn-primary">
+                                @*<i class="fa fa-search"></i>*@ Search
+                            </button>
+                        </span>
+
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="searchResultsTable" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>SNo</th>
+                                <th>Diary Number</th>
+                                <th>Real Estate Agent Name</th>
+                                <th>District</th>
+                                <th>RERA Number</th>
+                                <th>Issue Date</th>
+                                <th>Registration Upto Date</th>
+                                <th>Last Modified Date</th>
+                                <th>View Status</th>
+                                <th>View Certificate</th>
+                                <th>View Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet"></link>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+}

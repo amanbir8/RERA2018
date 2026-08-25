@@ -1,0 +1,888 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_Project_ConstructionStatusPhotographs
+
+<!--file upload Content-->
+<script src="@Url.Content("~/Scripts/jquery.form.js")"></script>
+<link href="@Url.Content("~/css/jquery-ui-fileupload.css")" rel="stylesheet" />
+<!--calander display Content-->
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<style>
+    .progress {
+        position: relative;
+        width: 400px;
+        border: 1px solid #ddd;
+        padding: 1px;
+    }
+
+    .progress-bar {
+        width: 0px;
+        height: 20px;
+        background-color: #57be65;
+    }
+
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+
+
+<script type="text/javascript">
+        
+    function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                $('#user_Photo').attr('src', e.target.result);
+            }
+            filerdr.readAsDataURL(input.files[0]);
+            //$(':input[type="submit"]').prop('disabled', false);
+            //$('#Create').prop('disabled', false);
+        }
+    }
+
+    </script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var drpYearText = $(document).find("select#drpQYear").val();
+        var drpQuarterText = $(document).find("select#drpQName").val();
+
+        $("#hdnQYear").val(drpYearText);
+        $("#hdnQName").val(drpQuarterText);
+
+        $('#drpQYear').attr('disabled', true);
+        $('#drpQName').attr('disabled', true);
+        //$('#A_column').attr('readonly', false);
+        //$('#B_column').attr('readonly', true);
+
+
+        $(document).on('click', '#BtnDrp', function (e) {
+            e.preventDefault();
+            var proceedButton = $(this);
+            var drpText = $(document).find("select#ProjectPhotographsRelated_Project_ID").val();
+            //alert(drpText)
+            if ($.trim(drpText) == "") {
+                alert("Please select the Project")
+                // $("#idMainForm").hide();
+            }
+            else {
+                $("#idMainForm").show();
+                $(proceedButton).parents('form').submit();
+            }
+        });
+
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            var drpText = $(document).find("select#ProjectPhotographsRelated_Project_ID").val();
+            if ($.trim(drpText) == "") {
+                alert("Please select the Project")
+                //$("#idMainForm").hide();
+                drpText = "";
+                return false;
+            }
+            else {
+                $(submitButton).parents('form').submit();
+                // $("#idMainForm").show();
+            }
+
+
+        });
+    });
+</script>
+<script>
+   //    $(function () {
+   //        var startYear = 2001;
+   //        var endYear = 2050;
+   //        var defaultValue = 'select'
+   //        $('#B_column').append('<option value="' + defaultValue + '">' + defaultValue + '</option>');
+   //        for (var i = startYear; i <= endYear; i++)
+   //            $('#B_column').append('<option value="' + i + '">' + i + '</option>');
+
+
+   //});
+</script>
+<script>
+          $(
+        function ()
+        {
+            $('#Photographs_ClickDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        });
+</script>
+<script type="text/javascript">
+    $(document).ready(
+        function () {
+
+            //$('[data-toggle="tooltip"]').tooltip({
+            //    // template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="custom-tooltip-inner"></div></div>',
+            //    // title: this.title
+            //});           
+
+
+            if ($('input[name=TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code]:checked').val() === "2") {
+                $('#getBTBconstructionInfo').show();
+                //$('#Past_Exp_Punjab').focus();
+            }
+            else {               
+                $('#getBTBconstructionInfo').hide();
+            }
+
+
+            $('input[name=TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code]').click(function () {
+
+                if ($('input[name=TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code]:checked').val() == "1") {
+                    $('#getFileTypeSizeAInfo').show();
+                    $('#getFileTypeSizeBInfo').hide();
+                    $('#getFileTypeSizeCInfo').hide();
+                }
+                if ($('input[name=TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code]:checked').val() == "2") {
+                    $('#getFileTypeSizeAInfo').hide();
+                    $('#getFileTypeSizeBInfo').show();
+                    $('#getFileTypeSizeCInfo').hide();
+                }
+                if ($('input[name=TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code]:checked').val() == "3") {
+                    $('#getFileTypeSizeAInfo').hide();
+                    $('#getFileTypeSizeBInfo').hide();
+                    $('#getFileTypeSizeCInfo').show();
+                }
+
+                if ($('input[name=TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code]:checked').val() == "2") {
+                    $('#getBTBconstructionInfo').show();
+                    $("#getIFconstructionNAInfo").hide();
+                    $('#BuildingTowerBlock_InfoCode').attr('disabled', false);
+                    $('#BuildingTowerBlock_FloorsNumber').attr('disabled', false);
+                    $('#BuildingTowerBlock_PhotographType').attr('disabled', false);
+
+                    //$('#Past_Exp_Punjab').focus();
+
+                    //$("#Past_Exp_Punjab").val("0");
+                    //$('#Past_Exp_Other_States').val("0");
+
+                    //$('#Ind_Org_CompltdProj_FiveYrs').val("0");
+                    //$('#Ind_Org_TotalArea_Constructed').val("0");
+
+                    //$('#Ind_Org_OngoingProjects').val("0");
+                    //$('#Ind_Org_AreaToBe_Constructed').val("0");
+                    //$('#show').hide();
+                    //$('#show1').hide();
+                    //$('#show2').hide();
+
+                    $('#BuildingTowerBlock_InfoCode').empty();
+                    var baseUrl = $('body').attr('data-base-url');
+                    $.ajax({
+                        type: "POST",
+                        url: baseUrl + "Project/GetBuildingTowerBlockByProjectId",
+                        datatype: "Json",
+                        data: { projectid: $('#ProjectPhotographsRelated_Project_ID').val() },
+                        success: function (data) {
+                            if (data.length > 0) {
+                                $('#getBTBconstructionNAInfo').hide();
+
+                                $.each(data, function (index, value) {
+                                    $('#BuildingTowerBlock_InfoCode').append('<option value="' + value.ProjectConstruction_ID + '">' + value.BuildingTowerBlock_Name + '</option>');
+                                });
+                            } else {
+                                $('#getBTBconstructionInfo').show();
+                                $("#showFileInfo").hide();
+                                $('#BuildingTowerBlock_InfoCode').attr('disabled', true);
+                                $('#BuildingTowerBlock_FloorsNumber').attr('disabled', true);
+                                $('#BuildingTowerBlock_PhotographType').attr('disabled', true);
+
+                                $('#getBTBconstructionNAInfo').show();
+                            };                            
+                        }
+                    });
+                }
+                else {
+                    $('#getBTBconstructionInfo').hide();
+                    $('#getBTBconstructionNAInfo').hide();
+                }
+            });
+        });
+</script>
+
+<script>
+    function singleFileSelected() {
+        //var selectedFile = evt.target.files can use this  or select input file element
+        //and access it's files object
+        //debugger;
+        var baseUrl = $('body').attr('data-base-url');
+        $(".InfoContainer").fadeIn();
+        var selectedFile = ($("#UploadedFile"))[0].files[0];//FileControl.files[0];
+        if (selectedFile) {
+            var FileSize = 0;
+            var imageType = /image.*/;
+            if (selectedFile.size > 1048576) {
+                FileSize = Math.round(selectedFile.size * 100 / 1048576) / 100 + " MB";
+            }
+            else if (selectedFile.size > 1024) {
+                FileSize = Math.round(selectedFile.size * 100 / 1024) / 100 + " KB";
+            }
+            else {
+                FileSize = selectedFile.size + " Bytes";
+            }
+            // here we will add the code of thumbnail preview of upload images
+
+            $("#showFileInfoGrid").show();
+            $("#FileName").text("Name : " + selectedFile.name);
+            $("#FileType").text("Type : " + selectedFile.type);
+            $("#FileSize").text("Size : " + FileSize);
+
+            $("#showSaveFileUploadMessage").hide();
+
+
+            if (selectedFile.type.match(imageType)) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = reader.result;
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "100";
+                    img.width = "100";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(100);
+                    $("#Imagecontainer").width(100);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+            if (selectedFile.type.match('application/pdf')) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+
+                    $("#Imagecontainer").empty();
+                    var dataURL = baseUrl + 'images/pdf.png';
+                    var img = new Image()
+                    img.src = dataURL;
+                    img.height = "35";
+                    img.width = "35";
+                    img.className = "thumb";
+                    $("#Imagecontainer").append(img);
+                    $("#Imagecontainer").height(35);
+                    $("#Imagecontainer").width(35);
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+    }
+</script>
+<script type="text/javascript">
+
+    $(function () {
+        $("#FormUpload").submit(function (event) {
+            //debugger;
+            var form = $('#FormUpload')[0];
+
+                //var dataString = new FormData(form);
+                var baseUrl = $('body').attr('data-base-url');
+                var files = ($("#UploadedFile"))[0].files[0];//FileControl.files[0];
+
+                if (typeof files === 'undefined') {
+                    $("#showSaveFileUploadMessage").show();
+                    $("#saveFileUploadMessageName").text("Note : Please Add files... to Upload!");
+                    //alert('Please Add file(s) to Upload!');
+                    return false;
+                }
+                //var files = $("#FileUpload1")[0].files;
+                if (files.size > 0) {
+                    var formData = new FormData(form);
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append(files[i].name, files[i]);
+                    }
+
+                    var progressbarLabel = $('#progressBar-label');
+                    var progressbarDiv = $('#progressbar');
+
+                    $.ajax({
+                        url: baseUrl + 'Project/FormPhotographUpload',
+                        method: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            //alert(data.status);
+                            if (data.statusCode == 101)
+                            {
+                                progressbarLabel.text('COMPLETE');
+                                progressbarDiv.fadeOut(2000);
+                                $(".InfoContainer").fadeOut(2000);
+                                $("#showFileInfo").fadeOut(2500);
+                                //unfill controls
+                                $("#BuildingTowerBlock_FloorsNumber").val('0');
+                                $("#Photographs_Title").val('');
+                                $("#Remarks_IfAny").val('');
+                            }
+                            else
+                            {
+                                progressbarLabel.text('Bad Request! Upload Failed');
+                                progressbarDiv.fadeOut(2000);
+
+                                $("#showSaveFileUploadMessage").show();
+                                $("#saveFileUploadMessageName").text("Note : " + data.status);
+                            }
+
+                        },
+                        failure: function(data) {
+                            alert('Bad Request! Upload Failed');
+                        },
+                        error: function (err) {
+                            //alert(err.message);
+                            alert('Bad Request! Upload Failed');
+                            //alert(err.statusText);
+                        }
+                    });
+
+                    progressbarLabel.text('UPLOADING ...');
+                    progressbarDiv.progressbar({
+                        value: false
+                    }).fadeIn(500);
+
+
+                    $("#showSaveFileUploadMessage").hide();
+                }
+
+                return false;
+        });
+
+        $('input[name=TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code]').change(function () {
+            $("#showFileInfo").show();
+            //debugger;
+            $('#TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Name').empty();            
+            if ($("#chkone").is(":checked")) {
+                $("input[name='TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Name']").val('Advertisement and Brochure/ Prospectus');
+                $("#getIFconstructionNAInfo").hide();
+            }
+            if ($("#chktwo").is(":checked")) {
+                $("input[name='TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Name']").val('Building/ Tower/ Block Construction');
+                $("#getIFconstructionNAInfo").hide();
+            }
+            if ($("#chkthree").is(":checked")) {
+                $("input[name='TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Name']").val('Internal Infrastructure and Common Areas');
+                $("#getIFconstructionNAInfo").show();
+            }                   
+
+            //// to add multiple image - need Add More Button Option
+        });
+
+        //$('#PromoterDoc_InfoCode').change(function () {
+
+        //    //$('#OfficialComm_AddressDistrictCode').empty();
+        //    //$('#getDocFileInfo').fadeIn();
+        //    var baseUrl = $('body').attr('data-base-url');
+        //    //debugger;
+        //    $.ajax({
+        //        type: "POST",
+        //        url: baseUrl + "PromoterDocument/GetPromoterDocumentMasterByDocId",
+        //        datatype: "Json",
+        //        data: { DocId: $('#PromoterDoc_InfoCode').val() },
+        //        success: function (data) {
+        //            $.each(data, function (index, value) {
+        //                $('#getDocFileInfo').show();
+
+        //                //$('#DocName').text("File Name : " + value.PromoterDocMaster_InfoName);
+        //                $('#DocFileFormat').text("File Format : " + value.PromoterDoc_SetFileFormat);
+
+        //                var ofilesize = 0;
+        //                if (value.PromoterDoc_SetFileSize > 1048576) {
+        //                    ofilesize = Math.round(value.PromoterDoc_SetFileSize * 100 / 1048576) / 100 + " MB";
+        //                }
+        //                else if (value.PromoterDoc_SetFileSize > 1024) {
+        //                    ofilesize = Math.round(value.PromoterDoc_SetFileSize * 100 / 1024) / 100 + " KB";
+        //                }
+        //                else {
+        //                    ofilesize = value.PromoterDoc_SetFileSize + " Bytes";
+        //                }
+
+        //                $('#DocFileSize').text("File Size : " + ofilesize);
+        //                if (value.IsMandatory == 1)
+        //                {
+        //                    $('#DocFileMandatoryStatus').text("File Status : This document is mandatory file for promoter registration/upload.");
+        //                }
+        //                else
+        //                {
+        //                    $('#DocFileMandatoryStatus').text("File Status : This document is optional file to upload.");
+        //                }
+        //                $('#DocFileDiscription').text("Description : " + value.A_column);
+
+        //                //value.PromoterDoc_IsGroup == 1
+        //                //var num = typeof value.PromoterDoc_IsGroup;
+        //                //var ofilegroupsize = num.toString();
+        //                //$('#DocFileGroupSize').text("File Limits : Max. Number of Files limited to " + ofilegroupsize + " file(s) only.");
+
+
+        //                //$('#OfficialComm_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+        //            });
+        //        }
+        //    });
+        //});
+
+        $('#BuildingTowerBlock_InfoCode').change(function () {
+            $('#BuildingTowerBlock_InfoName').empty();
+            $("input[name='BuildingTowerBlock_InfoName']").val($("#BuildingTowerBlock_InfoCode option:selected").text());
+        });
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [4, 5]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project Update (Quarterly): Project Construction Status Photograph(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Photograph(s) of Construction Status of Building/ Tower/ Block/ Internal Infrastructure/Common Areas Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm("DropdownlistProject_ProjectPhotographsDetails", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Project</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label">Select Project</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.DropDownListFor(m => m.ProjectPhotographsRelated_Project_ID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "Select Project", new { @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            }
+                            <div @if (Session["Project_id"] != null) { @Html.Raw("style=''")         } else { @Html.Raw("style='display: none;'")         }>
+                                @using (Html.BeginForm("FormPhotographUpload", "Project", FormMethod.Post, new { enctype = "multipart/form-data", @id = "FormUpload" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(model => model.ProjectPhotographs_IndexID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.HiddenFor(model => model.ProjectPhotographs_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.HiddenFor(model => model.ProjectPhotographsRelated_Project_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @Html.HiddenFor(model => model.Promoter_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    @*@Html.DropDownListFor(m => m.ProjectConstructionRelated_ProjectRegistration_ID, new SelectList(ViewBag.list, "ProjectRegistration_ID", "Project_Name"), "Select Project",new { @class = "form-control" })*@
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Select Quarterly Update Option</legend>
+
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Select Year</label>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @*@Html.DropDownListFor(model => model.B_column, new SelectList(""), new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })*@
+                                                                @if (@TempData["CurrentYears"] != null)
+                                                                {
+                                                                    @Html.DropDownListFor(model => model.B_column, new SelectList(ViewBag.Years, "Text", "Value", TempData["CurrentYears"]), new { @id = "drpQYear", @class = "form-control" })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DropDownListFor(model => model.B_column, new SelectList(ViewBag.Years, "Text", "Value"), new { @id = "drpQYear", @class = "form-control" })//, @disabled = "disabled"
+                                                                }
+                                                                @Html.HiddenFor(model => model.B_column, new { id = "hdnQYear" })
+                                                                @Html.ValidationMessageFor(model => model.B_column, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label class="control-label mand">Select Quarter</label>
+                                                                @{var listItems1 = new List<SelectListItem>
+                                                                    {
+
+                                                                       // new SelectListItem {  Text = "..." , Value=""  },
+                                                                        new SelectListItem {  Text = "Registration Process" , Value="Registration Process"  },
+                                                                        new SelectListItem {  Text = "First Quarter" , Value="First Quarter"  },
+                                                                         new SelectListItem {  Text = "Second Quarter" , Value="Second Quarter"  },
+                                                                         new SelectListItem {  Text = "Third Quarter" , Value="Third Quarter"  },
+                                                                         new SelectListItem {  Text = "Fourth Quarter" , Value="Fourth Quarter"  },
+                                                                    };
+                                                                }
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.HiddenFor(model => model.A_column, new { id = "hdnQName" })
+                                                                @Html.DropDownListFor(model => model.A_column, new SelectList(listItems1, "Value", "Text"), new { @id = "drpQName", @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Construction Status Details</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code, htmlAttributes: new { @class = "control-label mand" })
+                                                                @Html.HiddenFor(model => model.TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Name, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-9">
+                                                                <label class="form-group">
+                                                                    @Html.RadioButtonFor(model => model.TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code, "1", htmlAttributes: new { @id = "chkone" }) Advertisement and Brochure/ Prospectus
+                                                                    @Html.RadioButtonFor(model => model.TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code, "2", htmlAttributes: new { @id = "chktwo" }) Building/ Tower/ Block Construction
+                                                                    @Html.RadioButtonFor(model => model.TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Code, "3", htmlAttributes: new { @id = "chkthree" }) Internal Infrastructure and Common Areas
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="getFileTypeSizeAInfo" style="display:none">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="help-block col-md-offset-3 col-md-9">
+                                                                    (i) File Type : .PDF  , (ii) File Size : 1MB.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="getFileTypeSizeBInfo" style="display:none">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="help-block col-md-offset-3 col-md-9">
+                                                                    (i) File Type : .JPG/.JPEG  , (ii) File Size : 1MB.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="getFileTypeSizeCInfo" style="display:none">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="help-block col-md-offset-3 col-md-9">
+                                                                    (i) File Type : .JPG/.JPEG  , (ii) File Size : 1MB.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="getBTBconstructionNAInfo" style="display:none">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="help-block col-md-offset-3 col-md-9">
+                                                                    No record(s) found. Please add Building/Tower/Block construction details.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="getIFconstructionNAInfo" style="display:none">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="help-block col-md-offset-3 col-md-9">
+                                                                    Photograph(s) of Construction Status of Internal Infrastructure and Common Areas
+                                                                    <br /><br />
+                                                                    In case of Group Housing or Building/ Tower Development – photographs of construction status of common areas like Gym/ Club House/ Swimming Pool/ Play Area/ Parks is to be provided. In case of Plotted development photographs of construction status of common areas like – parks/ internal roads is to be provided.
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="getBTBconstructionInfo" style="display:none">
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => model.BuildingTowerBlock_InfoCode, htmlAttributes: new { @class = "control-label mand" })
+                                                                    @Html.HiddenFor(model => model.BuildingTowerBlock_InfoName, htmlAttributes: new { @class = "control-label" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @if (Model.MasterBuilding != null)
+                                                                    {
+                                                                        @Html.DropDownListFor(model => model.BuildingTowerBlock_InfoCode, new SelectList(Model.MasterBuilding, "ProjectConstruction_ID", "BuildingTowerBlock_Name"), "Select", new { @class = "form-control" })
+                                                                        @*@Html.DropDownListFor(model => model.Bank_AddressDistrictCode, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })*@
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DropDownListFor(model => model.BuildingTowerBlock_InfoCode, new SelectList(" "), "Select", new { @class = "form-control" })
+                                                                    }
+                                                                    @*@Html.EditorFor(model => model.BuildingTowerBlock_InfoCode, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                                    @Html.ValidationMessageFor(model => model.BuildingTowerBlock_InfoCode, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="form-group">
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => model.BuildingTowerBlock_FloorsNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.EditorFor(model => model.BuildingTowerBlock_FloorsNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                    @Html.ValidationMessageFor(model => model.BuildingTowerBlock_FloorsNumber, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.LabelFor(model => model.BuildingTowerBlock_PhotographType, htmlAttributes: new { @class = "control-label mand" })
+                                                                    @{var listItemsPhotographType = new List<SelectListItem>
+                                                                    {
+
+                                                                        new SelectListItem {  Text = "..." , Value=""  },
+                                                                        new SelectListItem {  Text = "Floor Plan" , Value="Floor Plan"  },
+                                                                        new SelectListItem {  Text = "Floor Constructed" , Value="Floor Constructed"  },
+                                                                    };
+                                                                    }
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @Html.DropDownListFor(model => model.BuildingTowerBlock_PhotographType, new SelectList(listItemsPhotographType, "Value", "Text"), new { @class = "form-control" })
+                                                                    @Html.ValidationMessageFor(model => model.BuildingTowerBlock_PhotographType, "", new { @class = "text-danger" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Photographs_Title, htmlAttributes: new { @class = "control-label mand" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.Photographs_Title, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.Photographs_Title, "", new { @class = "text-danger" })
+                                                            </div>
+                                                            @*<div class="col-md-3">
+                                            @Html.LabelFor(model => model.Photographs_ClickDate, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.EditorFor(model => model.Photographs_ClickDate, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Photographs_ClickDate, "", new { @class = "text-danger" })
+                                        </div>*@
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3">
+                                                                @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                                @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="showFileInfo" style="display:none">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <fieldset class="col-md-12">
+                                                    <legend class="my">Upload Photograph(s) of Construction Status Details</legend>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3"></div>
+                                                            <div class="col-md-9" id="FormContent">
+                                                                <span class="btn btn-success fileinput-button">
+                                                                    <i class="glyphicon glyphicon-plus"></i>
+                                                                    <span>Add files...</span>
+                                                                    <input type="file" name="UploadedFile" id="UploadedFile" onchange="singleFileSelected()" />
+                                                                </span>
+                                                                <button class="btn btn-outline btn-primary" type="submit" value="submit" id="Submit_btn">
+                                                                    <i class="glyphicon glyphicon-upload"></i>
+                                                                    <span>Start upload</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" id="showFileInfoGrid" style="display:none">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3"></div>
+                                                            <div class="col-md-9">
+                                                                <div class="InfoContainer">
+                                                                    <div id="Imagecontainer" style="height:100px;width:100px"></div>
+                                                                    <div id="FileName" class="info"></div>
+                                                                    <div id="FileType" class="info"></div>
+                                                                    <div id="FileSize" class="info"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-3"></div>
+                                                            <div class="col-md-6">
+                                                                <div id="progressbar" style="position: relative; display: none">
+                                                                    <span style="position: absolute; left: 35%; top: 20%" id="progressBar-label">
+                                                                        UPLOADING ...
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" id="showSaveFileUploadMessage" style="display: none">
+                                                        <div class="form-group">
+                                                            <div class="col-md-offset-3 col-md-6 alert alert-warning">
+                                                                <div id="saveFileUploadMessageName" class="info">HH</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                }
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @Html.ActionLink("Back to List (View Documents)", "Create_PhotographDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "Create_PhotographDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                        <thead>
+                                            <tr>
+                                                @*<th>
+                                @Html.Label("Construction Title", htmlAttributes: new { @class = "control-label" })
+                            </th>*@
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.BuildingTowerBlock_InfoName)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Description, If Any")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.Photographs_Title)
+                                                </th>
+                                                @*<th>
+                                @Html.DisplayNameFor(model => model.Photographs_ClickDate)
+                            </th>*@
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.Remarks_IfAny)
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("View")
+                                                </th>
+                                                <th>
+                                                    @Html.DisplayName("Delete")
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.prpongoing)
+                                        {
+                                            <tr>
+                                                @*<td>
+
+
+                                @if (item.BuildingTowerBlock_InfoName != String.Empty)
+                                {
+                                    @Html.Label("Construction: ", htmlAttributes: new { @class = "control-label" })
+                                    @Html.DisplayFor(modelItem => item.BuildingTowerBlock_InfoName)
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => item.TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Name)
+                                }
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Photographs_Title)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Photographs_ClickDate)
+                                @Html.Label("(", htmlAttributes: new { @class = "control-label" })
+                                @Html.DisplayFor(modelItem => item.B_column)
+                                @Html.Label(")", htmlAttributes: new { @class = "control-label" })
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                            </td>*@
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.TypeRelated_BuildingTowerBlock_ComArea_AdvtProspectus_Name)
+                                                </td>
+                                                <td>
+                                                    @if (item.BuildingTowerBlock_PhotographType != String.Empty)
+                                                    {
+                                                        if (item.BuildingTowerBlock_InfoName != String.Empty)
+                                                        {
+                                                @Html.DisplayFor(modelItem => item.BuildingTowerBlock_InfoName)
+                                                @Html.DisplayName(", ")
+                                                        }
+                                                @Html.DisplayName("Floor: ")
+                                                @Html.DisplayFor(modelItem => item.BuildingTowerBlock_FloorsNumber)
+                                                @Html.DisplayName(", ")
+                                                @Html.DisplayFor(modelItem => item.BuildingTowerBlock_PhotographType)
+                                                    }
+                                                    else
+                                                    {
+                                                @Html.DisplayName("NA")
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Photographs_Title)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                                </td>
+                                                <td align="center">
+                                                    <a href="~/@Html.DisplayFor(modelItem => item.Photographs_FilePath)" target="_blank" title="View"><i class="fa fa-external-link-square"></i></a>
+                                                </td>
+                                                <td align="center">
+                                                    @if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                    {
+                                                        @("--")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.ActionLink(" ", "Delete_PhotographDetails", new { inProjectPhotographs_IndexID = item.ProjectPhotographs_IndexID, inProjectPhotographs_ID = item.ProjectPhotographs_ID, inProject_ID = item.ProjectPhotographsRelated_Project_ID }, new { onclick = "return confirm('Do you want to delete?');", @class = "fa fa-remove fa-lg", @title = "Delete" })
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                                        </div>
+                                        <!-- /.row (nested) -->
+                                    </div>
+            <!-- /.panel-body -->
+                                </div>
+                    <!-- /.panel -->
+                        </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+    <!-- /.wrapper -->
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+
+        <!-- Metis Menu Plugin JavaScript -->
+        <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    }

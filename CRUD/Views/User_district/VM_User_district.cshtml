@@ -1,0 +1,83 @@
+﻿@model CRUD.Models.VM_User_Dist
+
+@{
+    Layout = null;
+}
+
+ 
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Bind DropdownList Details</title>
+</head>
+<body>
+    
+   <div><table>
+     
+        <tr> 
+            Select User: @Html.DropDownListFor(m => Model.district, new SelectList(Model.district, "DistrictId", "DistrictName"), "Select User")
+
+
+            
+
+        </tr>
+     </table> 
+</div>
+    <div><table>
+    @foreach (var item in Model.user)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Education)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+
+        </tr>
+    }
+</table>
+</div>
+   @* <div><table>
+        <tr>
+            <td>
+                @Html.DisplayFor(m => m.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(m => m.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(m => m.Location)
+            </td>
+
+        </tr>
+    </table>
+        </div>
+
+             <tr>
+                    <td>
+                        @Html.DisplayFor(m => m.UserId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => m.UserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => m.Location)
+                    </td>
+
+                </tr>*@
+        @*<div>
+
+                Select User: @Html.DropDownListFor(m => m.district, new SelectList(Model.district, "distrcitId", "districtName"), "Select User")
+            </div>*@
+</body>
+</html>
+

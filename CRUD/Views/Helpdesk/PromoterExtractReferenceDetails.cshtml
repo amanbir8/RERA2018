@@ -1,0 +1,40 @@
+﻿@model CRUD.Models.HelpDesk.Clsprp_AuthorityDesk_PromoterCoPromoterDetails
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.CoPromoter_RegDiaryNumber_Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.Link_RegDiaryNumber_Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.CoPromoterType_Flag)</th>
+                        <th>@Html.DisplayNameFor(model => model.RemarksIfAny)</th>                       
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.prpCoPromoters)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.CoPromoter_RegDiaryNumber_Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Link_RegDiaryNumber_Name)</td>                            
+                            @if (item.CoPromoterType_Flag == 1)
+                            {
+                                <td>@Html.DisplayName("Individual")</td>
+                            }
+                            else
+                            {
+                                <td>@Html.DisplayName("Other Than Individual")</td>
+                            }
+                            <td align="justify">@Html.DisplayFor(modelItem => item.RemarksIfAny)</td>                            
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

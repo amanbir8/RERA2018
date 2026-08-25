@@ -1,0 +1,440 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_ProjectSuperLockUnlockApplyConfirm
+
+@{
+    Layout = null;
+}
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/css-validator/style.css")" />
+
+<script>
+    $(function () {
+        $('#RegDiary_ApplicationDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#RERAnumberIssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#RERAnumberRegUptoDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var baseUrl = $('body').attr('data-base-url');
+        $("#IsLockedConfirmed").val(1);
+
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var usermanagerModal = $(document).find('#myModal');
+            $(usermanagerModal).fadeOut(1000, function () {
+                $(usermanagerModal).modal('hide');
+            });
+        });
+
+        $("#refreshOrder").click(function (e) {
+            e.preventDefault();
+            var usermanagerModal = $(document).find('#myModal');
+            $(usermanagerModal).fadeOut(1000, function () {
+                $(usermanagerModal).modal('hide');
+            });
+        });
+
+        $(document).on('click', '.radio-promoterdetailvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowPromoterDetail").addClass("show").removeClass("hide");
+            }
+            else if (this.value == '0') {
+                $("#rowPromoterDetail").addClass("hide").removeClass("show");
+            }
+        });
+
+        $(document).on('click', '.radio-copromoterdetailvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowCoPromoterDetail").addClass("show").removeClass("hide");
+            }
+            else if (this.value == '0') {
+                $("#rowCoPromoterDetail").addClass("hide").removeClass("show");
+            }
+        });
+
+        $(document).on('click', '.radio-projectdetailvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowProjectDetail").addClass("show").removeClass("hide");
+            }
+            else if (this.value == '0') {
+                $("#rowProjectDetail").addClass("hide").removeClass("show");
+            }
+        });
+
+        $(document).on('click', '.radio-qtrdetailvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowQTRDetail").addClass("show").removeClass("hide");
+            }
+            else if (this.value == '0') {
+                $("#rowQTRDetail").addClass("hide").removeClass("show");
+            }
+        });
+
+        $(document).on('click', '.radio-yearmappingformvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowYearMapping").addClass("show").removeClass("hide");                
+            }
+            else if (this.value == '0') {
+                $("#rowYearMapping").addClass("hide").removeClass("show");                
+            }
+        });
+
+        $(document).on('click', '.radio-lockpromoterformvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowLockPromoter").addClass("show").removeClass("hide");
+            }
+            else if (this.value == '0') {
+                $("#rowLockPromoter").addClass("hide").removeClass("show");
+            }
+        });
+
+        $(document).on('click', '.radio-lockprojectformvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowLockProject").addClass("show").removeClass("hide");
+            }
+            else if (this.value == '0') {
+                $("#rowLockProject").addClass("hide").removeClass("show");
+            }
+        });
+
+        $(document).on('click', '.radio-lockqtrformvalue', function (e) {
+            if (this.value == '1') {
+                $("#rowLockQTR").addClass("show").removeClass("hide");
+            }
+            else if (this.value == '0') {
+                $("#rowLockQTR").addClass("hide").removeClass("show");
+            }
+        });
+    });
+</script>
+
+<div id="wrapper">    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                @using (Html.BeginForm("ProjectEditApplySuperLockUnlockStatusDetails", "HelpdeskControlPanel", FormMethod.Post, new { enctype = "multipart/form-data", id = "myform_ProjectEditsApplyStatusInsert" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(model => model.Project_ApplySuperLockUnlock_IndexID)
+                                    @Html.HiddenFor(model => model.Project_ApplySuperLockUnlock_ID)
+                                    @Html.HiddenFor(model => model.Related_Promoter_ID)
+                                    @Html.HiddenFor(model => model.Related_Project_ID)
+                                    @Html.HiddenFor(model => model.Related_User_ID)
+                                    @Html.HiddenFor(model => model.Related_Reference_ID)
+                                    @Html.HiddenFor(model => model.RERAnumberRegistration)
+                                    @Html.HiddenFor(model => model.ProjectRegDiaryNumber_Name)
+                                    @Html.HiddenFor(model => model.IsLockedConfirmed)
+                                    @Html.HiddenFor(model => model.IsLockedEnable)
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                                @Html.LabelFor(model => model.ProjectRegDiaryNumber_Name, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-4">
+                                                @Html.EditorFor(model => model.ProjectRegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @disabled = "disabled" } })
+                                                @Html.ValidationMessageFor(model => model.ProjectRegDiaryNumber_Name, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-4">                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                                @Html.LabelFor(model => model.RegDiary_ApplicationDate, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>                                           
+                                            <div class="col-md-4">
+                                                @Html.EditorFor(model => model.RegDiary_ApplicationDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "Application Date", @autocomplete = "off", @disabled = "disabled" } })
+                                                @Html.ValidationMessageFor(model => model.RegDiary_ApplicationDate, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-4">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    if (Model.RERAnumberRegistration.ToString() != "NA")
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-4">
+                                                    @Html.LabelFor(model => model.RERAnumberRegistration, htmlAttributes: new { @class = "control-label mand" })
+                                                </div>
+                                                <div class="col-md-4">
+                                                    @Html.EditorFor(model => model.RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off", @disabled = "disabled" } })
+                                                    @Html.ValidationMessageFor(model => model.RERAnumberRegistration, "", new { @class = "text-danger" })
+                                                </div>
+                                                <div class="col-md-4">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-4">
+                                                    @Html.Label("Issue Date/Valid upto Date", htmlAttributes: new { @class = "control-label mand" })
+                                                </div>
+                                                <div class="col-md-4">
+                                                    @if (Model.RERAnumberIssueDate != DateTime.MinValue)
+                                                    {
+                                                        @Html.EditorFor(model => model.RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "From Date", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.RERAnumberIssueDate, "", new { @class = "text-danger" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.DisplayName("NA")
+                                                    }
+                                                </div>
+                                                <div class="col-md-4">
+                                                    @if (Model.RERAnumberRegUptoDate != DateTime.MinValue)
+                                                    {
+                                                        @Html.EditorFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "To Date", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.RERAnumberRegUptoDate, "", new { @class = "text-danger" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.DisplayName("NA")
+                                                    }                                                
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                @Html.Label("(A) Locked/Confirmed/Show Records wrt Details of Project for Authority (Yes/No)?", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-md-offset-1">
+                                                @Html.Label("(i) Promoter Details", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.IsPromoterConfirmed == 1)
+                                                {
+                                                    @Html.DisplayName("YES")
+                                                }
+                                                else
+                                                {
+                                                    <label class="form-group">
+                                                        @Html.RadioButtonFor(model => model.IsPromoterConfirmed, "1", new { @id = "chkLockYes", @class = "radio-promoterdetailvalue", @required = "required" }) Yes
+                                                        @Html.RadioButtonFor(model => model.IsPromoterConfirmed, "0", new { @id = "chkLockNo", @class = "radio-promoterdetailvalue", @required = "required" }) No
+                                                    </label>
+                                                    @Html.ValidationMessageFor(model => model.IsPromoterConfirmed, "", new { @class = "text-danger" })
+                                                }                                                
+                                            </div>
+                                            <div class="col-md-5 hide" id="rowPromoterDetail">
+                                                <input type="submit" name="submit" value="Confirm Promoter Detail" id="BtnPromoterDetailform" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-md-offset-1">
+                                                @Html.Label("(ii) Co-Promoter Details", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.IsCoPromoterConfirmed == 1)
+                                                {
+                                                    @Html.DisplayName("YES")
+                                                }
+                                                else
+                                                {
+                                                    <label class="form-group">
+                                                        @Html.RadioButtonFor(model => model.IsCoPromoterConfirmed, "1", new { @id = "chkConfirmLockYes", @class = "radio-copromoterdetailvalue", @required = "required" }) Yes
+                                                        @Html.RadioButtonFor(model => model.IsCoPromoterConfirmed, "0", new { @id = "chkConfirmLockNo", @class = "radio-copromoterdetailvalue", @required = "required" }) No
+                                                    </label>
+                                                    @Html.ValidationMessageFor(model => model.IsCoPromoterConfirmed, "", new { @class = "text-danger" })
+                                                }                                                
+                                            </div>
+                                            <div class="col-md-5 hide" id="rowCoPromoterDetail">
+                                                <input type="submit" name="submit" value="Confirm Co-Promoter Detail" id="BtnCoPromoterDetailform" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-md-offset-1">
+                                                @Html.Label("(iii) Project Details", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.IsProjectConfirmed == 1)
+                                                {
+                                                    @Html.DisplayName("YES")
+                                                }
+                                                else
+                                                {
+                                                    <label class="form-group">
+                                                        @Html.RadioButtonFor(model => model.IsProjectConfirmed, "1", new { @id = "chkConfirmLockYes", @class = "radio-projectdetailvalue", @required = "required" }) Yes
+                                                        @Html.RadioButtonFor(model => model.IsProjectConfirmed, "0", new { @id = "chkConfirmLockNo", @class = "radio-projectdetailvalue", @required = "required" }) No
+                                                    </label>
+                                                    @Html.ValidationMessageFor(model => model.IsProjectConfirmed, "", new { @class = "text-danger" })
+                                                }                                                
+                                            </div>
+                                            <div class="col-md-5 hide" id="rowProjectDetail">
+                                                <input type="submit" name="submit" value="Confirm Project Detail" id="BtnProjectDetailform" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-md-offset-1">
+                                                @Html.Label("(iv) Quarterly Update Details", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.IsQuarterlyUpdatesConfirmed == 1)
+                                                {
+                                                    @Html.DisplayName("YES")
+                                                }
+                                                else
+                                                {
+                                                    <label class="form-group">
+                                                        @Html.RadioButtonFor(model => model.IsQuarterlyUpdatesConfirmed, "1", new { @id = "chkConfirmLockYes", @class = "radio-qtrdetailvalue", @required = "required" }) Yes
+                                                        @Html.RadioButtonFor(model => model.IsQuarterlyUpdatesConfirmed, "0", new { @id = "chkConfirmLockNo", @class = "radio-qtrdetailvalue", @required = "required" }) No
+                                                    </label>
+                                                    @Html.ValidationMessageFor(model => model.IsQuarterlyUpdatesConfirmed, "", new { @class = "text-danger" })
+                                                }                                                
+                                            </div>
+                                            <div class="col-md-5 hide" id="rowQTRDetail">
+                                                <input type="submit" name="submit" value="Confirm Quarterly Updates Detail" id="BtnQTRDetailform" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                @Html.Label("(B) Confirmed/Year Mapping of Quarterly Updates of Project (Yes/No)?", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-md-offset-1">
+                                                @Html.Label("(i) Year Mapping of Quarterly Updates", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.IsYearMappingConfirmed == 1)
+                                                {
+                                                    @Html.DisplayName("YES (Year Mapped)")
+                                                }
+                                                else
+                                                { 
+                                                    <label class="form-group">
+                                                        @Html.RadioButtonFor(model => model.IsYearMappingConfirmed, "1", new { @id = "chkConfirmLockYes", @class = "radio-yearmappingformvalue", @required = "required" }) Yes
+                                                        @Html.RadioButtonFor(model => model.IsYearMappingConfirmed, "0", new { @id = "chkConfirmLockNo", @class = "radio-yearmappingformvalue", @required = "required" }) No
+                                                    </label>
+                                                    @Html.ValidationMessageFor(model => model.IsYearMappingConfirmed, "", new { @class = "text-danger" })
+                                                }
+                                            </div>
+                                            <div class="col-md-5 hide" id="rowYearMapping">
+                                                <input type="submit" name="submit" value="Confirm Year Mapping" id="BtnYearMappingform" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                @Html.Label("(C) Locked/Unlocked for Real-estate Project (Yes/No)?", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-md-offset-1">
+                                                @Html.Label("(i) Promoter Locked", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.IsLockPromoterDN == 1)
+                                                {
+                                                    @Html.DisplayName("YES")
+                                                }
+                                                else
+                                                {                                                    
+                                                    <label class="form-group">
+                                                        @Html.RadioButtonFor(model => model.IsLockPromoterDN, "1", new { @id = "chkConfirmLockYes", @class = "radio-lockpromoterformvalue", @required = "required" }) Yes
+                                                        @Html.RadioButtonFor(model => model.IsLockPromoterDN, "0", new { @id = "chkConfirmLockNo", @class = "radio-lockpromoterformvalue", @required = "required" }) No
+                                                    </label>
+                                                    @Html.ValidationMessageFor(model => model.IsLockPromoterDN, "", new { @class = "text-danger" })                                                    
+                                                }
+                                            </div>
+                                            <div class="col-md-5 hide" id="rowLockPromoter">
+                                                <input type="submit" name="submit" value="Confirm Promoter Lock" id="BtnLockPromoterform" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-md-offset-1">
+                                                @Html.Label("(ii) Project Locked", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.IsLockProjectDN == 1)
+                                                {
+                                                    @Html.DisplayName("YES")
+                                                }
+                                                else
+                                                {
+                                                    <label class="form-group">
+                                                        @Html.RadioButtonFor(model => model.IsLockProjectDN, "1", new { @id = "chkConfirmLockYes", @class = "radio-lockprojectformvalue", @required = "required" }) Yes
+                                                        @Html.RadioButtonFor(model => model.IsLockProjectDN, "0", new { @id = "chkConfirmLockNo", @class = "radio-lockprojectformvalue", @required = "required" }) No
+                                                    </label>
+                                                    @Html.ValidationMessageFor(model => model.IsLockProjectDN, "", new { @class = "text-danger" })
+                                                }
+                                            </div>
+                                            <div class="col-md-5 hide" id="rowLockProject">
+                                                <input type="submit" name="submit" value="Confirm Project Lock" id="BtnLockProjectform" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3 col-md-offset-1">
+                                                @Html.Label("(iii) Quarterly Updates Locked", htmlAttributes: new { @class = "control-label" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @if (Model.IsLockQtrDN == 1)
+                                                {
+                                                    @Html.DisplayName("YES")
+                                                }
+                                                else
+                                                {
+                                                    <label class="form-group">
+                                                        @Html.RadioButtonFor(model => model.IsLockQtrDN, "1", new { @id = "chkConfirmLockYes", @class = "radio-lockqtrformvalue", @required = "required" }) Yes
+                                                        @Html.RadioButtonFor(model => model.IsLockQtrDN, "0", new { @id = "chkConfirmLockNo", @class = "radio-lockqtrformvalue", @required = "required" }) No
+                                                    </label>
+                                                    @Html.ValidationMessageFor(model => model.IsLockQtrDN, "", new { @class = "text-danger" })
+                                                }
+                                            </div>
+                                            <div class="col-md-5 hide" id="rowLockQTR">
+                                                <input type="submit" name="submit" value="Confirm Quarterly Update Lock" id="BtnLockQTRform" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>                                
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-offset-4 col-md-8">                                                
+                                                <button type="button" id="refreshOrder" class="btn btn-outline btn-primary">Refresh</button>
+                                                <button type="button" id="cancelOrder" class="btn btn-primary">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->

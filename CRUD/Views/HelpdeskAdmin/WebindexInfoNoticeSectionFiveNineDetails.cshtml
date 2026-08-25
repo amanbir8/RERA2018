@@ -1,0 +1,458 @@
+﻿@model CRUD.Models.HelpdeskAdmin.ClsPrp_AdminDesk_NoticeSectionFiveNine
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            $(submitButton).parents('form').submit();
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        if ($('#OrderDate').val() == "01-Jan-0001") {
+            $('#OrderDate').val("");
+        }
+
+        if ($('#CurrentStatusDate').val() == "01-Jan-0001") {
+            $('#CurrentStatusDate').val("");
+        }
+
+        if ($('#NoticeDate').val() == "01-Jan-0001") {
+            $('#NoticeDate').val("");
+        }
+
+    });
+</script>
+
+<script>
+    $(function () {
+        $('[data-spzoom]').spzoom();
+
+        $('table#promoter-documents-list-table').dataTable({
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [7]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    
+        $('#NoticeDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, })
+        $('#CurrentStatusDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, })
+        $('#OrderDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, })
+    });
+</script> 
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Notices under Section 59 (Consolidated List) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Consolidated List of Notices under Section 59
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.NoticesSectionFiveNine_IndexID, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.NoticesSectionFiveNine_ID, htmlAttributes: new { @class = "control-label" })
+                                @Html.HiddenFor(model => model.SerialOrderNumber, htmlAttributes: new { @class = "control-label" })
+                                    
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Notice Details</legend>
+
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">                                                            
+                                                            @Html.LabelFor(model => model.NoticeFile_NumberDetails, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Notice or file number details of document.">
+                                                            @Html.EditorFor(model => model.NoticeFile_NumberDetails, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.NoticeFile_NumberDetails, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.NoticeDate, htmlAttributes: new { @class = "control-label mand" })                                                            
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.NoticeDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.NoticeDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @{var listItems3 = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "Ajnala" , Value="Ajnala"  },
+                                                                    new SelectListItem {  Text = "Amritsar" , Value="Amritsar"  },
+                                                                    new SelectListItem {  Text = "Amritsar-1" , Value="Amritsar-1"  },
+                                                                    new SelectListItem {  Text = "Amritsar-2" , Value="Amritsar-2"  },
+                                                                    new SelectListItem {  Text = "Baba Bakala" , Value="Baba Bakala"  },
+                                                                    new SelectListItem {  Text = "Majitha" , Value="Majitha"  },
+                                                                    new SelectListItem {  Text = "Barnala" , Value="Barnala"  },
+                                                                    new SelectListItem {  Text = "Tapa" , Value="Tapa"  },
+                                                                    new SelectListItem {  Text = "Bathinda" , Value="Bathinda"  },
+                                                                    new SelectListItem {  Text = "Maur" , Value="Maur"  },
+                                                                    new SelectListItem {  Text = "Rampura Phul" , Value="Rampura Phul"  },
+                                                                    new SelectListItem {  Text = "Talwandi Sabo" , Value="Talwandi Sabo"  },
+                                                                    new SelectListItem {  Text = "Amloh" , Value="Amloh"  },
+                                                                    new SelectListItem {  Text = "Bassi Pathana" , Value="Bassi Pathana"  },
+                                                                    new SelectListItem {  Text = "Fatehgarh Sahib" , Value="Fatehgarh Sahib"  },
+                                                                    new SelectListItem {  Text = "Khamanon" , Value="Khamanon"  },
+                                                                    new SelectListItem {  Text = "Jalandhar" , Value="Jalandhar"  },
+                                                                    new SelectListItem {  Text = "Jalandhar-1" , Value="Jalandhar-1"  },
+                                                                    new SelectListItem {  Text = "Jalandhar-2" , Value="Jalandhar-2"  },
+                                                                    new SelectListItem {  Text = "Nakodar" , Value="Nakodar"  },
+                                                                    new SelectListItem {  Text = "Phillaur" , Value="Phillaur"  },
+                                                                    new SelectListItem {  Text = "Shahkot" , Value="Shahkot"  },
+                                                                    new SelectListItem {  Text = "Dera Bassi" , Value="Dera Bassi"  },
+                                                                    new SelectListItem {  Text = "Zirakpur" , Value="Zirakpur"  },
+                                                                    new SelectListItem {  Text = "Mohali" , Value="Mohali"  },
+                                                                    new SelectListItem {  Text = "SAS Nagar" , Value="SAS Nagar"  },
+                                                                    new SelectListItem {  Text = "Kharar" , Value="Kharar"  },
+                                                                    new SelectListItem {  Text = "Kurali" , Value="Kurali"  },
+                                                                    new SelectListItem {  Text = "Lalru" , Value="Lalru"  },
+                                                                    new SelectListItem {  Text = "Mullanpur" , Value="Mullanpur"  },
+                                                                    new SelectListItem {  Text = "Ludhiana" , Value="Ludhiana"  },
+                                                                    new SelectListItem {  Text = "Ludhiana East" , Value="Ludhiana East"  },
+                                                                    new SelectListItem {  Text = "Jagraon" , Value="Jagraon"  },
+                                                                    new SelectListItem {  Text = "Khanna" , Value="Khanna"  },
+                                                                    new SelectListItem {  Text = "Ludhiana West" , Value="Ludhiana West"  },
+                                                                    new SelectListItem {  Text = "Payal" , Value="Payal"  },
+                                                                    new SelectListItem {  Text = "Raikot" , Value="Raikot"  },
+                                                                    new SelectListItem {  Text = "Samrala" , Value="Samrala"  },
+                                                                    new SelectListItem {  Text = "Faridkot" , Value="Faridkot"  },
+                                                                    new SelectListItem {  Text = "Jaiton" , Value="Jaiton"  },
+                                                                    new SelectListItem {  Text = "Kot Kapura" , Value="Kot Kapura"  },
+                                                                    new SelectListItem {  Text = "Ferozepur" , Value="Ferozepur"  },
+                                                                    new SelectListItem {  Text = "Guru Harsahai" , Value="Guru Harsahai"  },
+                                                                    new SelectListItem {  Text = "Zira" , Value="Zira"  },
+                                                                    new SelectListItem {  Text = "Bhulath" , Value="Bhulath"  },
+                                                                    new SelectListItem {  Text = "Kapurthala" , Value="Kapurthala"  },
+                                                                    new SelectListItem {  Text = "Phagwara" , Value="Phagwara"  },
+                                                                    new SelectListItem {  Text = "Sultanpur Lodhi" , Value="Sultanpur Lodhi"  },
+                                                                    new SelectListItem {  Text = "Dudhan Kalan" , Value="Dudhan Kalan"  },
+                                                                    new SelectListItem {  Text = "Nabha" , Value="Nabha"  },
+                                                                    new SelectListItem {  Text = "Patiala" , Value="Patiala"  },
+                                                                    new SelectListItem {  Text = "Patran" , Value="Patran"  },
+                                                                    new SelectListItem {  Text = "Rajpura" , Value="Rajpura"  },
+                                                                    new SelectListItem {  Text = "Samana" , Value="Samana"  },
+                                                                    new SelectListItem {  Text = "Banur" , Value="Banur"  },
+                                                                    new SelectListItem {  Text = "Abohar" , Value="Abohar"  },
+                                                                    new SelectListItem {  Text = "Fazilka" , Value="Fazilka"  },
+                                                                    new SelectListItem {  Text = "Jalalabad" , Value="Jalalabad"  },
+                                                                    new SelectListItem {  Text = "Batala" , Value="Batala"  },
+                                                                    new SelectListItem {  Text = "Dera Baba Nanak" , Value="Dera Baba Nanak"  },
+                                                                    new SelectListItem {  Text = "Gurdaspur" , Value="Gurdaspur"  },
+                                                                    new SelectListItem {  Text = "Pathankot" , Value="Pathankot"  },
+                                                                    new SelectListItem {  Text = "Kalanaur" , Value="Kalanaur"  },
+                                                                    new SelectListItem {  Text = "Dasua" , Value="Dasua"  },
+                                                                    new SelectListItem {  Text = "Garhshankar" , Value="Garhshankar"  },
+                                                                    new SelectListItem {  Text = "Hoshairpur" , Value="Hoshairpur"  },
+                                                                    new SelectListItem {  Text = "Mukerian" , Value="Mukerian"  },
+                                                                    new SelectListItem {  Text = "Budhladha" , Value="Budhladha"  },
+                                                                    new SelectListItem {  Text = "Mansa" , Value="Mansa"  },
+                                                                    new SelectListItem {  Text = "Sardulgarh" , Value="Sardulgarh"  },
+                                                                    new SelectListItem {  Text = "Bagha Puarana" , Value="Bagha Puarana"  },
+                                                                    new SelectListItem {  Text = "Dharamkot" , Value="Dharamkot"  },
+                                                                    new SelectListItem {  Text = "Moga" , Value="Moga"  },
+                                                                    new SelectListItem {  Text = "Nihal Singh Wala" , Value="Nihal Singh Wala"  },
+                                                                    new SelectListItem {  Text = "Giddarbaha" , Value="Giddarbaha"  },
+                                                                    new SelectListItem {  Text = "Malout" , Value="Malout"  },
+                                                                    new SelectListItem {  Text = "Sri Mukatsar Sahib" , Value="Sri Mukatsar Sahib"  },
+                                                                    new SelectListItem {  Text = "Dhar Kalan" , Value="Dhar Kalan"  },
+                                                                    new SelectListItem {  Text = "Pathankot" , Value="Pathankot"  },
+                                                                    new SelectListItem {  Text = "Anandpur Sahib" , Value="Anandpur Sahib"  },
+                                                                    new SelectListItem {  Text = "Chamkaur Sahib" , Value="Chamkaur Sahib"  },
+                                                                    new SelectListItem {  Text = "Nangal" , Value="Nangal"  },
+                                                                    new SelectListItem {  Text = "Ropar" , Value="Ropar"  },
+                                                                    new SelectListItem {  Text = "Roop Nagar" , Value="Roop Nagar"  },
+                                                                    new SelectListItem {  Text = "Ahmedgarh" , Value="Ahmedgarh"  },
+                                                                    new SelectListItem {  Text = "Bhawanigarh" , Value="Bhawanigarh"  },
+                                                                    new SelectListItem {  Text = "Dhuri" , Value="Dhuri"  },
+                                                                    new SelectListItem {  Text = "Lehra" , Value="Lehra"  },
+                                                                    new SelectListItem {  Text = "Malerkotla" , Value="Malerkotla"  },
+                                                                    new SelectListItem {  Text = "Moonak" , Value="Moonak"  },
+                                                                    new SelectListItem {  Text = "Sangrur" , Value="Sangrur"  },
+                                                                    new SelectListItem {  Text = "Sunam" , Value="Sunam"  },
+                                                                    new SelectListItem {  Text = "Balachaur" , Value="Balachaur"  },
+                                                                    new SelectListItem {  Text = "Banga" , Value="Banga"  },
+                                                                    new SelectListItem {  Text = "Nawan Shahar" , Value="Nawan Shahar"  },
+                                                                    new SelectListItem {  Text = "SBS Nagar" , Value="SBS Nagar"  },
+                                                                    new SelectListItem {  Text = "Khadoor Sahib" , Value="Khadoor Sahib"  },
+                                                                    new SelectListItem {  Text = "Patti" , Value="Patti"  },
+                                                                    new SelectListItem {  Text = "Tarn Taran" , Value="Tarn Taran"  },
+                                                                    new SelectListItem {  Text = "Other" , Value="Other"  },
+                                                                };
+                                                            }                                                            
+                                                            @Html.LabelFor(model => model.DistrictTown_InfoName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="District or town details of notice under section 59.">
+                                                            @Html.DropDownListFor(model => model.DistrictTown_InfoName, new SelectList(listItems3, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.DistrictTown_InfoName, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PromoterName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Promoter's name reference with notice under Section 59 document.">
+                                                            @Html.EditorFor(model => model.PromoterName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PromoterName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PromoterNameWithAddressDetails, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.PromoterNameWithAddressDetails, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PromoterNameWithAddressDetails, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Project's name reference with notice under Section 59 document.">
+                                                            @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectNameWithAddressDetails, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectNameWithAddressDetails, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectNameWithAddressDetails, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Status and Order Details</legend>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CurrentStatusDate, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Date of current status related to notice under Section 59 document.">
+                                                            @Html.EditorFor(model => model.CurrentStatusDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.CurrentStatusDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.CurrentStatusWithRemarks, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.CurrentStatusWithRemarks, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.CurrentStatusWithRemarks, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.OrderDate, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Date of order related to notice under Section 59 document.">
+                                                            @Html.EditorFor(model => model.OrderDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.OrderDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.OrderDateWithRemarksIfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.OrderDateWithRemarksIfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.OrderDateWithRemarksIfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                              
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other Option(s)</legend>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">Is valid for public view? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsPublicView, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "WebindexInfoNoticeSectionFiveNineDetails", "HelpdeskAdmin", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                <div class="form-group">                                        
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.DistrictTown_InfoName)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.NoticeFile_NumberDetails)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.NoticeDate)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.ProjectName)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.CurrentStatusWithRemarks)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.OrderDate)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Public View")
+                                                        </th>
+                                                        <th width="10%">@Html.DisplayName("Edit| Delete")</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.prpNoticeSectionFiveNine)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.DistrictTown_InfoName)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.NoticeFile_NumberDetails)
+                                                            </td>
+                                                            <td>
+                                                                @if (item.NoticeDate == Convert.ToDateTime("01-Jan-0001"))
+                                                                {
+                                                                    @Html.DisplayName("")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayFor(modelItem => item.NoticeDate)
+                                                                }                                                                
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.ProjectName)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.CurrentStatusWithRemarks)
+                                                            </td>
+                                                            <td>                                                                
+                                                                @if (item.OrderDate == Convert.ToDateTime("01-Jan-0001"))
+                                                                {
+                                                                    @Html.DisplayName("")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayFor(modelItem => item.OrderDate)
+                                                                }                                                                
+                                                            </td>
+                                                            <td>
+                                                                @if (item.IsPublicView == 1)
+                                                                {
+                                                                    @Html.DisplayName("Yes")
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.DisplayName("No")
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @Html.ActionLink("Edit", "Edit_windexInfoNoticeSectionFiveNineDetails", new { pIndexID = item.NoticesSectionFiveNine_IndexID, pKeyID = item.NoticesSectionFiveNine_ID }) @("| ")
+                                                                @Html.ActionLink("Delete", "Delete_windexInfoNoticeSectionFiveNineDetails", new { pIndexID = item.NoticesSectionFiveNine_IndexID, pKeyID = item.NoticesSectionFiveNine_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })                                                                
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

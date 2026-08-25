@@ -1,0 +1,42 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_QUpdatesProjectStatusFormFive
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayName("Quarter Year")</th>
+                        <th>@Html.DisplayName("Quarter Name")</th>
+                        <th>@Html.DisplayName("Financial year ending on (31st March)")</th>
+                        @*<th>@Html.DisplayName("Quarterly/Form-5 Diary Number")</th>*@
+                        <th>@Html.DisplayName("Date of Submission")</th>        
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.prpongoing)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.setQuarterValue_Year)</td>
+                            <td>@Html.DisplayFor(modelItem => item.setQuarterValue_Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.FinancialYear_EndingOnDate)</td> 
+                            @*<td>@Html.DisplayFor(modelItem => item.ProjectStatementofAccounts_DiaryNumber)</td>*@
+                            @if (Convert.ToString(item.QuarterlySubmittedDate) != "0001-01-01")
+                            {
+                                <td align="center">@Html.DisplayFor(modelItem => item.QuarterlySubmittedDate)</td>
+                            }
+                            else
+                            {
+                                <td align="center">@Html.DisplayName(" ")</td>
+                            }                             
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

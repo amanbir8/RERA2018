@@ -1,0 +1,410 @@
+﻿
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('#Is_YesNoAgree_AgentPermission_Flag').click(function () {
+            if ($("#Is_YesNoAgree_AgentPermission_Flag").is(':checked')) {
+                $('#BtnAgreeMainform').removeClass('btn-outline');
+            }
+            else {
+                $('#BtnAgreeMainform').addClass('btn-outline');
+            };
+        });
+    });
+</script>
+<script type="text/javascript">
+    @if (TempData["AgentRegDiaryNumber_Name"].ToString() != "")
+    {
+        <text >
+            $(document).ready(function()
+                {
+                swal({
+                title: "Message",
+                    text: "@TempData["AgentRegDiaryNumber_Name"]",
+                    type: "success"
+                }, function () {
+                    window.location = "../AgentView/AgentView";
+                });
+            });
+        </text>
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(document).on("click", "a.info-help-details", infohelpHandlerRegistrationdetails);
+    });
+
+    function infohelpHandlerRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Application for Registration</b><br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-I: Agent Profile.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-II: Organization Member Details (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-III: Upload Document(s).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-IV: Other State/UT Registration Number Detail (if any).<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-V: Application Fee.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Step-VI: Review and Confirm Application Form.<br/> <i class="fa fa-check-square" style="color:#eff3f9"></i> Note down Diary Number for your future reference.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Review/ Confirmation Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Agent Review/ Confirmation Details
+                    <span class="pull-right">
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            @using (Html.BeginForm("AgentView", "AgentView", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                               
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Review/ Confirmation Status</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName("S No")
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayName("Agent Review/Confirmation Title")
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayName("Status")
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            @Html.DisplayName("Action Required")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <hr />
+                                                </div>
+                                                @{
+                                                    int sno = 1;
+                                                }
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @if (Session["User_Type"] != null)
+                                                            {
+                                                                if (Session["User_Type"].ToString() == "1")
+                                                                {
+                                                                    @Html.ActionLink("Agent's Profile", "RegIndAgent", "Agent")
+                                                                }
+                                                                if (Session["User_Type"].ToString() == "2")
+                                                                {
+                                                                    @Html.ActionLink("Agent's Profile", "RegAgentOtherThanIndivual", "Agent")
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.ActionLink("Agent's Profile", "RegIndAgent", "Agent")
+                                                            }
+                                                        </div>
+                                                        @if (TempData["AgentProfile"].ToString() == "Complete")
+                                                        {
+                                                            <div class="col-md-3 alert-warning">
+                                                                @TempData["AgentProfile"]
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <a href="@Url.Action("Print_IndAgentDetail","AgentPrintForm")" target="_blank">
+                                                                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                    </a>
+                                                                }                                                                
+                                                                <br />                                                                
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["AgentProfile"]<br />
+
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue"]" formaction="AgentProfile" class="btn btn-default col-md-9" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue"]" formaction="AgentProfile" class="btn btn-default col-md-9" />
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @if (Session["User_Type"].ToString() == "2")
+                                                {
+                                                    {
+                                                        sno = sno + 1;
+                                                    }
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.ActionLink("Other Member Detail", "Create_Agent_mem", "Agent")
+                                                        </div>
+                                                        @if (TempData["OtherMemberDetail"].ToString() == "Complete")
+                                                        {
+                                                            <div class="col-md-3 alert-warning">
+                                                                @TempData["OtherMemberDetail"]
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <a href="@Url.Action("Print_AgentOtherMemberDetail","AgentPrintForm")" target="_blank">
+                                                                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                    </a>
+                                                                }
+                                                                <br />
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["OtherMemberDetail"]<br />
+
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            { 
+                                                                <input type="submit" value="@TempData["submitOtherMemeber"]" formaction="OtherMemberDetail" class="btn btn-default col-md-9" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitOtherMemeber"]" formaction="OtherMemberDetail" class="btn btn-default col-md-9" />
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                }
+                                                @if (Session["User_ParentEntityFlag"].ToString() == "1")
+                                                {
+                                                    <div class="row">
+                                                        @{
+                                                            sno = sno + 1;
+                                                        }
+                                                        <div class="form-group">
+                                                            <div class="col-md-1">
+                                                                @Html.DisplayName(sno.ToString())
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                @Html.ActionLink("Other State/UT RERA Details", "Create_Agent_OtherStateUT", "Agent")
+                                                            </div>
+                                                            @if (TempData["OtherState"].ToString() == "Complete")
+                                                            {
+                                                                <div class="col-md-3 alert-warning">
+                                                                    @TempData["OtherState"]
+                                                                    @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                    {
+                                                                        <a href="@Url.Action("Print_AgentOtherStateUT_RERA","AgentPrintForm")" target="_blank">
+                                                                            <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                        </a>
+                                                                    }
+                                                                    <br />                                                             
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="col-md-3 alert-danger">
+                                                                    @TempData["OtherState"]<br />
+
+                                                                </div>
+                                                            }
+                                                            <div class="col-md-5">
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitOtherState"]" formaction="OtherState" class="btn btn-default col-md-9" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                { 
+                                                                    <input type="submit" value="@TempData["submitOtherState"]" formaction="OtherState" class="btn btn-default col-md-9" />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                 <div class="row">
+                                                    @{
+                                                        sno = sno + 1;
+                                                    }
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.ActionLink("Document Upload", "AgentDoc", "AgentDocument")
+                                                        </div>
+                                                        @if (TempData["DocumentUpload"].ToString() == "Complete")
+                                                        {
+                                                            <div class="col-md-3 alert-warning">
+                                                                @TempData["DocumentUpload"]
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <a href="@Url.Action("Print_AgentDocumentDetails","AgentPrintForm")" target="_blank">
+                                                                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                    </a>
+                                                                }
+                                                                <br />                                                                
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["DocumentUpload"]<br />
+
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitDocumentUpload"]" formaction="DocumentUpload" class="btn btn-default col-md-9" disabled="disabled"/>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="submit" value="@TempData["submitDocumentUpload"]" formaction="DocumentUpload" class="btn btn-default col-md-9" />
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    @{
+                                                        sno = sno + 1;
+                                                    }
+                                                    <div class="form-group">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayName(sno.ToString())
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.ActionLink("Payment Details", "RegAgent", "Agent")
+                                                        </div>
+                                                        @if (TempData["PaymentDetails"].ToString() == "Complete")
+                                                        {
+                                                            <div class="col-md-3 alert-warning">
+                                                                @TempData["PaymentDetails"]
+                                                                @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                                {
+                                                                    <a href="@Url.Action("Print_AgentPaymentDetails","AgentPrintForm")" target="_blank">
+                                                                        <img src="~/images/pdf.png" alt="Print" height="25" width="25" />
+                                                                    </a>
+                                                                }
+                                                                <br />                                                                
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-3 alert-danger">
+                                                                @TempData["PaymentDetails"]<br />
+
+                                                            </div>
+                                                        }
+                                                        <div class="col-md-5">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            { 
+                                                                <input type="submit" value="@TempData["submitPaymentDetails"]" formaction="PaymentDetails" class="btn btn-default col-md-9" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            { 
+                                                                <input type="submit" value="@TempData["submitPaymentDetails"]" formaction="PaymentDetails" class="btn btn-default col-md-9" />
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Disclaimer</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12 text-justify">
+                                                            <label class="control-label">
+                                                                Disclaimer: @Html.CheckBox("Is_YesNoAgree_AgentPermission_Flag", true) [I / We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12 text-left">
+                                                            @if (Convert.ToInt32(TempData["IsdraftValue"]) == 1)
+                                                            {
+                                                                <input type="submit" value="I Agree" id="BtnAgreeMainform" class="btn btn-primary" formaction="Btn_Agree" disabled="disabled" />
+
+                                                            }
+                                                            else
+                                                            {
+                                                                if (TempData["Agree"].ToString() == "Done")
+                                                                {
+                                                                    <input type="submit" value="I Agree" id="BtnAgreeMainform" class="btn btn-primary" formaction="Btn_Agree" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="submit" value="I Agree" id="BtnAgreeMainform" class="btn btn-primary" formaction="Btn_Agree" disabled="disabled" />
+                                                                }
+                                                            }
+                                                             <div>
+                                                             @if (TempData["AgentRegDiaryNumber_Name"] != null)
+                                                             {
+                                                                <b>@TempData["AgentRegDiaryNumber_Name"].ToString()</b>
+                                                             }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+}

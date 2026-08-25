@@ -1,0 +1,226 @@
+﻿@model CRUD.Models.HelpdeskAdmin.ClsPrp_AdminDesk_NoticeSectionFiveNineByLA_FileLogDetails
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css-validator/style.css")" />
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<script type="text/javascript">
+
+    @if (TempData["EventSubmitMessage"].ToString() != "")
+    {        
+        <text>
+            $(document).ready(function()
+                {
+                swal({
+                title: "Message",
+                    text: "@TempData["EventSubmitMessage"]",
+                    type: "success"
+                }, function () {
+                    return true;
+                });
+            });
+        </text>        
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#EventAction_Type').change(function () {
+
+            var BASE_URLn = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: "POST",
+                url: BASE_URLn + 'HelpdeskAdmin/GetDeskEventDescriptionMasterByCode',
+                datatype: "Json",
+                data: { EventCode: $('#EventAction_Type').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+
+                        $('#getCriteriaSubCodeFileInfo').show();
+                        $('#CriteriaSubCodeFileDiscription').text("Description : " + value.DeskAction_Description);
+                    });
+                }
+            });
+
+            $('#EventAction_Aggregate').empty();
+            $('#EventAction_Description').empty();
+            $("input[name='EventAction_Aggregate']").val($("#EventAction_Type option:selected").text());
+            $("input[name='EventAction_Description']").val($("#EventAction_Type option:selected").text());
+        });
+
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var managerModal = $(document).find('#myModal');
+            $(managerModal).fadeOut(1000, function () {
+                $(managerModal).modal('hide');
+            });
+        });
+    });
+</script>
+
+<script>
+    jQuery.validator.addMethod("alphanumericcc", function (value, element) {
+        // return this.optional(element) || /^\w+(\s+\w+)*$/.test($.trim(value));
+        return this.optional(element) || /^[a-zA-Z0-9 ,-.()/]*$/.test($.trim(value));
+    }, "Special characters are not allowed. Maximum length is 1000");
+
+    $("#myform_NoticeSecFiveNineInfoEventInsert").validate({
+        rules: {
+            Remarks_IfAny: {
+                required: true,
+                alphanumericcc: true
+            },
+
+            name: {
+                required: true,
+                alphanumericcc: true
+            },
+
+            email: {
+                required: true,
+                email: true
+            },
+            phone: {
+                required: true,
+                number: true
+            },
+        }
+    });
+</script>
+
+<script>
+   // get remaining words count for textarea
+   var maxMessageLength = 1000;
+   var messageField = $('#myform_NoticeSecFiveNineInfoEventInsert').find('textarea#Remarks_IfAny');
+   $('body').on('input', 'textarea#Remarks_IfAny', function (e) {
+       var msgVal = $(this).val();
+       var msgValLen = msgVal.length;
+       if (msgValLen <= maxMessageLength) {
+           var remaining = parseInt(maxMessageLength - msgValLen);
+           $(this).parents('.form-group').find('.words-remain').html(remaining + ' characters remaining');
+       }
+   });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                @using (Html.BeginForm("NoticeSecFiveNineInfoEventInsert", "HelpdeskAdmin", FormMethod.Post, new { enctype = "multipart/form-data", id = "myform_NoticeSecFiveNineInfoEventInsert" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(model => model.Related_NoticesSectionFiveNine_ID)
+                                    @Html.HiddenFor(model => model.Related_NoticeFile_NumberDetails)
+                                    @Html.HiddenFor(model => model.EventAction_Aggregate)
+                                    @Html.HiddenFor(model => model.EventAction_Description)
+                                    @Html.HiddenFor(model => model.ProgressStatus)
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                Notice File/ Number
+                                            </div>
+                                            <div class="col-md-9">
+                                                @Html.DisplayFor(model => model.Related_NoticeFile_NumberDetails, new { htmlAttributes = new { @class = "form-control" } })                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                Project Name
+                                            </div>
+                                            <div class="col-md-9">
+                                                @Html.DisplayFor(model => model.ProgressStatus, new { htmlAttributes = new { @class = "form-control" } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.EventAction_Type, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            @if (Model.DeskEventMaster != null)
+                                            {
+                                                <div class="col-md-9">
+                                                    @Html.DropDownListFor(model => model.EventAction_Type, new SelectList(Model.DeskEventMaster, "DeskAction_Code", "DeskAction_Aggregate"), "Select", new { @class = "form-control", required = "required" })
+                                                    @Html.ValidationMessageFor(model => model.EventAction_Type, "", new { @class = "text-danger" })
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-md-9">
+                                                    @Html.DropDownListFor(model => model.EventAction_Type, new SelectList(" "), "Select", new { @class = "form-control", required = "required" })
+                                                    @Html.ValidationMessageFor(model => model.EventAction_Type, "", new { @class = "text-danger" })
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="row" id="getCriteriaSubCodeFileInfo" style="display:none">
+                                        <div class="help-block col-md-offset-3 col-md-9">
+                                            <div id="CriteriaSubCodeFileDiscription" class="info"></div>
+                                        </div>
+                                    </div>
+                                    @*<div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.IsChecklistValueOk, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-9">
+                                                <label class="form-group">
+                                                    @Html.RadioButtonFor(model => model.IsChecklistValueOk, "Y", new { id = "chkYes", required = "required" }) Yes
+                                                    @Html.RadioButtonFor(model => model.IsChecklistValueOk, "N", new { id = "chkNo", required = "required" }) No
+                                                    @Html.RadioButtonFor(model => model.IsChecklistValueOk, "X", new { id = "chkNotApplicable", required = "required" }) Not Applicable
+                                                </label>
+                                                @Html.ValidationMessageFor(model => model.IsChecklistValueOk, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-9">
+                                                @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                                                @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">&nbsp;</div>
+                                            <div class="col-md-8">
+                                                <div class="col-md-offset-2 col-md-10">
+                                                    <i class="words-remain help-block col-md-6">
+                                                        1000 characters remaining
+                                                    </i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-offset-3 col-md-9">
+                                                <input type="submit" value="Submit" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                <button type="button" id="cancelOrder" class="btn btn-primary"> Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->

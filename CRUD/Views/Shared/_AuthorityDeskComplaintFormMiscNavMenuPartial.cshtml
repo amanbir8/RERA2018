@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNet.Identity
+<script>
+    $(document).ready(function () {
+        var currentLoc = window.location.pathname;
+        $(document).find('a.tab-btns[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff' });
+    });
+</script>
+@if (Request.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <fieldset class="col-md-12">
+                    <legend class="my">View Complaint Form-Unregistered Project Complaint Details</legend>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">                  
+                                @Html.ActionLink("Complaint Details", "Display_ComplaintFormMisc", "HelpdeskComplaint", null, new { @class = "btn tab-btns btn-outline btn-primary" })
+                                @Html.ActionLink("PDF Print", "Print_ComplaintFormMiscDeskDetails", "ComplaintPrintForm", null, new { @class = "btn tab-btns btn-outline btn-primary", @target = "_blank" })
+                                @Html.ActionLink("Action", "FormMiscInfoEventInsert", "HelpdeskComplaint", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+}
+

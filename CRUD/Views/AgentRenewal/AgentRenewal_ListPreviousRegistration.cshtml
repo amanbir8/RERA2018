@@ -1,0 +1,71 @@
+﻿@model CRUD.Models.AgentRenewal.Clsprp_AgentRenewal_ListPreviousRegistrations
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" style="width: 100%;" id="dataTables-renewalagent-list">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayName("Sr No")</th>
+                        <th>@Html.DisplayNameFor(model => model.RegDiaryNumber_Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.Agent_Name)</th>                        
+                        <th>@Html.DisplayNameFor(model => model.RERAnumberRegistration)</th>
+                        <th>@Html.DisplayNameFor(model => model.RERAnumberIssueDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.RERAnumberRegUptoDate)</th>
+                        <th>@Html.DisplayName("View Detail")</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int snofivenine = 0;
+                    }
+                    @foreach (var item in Model.AgentRenewalList)
+                    {
+                        {
+                            snofivenine = snofivenine + 1;
+                        }
+                        <tr>
+                            <td>@Html.DisplayName(snofivenine.ToString())</td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RegDiaryNumber_Name)
+                                @Html.HiddenFor(modelItem => item.Agent_ID, new { @class = "hdnAgentID" })
+                                @Html.HiddenFor(modelItem => item.AgentType_ID, new { @class = "hdnAgentTypeID" })
+                                @Html.HiddenFor(modelItem => item.UserID, new { @class = "hdnUserID" })
+                                @Html.HiddenFor(modelItem => item.Related_RenewalAgent_ID, new { @class = "hdnRenewalAgentID" })
+                                @Html.HiddenFor(modelItem => item.Related_RenewalAgent_Year, new { @class = "hdnRenewalAgentYear" })
+                                @Html.HiddenFor(modelItem => item.Renewal_OrderSequence, new { @class = "hdnRenewalOrder" })
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.Agent_Name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.RERAnumberRegistration)</td>
+                            <td>
+                                @if (item.RERAnumberIssueDate != DateTime.MinValue)
+                                {
+                                    @Html.DisplayFor(modelItem => item.RERAnumberIssueDate)
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("--")
+                                }
+                            </td>
+                            <td>
+                                @if (item.RERAnumberRegUptoDate != DateTime.MinValue)
+                                {
+                                    @Html.DisplayFor(modelItem => item.RERAnumberRegUptoDate)
+                                }
+                                else
+                                {
+                                    @Html.DisplayName("--")
+                                }
+                            </td>
+                            <td>@Html.DisplayName("--")</td>                                                        
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

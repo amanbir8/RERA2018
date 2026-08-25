@@ -1,0 +1,196 @@
+﻿@model CRUD.Models.HelpDeskAgent.ClsPrp_AuthorityDesk_AgentSubCheckListLog
+
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css-validator/style.css")" />
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#CriteriaSubCode').change(function () {
+
+            var BASE_URLn = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: "POST",
+                url: BASE_URLn + 'HelpdeskAgent/GetAgentCriteriaSubCodeDescriptionMasterByCode',
+                datatype: "Json",
+                data: { CriteriaSubCode: $('#CriteriaSubCode').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+
+                        $('#getCriteriaSubCodeFileInfo').show();
+                        $('#CriteriaSubCodeFileDiscription').text("Description : " + value.SubCheckListDescription);
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    jQuery.validator.addMethod("alphanumericcc", function (value, element) {
+        // return this.optional(element) || /^\w+(\s+\w+)*$/.test($.trim(value));
+        return this.optional(element) || /^[a-zA-Z0-9 ,-.()/]*$/.test($.trim(value));
+    }, "Special characters are not allowed. Maximum length is 500");
+
+    $("#myform_CheckListInsert").validate({
+        rules: {
+            Remarks_IfAny: {
+                required: true,
+                alphanumericcc: true
+            },
+
+            name: {
+                required: true,
+                alphanumericcc: true
+            },
+
+            email: {
+                required: true,
+                email: true
+            },
+            phone: {
+                required: true,
+                number: true
+            },
+        }
+    });
+</script>
+
+<script>
+   // get remaining words count for textarea
+   var maxMessageLength = 500;
+   var messageField = $('#myform_CheckListInsert').find('textarea#Remarks_IfAny');
+   $('body').on('input', 'textarea#Remarks_IfAny', function (e) {
+       var msgVal = $(this).val();
+       var msgValLen = msgVal.length;
+       if (msgValLen <= maxMessageLength) {
+           var remaining = parseInt(maxMessageLength - msgValLen);
+           $(this).parents('.form-group').find('.words-remain').html(remaining + ' characters remaining');
+       }
+   });
+</script>
+
+<div id="wrapper">    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                @using (Html.BeginForm("AgentInfoCheckListInsert", "HelpdeskAgent", FormMethod.Post, new { enctype = "multipart/form-data", id = "myform_CheckListInsert" }))
+                                {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(model => model.Related_Agent_ID)                                
+                                @Html.HiddenFor(model => model.Agent_DiaryNumber)                                
+                                @Html.HiddenFor(model => model.CriteriaCode)
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            Real Estate Agent Name
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.DisplayFor(model => model.zapAgentName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.DisplayName("(")
+                                            @Html.DisplayFor(model => model.zapAgent_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.DisplayName(")")                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            Checklist Criteria
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.DisplayFor(model => model.A_column, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.CriteriaSubCode, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        @if (Model.SubCheckListMaster != null)
+                                            {
+                                            <div class="col-md-9">
+                                                @Html.DropDownListFor(model => model.CriteriaSubCode, new SelectList(Model.SubCheckListMaster, "SubCheckList_ID", "SubCheckListName"), "Select", new { @class = "form-control", required = "required" })
+                                                @Html.ValidationMessageFor(model => model.CriteriaSubCode, "", new { @class = "text-danger" })
+                                            </div>
+                                            }
+                                            else
+                                            {
+                                            <div class="col-md-9">
+                                                @Html.DropDownListFor(model => model.CriteriaSubCode, new SelectList(" "), "Select", new { @class = "form-control", required = "required" })
+                                                @Html.ValidationMessageFor(model => model.CriteriaSubCode, "", new { @class = "text-danger" })
+                                            </div>
+                                            }
+                                    </div>
+                                </div>
+                                <div class="row" id="getCriteriaSubCodeFileInfo" style="display:none">
+                                    <div class="help-block col-md-offset-3 col-md-9">
+                                        <div id="CriteriaSubCodeFileDiscription" class="info"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.IsChecklistValueOk, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            <label class="form-group">
+                                                @Html.RadioButtonFor(model => model.IsChecklistValueOk, "Y", new { id = "chkYes", required = "required" }) Yes                  
+                                                @Html.RadioButtonFor(model => model.IsChecklistValueOk, "N", new { id = "chkNo", required = "required" }) No
+                                                @Html.RadioButtonFor(model => model.IsChecklistValueOk, "O", new { id = "chkExempted", required = "required" }) Exempted
+                                                @Html.RadioButtonFor(model => model.IsChecklistValueOk, "X", new { id = "chkNotApplicable", required = "required" }) Not Applicable
+                                                @Html.RadioButtonFor(model => model.IsChecklistValueOk, "P", new { id = "chkPending", required = "required" }) To be Provided Later
+                                            </label>
+                                            @Html.ValidationMessageFor(model => model.IsChecklistValueOk, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label mand" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.EditorFor(model => model.Remarks_IfAny, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                                            @Html.ValidationMessageFor(model => model.Remarks_IfAny, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-3">&nbsp;</div>
+                                        <div class="col-md-8">
+                                            <div class="col-md-offset-2 col-md-10">
+                                                <i class="words-remain help-block col-md-6">
+                                                    500 characters remaining
+                                                </i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-offset-3 col-md-9">
+                                            <input type="submit" value="Submit" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->

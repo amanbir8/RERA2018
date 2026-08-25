@@ -1,0 +1,729 @@
+﻿@model CRUD.Models.Promoter.ClsPrp_OrgExp
+
+<script>
+    $(function () {
+        var BASE_URL = $('body').attr('data-base-url');
+
+        //$.ajax({
+        //    type: "GET",
+        //    url: BASE_URL + "Promoter/GetState",
+        //    datatype: "Json",
+        //    success: function (data) {
+
+        //        //$('#Org_State').empty();
+        //        //$("#Org_State").append(new Option("Select", "0"))
+
+        //        $.each(data.stateMaster, function (index, value) {
+        //            $('#Org_State').append('<option value="' + value.StateId + '">' + value.StateName + '</option>');
+
+        //            $("#Org_State option:contains(undefined)").remove();
+        //        });
+        //    }
+        //});
+
+        $('#Org_State').change(function () {
+
+            $('#Org_District').empty();
+
+            $.ajax({
+                type: "POST",
+                url: BASE_URL + "Promoter/GetDistrictByStateId",
+                datatype: "Json",
+                data: { StateId: $('#Org_State').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#Org_District').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                    });
+                }
+            });
+        });
+
+        //$.ajax({
+
+        //    type: "GET",
+        //    url: BASE_URL + "Promoter/GetState",
+        //    datatype: "Json",
+        //    success: function (data) {
+
+        //        //$('#State').empty();
+        //        //$("#State").append(new Option("Select", "0"))
+
+        //        $.each(data.stateMaster, function (index, value) {
+        //            $('#State').append('<option value="' + value.StateId + '">' + value.StateName + '</option>');
+
+        //            $("#State option:contains(undefined)").remove();
+        //        });
+        //    }
+        //});
+
+        $('select#State').on('change', function () {
+
+            $('#District').empty();
+            var stateId = $(this).val();
+            // console.log(stateId);
+            $.ajax({
+                type: "POST",
+                url: BASE_URL + "Promoter/GetDistrictByStateId",
+                datatype: "Json",
+                data: { StateId : stateId },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#District').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                    });
+                }
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if ($('#Phone_No').val() === "0") {
+            $('#Phone_No').val("");
+        }
+
+            if ($('input[name=Experience]:checked').val() === "Y") {
+                $('#show').show();
+                $('#Past_Exp_Punjab').focus();
+            }
+            else {
+                $('#Past_Exp_Punjab').val("0");
+                $('#Past_Exp_Other_States').val("0");
+
+                $('#Ind_Org_CompltdProj_FiveYrs').val("0");
+                $('#Ind_Org_TotalArea_Constructed').val("0");
+
+                $('#Ind_Org_OngoingProjects').val("0");
+                $('#Ind_Org_AreaToBe_Constructed').val("0");
+
+                $('#show').hide();
+            }
+
+
+            $('input[name=Experience]').click(function () {
+                if ($('input[name=Experience]:checked').val() === "N") {
+                    //$("#Past_Exp_Punjab").val("0");
+                    //$('#Past_Exp_Other_States').val("0");
+
+                    //$('#Ind_Org_CompltdProj_FiveYrs').val("0");
+                    //$('#Ind_Org_TotalArea_Constructed').val("0");
+
+                    //$('#Ind_Org_OngoingProjects').val("0");
+                    //$('#Ind_Org_AreaToBe_Constructed').val("0");
+                    $('#show').hide();
+                }
+                else {
+
+                    $('#show').show();
+
+                }
+            });
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+
+        });
+        var loginuser = function () {
+            if ($('input[name=Experience]:checked').val() === "Y") {
+                var exp_punjab = $('#Past_Exp_Punjab').val();
+                var exp_other = $('#Past_Exp_Other_States').val();
+                if (exp_punjab == "" || exp_punjab == undefined || exp_other == "" || exp_other == undefined) {
+                    alert("Please enter required experience");
+
+                    $('#Past_Exp_Punjab').focus();
+                    return false;
+                }
+            }
+            else if ($('input[name=Experience]:checked').val() === "N") {
+                //alert("else case");
+                //$('#Past_Exp_Punjab').val() = 0;
+                //$('#Past_Exp_Other_States').val() = 0;
+
+                $("#Past_Exp_Punjab").val("0");
+                $('#Past_Exp_Other_States').val("0");
+
+                $('#Ind_Org_CompltdProj_FiveYrs').val("0");
+                $('#Ind_Org_TotalArea_Constructed').val("0");
+
+                $('#Ind_Org_OngoingProjects').val("0");
+                $('#Ind_Org_AreaToBe_Constructed').val("0");
+            }
+
+
+            if ($('input[name=Last_FiveYr_Exp]:checked').val() === "Y") {
+                var Compltd_FiveYrs = $('#Ind_Org_CompltdProj_FiveYrs').val();
+                var TotalArea_Const = $('#Ind_Org_TotalArea_Constructed').val();
+                if (Compltd_FiveYrs == "" || Compltd_FiveYrs == undefined || TotalArea_Const == "" || TotalArea_Const == undefined) {
+                    alert("Please enter required experience");
+
+                    $('#Ind_Org_CompltdProj_FiveYrs').focus();
+                    return false;
+                }
+            }
+            else if ($('input[name=Last_FiveYr_Exp]:checked').val() === "N") {
+                //alert("else case");
+                $('#Ind_Org_CompltdProj_FiveYrs').val() = 0;
+                $('#Ind_Org_TotalArea_Constructed').val() = 0;
+            }
+
+            if ($('input[name=Ongoing_Exp]:checked').val() === "Y") {
+                var Ongoing_Projects = $('#Ind_Org_OngoingProjects').val();
+                var Area_ToBeConst = $('#Ind_Org_AreaToBe_Constructed').val();
+                if (Ongoing_Projects == "" || Ongoing_Projects == undefined || Area_ToBeConst == "" || Area_ToBeConst == undefined) {
+                    alert("Please enter required experience");
+
+                    $('#Ind_Org_OngoingProjects').focus();
+                    return false;
+                }
+            }
+            else if ($('input[name=Ongoing_Exp]:checked').val() === "N") {
+                //alert("else case");
+                $('#Ind_Org_OngoingProjects').val() = 0;
+                $('#Ind_Org_AreaToBe_Constructed').val() = 0;
+            }
+
+
+        };
+</script>
+<script type="text/javascript">
+
+        function showPAN(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_PAN').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+        function showOrgCert(input) {
+            if (input.files && input.files[0]) {
+                var filerdr = new FileReader();
+                filerdr.onload = function (e) {
+                    $('#user_OrgCert').attr('src', e.target.result);
+                }
+                filerdr.readAsDataURL(input.files[0]);
+            }
+        }
+</script>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">My Profile</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Promoter - Other than Individual (Company/ Proprietorship Firm/ Societies/ Partnership Firm/Competent Authority etc)
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm("RegOrgExp", "Promoter", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <h6>@ViewBag.Message</h6>
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Promoter - Other than Individual Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Org_Name, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Name of Organization as per PAN Card of Organization.">
+                                                            @Html.EditorFor(model => model.Org_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Org_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Org_Type, htmlAttributes: new { @class = "control-label mand" })
+                                                            @{var listItems2 = new List<SelectListItem>
+                                                        {
+                                                        new SelectListItem {  Text = "..." , Value=""  },
+                                                        new SelectListItem {  Text = "Private Limited Company" , Value="1"  },
+                                                        new SelectListItem {  Text = "Public Limited Company" , Value="2"  },
+                                                        new SelectListItem {  Text = "Undivided Hindu Family" , Value="3"  },
+
+                                                        new SelectListItem {  Text = "Partnerships" , Value="4"  },
+                                                        new SelectListItem {  Text = "Co-operative Societies" , Value="5"  },
+                                                        new SelectListItem {  Text = "Limited Liabilities Partnership" , Value="6"  },
+
+                                                        new SelectListItem {  Text = "Development Authorities" , Value="7"  },
+                                                        new SelectListItem {  Text = "Others" , Value="8"  },
+
+                                                        };
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.Org_Type, new SelectList(listItems2, "Value", "Text"), new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Org_Type, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                         @*<div class="col-md-3">@Html.LabelFor(model => model.Org_Type, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Org_Type, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Org_Type, "", new { @class = "text-danger" })
+                                                        </div>*@
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Org_Objects, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Main Objects of Organization e.g. (1.) Property Developer and Builder/ Contractor, (2.) Property Developer, (3.) Property Developer and Material Supplier etc.">
+                                                            @Html.EditorFor(model => model.Org_Objects, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Org_Objects, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Registered Address of Organization</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Org_Address_Line1, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Registered Address of Organization as per PAN Card of Organization.">
+                                                            @Html.EditorFor(model => model.Org_Address_Line1, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Org_Address_Line1, "", new { @class = "text-danger" })
+                                                        </div>
+
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Org_Address_Line2, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Org_Address_Line2, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Org_Address_Line2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        @*<div class="col-md-3">@Html.LabelFor(model => model.Org_State, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Org_State, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Org_State, "", new { @class = "text-danger" })
+                                                        </div>*@
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select State</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.Org_State, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Org_State, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select District</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.Org_District, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Org_District, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        @*<div class="col-md-3">@Html.LabelFor(model => model.Org_District, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Org_District, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Org_District, "", new { @class = "text-danger" })
+                                                        </div>*@
+                                                     </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Org_Pin_Code, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Org_Pin_Code, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Org_Pin_Code, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Organization Address for Official Communication</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Address_Line1, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Valid Address of Organization for all official communication with the Authority.">
+                                                            @Html.EditorFor(model => model.Address_Line1, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Address_Line1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Address_Line2, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Address_Line2, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Address_Line2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        @*<div class="col-md-3">@Html.LabelFor(model => model.State, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+                                                        </div>*@
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select State</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.State, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(m => m.State, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select District</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.District, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(m => m.District, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        @*<div class="col-md-3">@Html.LabelFor(model => model.District, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.District, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                        </div>*@
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Pin_Code, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Pin_Code, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Pin_Code, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Details of Authorized Signatory who will sign Form-B and Application Form</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.First_Name, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Name of Authorised Signatory without any Salutation (Mr./Mrs/M/s Etc.).">
+                                                            @Html.EditorFor(model => model.First_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.First_Name, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Mobile_no, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Mobile Number of Authorised Signatory without any prefix and country code.">
+                                                            @Html.EditorFor(model => model.Mobile_no, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Mobile_no, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Active and valid Email Id of Authorised Signatory.">
+                                                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Phone_No, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Landline Number with std code and without '0' prefix, eg. 1721234567.">
+                                                            @Html.EditorFor(model => model.Phone_No, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Phone_No, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                @*<div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Phone_No_STD, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Phone_No_STD, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Phone_No_STD, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>*@
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.WebLink_Promoter_website, htmlAttributes: new { @class = "control-label" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Valid and active URL of Promoter's Website (if any).">
+                                                            @Html.EditorFor(model => model.WebLink_Promoter_website, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.WebLink_Promoter_website, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.PAN_No, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="PAN Number of Organization as per PAN card and PAN Number format, eg. ABCDE1234F.">
+                                                            @Html.EditorFor(model => model.PAN_No, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PAN_No, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-8">
+                                                            <label class="control-label mand">Do you have Annual Report consisting of Director's Report, Auditor's Report,Audited P & L, Balance Sheet and Cash Flow Statements?</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsOtherOrganizationMembers, "Y", true) Yes
+                                                                @Html.RadioButtonFor(model => model.IsOtherOrganizationMembers, "N", false) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsOtherOrganizationMembers, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Do you have any Joint Promoter?</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.Org_Reg_Certificate, "Y", true) Yes
+                                                                @Html.RadioButtonFor(model => model.Org_Reg_Certificate, "N", false) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.Org_Reg_Certificate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Do you have any Parent Entity?</label>
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="A parent entity (Company) has control of the management and operations of a subsidiary company. It is also referred to as 'holding company'.">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.Org_Parent_Entity, "Y", true) Yes
+                                                                @Html.RadioButtonFor(model => model.Org_Parent_Entity, "N", false) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.Org_Parent_Entity, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        @*<label class="control-label col-md-3">Any Litigation Related to Project</label>
+                                                        <div class="col-md-2">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.IsLitigation_RelatedProject, "Yes", true) Yes
+                                                                @Html.RadioButtonFor(model => model.IsLitigation_RelatedProject, "No", false) No
+                                                            </label>
+                                                        </div>*@
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Do you have any Past Experience?</label>
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Past Experience in Real Estate Sector.">
+                                                            <label class="form-group">
+                                                                @Html.RadioButtonFor(model => model.Experience, "Y", true) Yes
+                                                                @Html.RadioButtonFor(model => model.Experience, "N", false) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.Experience, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="show">
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <hr />
+                                                                Years of Experience of Promoter in Real Estate Development
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Past_Exp_Punjab, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Past_Exp_Punjab, new { htmlAttributes = new { @class = "form-control" }, @Value = "0" })
+                                                        </div>
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Past_Exp_Other_States, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Past_Exp_Other_States, new { htmlAttributes = new { @class = "form-control" } })
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <hr />
+                                                                Number of Completed Projects and Total Area Constructed (in sqr mtrs) under all such Projects in Past Five Years or since Inception
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Ind_Org_CompltdProj_FiveYrs, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Ind_Org_CompltdProj_FiveYrs, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Ind_Org_CompltdProj_FiveYrs, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Ind_Org_TotalArea_Constructed, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Ind_Org_TotalArea_Constructed, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Ind_Org_TotalArea_Constructed, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <div class="col-md-12">
+                                                                <hr />
+                                                                Number of ongoing projects and proposed area to be constructed (in sqr mtrs)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Ind_Org_OngoingProjects, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Ind_Org_OngoingProjects, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Ind_Org_OngoingProjects, "", new { @class = "text-danger" })
+                                                        </div>
+
+                                                        <div class="col-md-3">@Html.LabelFor(model => model.Ind_Org_AreaToBe_Constructed, htmlAttributes: new { @class = "control-label mand" })</div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Ind_Org_AreaToBe_Constructed, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Ind_Org_AreaToBe_Constructed, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                        @*<div class="row">
+                                                <div class="form-group" style="">
+                                                    <div class="col-md-3">@Html.LabelFor(model => model.PAN_Doc_Address, htmlAttributes: new { @class = "control-label" })</div>
+                                                    <div class="col-md-3"><input type="file" id="PAN_Doc_Address" name="PAN_Doc_Address" onchange="showPAN(this)" /></div>
+
+                                                    <div class="col-md-3">@Html.LabelFor(model => model.Org_Reg_Certificate, htmlAttributes: new { @class = "control-label" })</div>
+                                                    <div class="col-md-3"><input type="file" id="Org_Reg_Certificate" name="Org_Reg_Certificate" onchange="showOrgCert(this)" /></div>
+                                                </div>
+                                            </div>*@
+
+                                        @*<div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3"><img id="user_PAN" height="100" width="90" style="border:solid" src="~/readwritedata/@Html.DisplayFor(model => model.PAN_Doc_Address)" /></div>
+                                                    <div class="col-md-3">@Html.HiddenFor(model => model.PAN_Doc_Address)</div>
+                                                    @Html.HiddenFor(model => model.PAN_Doc_Address)
+
+                                                    <div class="col-md-3"><img id="user_OrgCert" height="100" width="90" style="border:solid" src="~/readwritedata/@Html.DisplayFor(model => model.Org_Reg_Certificate)" /></div>
+                                                    <div class="col-md-3">@Html.HiddenFor(model => model.Org_Reg_Certificate)</div>
+                                                    @Html.HiddenFor(model => model.Org_Reg_Certificate)
+                                                </div>
+                                            </div>*@
+                                        @*<div class="row">
+                                                <div class="form-group  modal-header">
+                                                    <label class="control-label col-md-3">Do you have Last Five Years Experience</label>
+                                                    <div class="col-md-2">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.Last_FiveYr_Exp, "Yes", true) Yes
+                                                            @Html.RadioButtonFor(model => model.Last_FiveYr_Exp, "No", false) No
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="show1" class="modal-header">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">@Html.LabelFor(model => model.Ind_Org_CompltdProj_FiveYrs, htmlAttributes: new { @class = "control-label" })</div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.Ind_Org_CompltdProj_FiveYrs, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.Ind_Org_CompltdProj_FiveYrs, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="col-md-3">@Html.LabelFor(model => model.Ind_Org_TotalArea_Constructed, htmlAttributes: new { @class = "control-label" })</div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.Ind_Org_TotalArea_Constructed, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.Ind_Org_TotalArea_Constructed, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="form-group  modal-header">
+                                                    <label class="control-label col-md-3">Do you have Ongoing Experience</label>
+                                                    <div class="col-md-2">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.Ongoing_Exp, "Yes", true) Yes
+                                                            @Html.RadioButtonFor(model => model.Ongoing_Exp, "No", false) No
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="show2" class="modal-header">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">@Html.LabelFor(model => model.Ind_Org_OngoingProjects, htmlAttributes: new { @class = "control-label" })</div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.Ind_Org_OngoingProjects, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.Ind_Org_OngoingProjects, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="col-md-3">@Html.LabelFor(model => model.Ind_Org_AreaToBe_Constructed, htmlAttributes: new { @class = "control-label" })</div>
+                                                    <div class="col-md-3">
+                                                        @Html.EditorFor(model => model.Ind_Org_AreaToBe_Constructed, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.Ind_Org_AreaToBe_Constructed, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-3">Do you have any Organization Members</label>
+                                                    <div class="col-md-2">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.IsOtherOrganizationMembers, "Yes", true) Yes
+                                                            @Html.RadioButtonFor(model => model.IsOtherOrganizationMembers, "No", false) No
+                                                        </label>
+                                                    </div>
+                                                </div>*@
+                                        
+
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <input type="submit" value="Save" class="btn btn-outline btn-primary" />
+                                                    &nbsp;
+                                                    @Html.ActionLink("Reset", "RegOrgExp", "Promoter", null, new { @class = "btn btn-outline btn-primary" })
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @*<div class="col-md-12" style="margin-bottom:10px;text-align:left;">
+                                                <div> @TempData["notice"]<br />Photo Should be in .jpg format and less than 512KB </div>
+                                            </div>*@
+                                    }
+
+                            @*<div>
+                                @Html.ActionLink("Back to List", "Index")
+                            </div>*@
+                            <!-- /.col-lg-12 (nested) -->
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+
+    </div>
+
+</div>
+<!-- /.wrapper -->
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+}

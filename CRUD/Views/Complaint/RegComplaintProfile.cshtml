@@ -1,0 +1,397 @@
+﻿@model CRUD.Models.Complaint.ClsPrp_ComplaintProfile
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        if ($('#PhoneNumber_Number').val() === "0") {
+            $('#PhoneNumber_Number').val("");
+        }
+
+
+        $('#IsSameCommunicationAdd_ResOffAdd').on("click", function () {
+            if ($(this).is(':checked')) {
+
+                //Clone the DropDownList
+                var ddl = $("#Residencial_Official_AddressStateCode").clone();
+
+                //[OPTIONAL] Copy the selected value
+                var selectedValue = $("#Residencial_Official_AddressStateCode option:selected").val();
+                $("input[name='Comm_AddressStateCode']").find("option[value = '" + selectedValue + "']").attr("selected", "selected");
+                $("input[name='Comm_AddressLine1']").val($("input[name='Residencial_Official_AddressLine1']").val());
+                $("input[name='Comm_AddressLine2']").val($("input[name='Residencial_Official_AddressLine2']").val());
+                $("select[name='Comm_AddressStateCode']").val($("select[name='Residencial_Official_AddressStateCode']").val());
+
+                $("select[name='Comm_AddressDistrictCode']").val($("select[name='Residencial_Official_AddressDistrictCode']").val());
+                $("input[name='Comm_AddressPIN']").val($("input[name='Residencial_Official_AddressPIN']").val());                
+            } else {
+                $("input[name='Comm_AddressLine1']").val('');
+                $("input[name='Comm_AddressLine2']").val('');
+                $("input[name='Comm_AddressPIN']").val('');
+                $("select[name='Comm_AddressDistrictCode']").val('');
+                $("select[name='Comm_AddressStateCode']").val('');
+            }
+        });       
+        
+        $(function () {
+            var baseUrl = $('body').attr('data-base-url');
+            $.ajax({
+                type: "GET",
+                url: baseUrl + "Complaint/GetState",
+                datatype: "Json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#Residencial_Official_AddressStateCode').append('<option value="' + value.StateId + '">' + value.StateName + '</option>');
+
+                        $("#Residencial_Official_AddressStateCode option:contains(undefined)").remove();
+                    });
+                }
+            });
+
+            $('#Residencial_Official_AddressStateCode').change(function () {
+
+                $('#Residencial_Official_AddressDistrictCode').empty();
+
+                $.ajax({
+                    type: "POST",
+                    url: baseUrl + "Complaint/GetDistrictByStateId",
+                    datatype: "Json",
+                    data: { StateId: $('#Residencial_Official_AddressStateCode').val() },
+                    success: function (data) {
+                        $.each(data, function (index, value) {
+                            $('#Residencial_Official_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+    });        
+</script>
+<script>
+        $(function () {            
+            var baseUrl = $('body').attr('data-base-url');
+        $.ajax({
+            type: "GET",
+            url: baseUrl + "Complaint/GetState",
+            datatype: "Json",
+            success: function (data) {
+                $.each(data, function (index, value) {
+                    $('#Comm_AddressStateCode').append('<option value="' + value.StateId + '">' + value.StateName + '</option>');
+
+                    $("#Comm_AddressStateCode option:contains(undefined)").remove();
+                });
+            }
+        });
+
+        $('#Comm_AddressStateCode').change(function () {
+
+            $('#Comm_AddressDistrictCode').empty();
+
+            $.ajax({
+                type: "POST",
+                url: baseUrl + "Complaint/GetDistrictByStateId",
+                datatype: "Json",
+                data: { StateId: $('#Comm_AddressStateCode').val() },
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $('#Comm_AddressDistrictCode').append('<option value="' + value.DistrictId + '">' + value.DistrictName + '</option>');
+                    });
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var compBASE_URL = $('body').attr('data-base-url');
+        $(document).on('click', 'a.complainantdeskHomeButton', function (e) {
+            e.preventDefault();
+            window.location = compBASE_URL + 'Home/IndexComplainant';
+        });
+    });
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">My Profile</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Complainant Profile Registration Details
+                    <span class="pull-right">
+                        <a class="complainantdeskHomeButton" href="javascript:void(0);" title="Home"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-home" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm("RegComplaintProfile", "Complaint", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <h6>@TempData["messageComplaintProfile"]</h6>
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                @Html.HiddenFor(model => model.ComplaintProfile_IndexID)
+                                @Html.HiddenFor(model => model.ComplaintProfile_ID)
+                                @Html.HiddenFor(model => model.UserID)
+                                
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Applicant Registration Details</legend>                                                    
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Applicant_FirstName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="First Name of the Applicant or Complainant (or a person on the behaf of complainant) as per PAN Card.">
+                                                            @Html.EditorFor(model => model.Applicant_FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Applicant_FirstName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Applicant_LastName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Applicant_LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Applicant_LastName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Father_FirstName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Father_FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Father_FirstName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Father_LastName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Father_LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Father_LastName, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>                                                                                                
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Mobile Number of the Applicant without any prefix and country code.">
+                                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+                                                        </div>                                                       
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PhoneNumber_Number, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Landline Number of the Applicant with std code and without '0' prefix, eg. 1721234567.">
+                                                            @Html.EditorFor(model => model.PhoneNumber_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.PhoneNumber_Number, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Active and valid email Id of the Applicant for all official communication with the Authority.">
+                                                            @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Occupation, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Occupation e.g. Consultant, Lawyer, Advocate, Builder, Agent etc.">
+                                                            @Html.EditorFor(model => model.Occupation, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Occupation, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>                                                
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Residential Address</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Residencial_Official_AddressLine1, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Residential address of the Applicant.">
+                                                            @Html.EditorFor(model => model.Residencial_Official_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Residencial_Official_AddressLine1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Residencial_Official_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Residencial_Official_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Residencial_Official_AddressLine2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select State</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.Residencial_Official_AddressStateCode, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Residencial_Official_AddressStateCode, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select District</label>
+                                                        </div>                                                        
+                                                        @if (Model.districtMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.Residencial_Official_AddressDistrictCode, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.Residencial_Official_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3"> 
+                                                            @Html.LabelFor(model => model.Residencial_Official_AddressPIN, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Residencial_Official_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Residencial_Official_AddressPIN, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>                               
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Address for Official Communication or Notifications</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-9">                                                            
+                                                            <label class="control-label">                                                                
+                                                                @Html.CheckBox("IsSameCommunicationAdd_ResOffAdd", Model.IsSameCommunicationAdd_ResOffAdd.HasValue? Model.IsSameCommunicationAdd_ResOffAdd : false)
+                                                            </label>
+                                                            Is Your Communication or Notification Address is same as Residential Address?
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Comm_AddressLine1, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Valid address of the Applicant for all official communication with the Authority.">
+                                                            @Html.EditorFor(model => model.Comm_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Comm_AddressLine1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Comm_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Comm_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Comm_AddressLine2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select State</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(m => m.Comm_AddressStateCode, new SelectList(Model.stateMaster, "StateId", "StateName"), "Select State", new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(model => model.Comm_AddressStateCode, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label class="control-label mand">Select District</label>
+                                                        </div>
+                                                        @if (Model.districtMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.Comm_AddressDistrictCode, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.Comm_AddressDistrictCode, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Comm_AddressPIN, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Comm_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.Comm_AddressPIN, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>                               
+
+                                  <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @if (Model.IsDraft == 1)
+                                            {
+                                                <input type="submit" value="@TempData["submitvalue"]" class="btn btn-primary" disabled = "disabled" />
+                                            }
+                                            else
+                                            {
+                                                <input type="submit" value="@TempData["submitvalue"]" class="btn btn-outline btn-primary" />
+                                            }                                            
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "RegComplaintProfile", "Complaint", null, new { @class = "btn btn-outline btn-primary" })
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

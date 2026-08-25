@@ -1,0 +1,451 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_CompletionProjectRegistrationNumber
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="@Url.Content("~/mask-validator/jquery.inputmask.bundle-old.js")"></script>
+<script src="@Url.Content("~/mask-validator/inputmask/bindings/inputmask.binding.js")"></script>
+
+<script>
+    $(function () {
+        $("#RERAnumberRegistration").inputmask({ mask: function () { return ["AAAAAA-AAA99-AA9999"]; } });
+
+        $('#RERAnumberIssueDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#RERAnumberRegUptoDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        $('#Extra1').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $("#PCC_ReferenceDate").datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#PCC_ReferenceDate").val() == "01-Jan-0001" || $("#PCC_ReferenceDate").val() == "01/01/0001") {
+            $('#PCC_ReferenceDate').val("");
+        }        
+
+        if ($("#Extra1").val() == "01-Jan-0001" || $("#Extra1").val() == "01/01/0001") {
+            $('#Extra1').val("");
+        }
+    });
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+<style>
+    *.bgextractdisplay-color {
+        background-color: #8fcedd;
+    }
+</style>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">List of Projects : Project Completion Certificate(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                     RERA Registration Number (Completion Certificate of Registered Project) Details
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Project - ( @Html.DisplayFor(model => model.zipProject_RERAregistrationNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipProjectName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-4 project-name">
+                                                        @Html.DisplayFor(model => model.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipProject_DiaryNumber, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        @Html.DisplayFor(model => model.zipProjectCompletion_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.DisplayName(" of ")
+                                                        @Html.DisplayFor(model => model.zipProject_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityCompletionProjectIssueDeskNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>
+                                        Add Completion of Registered Project Details
+                                    </h4>
+                                </div>
+                            </div>
+                            @using (Html.BeginForm("Add_CompletionProjectRegistrationNumber", "Helpdesk", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()                               
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })                                                                                             
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Project Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PromoterName, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.PromoterName, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.PromoterName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.Label("Project Diary Number", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.ProjectRegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.ProjectRegDiaryNumber_Name, "", new { @class = "text-danger" })
+                                                        </div>                                                        
+                                                        <div class="col-md-3">
+                                                            @Html.Label("CC Diary Number", htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Extra2, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                                                            @Html.ValidationMessageFor(model => model.Extra2, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">District Name</label>
+                                                        </div>                                                        
+                                                        @if (Model.districtMaster != null)
+                                                        {
+                                                            <div class="col-md-3">
+                                                                @Html.DropDownListFor(model => model.ProjectAddressDistrict, new SelectList(Model.districtMaster, "DistrictId", "DistrictName"), "Select District", new { @class = "form-control", @disabled = "disabled" })
+                                                                @Html.ValidationMessageFor(model => model.ProjectAddressDistrict, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>                                                            
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">RERA Registration Number Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RERAnumberRegistration, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="RERA Registration Number of project file after approved by approval authority.">
+                                                            @Html.EditorFor(model => model.RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control", @maxlength = "20", @placeholder = "PBRERA-SAS01-PM0001" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAnumberRegistration, "", new { @class = "text-danger" })
+                                                        </div>                            
+                                                    </div>
+                                                </div>                    
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RERAnumberIssueDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RERAnumberIssueDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAnumberIssueDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.RERAnumberRegUptoDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            <label class="control-label">Extension of Registration Upto Date</label>                                                            
+                                                        </div>                                                        
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.Extra1, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.Extra1, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                                                     
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Completion Certificate Details</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PCC_InfoDetails, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Project Completion Certificate Information.">
+                                                            @Html.EditorFor(model => model.PCC_InfoDetails, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PCC_InfoDetails, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PCC_ReferenceName, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Specify Reference Number of Project Completion Certificate, if any.">
+                                                            @Html.EditorFor(model => model.PCC_ReferenceName, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Number", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PCC_ReferenceName, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PCC_ReferenceDate, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.PCC_ReferenceDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "Reference Date", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PCC_ReferenceDate, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PCC_CertificateStatus, htmlAttributes: new { @class = "control-label mand" })
+                                                        </div>
+                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Specify name of issueing authority of project completion certificate.">
+                                                            @Html.EditorFor(model => model.PCC_CertificateStatus, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                            @Html.ValidationMessageFor(model => model.PCC_CertificateStatus, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.PCC_ReciptType, htmlAttributes: new { @class = "control-label mand" })
+                                                            @{
+                                                                var listItemsModeType = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "Online Mode" , Value="Online"  },
+                                                                    new SelectListItem {  Text = "Offline Mode" , Value="Offline"  },
+                                                                    new SelectListItem {  Text = "Email Mode" , Value="Email"  },
+                                                                    new SelectListItem {  Text = "Fax Mode" , Value="Fax"  },
+                                                                    new SelectListItem {  Text = "Other" , Value="Other"  },
+                                                                };
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.PCC_ReciptType, new SelectList(listItemsModeType, "Value", "Text"), new { @class = "form-control", @autocomplete = "off" })
+                                                            @Html.ValidationMessageFor(model => model.PCC_ReciptType, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">                                                        
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.Extra3, htmlAttributes: new { @class = "control-label mand" })
+                                                            @{
+                                                                var listItemsCertificateType = new List<SelectListItem>
+                                                                {
+                                                                    new SelectListItem {  Text = "..." , Value=""  },
+                                                                    new SelectListItem {  Text = "Completion Certificate (CC)" , Value="Completion Certificate"  },
+                                                                    new SelectListItem {  Text = "Occupation Certificate (OC)" , Value="Occupation Certificate"  },
+                                                                    new SelectListItem {  Text = "Partial Completion Certificate (PCC)" , Value="Partial Completion Certificate"  },
+                                                                    new SelectListItem {  Text = "Revised Completion Certificate" , Value="Revised Completion Certificate"  },
+                                                                    new SelectListItem {  Text = "Other" , Value="Other"  },
+                                                                };
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DropDownListFor(model => model.Extra3, new SelectList(listItemsCertificateType, "Value", "Text"), new { @class = "form-control", @autocomplete = "off" })
+                                                            @Html.ValidationMessageFor(model => model.Extra3, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                                  
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-3">
+                                                            @Html.LabelFor(model => model.RemarksIfAny, htmlAttributes: new { @class = "control-label" })
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.EditorFor(model => model.RemarksIfAny, new { htmlAttributes = new { @class = "form-control" } })
+                                                            @Html.ValidationMessageFor(model => model.RemarksIfAny, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                               
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <fieldset class="col-md-12">
+                                                <legend class="my">Other(s)</legend>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">(i) Is Extension of Registration? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsDraftEvaluation, "1", htmlAttributes: new { @id = "chkExtensionValueY" }) Yes
+                                                                @Html.RadioButtonFor(model => model.IsDraftEvaluation, "0", htmlAttributes: new { @id = "chkExtensionValueN" }) No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsDraftEvaluation, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">(ii) Is Valid for Public View? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.IsPublicView, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsPublicView, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>                                               
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-6">
+                                                            <label class="control-label mand">(iii) Is Any Condition/Annexure? (Yes/No)</label>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label>
+                                                                @Html.RadioButtonFor(model => model.IsDraftSecMember, "1") Yes
+                                                                @Html.RadioButtonFor(model => model.IsDraftSecMember, "0") No
+                                                            </label>
+                                                            @Html.ValidationMessageFor(model => model.IsDraftSecMember, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            @if (Model.IsDraft == 1)
+                                            {
+                                                <input type="submit" value="@TempData["submitvalue"]" class="btn btn-outline btn-primary" disabled = "disabled" />
+                                            }
+                                            else
+                                            {
+                                                <input type="submit" value="@TempData["submitvalue"]" class="btn btn-outline btn-primary" />
+                                            }                                       
+                                            &nbsp;
+                                            @Html.ActionLink("Reset", "Add_CompletionProjectRegistrationNumber", "Helpdesk", null, new { @class = "btn btn-outline btn-primary" })                                     
+                                        
+                                            @Html.HiddenFor(m => m.PCC_IndexID)
+                                            @Html.HiddenFor(m => m.PCC_ID)
+                                            @Html.HiddenFor(m => m.ProjectRegDiaryNumber_Name)
+                                            @Html.HiddenFor(m => m.Promoter_ID)
+                                            @Html.HiddenFor(m => m.Project_ID)
+                                            @Html.HiddenFor(m => m.User_ID)
+                                            @Html.HiddenFor(m => m.RERAnumberRegistration)
+                                            @Html.HiddenFor(m => m.RERAnumberIssueDate)
+                                            @Html.HiddenFor(m => m.RERAnumberRegUptoDate)
+                                            @Html.HiddenFor(m => m.ProjectName)
+                                            @Html.HiddenFor(m => m.PromoterName)
+                                            @Html.HiddenFor(m => m.ProjectAddressDistrict)
+                                            @Html.HiddenFor(m => m.DName)                                            
+                                            @Html.HiddenFor(m => m.Extra1)
+                                            @Html.HiddenFor(m => m.Extra2) 
+                                            @Html.HiddenFor(m => m.Extra3)                                           
+
+                                            @Html.HiddenFor(m => m.IsDraftHelpDesk)
+                                            @Html.HiddenFor(m => m.IsDraftEvaluation)                                            
+                                            @Html.HiddenFor(m => m.IsDraftSecMember)
+                                            @Html.HiddenFor(m => m.IsDraftMember)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>                
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+}

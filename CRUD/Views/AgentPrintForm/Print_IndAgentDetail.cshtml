@@ -1,0 +1,197 @@
+﻿@model CRUD.Models.AgentPrintForm.Clsprp_IndAgent
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                @if (Model.zapAgent_DiaryNumber != null)
+                {
+
+                    var varDate = System.DateTime.Now.Date;
+                    <tr>
+                        <td colspan="2" style="text-align:left;">@Html.DisplayName("Real Estate Regulatory Authority, Punjab")</td>
+                        <td colspan="2" style="text-align:right;">@Html.DisplayName(String.Format("{0:D}", varDate))</td>
+                    </tr>
+                        <tr><td colspan="4" style="border: 1px solid #ccc"><b>@Html.DisplayName("Real Estate Agent Application")</b></td></tr>
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr>
+                            <td width="25%">@Html.DisplayName("Diary Number")</td>
+                            <td width="35%">@Html.DisplayFor(model => model.zapAgent_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.zapAgentName, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>@Html.DisplayFor(model => model.zapAgentName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                            <td>@Html.LabelFor(model => model.zapAgentLastModifiedOn, htmlAttributes: new { @class = "control-label" })</td>
+                            <td>
+                                @Html.DisplayFor(model => model.zapAgentLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                            </td>
+                        </tr>
+
+                        <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                        <tr><td colspan="4"><h4>@Html.DisplayName("Agent Registration Details")</h4></td></tr>
+
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4" style="font-style: italic; font-size:medium; border: 1px solid #ccc">No Record(s) Found.</td></tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                }
+                @foreach (var item in Model.Agent)
+                {
+
+                    <tr>
+                        <td>@Html.DisplayName("Existing/New Agent Registration")</td>
+                        <td colspan="3">
+                            @if (item.Existing_RERANumber != "Y")
+                            {
+                                @Html.DisplayName("New Agent Registration")
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelitem => item.Existing_RERANumber, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.DisplayName(" (Registered Agent)")
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.Agent_FirstName, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.Agent_FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.Agent_MiddleName, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.Agent_MiddleName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.Agent_LastName, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.Agent_LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.Father_FirstName, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.Father_FirstName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.Father_MiddleName, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.Father_MiddleName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.Father_LastName, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.Father_LastName, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.PAN_Number, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.PAN_Number, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.Aadhaar_Number, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.Aadhaar_Number, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.MobileNumber, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.MobileNumber, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.PhoneNumber_Number, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.PhoneNumber_Number, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.Occupation, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.Occupation, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.LabelFor(modelitem => item.EmailAddress, htmlAttributes: new { @class = "control-label" })</td>
+                        <td colspan="3" style="text-align:justify;">@Html.DisplayFor(modelitem => item.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayName("Other State/UT RERA registration No")</td>
+                        <td colspan="3" style="text-align:justify;">
+
+                            @if (item.IsOtherStateUT_RERAregistration == "Y")
+                            {
+                                @Html.DisplayName("Yes")
+                            }
+                            @if (item.IsOtherStateUT_RERAregistration == "N")
+                            {
+                                @Html.DisplayName("No")
+                            }
+
+                        </td>
+                    </tr>
+
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4"><h4>@Html.DisplayName("Permanent Address Details")</h4></td></tr>
+                    <tr>
+                        <td>@Html.DisplayName("Address Line 1")</td>
+                        <td>@Html.DisplayFor(modelitem => item.P_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td>@Html.DisplayName("Address Line 2")</td>
+                        <td>@Html.DisplayFor(modelitem => item.P_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayName("District & State")</td>
+                        <td>
+                            @Html.DisplayFor(model => model.P_AddressDist, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.DisplayName(", ")
+                            @Html.DisplayFor(model => model.P_AddressState, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                        <td>@Html.DisplayName("Pin Code")</td>
+                        <td>@Html.DisplayFor(model => item.P_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4"><h4>@Html.DisplayName("Business Place Address Details")</h4></td></tr>
+                    <tr>
+                        <td>@Html.DisplayName("Address Line 1")</td>
+                        <td>@Html.DisplayFor(modelitem => item.BusinessPlace_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td>@Html.DisplayName("Address Line 2")</td>
+                        <td>@Html.DisplayFor(modelitem => item.BusinessPlace_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayName("District & State")</td>
+                        <td>
+                            @Html.DisplayFor(model => model.BusinessPlace_AddressDistrict, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.DisplayName(", ")
+                            @Html.DisplayFor(model => model.BusinessPlace_AddressState, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                        <td>@Html.DisplayName("Pin Code")</td>
+                        <td>@Html.DisplayFor(model => item.BusinessPlace_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                    <tr><td colspan="4"><h4>@Html.DisplayName("Official Communication Address Details")</h4></td></tr>
+                    <tr>
+                        <td>@Html.DisplayName("Address Line 1")</td>
+                        <td>@Html.DisplayFor(modelitem => item.BComm_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })</td>
+                        <td>@Html.DisplayName("Address Line 2")</td>
+                        <td>@Html.DisplayFor(modelitem => item.BComm_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayName("District & State")</td>
+                        <td>
+                            @Html.DisplayFor(model => model.BComm_AddressDistrict, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.DisplayName(", ")
+                            @Html.DisplayFor(model => model.BComm_AddressState, new { htmlAttributes = new { @class = "form-control" } })
+                        </td>
+                        <td>@Html.DisplayName("Pin Code")</td>
+                        <td>@Html.DisplayFor(model => item.BComm_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })</td>
+                    </tr>
+
+                }
+
+            </table>
+            <table cellpadding="5" cellspacing="0" style="font-size: 11pt;width:100%;">
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="font-style: italic; font-size:small; border: 1px solid #ccc">Disclaimer: [I/We] solemnly affirm and declare that the particulars given herein are correct to [my/our] knowledge and belief and nothing material has been concealed by [me/us] therefrom.</td></tr>
+                <tr><td colspan="4" style="font-style: italic;"><br /><br /></td></tr>
+                <tr><td colspan="4" style="text-align:right; font-style: italic; font-size:medium;">(Authorized Signatory)</td></tr>
+            </table>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+</div>
+

@@ -1,0 +1,1302 @@
+﻿@model CRUD.Models.HelpDesk.Clsprp_AuthorityDesk_PromoterCoPromoterDetails
+
+<link href="@Url.Content("~/css/jquery.spzoom.css")" rel="stylesheet" type="text/css" />
+
+<script>
+    $(document).ready(function () {
+        var BASE_URLm = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var projectId = 0;//$.trim($(parentRow).find('input.hdnProjectID').val());
+            projectId = parseInt(projectId);
+            var criteriaCode = $(this).attr('data-criteria-code');
+            criteriaCode = parseInt(criteriaCode);
+
+            $.ajax({
+                url: BASE_URLm + 'Helpdesk/ProjectInfoCheckListInsert',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId, 'criteriaCode': criteriaCode },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Checklist Criteria Details');
+            $(projectDetailsModal).modal('show');
+        });
+
+        $(document).on('click', 'a.panel-accordion-toggle', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var criteriaCode = $(this).attr('data-parent');
+            var criteriaValue = $(this).attr('data-copromoter');
+
+            var criteriaCmd = "#btnAccordionAdditionalCoPromoters" + criteriaValue;
+            var criteriaSelector = "#accordionAdditionalCoPromoters" + criteriaValue;
+
+            var profileSelector = "#btnViewjointpromoterdetails" + criteriaValue;            
+            if ($(profileSelector).find("span").hasClass('btn-warning')) {
+                $(profileSelector).find("span").toggleClass("btn-warning btn-primary");
+            };
+
+            switch (criteriaCode) {
+                case criteriaSelector:
+                    $(criteriaCmd).find("span").toggleClass("btn-outline");
+                    $(criteriaCmd).find("i").toggleClass("fa-minus-circle fa-plus-circle");                    
+                    break;
+            }
+        });
+
+        $(document).on('click', 'a.lock-copromoterprofile-box', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            var btnLabel = $(this).attr("title");
+            var cnfrmTxt = "Do you want to lock details?";
+            if (btnLabel == "Unlock Details") {
+                var cnfrmTxt = "Do you want to unlock details?";
+            }
+
+            if (confirm(cnfrmTxt)) {
+                var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+                var parmPromoterId = $.trim($(document).find('#zipRelated_Promoter_ID').val());
+                var parmLockUnlockFlag = $(this).attr('data-copromoter-flag');
+                var parmLockUnlockIndex = $(this).attr('data-cprmindex-code');
+                var parmApplicationId = $(this).attr('data-cprmid-code');
+
+                var criteriaValue = $(this).attr('data-copromoter-box');
+                var criteriaSelector = "#btnLockcopromoterprofilebox" + criteriaValue;
+                //$(criteriaSelector).find("span").toggleClass("btn-primary btn-warning");
+                //$(criteriaSelector).find("i").toggleClass("fa-key fa-unlock");
+                var baseUrlcrpmlockunlock = $('body').attr('data-base-url');
+
+                $.ajax({
+                    type: 'GET',
+                    url: baseUrlcrpmlockunlock + 'Helpdesk/LockUnlockHandler_CoPromoterProfileByIndex',
+                    data: { 'parmProjectId': parmProjectId, 'parmPromoterId': parmPromoterId, 'parmLockUnlock': parmLockUnlockFlag, 'parmIndexID': parmLockUnlockIndex, 'parmAppId': parmApplicationId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        alert(data.status);
+                        if (data.statusCode == 101) {
+                            $(criteriaSelector).find("span").removeClass("btn-warning").addClass("btn-primary");
+                            $(criteriaSelector).attr("title", "Unlock Details");
+                            $(criteriaSelector).find("i").removeClass("fa-unlock").addClass("fa-key");
+                            $(criteriaSelector).prop('disabled', true);
+                            $(criteriaSelector).find("span").addClass("disabledlockunlock");
+                        } else if (data.statusCode == 105) {
+                            $(criteriaSelector).find("span").removeClass("btn-primary").addClass("btn-warning");
+                            $(criteriaSelector).attr("title", "Lock Details");
+                            $(criteriaSelector).find("i").removeClass("fa-key").addClass("fa-unlock");
+                            $(criteriaSelector).prop('disabled', true);
+                            $(criteriaSelector).find("span").addClass("disabledlockunlock");
+                        }
+                    },
+                    failure: function (data) {
+                        alert('Bad Request! Failed');
+                    },
+                    error: function (err) {
+                        alert('Bad Request! Error');
+                    }
+                });
+            }
+        });
+
+        $(document).on('click', 'a.lock-copromoterprofile-info', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmApplicationId = $(this).attr('data-cprmapp-code');
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmPromoterId = $.trim($(document).find('#zipRelated_Promoter_ID').val());
+            var criteriaCode = 0;
+            parmApplicationId = parseInt(parmApplicationId);
+            parmProjectId = parseInt(parmProjectId);
+            parmPromoterId = parseInt(parmPromoterId);
+            criteriaCode = parseInt(criteriaCode);
+            var baseUrlExtRef = $('body').attr('data-base-url');
+
+            $.ajax({
+                url: baseUrlExtRef + 'Helpdesk/PromoterExtractReferenceDetails',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': parmProjectId, 'promoterId': parmPromoterId, 'appplicationId': parmApplicationId, 'varflag': criteriaCode },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Promoter Details');
+            $(projectDetailsModal).modal('show');
+        });
+
+        $(document).on('click', 'a.show-jointpromoterdetails-box', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var jointpromoterModal = $(document).find('#myModal');
+            $(jointpromoterModal).find('.modal-body').html('');
+
+            var prmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var prmPromoterId = $.trim($(document).find('#zipRelated_Promoter_ID').val());
+            var prmLinkPromoterId = $(this).attr('data-jointpromoter-link-promoterid');
+            var prmJPromoterApplicationId = $(this).attr('data-jointpromoter-application-code');
+            var prmJPromoterApplicationType = $(this).attr('data-jointpromoter-application-type');
+            prmProjectId = parseInt(prmProjectId);
+            prmPromoterId = parseInt(prmPromoterId);
+            prmLinkPromoterId = parseInt(prmLinkPromoterId);
+            prmJPromoterApplicationId = parseInt(prmJPromoterApplicationId);
+            prmJPromoterApplicationType = parseInt(prmJPromoterApplicationType);
+
+            var criteriaValue = $(this).attr('data-jointpromoter-box');
+            var criteriaSelector = "#btnViewjointpromoterdetails" + criteriaValue;
+            $(criteriaSelector).find("span").toggleClass("btn-primary btn-warning");
+
+            var baseUrljointpromoter = $('body').attr('data-base-url');
+            var varDNumber = $("#zipProject_DiaryNumber").val();
+            var varProjectName = $("#zipProjectName").val();
+            
+            $.ajax({
+                url: baseUrljointpromoter + 'Helpdesk/PromoterExtractRelatedLinksJointPromoterDetails',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': prmProjectId, 'promoterId': prmPromoterId, 'linkpromoterId': prmLinkPromoterId, 'jpromoterapplicationId': prmJPromoterApplicationId, 'jpromoterapplicationType': prmJPromoterApplicationType, 'varflag': '0' },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(jointpromoterModal).find('.modal-body').html(response);
+                    $(jointpromoterModal).find('table').DataTable({
+                        responsive: true
+                    });
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+            $(jointpromoterModal).find('h4.modal-title').html('Diary Number - <a href="javascript:void(0);"></a>');
+            $(jointpromoterModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(jointpromoterModal).modal('show');
+        });
+    });
+</script>
+<script>
+    $(function () {        
+        //if ($('#DetailPaymentPendingProject').val() == "") {
+        //    $('#DetailPaymentPendingProject').val("0");
+        //    $('#show_payment_pending').hide();
+        //};
+
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-spzoom]').spzoom();
+    }); 
+</script>
+
+<script>
+    function openSideScreen(promotorId, documentIndexId) {
+        var baseUrl = $('body').attr('data-base-url');
+        var apiUrl = '@System.Configuration.ConfigurationManager.AppSettings["docpagesBaseURL"]';
+        $.ajax({
+            type: "GET",
+            url: baseUrl + "Helpdesk/GetPromoterDoc",
+            datatype: "Json",
+            data: { 'Pid': promotorId, 'docIndexID': documentIndexId },
+            beforeSend: function () {
+                startPreloader();
+            },
+            success: function (data) {
+                stopPreloader();
+                var fileUrl = '';
+                $.each(data.prpPromoterDocList, function (index, value) {
+                    if (value.PromoterDoc_IndexID == documentIndexId) {
+                        fileUrl = value.PromoterDoc_FilePath;
+                    }
+                });
+
+                var filename = fileUrl;
+                var extension = filename.replace(/^.*\./, '');
+                if (extension == filename) {
+                    extension = '';
+                } else {
+                    extension = extension.toLowerCase();
+                }
+                switch (extension) {
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                        $("#mySidescreenDocumentEmbed").hide();
+                        $("#mySidescreenDocumentImage").show();
+                        $("#mySidescreenDocImg").attr('src', apiUrl + fileUrl);
+                        $("#documentTypeDiscription").text('(File Type: JPEG/JPG)');
+                        break;
+                    case 'pdf':
+                        $("#mySidescreenDocumentEmbed").show();
+                        $("#mySidescreenDocumentImage").hide();
+                        $("#mySidescreenDocEmbedd").attr('src', apiUrl + fileUrl + '#view=FitH&scrollbar=0&toolbar=0&navpanes=1');
+                        $("#documentTypeDiscription").text('(File Type: PDF)');
+                        break;
+                    default:
+                        $("#mySidescreenDocumentEmbed").show();
+                        $("#mySidescreenDocumentImage").hide();
+                        $("#mySidescreenDocEmbedd").attr('src', apiUrl + fileUrl + '#view=FitH&scrollbar=0&toolbar=0&navpanes=1');
+                        $("#documentTypeDiscription").text('(File Type: Other File)');
+                        break;
+                }
+                //$("#myiframe").attr('src', apiUrl + fileUrl);
+            }
+        });
+
+        document.getElementById("mySidescreen").style.width = "40%";
+        document.getElementById("mySidescreen").style.height = "100%";
+        document.getElementById("wrapper").style.marginLeft = "40%";
+        document.getElementById("wrapper").style.transition = "0.3s";
+        document.getElementById("page-wrapper").style.marginLeft = "0px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "block";
+        //document.getElementById("myclosesideshutter").style.marginLeft = "40%";
+        document.getElementById("myclosesideshutter").style.transition = "0.3s";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function closeSideScreen() {
+        document.getElementById("mySidescreen").style.width = "0";
+        document.getElementById("wrapper").style.marginLeft = "0";
+        document.getElementById("page-wrapper").style.marginLeft = "250px";
+        document.getElementById("side-menu").style.display = "block";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "none";
+    }
+
+    function closeSideShutter() {
+        document.getElementById("mySidescreen").style.width = "250px";
+        document.getElementById("wrapper").style.marginLeft = "0";
+        document.getElementById("page-wrapper").style.marginLeft = "250px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "block";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function openSideShutter() {
+        document.getElementById("mySidescreen").style.width = "40%";
+        document.getElementById("mySidescreen").style.height = "100%";
+        document.getElementById("wrapper").style.marginLeft = "40%";
+        document.getElementById("page-wrapper").style.marginLeft = "0px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "block";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function zoominSideScreen() {
+        document.getElementById("mySidescreen").style.width = "250px";
+        document.getElementById("wrapper").style.marginLeft = "0";
+        document.getElementById("page-wrapper").style.marginLeft = "250px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "block";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function zoomoutSideScreen() {
+        document.getElementById("mySidescreen").style.width = "60%";
+        document.getElementById("mySidescreen").style.height = "100%";
+        document.getElementById("wrapper").style.marginLeft = "60%";
+        document.getElementById("page-wrapper").style.marginLeft = "0px";
+        document.getElementById("side-menu").style.display = "none";
+
+        document.getElementById("myopensideshutter").style.display = "none";
+        document.getElementById("myclosesideshutter").style.display = "none";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "block";
+    }
+
+    function openSidebarNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+        document.getElementById("mySidenav").style.height = "50%";
+        document.getElementById("mySidenav").style.marginBottom = "0";
+        document.getElementById("main").style.marginLeft = "250px";
+        //document.getElementById("mybtnsidenav").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "none";
+    }
+
+    function closeSidebarNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+        //document.getElementById("mybtnsidenav").style.display = "block";
+        document.getElementById("mySidescreenbtnZoomOut").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomIn").style.display = "none";
+        document.getElementById("mySidescreenbtnZoomOff").style.display = "none";
+    }
+</script>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+
+        $(document).on('click', 'a.modalOpenerButtonExpandChecklist', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmCriteriaID = $(this).attr('data-criteria-code');
+            var parmCriteriaSubID = $(this).attr('data-subcriteria-code');
+            var parmCriteriaFlag = $(this).attr('data-criteria-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmCriteriaID = parseInt(parmCriteriaID);
+            parmCriteriaSubID = parseInt(parmCriteriaSubID);
+            parmCriteriaFlag = parseInt(parmCriteriaFlag);
+
+            var varDNumber = $("#zipProject_DiaryNumber").val();
+            var varProjectName = $("#zipProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectInfoCheckListDisplayLogByFlag',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'parmProjectId': parmProjectId, 'parmCriteriaID': parmCriteriaID, 'parmCriteriaSubID': parmCriteriaSubID, 'parmCriteriaFlag': parmCriteriaFlag },
+                beforeSend: function(){
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Checklist History Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+        $(document).on('click', 'a.modalOpenerButtonExpandDocument', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmdocID = $(this).attr('data-document-code');
+            var parmdocSubID = $(this).attr('data-subdocument-code');
+            var parmdocFlag = $(this).attr('data-document-flag');
+            parmProjectId = parseInt(parmProjectId);
+            parmdocID = parseInt(parmdocID);
+            parmdocSubID = parseInt(parmdocSubID);
+            parmdocFlag = parseInt(parmdocFlag);
+
+            var varDNumber = $("#zipProject_DiaryNumber").val();
+            var varProjectName = $("#zipProjectName").val();
+            $(projectDetailsModal).find('.modal-title').find('.title-project-details').html('');
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectInfoDocumentDisplayByFlag',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'parmProjectId': parmProjectId, 'parmdocID': parmdocID, 'parmdocSubID': parmdocSubID, 'parmdocFlag': parmdocFlag },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            $(projectDetailsModal).find('h4.modal-title').html('Document Details - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('.modal-title a').html(varDNumber + ' (' + varProjectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+        $(document).on("click", "a.lock-copromoterprofile-details", lockUnclockHandlerCoPromoterProfile);
+
+        //Lock-Unlock-Loader-Handler (pTrack)
+        var parmLockUnlockpCoPromoter = $.trim($(document).find('#IsDraftCoPromoters').val());
+        if (parmLockUnlockpCoPromoter == 1) { //L        
+            $("#btnLockcopromoterprofileDetails").prop('disabled', false);
+            $("#btnLockcopromoterprofileDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockcopromoterprofileDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockcopromoterprofileDetails").attr("title", "Unlock Details");
+            $("#btnLockcopromoterprofileDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else if (parmLockUnlockpCoPromoter == 5) { //UL         
+            $("#btnLockcopromoterprofileDetails").prop('disabled', false);
+            $("#btnLockcopromoterprofileDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockcopromoterprofileDetails").find("span").removeClass("disabledlockunlock");
+            $("#btnLockcopromoterprofileDetails").attr("title", "Lock Details");
+            $("#btnLockcopromoterprofileDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+        else if (parmLockUnlockpCoPromoter == 6) { //PL         
+            $("#btnLockcopromoterprofileDetails").prop('disabled', true);
+            $("#btnLockcopromoterprofileDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+            $("#btnLockcopromoterprofileDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockcopromoterprofileDetails").attr("title", "Unlock Details");
+            $("#btnLockcopromoterprofileDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+        }
+        else {
+            $("#btnLockcopromoterprofileDetails").prop('disabled', true);
+            $("#btnLockcopromoterprofileDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+            $("#btnLockcopromoterprofileDetails").find("span").addClass("disabledlockunlock");
+            $("#btnLockcopromoterprofileDetails").attr("title", "Lock Details");
+            $("#btnLockcopromoterprofileDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+        }
+    });
+
+    function lockUnclockHandlerCoPromoterProfile() {
+
+        var btnLabel = $(this).attr("title");
+        var cnfrmTxt = "Do you want to lock details?";
+        if (btnLabel == "Unlock Details") {
+            var cnfrmTxt = "Do you want to unlock details?";
+        }
+
+        if (confirm(cnfrmTxt)) {
+            var parmProjectId = $.trim($(document).find('#zipRelated_Project_ID').val());
+            var parmPromoterId = $.trim($(document).find('#zipRelated_Promoter_ID').val());
+            var parmLockUnlock = $.trim($(document).find('#IsDraftCoPromoters').val());
+            var parmIndexID = 0;
+            var baseUrllockunlock = $('body').attr('data-base-url');
+
+            $.ajax({
+                type: 'GET',
+                url: baseUrllockunlock + 'Helpdesk/LockUnlockHandler_CoPromotersRecordList',
+                data: { 'parmProjectId': parmProjectId, 'parmPromoterId': parmPromoterId, 'parmLockUnlock': parmLockUnlock, 'parmIndexID': parmIndexID },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    alert(data.status);
+                    if (data.statusCode == 101) {
+                        $("#btnLockcopromoterprofileDetails").find("span").removeClass("btn-warning").addClass("btn-primary");
+                        $("#btnLockcopromoterprofileDetails").attr("title", "Unlock Details");
+                        $("#btnLockcopromoterprofileDetails").find("i").removeClass("fa-unlock").addClass("fa-key");
+                        $("#btnLockcopromoterprofileDetails").prop('disabled', true);
+                        $("#btnLockcopromoterprofileDetails").find("span").addClass("disabledlockunlock");
+                    } else if (data.statusCode == 105) {
+                        $("#btnLockcopromoterprofileDetails").find("span").removeClass("btn-primary").addClass("btn-warning");
+                        $("#btnLockcopromoterprofileDetails").attr("title", "Lock Details");
+                        $("#btnLockcopromoterprofileDetails").find("i").removeClass("fa-key").addClass("fa-unlock");
+                        $("#btnLockcopromoterprofileDetails").prop('disabled', true);
+                        $("#btnLockcopromoterprofileDetails").find("span").addClass("disabledlockunlock");
+                    }
+                },
+                failure: function (data) {
+                    alert('Bad Request! Failed');
+                },
+                error: function (err) {
+                    alert('Bad Request! Error');
+                }
+            });
+        }
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Project Application Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Details and Profile of Joint-Promoter(s), If Any
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <fieldset class="col-md-12">
+                                            <legend class="my">Project /Application - ( @Html.DisplayFor(model => model.zipProject_DiaryNumber, new { htmlAttributes = new { @class = "form-control" } }) ) Details</legend>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.zipProjectName, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        @Html.DisplayFor(model => model.zipProjectName, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.HiddenFor(model => model.zipProjectName)
+                                                        @Html.HiddenFor(model => model.zipProject_DiaryNumber)
+                                                        @Html.HiddenFor(model => model.zipRelated_Project_ID)
+                                                        @Html.HiddenFor(model => model.zipRelated_Promoter_ID)
+                                                        @Html.HiddenFor(model => model.IsDraftCoPromoters)
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor(model => model.zipProjectLastModifiedOn, htmlAttributes: new { @class = "control-label" })
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        @Html.DisplayFor(model => model.zipProjectLastModifiedOn, new { htmlAttributes = new { @class = "form-control" } })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Partial("_AuthorityDeskNavMenuPartial")
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h4 class="page-header" style="margin-top: 15px;">
+                                        <a data-criteria-code="151" class="modalOpenerButton" href="javascript:void(0);" title="Add Remarks (If Any)"><i class="fa fa-list-ul fa-fw"></i> </a>Promoter Profile: Joint-Promoter(s) Details, If Any
+                                        <span class="pull-right">
+                                            <a class="modalOpenerButtonExpandChecklist" data-criteria-code="601" data-subcriteria-code="0" data-criteria-flag="1" href="javascript:void(0);" title="View Checklist"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-check-square-o" aria-hidden="true"></i></span></a>
+                                            <a class="a lock-copromoterprofile-details" id="btnLockcopromoterprofileDetails" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                        </span>
+                                    </h4>
+                                </div>
+                                <!-- /.col-lg-12 -->
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    @{
+                                        int snoCoPromoterDetails = 0;
+                                        string accordionAdditionalCoPromoters = string.Empty;
+                                        string btnAccordionAdditionalCoPromoters = string.Empty;
+                                        string accordionAdditionalCoPromotersparent = string.Empty;
+                                        string collapseProfileCoPromotersparent = string.Empty;
+                                        string collapseProfileCoPromoters = string.Empty;
+                                        string btnLockcopromoterprofilebox = string.Empty;
+
+                                        string btnViewjointpromoterdetails = string.Empty;
+                                    }
+                                    @if (Model.prpCoPromoters != null)
+                                    {
+                                        if (Model.prpCoPromoters.Count > 0)
+                                        {
+                                            foreach (var item in Model.prpCoPromoters)
+                                            {
+                                                {
+                                                    snoCoPromoterDetails = snoCoPromoterDetails + 1;
+                                                    accordionAdditionalCoPromoters = "accordionAdditionalCoPromoters" + snoCoPromoterDetails.ToString();
+                                                    btnAccordionAdditionalCoPromoters = "btnAccordionAdditionalCoPromoters" + snoCoPromoterDetails.ToString();
+                                                    accordionAdditionalCoPromotersparent = "#accordionAdditionalCoPromoters" + snoCoPromoterDetails.ToString();
+                                                    collapseProfileCoPromotersparent = "#collapseProfileCoPromoters" + snoCoPromoterDetails.ToString();
+                                                    collapseProfileCoPromoters = "collapseProfileCoPromoters" + snoCoPromoterDetails.ToString();
+                                                    btnLockcopromoterprofilebox = "btnLockcopromoterprofilebox" + snoCoPromoterDetails.ToString();
+                                                    btnViewjointpromoterdetails = "btnViewjointpromoterdetails" + snoCoPromoterDetails.ToString();
+                                                }
+                                                <div class="panel-group" id=@accordionAdditionalCoPromoters>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group">
+                                                                <fieldset class="col-md-12">
+                                                                    <legend class="my">
+                                                                        <a data-criteria-code="151" class="modalOpenerButton" href="javascript:void(0);">
+                                                                            @Html.DisplayName("(" + snoCoPromoterDetails.ToString() + ")") Joint-Promoter Profile
+                                                                            @if (item.CoPromoterType_Flag == 1)
+                                                                            { @Html.DisplayName("(Individual)");
+                                                                            }
+                                                                            @if (item.CoPromoterType_Flag == 2)
+                                                                            { @Html.DisplayName("(Other Than Individual)");
+                                                                            }
+                                                                        </a>
+                                                                    </legend>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @if (item.CoPromoterType_Flag == 1)
+                                                                                {
+                                                                                    @Html.LabelFor(model => item.Org_Title, htmlAttributes: new { @class = "control-label" })
+                                                                                }
+                                                                                @if (item.CoPromoterType_Flag == 2)
+                                                                                {
+                                                                                    @Html.LabelFor(model => item.Org_Name, htmlAttributes: new { @class = "control-label" })
+                                                                                }
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @if (item.CoPromoterType_Flag == 1)
+                                                                                {
+                                                                                    @Html.DisplayFor(model => item.First_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    @Html.DisplayName(" ")
+                                                                                    @Html.DisplayFor(model => item.Middle_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    @Html.DisplayName(" ")
+                                                                                    @Html.DisplayFor(model => item.Last_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                }
+                                                                                @if (item.CoPromoterType_Flag == 2)
+                                                                                {
+                                                                                    @Html.DisplayFor(model => item.Org_Title, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    @Html.DisplayName(" ")
+                                                                                    @Html.DisplayFor(model => item.Org_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                }
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @if (item.CoPromoterType_Flag == 1)
+                                                                                {
+                                                                                    @Html.DisplayName("Father's Name");
+                                                                                }
+                                                                                @if (item.CoPromoterType_Flag == 2)
+                                                                                {
+                                                                                    @Html.LabelFor(model => item.Org_Type, htmlAttributes: new { @class = "control-label" })
+                                                                                }
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @if (item.CoPromoterType_Flag == 1)
+                                                                                {
+                                                                                    @Html.DisplayFor(model => item.Fath_First_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    @Html.DisplayName(" ")
+                                                                                    @Html.DisplayFor(model => item.Fath_Middle_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    @Html.DisplayName(" ")
+                                                                                    @Html.DisplayFor(model => item.Fath_Last_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                }
+                                                                                @if (item.CoPromoterType_Flag == 2)
+                                                                                {
+                                                                                    switch (item.Org_Type)
+                                                                                    {
+                                                                                        case "1":
+                                                                                            @Html.DisplayName("Private Limited Company");
+                                                                                            break;
+                                                                                        case "2":
+                                                                                            @Html.DisplayName("Public Limited Company")
+                                                                                            break;
+                                                                                        case "3":
+                                                                                            @Html.DisplayName("Undivided Hindu Family")
+                                                                                            break;
+                                                                                        case "4":
+                                                                                            @Html.DisplayName("Partnerships")
+                                                                                            break;
+                                                                                        case "5":
+                                                                                            @Html.DisplayName("Co-operative Societies")
+                                                                                            break;
+                                                                                        case "6":
+                                                                                            @Html.DisplayName("Limited Liabilities Partnership")
+                                                                                            break;
+                                                                                        case "7":
+                                                                                            @Html.DisplayName("Development Authorities")
+                                                                                            break;
+                                                                                        case "8":
+                                                                                            @Html.DisplayName("Others")
+                                                                                            break;
+                                                                                        default:
+                                                                                            @Html.DisplayName("Not Known");
+                                                                                            break;
+                                                                                    }
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(model => item.CoPromoter_WebLink, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(model => item.CoPromoter_WebLink, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(model => item.CoPromoter_PAN_Number, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-3">
+                                                                                @Html.DisplayFor(model => item.CoPromoter_PAN_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>                                                                    
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-md-3">
+                                                                                @Html.LabelFor(model => item.OTI_Org_Objects, htmlAttributes: new { @class = "control-label" })
+                                                                            </div>
+                                                                            <div class="col-md-7">
+                                                                                @if (item.CoPromoterType_Flag == 1)
+                                                                                {
+                                                                                    @Html.DisplayFor(model => item.Ind_Org_Objects, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                }
+                                                                                @if (item.CoPromoterType_Flag == 2)
+                                                                                {
+                                                                                    @Html.DisplayFor(model => item.OTI_Org_Objects, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                }
+                                                                            </div>
+                                                                            <div class="col-md-2">
+                                                                                <span class="pull-right">
+                                                                                    <a id=@btnAccordionAdditionalCoPromoters data-toggle="collapse" data-parent=@accordionAdditionalCoPromotersparent data-copromoter=@snoCoPromoterDetails.ToString() href=@collapseProfileCoPromotersparent class="panel-accordion-toggle" aria-expanded="false" title="Expand/Compress Details"><span class="btn btn-primary btn-outline btn-xs"><i class="fa fa-plus-circle" aria-hidden="true"> read more</i></span></a>                                                                                  
+                                                                                </span>                                                                                
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id=@collapseProfileCoPromoters class="panel-collapse collapse" aria-expanded="false" style="">
+                                                        <div class="row">
+                                                            <div class="col-lg-12">
+                                                                <div class="form-group">
+                                                                    <fieldset class="col-md-12">
+                                                                        <legend class="my"><a data-criteria-code="151" class="modalOpenerButton" href="javascript:void(0);">
+                                                                            Profile Details                                                                            
+                                                                            @if (item.CoPromoterType_Flag == 1)
+                                                                            {
+                                                                                @Html.DisplayName("(")
+                                                                                @Html.DisplayFor(model => item.First_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                @Html.DisplayName(" ")
+                                                                                @Html.DisplayFor(model => item.Middle_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                @Html.DisplayName(" ")
+                                                                                @Html.DisplayFor(model => item.Last_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                @Html.DisplayName(")")
+                                                                            }
+                                                                            @if (item.CoPromoterType_Flag == 2)
+                                                                            {
+                                                                                @Html.DisplayName("(")
+                                                                                @Html.DisplayFor(model => item.Org_Title, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                @Html.DisplayName(" ")
+                                                                                @Html.DisplayFor(model => item.Org_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                @Html.DisplayName(")")
+                                                                            }
+                                                                            </a>
+                                                                        </legend>
+                                                                        @if (item.CoPromoterType_Flag == 2)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.LabelFor(model => item.Link_RegDiaryNumber_Name, htmlAttributes: new { @class = "control-label" })
+                                                                                    </div>
+                                                                                    <div class="col-md-3">
+                                                                                        @if (item.Link_RegDiaryNumber_Name.ToString() == "0" || item.Link_RegDiaryNumber_Name.ToString() == string.Empty)
+                                                                                        {
+                                                                                            @Html.DisplayName("NA")
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @Html.DisplayFor(model => item.Link_RegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control" } })                                                                                            
+                                                                                        }
+                                                                                    </div> 
+                                                                                    <div class="col-md-6">
+                                                                                        <span class="pull-right">
+                                                                                            <a class="a lock-copromoterprofile-info" data-cprmapp-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Reference Info, If Any"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-info-circle" aria-hidden="true"></i></span></a>
+                                                                                            @if (item.LinkTo_RegDiaryNumber_Promoter_ID.ToString() != "0")
+                                                                                            {
+                                                                                                <a class="a show-jointpromoterdetails-box" id=@btnViewjointpromoterdetails data-jointpromoter-box=@snoCoPromoterDetails.ToString() data-jointpromoter-link-promoterid="@Html.DisplayFor(model => item.LinkTo_RegDiaryNumber_Promoter_ID)" data-jointpromoter-application-code="@Html.DisplayFor(model => item.Related_CoPromoter_ApplicationID)" data-jointpromoter-application-type="@Html.DisplayFor(model => item.Related_CoPromoterType_Flag)" href="javascript:void(0);" title="Profile Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-user" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                            @if (item.IsBriefSummaryDraft == 1)
+                                                                                            { //L
+                                                                                                <a class="a lock-copromoterprofile-box" id=@btnLockcopromoterprofilebox data-copromoter-box=@snoCoPromoterDetails.ToString() data-copromoter-flag=@Html.DisplayFor(model => item.IsBriefSummaryDraft) data-cprmindex-code="@Html.DisplayFor(model => item.Link_IndexID)" data-cprmid-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Unlock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-key" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                            else if (item.IsBriefSummaryDraft == 5)
+                                                                                            { //UL
+                                                                                                <a class="a lock-copromoterprofile-box" id=@btnLockcopromoterprofilebox data-copromoter-box=@snoCoPromoterDetails.ToString() data-copromoter-flag=@Html.DisplayFor(model => item.IsBriefSummaryDraft) data-cprmindex-code="@Html.DisplayFor(model => item.Link_IndexID)" data-cprmid-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                            else if (item.IsBriefSummaryDraft == 6)
+                                                                                            { //PL
+                                                                                                <a class="a lock-copromoterprofile-box" id=@btnLockcopromoterprofilebox data-copromoter-box=@snoCoPromoterDetails.ToString() data-copromoter-flag=@Html.DisplayFor(model => item.IsBriefSummaryDraft) data-cprmindex-code="@Html.DisplayFor(model => item.Link_IndexID)" data-cprmid-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Unlock Details"><span class="btn btn-outline btn-primary btn-xs disabledlockunlock"><i class="fa fa-key" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <a class="a lock-copromoterprofile-box" id=@btnLockcopromoterprofilebox data-copromoter-box=@snoCoPromoterDetails.ToString() data-copromoter-flag=@Html.DisplayFor(model => item.IsBriefSummaryDraft) data-cprmindex-code="@Html.DisplayFor(model => item.Link_IndexID)" data-cprmid-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs disabledlockunlock"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                        </span>
+                                                                                    </div>                                                                                   
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (item.CoPromoterType_Flag == 1)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.LabelFor(model => item.Link_RegDiaryNumber_Name, htmlAttributes: new { @class = "control-label" })
+                                                                                    </div>
+                                                                                    <div class="col-md-3">
+                                                                                        @if (item.Link_RegDiaryNumber_Name.ToString() == "0" || item.Link_RegDiaryNumber_Name.ToString() == string.Empty)
+                                                                                        {
+                                                                                            @Html.DisplayName("NA")
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @Html.DisplayFor(model => item.Link_RegDiaryNumber_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                        }
+                                                                                    </div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.LabelFor(model => item.CoPromoter_Aadhaar_Number, htmlAttributes: new { @class = "control-label" })
+                                                                                    </div>
+                                                                                    <div class="col-md-3">
+                                                                                        @if (item.CoPromoter_Aadhaar_Number == 0)
+                                                                                        {
+                                                                                            @Html.DisplayName("NA")
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @Html.DisplayFor(model => item.CoPromoter_Aadhaar_Number, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                        }
+                                                                                        <span class="pull-right">
+                                                                                            <a class="a lock-copromoterprofile-info" data-cprmapp-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Reference Info, If Any"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-info-circle" aria-hidden="true"></i></span></a>                                                                                           
+                                                                                            @if (item.LinkTo_RegDiaryNumber_Promoter_ID.ToString() != "0")
+                                                                                            {
+                                                                                                <a class="a show-jointpromoterdetails-box" id=@btnViewjointpromoterdetails data-jointpromoter-box=@snoCoPromoterDetails.ToString() data-jointpromoter-link-promoterid="@Html.DisplayFor(model => item.LinkTo_RegDiaryNumber_Promoter_ID)" data-jointpromoter-application-code="@Html.DisplayFor(model => item.Related_CoPromoter_ApplicationID)" data-jointpromoter-application-type="@Html.DisplayFor(model => item.Related_CoPromoterType_Flag)" href="javascript:void(0);" title="Profile Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-user" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                            @if (item.IsBriefSummaryDraft == 1)
+                                                                                            { //L
+                                                                                                <a class="a lock-copromoterprofile-box" id=@btnLockcopromoterprofilebox data-copromoter-box=@snoCoPromoterDetails.ToString() data-copromoter-flag=@Html.DisplayFor(model => item.IsBriefSummaryDraft) data-cprmindex-code="@Html.DisplayFor(model => item.Link_IndexID)" data-cprmid-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Unlock Details"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-key" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                            else if (item.IsBriefSummaryDraft == 5)
+                                                                                            { //UL
+                                                                                                <a class="a lock-copromoterprofile-box" id=@btnLockcopromoterprofilebox data-copromoter-box=@snoCoPromoterDetails.ToString() data-copromoter-flag=@Html.DisplayFor(model => item.IsBriefSummaryDraft) data-cprmindex-code="@Html.DisplayFor(model => item.Link_IndexID)" data-cprmid-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                            else if (item.IsBriefSummaryDraft == 6)
+                                                                                            { //PL
+                                                                                                <a class="a lock-copromoterprofile-box" id=@btnLockcopromoterprofilebox data-copromoter-box=@snoCoPromoterDetails.ToString() data-copromoter-flag=@Html.DisplayFor(model => item.IsBriefSummaryDraft) data-cprmindex-code="@Html.DisplayFor(model => item.Link_IndexID)" data-cprmid-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Unlock Details"><span class="btn btn-outline btn-primary btn-xs disabledlockunlock"><i class="fa fa-key" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <a class="a lock-copromoterprofile-box" id=@btnLockcopromoterprofilebox data-copromoter-box=@snoCoPromoterDetails.ToString() data-copromoter-flag=@Html.DisplayFor(model => item.IsBriefSummaryDraft) data-cprmindex-code="@Html.DisplayFor(model => item.Link_IndexID)" data-cprmid-code="@Html.DisplayFor(model => item.Link_ApplicationID)" href="javascript:void(0);" title="Lock Details"><span class="btn btn-outline btn-warning btn-xs disabledlockunlock"><i class="fa fa-unlock" aria-hidden="true"></i></span></a>
+                                                                                            }
+                                                                                        </span>
+                                                                                    </div>                                                                                    
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-3">
+                                                                                        <label class="control-label">Photograph (Individual Promoter)</label>
+                                                                                    </div>
+                                                                                    @if (item.Column_A.ToString() != "ImageNA")
+                                                                                    {
+                                                                                        <div class="col-md-3">
+                                                                                            @Html.HiddenFor(model => item.CoPromoterImage_FilePath)
+                                                                                            @Html.HiddenFor(model => item.CoPromoterImage_FileName)
+                                                                                            <a href="~/@Html.DisplayFor(model => item.CoPromoterImage_FilePath)@Html.DisplayFor(model => item.CoPromoterImage_FileName)" data-spzoom>
+                                                                                                <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/@Html.DisplayFor(model => item.CoPromoterImage_FilePath)@Html.DisplayFor(model => item.CoPromoterImage_FileName)" alt="No Image" />
+                                                                                            </a>
+                                                                                        </div>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <div class="col-md-3">
+                                                                                            <a href="~/images/no-image.png" data-spzoom>
+                                                                                                <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/images/no-image.png" alt="No Image" />
+                                                                                            </a>
+                                                                                        </div>
+                                                                                    }                                                                                    
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.CoPromoter_Occupation, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(model => item.CoPromoter_Occupation, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    </div>                                                                                    
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-12">
+                                                                                        <hr />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-3">
+                                                                                    @Html.LabelFor(model => item.AuthorizedPerson_Name, htmlAttributes: new { @class = "control-label" })
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.DisplayFor(model => item.AuthorizedPerson_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.LabelFor(model => item.AuthorizedPerson_MobileNumber, htmlAttributes: new { @class = "control-label" })
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.DisplayFor(model => item.AuthorizedPerson_MobileNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-3">
+                                                                                    @Html.LabelFor(model => item.AuthorizedPerson_EmailAddress, htmlAttributes: new { @class = "control-label" })
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.DisplayFor(model => item.AuthorizedPerson_EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.LabelFor(model => item.AuthorizedPerson_LandlineNumber, htmlAttributes: new { @class = "control-label" })
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.DisplayFor(model => item.AuthorizedPerson_LandlineNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        @if (item.IsAuthorizedPersonAddress != 0) {
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-12">
+                                                                                        <hr />
+                                                                                        Details of Authorised Contact Person/Signatory Address
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.AuthorizedPerson_AddressLine1, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(model => item.AuthorizedPerson_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    </div>
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.AuthorizedPerson_AddressLine2, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(model => item.AuthorizedPerson_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-3">
+                                                                                        <label class="control-label">District & State</label>
+                                                                                    </div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(m => item.AuthorizedPerson_AddressDistrictState_Name, new { htmlAttributes = new { @class = "form-control" } })                                                                                        
+                                                                                    </div>
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.AuthorizedPerson_AddressPIN, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(model => item.AuthorizedPerson_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-12">
+                                                                                    <hr />
+                                                                                    Address for Official Communication                                                                                    
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-3">@Html.LabelFor(model => item.Communication_AddressLine1, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.DisplayFor(model => item.Communication_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                </div>
+                                                                                <div class="col-md-3">@Html.LabelFor(model => item.Communication_AddressLine2, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.DisplayFor(model => item.Communication_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-3">
+                                                                                    <label class="control-label">District & State</label>
+                                                                                </div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.DisplayFor(m => item.Communication_Address_DistrictState_Name, new { htmlAttributes = new { @class = "form-control" } })                                                                                    
+                                                                                </div>
+                                                                                <div class="col-md-3">@Html.LabelFor(model => item.Communication_AddressPIN, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                <div class="col-md-3">
+                                                                                    @Html.DisplayFor(model => item.Communication_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>                                                                        
+                                                                        @if (item.CoPromoterType_Flag == 1)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-12">
+                                                                                        <hr />
+                                                                                        Permanent Address of Co-Promoter
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.Permanent_Address_Prm_Line1, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(model => item.Permanent_Address_Prm_Line1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    </div>
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.Permanent_Address_Prm_Line2, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(model => item.Permanent_Address_Prm_Line2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-3">
+                                                                                        <label class="control-label">District & State</label>
+                                                                                    </div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(m => item.Permanent_Address_Prm_DistrictState_Name, new { htmlAttributes = new { @class = "form-control" } })                                                                                        
+                                                                                    </div>
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.Permanent_Address_Prm_Pin_Code, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(model => item.Permanent_Address_Prm_Pin_Code, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        @if (item.CoPromoterType_Flag == 2)
+                                                                        {
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-12">
+                                                                                        <hr />
+                                                                                        Registered Address of Organization/Co-Promoter
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.Registered_Address_Org_Line1, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(model => item.Registered_Address_Org_Line1, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    </div>
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.Registered_Address_Org_Line2, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(model => item.Registered_Address_Org_Line2, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-md-3">
+                                                                                        <label class="control-label">District & State</label>
+                                                                                    </div>
+                                                                                    <div class="col-md-3">
+                                                                                        @Html.DisplayFor(m => item.Registered_Address_Org_DistrictState_Name, new { htmlAttributes = new { @class = "form-control" } })                                                                                        
+                                                                                    </div>
+                                                                                    <div class="col-md-3">@Html.LabelFor(model => item.Registered_Address_Org_Pin_Code, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                    <div class="col-md-3"> 
+                                                                                        @Html.DisplayFor(model => item.Registered_Address_Org_Pin_Code, new { htmlAttributes = new { @class = "form-control" } })                                                                                        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-12">
+                                                                                    <hr />
+                                                                                    Other Details
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-3">@Html.LabelFor(model => item.IsExperience, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                <div class="col-md-3">
+                                                                                    @(item.IsExperience == "Y" ? "Yes" : "No")
+                                                                                    @Html.DisplayName("(")
+                                                                                    @Html.DisplayFor(model => item.Past_Experience_InYear, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    @Html.DisplayName(" years)")
+                                                                                </div>
+                                                                                <div class="col-md-3">@Html.LabelFor(model => item.IsOrganizationParent_Entity, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                <div class="col-md-3">
+                                                                                    @(item.IsOrganizationParent_Entity == "Y" ? "Yes" : "No")                                                                                   
+                                                                                </div>                                                                                
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-md-3">@Html.LabelFor(model => item.IsOrganizationMembers, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                <div class="col-md-3">
+                                                                                    @(item.IsOrganizationMembers == "Y" ? "Yes" : "No")
+                                                                                </div>
+                                                                                <div class="col-md-3">@Html.LabelFor(model => item.IsLitigation_RelatedProject, htmlAttributes: new { @class = "control-label" })</div>
+                                                                                <div class="col-md-3">
+                                                                                    @(item.IsLitigation_RelatedProject == "Y" ? "Yes" : "No")
+                                                                                    @Html.DisplayName("(Nos ")
+                                                                                    @Html.DisplayFor(model => item.Past_Litigations_InNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                                                                    @Html.DisplayName(")")
+                                                                                </div>                                                                                                                                                                
+                                                                            </div>
+                                                                        </div>                                                                        
+                                                                    </fieldset>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>                                                    
+                                                </div> 
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group">
+                                                        <fieldset class="col-md-12">
+                                                            <legend class="my"><a data-criteria-code="152" class="modalOpenerButton" href="javascript:void(0);">Co-Promoter(s) Details</a></legend>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-12">No record(s) found.</div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    <!-- /.col-lg-12 (nested) -->
+                                </div>
+                                <!-- /.row (nested) -->
+                            </div>                                          
+                        </div>
+                    </div>
+                </div>               
+                <!-- /.col-lg-12 (nested) -->
+            </div>
+            <!-- /.row (nested) -->
+        </div>
+        <!-- /.panel-body -->
+    </div>
+    <!-- /.panel -->
+</div>
+
+<!-- Split Screen -->
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+<div id="mybtnsidenav" class="btn-sidenav">
+    <a onclick="openSidebarNav()" class="btn-primary">View Promoter's Document(s)</a>
+</div>
+
+
+<div id="myopensideshutter" class="opensideshutter" style="display:none;" data-toggle="tooltip" data-placement="right" title="Expand side panel">
+    <a href="javascript:void(0)" onclick="openSideShutter()">
+        <i class="fa fa-angle-double-right" style="font-size: 18px;
+        background: #7bb73f;
+        color: #22247b;
+        padding: 10px 8px 10px 8px; border:none;">
+        </i>
+    </a>
+</div>
+
+<div id="mySidenav" class="sidenav">
+    <div class="titlebar-name">Promoter's Document(s):</div>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeSidebarNav()">&times;</a>
+    @foreach (var item in Model.promoterDoc)
+    {
+        <ul style="color:#FFF;">
+            <li><a href="javascript:void(0)" data-record-id="" onclick="openSideScreen(@item.Promoter_ID, @item.PromoterDoc_IndexID)">@Html.DisplayFor(modelItem => item.PromoterDoc_InfoName)@Html.DisplayName(" (")@Html.DisplayFor(modelItem => item.PromoterDoc_ReferenceNumber)@Html.DisplayName(")")</a></li>
+        </ul>
+    }
+</div>
+
+<!-- Use any element to open the sidenav , item.PromoterDoc_InfoName, item.PromoterDoc_ReferenceNumber -->
+<div id="mySidescreen" class="sidescreen">
+    <div class="titlebar-name" id="documentDiscription">Promoter's Document(s):</div>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeSideScreen()" data-toggle="tooltip" data-placement="bottom" title="Minimize"><b><i style="font-size:16px; background-color:white;" class="fa">&#xf2d1;</i></b></a>
+    <div class="titlebarsubscript-name" id="documentTypeDiscription"></div>
+    <div id="mySidescreenDocumentImage" style="display:none;">
+        <img id="mySidescreenDocImg" src="" class="sidescreenContainer" />
+    </div>
+    <div id="mySidescreenDocumentEmbed" style="display:none;">
+        <embed id="mySidescreenDocEmbedd" src="" class="sidescreenContainer" style="min-height:800px;" type="application/pdf" />
+    </div>
+    @*<iframe class="iframepopup" id="myiframe"></iframe>*@
+    <button id="mySidescreenbtnZoomOut" class="btnZoomInOut" onclick="zoomoutSideScreen()" style="display:none;"><i class="fa fa-search-plus" aria-hidden="true"></i></button>
+    <button id="mySidescreenbtnZoomIn" class="btnZoomInOut" onclick="zoominSideScreen()" style="display:none;"><i class="fa fa-search-minus" aria-hidden="true"></i></button>
+    <button id="mySidescreenbtnZoomOff" class="btnZoomInOut" onclick="closeSideScreen()" style="display:none; left:80px;"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+</div>
+
+<div id="myclosesideshutter" class="closesideshutter" style="display:none;" data-toggle="tooltip" data-placement="right" title="Collapse side panel">
+    <a href="javascript:void(0)" onclick="closeSideShutter()">
+        <i class="fa fa-angle-double-left" style="font-size: 18px;
+        background: #7bb73f;
+        color: #22247b;
+        padding: 10px 8px 10px 8px;">
+        </i>
+    </a>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Checklist Criteria Details</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet">
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>  
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>   
+}

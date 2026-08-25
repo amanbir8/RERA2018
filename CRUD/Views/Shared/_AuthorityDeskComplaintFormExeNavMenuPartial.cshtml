@@ -1,0 +1,90 @@
+﻿@using Microsoft.AspNet.Identity
+<script>
+    $(document).ready(function () {
+        //var currentLoc = window.location.pathname;
+        //$(document).find('a.tab-btns[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff' });
+
+        var currentLoc = window.location.pathname;
+        var currentLocName = window.location.pathname.split('/');
+        var currentLink = currentLocName[3];
+        $(document).find('a.tab-btns[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff' });
+        $(document).find('a.btn-drpmenuitem[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff', 'background-color': '#064576' });
+        switch (currentLink) {
+            case 'Display_ComplaintFormExe':
+            case 'Display_FormExeaddmoreComplainant':
+            case 'Display_FormExeaddmoreRespondent':
+                $("#drpMenuButton_ComplaintDetails").addClass('active').css({ 'color': '#fff' });
+                break;
+            case 'FormExe_PreHearingDateAdd':
+            case 'FormExe_InterimOrderHearingAdd':
+            case 'FormExe_InterimOrderHearingDate':
+            case 'FormExe_CaseTransferDetails':
+            case 'FormExe_OrderJudgmentDetails':
+                $("#drpMenuButton_HearingDateDetails").addClass('active').css({ 'color': '#fff' });
+                break;
+            default:
+                $(document).find('a.tab-btns[href="' + currentLoc + '"]').addClass('active').css({ 'color': '#fff' });
+                break;
+        }
+    });
+</script>
+@if (Request.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group">
+                <fieldset class="col-md-12">
+                    <legend class="my">View Complaint Form-Execution Details</legend>
+                    <div class="row" id="mygroupmenutabbtns">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="dropdown pull-left" style="padding: 0 3px 0 0;">
+                                    <button class="btn tab-btns btn-outline btn-primary dropdown-toggle" type="button" id="drpMenuButton_ComplaintDetails" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Complaint Details <i class="fa fa-caret-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="drpMenuButton_ComplaintDetails">
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_ComplaintFormExecution", "HelpdeskComplaint")">Complaint Details</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_FormExeaddmoreComplainant", "HelpdeskComplaint")">Additional Applicant Details</a></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("Display_FormExeaddmoreRespondent", "HelpdeskComplaint")">Additional Respondent Details</a></li>
+                                    </ul>
+                                </div>
+                                <div class="pull-left" style="padding: 0 3px 0 0;">
+                                    @Html.ActionLink("List of enclosures in support of the complaint", "Display_ListEnclosuresDocFormExe", "HelpdeskComplaint", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                                </div>
+                                <div class="pull-left" style="padding: 0 3px 0 0;">
+                                    @Html.ActionLink("Fee Details", "Display_ComplaintFeeFormExe", "HelpdeskComplaint", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                                </div>
+                                <div class="pull-left" style="padding: 0 3px 0 0;">
+                                    @Html.ActionLink("PDF Print", "Print_ComplaintFormExedeskDetails", "ComplaintPrintForm", null, new { @class = "btn btn-outline tab-btns btn-primary", @target = "_blank" })
+                                </div>
+                                <div class="pull-left" style="padding: 0 3px 0 0;">
+                                    @Html.ActionLink("Communications", "Display_ListCommunicationLogFormExe", "HelpdeskComplaint", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                                </div>
+                                @*<div class="pull-left" style="padding: 0 3px 0 0;">
+                                        @Html.ActionLink("Complaint Hearing Details", "FormN_PreHearingDateAdd", "HelpdeskComplaint", null, new { @class = "btn btn-outline tab-btns btn-primary", @id = "drpMenuButton_HearingDateDetails" })
+                                    </div>*@
+                                <div class="dropdown pull-left" style="padding: 0 3px 0 0;">
+                                    <button class="btn tab-btns btn-outline btn-primary dropdown-toggle" type="button" id="drpMenuButton_HearingDateDetails" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Complaint Hearing Details <i class="fa fa-caret-down"></i>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="drpMenuButton_HearingDateDetails">
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("FormExe_PreHearingDateAdd", "HelpdeskComplaint")">Complaint Hearing Details</a></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("FormExe_OrderJudgmentDetails", "HelpdeskComplaint")">Order & Judgments</a></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("FormExe_CaseAssignment", "HelpdeskComplaint")">Case Assignment/Institution Details</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li role="presentation"><a role="menuitem" class="btn-drpmenuitem" tabindex="-1" href="@Url.Action("FormExe_CaseTransferDetails", "HelpdeskComplaint")">Case Transfer Details</a></li>
+                                    </ul>
+                                </div>
+                                <div class="pull-left">
+                                    @Html.ActionLink("Action", "FormExeInfoEventInsert", "HelpdeskComplaint", null, new { @class = "btn btn-outline tab-btns btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+}
+

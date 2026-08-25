@@ -1,0 +1,394 @@
+﻿@model CRUD.Models.HelpdeskControlPanel.ClsPrp_ControlPanel_View_UserManagerUserRegistration
+
+@{
+    Layout = null;
+}
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/css-validator/style.css")" />
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>
+    $(document).ready(function () {
+        jQuery.validator.addMethod("stralphanumeric", function (value, element) {
+            return this.optional(element) || /^[a-zA-Z0-9 ,-.()/]*$/.test($.trim(value));
+        }, "Special characters are not allowed.");
+
+        $("#myformSearchUserManager").validate({
+            rules: {
+                InputEntry_UserTypeFlag: {
+                    required: true
+                },
+                InputEntry_ApplicationModeFlag: {
+                    required: true
+                },
+                InputEntry_ReferenceNumber: {
+                    required: true,
+                    stralphanumeric: true
+                }
+            }
+        });
+    });
+</script>
+<script>
+    $(function () {
+        $('table#userregistrationdetailsTable').dataTable({
+            "bSort": false,
+            "bPaginate": false,
+            "bFilter": false,
+            "bInfo": false,
+            responsive: true
+        });
+
+        //$("#InputEntry_ReferenceNumber").inputmask({ mask: function () { return ["AAAAAA-AAA99-AAA9999"]; } });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var baseUrl = $('body').attr('data-base-url');
+        
+        function searchOrder(data) {
+            return $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'POST',
+                url: baseUrl + "HelpdeskControlPanel/SearchUserManagementViewReferenceRecord",
+                data: data,
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (obj) {
+                    stopPreloader();
+                    if (obj.status == true) {
+                        $("#rowSrchA").attr("style", "display:block");
+                        $("#rowSrchB").attr("style", "display:none");
+                        var detailsTableBody = $("#userregistrationdetailsTable tbody");
+                        var RowDetail;
+
+                        $.each(obj.numberObject, function () {
+                            $(this).each(function () {
+                                if (typeof (this.musersUserName) === "undefined") {
+                                    $("#rowSrchA").attr("style", "display:none");
+                                    $("#rowSrchB").attr("style", "display:block");
+                                }
+                                else {
+                                    $("#rowSrchA").attr("style", "display:block");
+                                    $("#rowSrchB").attr("style", "display:none");
+
+                                    var mTwoFactorEnabled = '';
+                                    if (this.musersTwoFactorEnabled == 0) {
+                                        mTwoFactorEnabled = 'Two-Factor Not Enabled';
+                                        if (this.mrolesName == 'NA') {
+                                            $("#rowSrchB").attr("style", "display:block");
+                                            mTwoFactorEnabled = '';
+                                        };
+                                    };
+                                    if (this.musersTwoFactorEnabled > 0) {
+                                        mTwoFactorEnabled = 'Two-Factor Enabled';
+                                    };
+
+                                    RowDetail = '<tr><td class="text-center">' + this.InputEntry_ReferenceNumber + '</td><td class="text-center">' + this.musersUserName + '</td><td class="text-center">' + this.mrolesName + '</td><td class="text-center">' + this.musersEmail + '</td><td class="text-center">' + this.musersPhoneNumber + '</td><td class="text-center">' + mTwoFactorEnabled + '</td></tr>';
+                                    var rowCountTable = 0;
+                                    $.each($("#userregistrationdetailsTable tbody tr"), function () {
+                                        rowCountTable = rowCountTable + 1;
+                                        if ($(this).find('td:eq(0)').html() === 'No data available in table') {
+                                            $(this).remove();
+                                        };
+                                        if ($(this).find('td:eq(0)').html() === 'No matching records found') {
+                                            $(this).remove();
+                                        };
+                                        if ($(this).find('td:eq(0)').html() === 'undefined') {
+                                            $(this).remove();
+                                        };
+                                    });
+                                    detailsTableBody.append(RowDetail);
+                                };
+                            });
+                        });
+                    }
+                    else {
+                        if (obj.remarks == 'Error') {
+                            alert(obj.statusMessage);
+                        }
+                        else {
+                            alert('Failed! Something went wrong');
+                        }
+                    }
+                },
+                error: function () {
+                    stopPreloader();
+                    alert("oops! Something went wrong")
+                }
+            });
+        }
+
+        $("#searchOrder").click(function (e) {
+            e.preventDefault();
+            var ArrObject = [];
+            ArrObject.length = 0;
+            var isAllValid = false;
+            if ($('#InputEntry_ReferenceNumber').val() != '') {
+                var xpUserRefNumber = $("#InputEntry_ReferenceNumber").val(),                    
+                    xpUserRefType = $("input[name='InputEntry_UserTypeFlag']:checked").val(),
+                    xpUserApplicationCode = $("input[name='InputEntry_ApplicationModeFlag']:checked").val(),
+                    xpUserComplaintCode = $("input[name='InputEntry_ComplaintModeFlag']:checked").val();
+
+                if (xpUserRefNumber.length > 0)
+                {
+                    var withoutSpace = xpUserRefNumber.replace(/ /g, '').length;
+                    if (withoutSpace > 0) {
+                        isAllValid = true;
+                    }
+                    else {
+                        alert('Invalid! The reference number (*) fields are invalid.');
+                        isAllValid = false;
+                    }
+                }
+                else
+                {
+                    alert('Invalid! The reference number (*) fields are invalid.');
+                    isAllValid = false;
+                }                
+            }
+            else {
+                alert('The mandatory (*) fields are required.');
+                isAllValid = false;
+            }
+
+            if (isAllValid) {
+                var r = confirm("Are you sure you want to search these reference details?");
+                if (r == true) {
+                    var pUserRefNumber = $("#InputEntry_ReferenceNumber").val(),
+                    pUserRefType = $("input[name='InputEntry_UserTypeFlag']:checked").val(),
+                    pUserApplicationCode = $("input[name='InputEntry_ApplicationModeFlag']:checked").val(),
+                    pUserComplaintCode = $("input[name='InputEntry_ComplaintModeFlag']:checked").val();
+                    
+                    $("#rowSrchA").attr("style", "display:block");                   
+                    $("#rowSrchB").attr("style", "display:none");
+
+                    ArrObject.push({                        
+                        InputEntry_UserTypeFlag: pUserRefType,
+                        InputEntry_ApplicationModeFlag: pUserApplicationCode,
+                        InputEntry_ComplaintModeFlag: pUserComplaintCode,
+                        InputEntry_ReferenceNumber: pUserRefNumber
+                    });
+
+                    var data = JSON.stringify({
+                        numberobject: ArrObject
+                    });
+
+                    $.when(searchOrder(data)).then(function (response) {
+                        console.log(response);
+                    }).fail(function (err) {
+                        console.log(err);
+                    });
+
+                    $("#searchOrder").addClass('sorder-disable');
+                    $("#searchOrder").prop('disabled', true);
+                }               
+            }
+        });
+        $("#cancelOrder").click(function (e) {
+            e.preventDefault();
+            var usermanagerModal = $(document).find('#myModal');
+            $(usermanagerModal).fadeOut(1000, function () {
+                $(usermanagerModal).modal('hide');
+            });
+        });
+        $("#resetOrder").click(function (e) {
+            e.preventDefault();
+            $("#rowSrchA").attr("style", "display:none");
+            $("#rowSrchB").attr("style", "display:block");
+            $("#userregistrationdetailsTable").find("tr:gt(0)").remove();
+            $("#searchOrder").removeClass('sorder-disable');
+            $("#searchOrder").prop('disabled', false);
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        var vcheckrangevaluemode = $("input[name='InputEntry_UserTypeFlag']:checked").val();
+        if (vcheckrangevaluemode == '103') {
+            $("#rowComplaintMode").attr("style", "display:block");
+            $("#rowApplicationMode").attr("style", "display:none");
+        }
+        else {
+            $("#rowComplaintMode").attr("style", "display:none");
+            $("#rowApplicationMode").attr("style", "display:block");
+        }
+
+        $(document).on('click', '.radio-usertypeoptions', function (e) {
+            if (this.value == '103') {
+                $("#rowComplaintMode").attr("style", "display:block");
+                $("#rowApplicationMode").attr("style", "display:none");
+            }
+            else {
+                $("#rowComplaintMode").attr("style", "display:none");
+                $("#rowApplicationMode").attr("style", "display:block");
+            }
+        });
+    });
+</script>
+<style>
+    *.bgdisabled-color {  
+        background-color: #F0F0F0;
+    }
+    *.bgdisplay-color {
+        background-color: #8fcedd;
+    }
+    .disclaimer-text {
+        text-align: justify;
+        text-justify: inter-word;
+    }
+    *.displayfontbold-color {
+        background-color: #F0F0F0;
+        font-weight: bold;
+    }
+    *.bgspecialdisplay-color {
+        background-color: #7bb73f;
+    }
+</style>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm(new { enctype = "multipart/form-data", id = "myformSearchUserManager" }))
+                            {
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(A.)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.InputEntry_UserTypeFlag, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.InputEntry_UserTypeFlag, "101", new { @id = "chkusertypePRM", @class = "radio-usertypeoptions", @checked = "checked" }) Promoter
+                                                            @Html.RadioButtonFor(model => model.InputEntry_UserTypeFlag, "102", new { @id = "chkusertypeREA", @class = "radio-usertypeoptions" }) Real-estate Agent
+                                                            @Html.RadioButtonFor(model => model.InputEntry_UserTypeFlag, "103", new { @id = "chkusertypeCML", @class = "radio-usertypeoptions" }) Complainant
+                                                        </label>
+                                                        @Html.ValidationMessageFor(model => model.InputEntry_UserTypeFlag, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="rowApplicationMode">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(B.)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.InputEntry_ApplicationModeFlag, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.InputEntry_ApplicationModeFlag, "11", new { @id = "chkapplicationmodeRID", @class = "radio-applicationmode", @checked = "checked" }) RERA Number
+                                                            @Html.RadioButtonFor(model => model.InputEntry_ApplicationModeFlag, "12", new { @id = "chkapplicationmodeDNO", @class = "radio-applicationmode" }) Diary Number
+                                                        </label>
+                                                        @Html.ValidationMessageFor(model => model.InputEntry_ApplicationModeFlag, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="rowComplaintMode" style="display:none;">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(B.)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.InputEntry_ComplaintModeFlag, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <label class="form-group">
+                                                            @Html.RadioButtonFor(model => model.InputEntry_ComplaintModeFlag, "21", new { @id = "chkapplicationmodeM", @class = "radio-complaintmode", @checked = "checked" }) Diary Number (Form-M)
+                                                            @Html.RadioButtonFor(model => model.InputEntry_ComplaintModeFlag, "22", new { @id = "chkapplicationmodeN", @class = "radio-complaintmode" }) Diary Number (Form-N)
+                                                        </label>
+                                                        @Html.ValidationMessageFor(model => model.InputEntry_ComplaintModeFlag, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">(C.)</label>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.LabelFor(model => model.InputEntry_ReferenceNumber, htmlAttributes: new { @class = "control-label mand" })
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor(model => model.InputEntry_ReferenceNumber, new { htmlAttributes = new { @class = "form-control bgdisabled-color", @autocomplete = "off" } })
+                                                        @Html.ValidationMessageFor(model => model.InputEntry_ReferenceNumber, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowSrchSubmit">
+                                    <div class="form-group">
+                                        <div class="col-lg-12 text-right">
+                                            <button type="button" id="searchOrder" class="btn btn-primary"><i class="fa fa-user-secret"></i> Proceed</button>
+                                            <button type="button" id="resetOrder" class="btn btn-primary"><i class="fa fa-cog"></i> Reset</button>
+                                            <button type="button" id="cancelOrder" class="btn btn-primary"><i class="fa fa-refresh"></i> Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>                               
+                                <div class="row" id="rowSrchA" style="display:none;">
+                                    <div class="col-lg-12">
+                                        <a href="javascript:void(0);"><i class="fa fa-list-ul fa-fw"></i> </a>
+                                        <strong>Details of User Information (Web-Portal) <i class="fa fa-angle-double-right"></i></strong>
+                                        <table id="userregistrationdetailsTable" class="table table-striped table-bordered" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">@Html.DisplayName("Reference Number")</th>
+                                                    <th class="text-center">@Html.DisplayName("User Name")</th>
+                                                    <th class="text-center">@Html.DisplayName("Role Description")</th>
+                                                    <th class="text-center">@Html.DisplayName("Email Address")</th>
+                                                    <th class="text-center">@Html.DisplayName("Phone Number")</th>
+                                                    <th class="text-center">@Html.DisplayName("Remarks, If Any")</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row" id="rowSrchB">
+                                    <div class="form-group">
+                                        <div class="col-md-12 disclaimer-text">
+                                            Note: The update/ reset/ search options provided herein is based on the information supplied by the promoter, So the information provided by the promoter should be verified/ authenticated before updates at the authority's website (RERA web-portal).
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

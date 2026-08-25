@@ -1,0 +1,646 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_Project_StatementofAccountsApplicationFormFive
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<link href="@Url.Content("~/dist/css/sweetalert.css")" rel="stylesheet" />
+<script src="@Url.Content("~/dist/js/sweetalert.js")"></script>
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+
+    @if (TempData["FormFiveSubmitMessage"].ToString() != "")
+    {         
+        <text>
+            $(document).ready(function()
+                {
+                swal({
+                title: "Confirmation",
+                    text: "@TempData["FormFiveSubmitMessage"]",
+                    type: "success"
+                }, function () {
+                    return true;
+                });
+            });
+        </text>
+    }
+</script>
+
+<script type="text/javascript">
+    @if (TempData["FormFivePreviewMessage"].ToString() != "")
+    {
+        <text>
+            $(document).ready(function () {
+
+                new PNotify({
+                    title: 'Notification',
+                    text: 'Preview (Form-5)<br/>For editing the form, note that it should be open by editing option instead of preview and confirm option.',
+                    type: 'info',
+                    hide: false
+                });
+
+            });
+        </text>
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#promoter-documents-list-table').DataTable({
+            responsive: true,
+            "pageLength": 50,
+            "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [3, 4, 5]
+            }]
+        });
+
+        $(document).on('click', '#BtnDrp', function (e) {
+            e.preventDefault();
+            var proceedButton = $(this);
+            var drpText = $(document).find("select#ProjectStatementofAccountsRelated_ProjectID").val();
+            if ($.trim(drpText) == "") {                    
+                alert("Please select the Project")                    
+            }
+            else {                    
+                $("#idMainForm").show();
+                $(proceedButton).parents('form').submit();
+            }
+        });
+
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            var drpText = $(document).find("select#ProjectStatementofAccountsRelated_ProjectID").val();
+            if ($.trim(drpText) == "") {                    
+                alert("Please select the Project")                    
+                drpText = "";
+                return false;
+            }
+            else {
+
+                var files = $("#Photo_Address").get(0).files;
+                var path = $('#user_Photo').attr('src').replace('/', '');
+
+                if (files.length > 0 || path.length > 0) {
+                    $(submitButton).parents('form').submit();
+                }
+                else {
+                    alert("Bad request! Add document file to Upload!")
+                    return false;
+                }                 
+            }
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    var baseUrl = $('body').attr('data-base-url');
+
+    function showPhoto(input) {
+        if (input.files && input.files[0]) {
+            var filerdr = new FileReader();
+            filerdr.onload = function (e) {
+                //$('#user_Photo').attr('src', e.target.result);
+                var selectedFile = input.files[0];
+                var imageType = 'image/jpeg';
+                if (selectedFile.type.match(imageType)) {
+                    $('#user_Photo').attr('src', e.target.result);
+                }
+                if (selectedFile.type.match('application/pdf')) {
+                    var dataURL = baseUrl + 'images/pdf-icon.gif';
+                    $('#user_Photo').attr('src', dataURL);
+                    $('#user_Photo').attr('width', '78');
+                    $('#user_Photo').attr('height', '78');
+                }
+            }
+            filerdr.readAsDataURL(input.files[0]);
+            //$(':input[type="submit"]').prop('disabled', false);
+            //$('#Create').prop('disabled', false);
+            $('#Photo_AddressShow').empty();
+            $("#Photo_AddressShow").val(input.files[0].name);
+        }
+    }
+</script>
+
+<script>
+
+    //// To calulate Common Land Area
+    //function CalculateCommonArea() {
+
+    //    if ($("#ProposedLand_TobeDeveloped_Area_Total").val() != "" && $("#ProposedLand_Area_ResidentialGroupHousing").val() != "" && $("#ProposedLand_Area_ResidentialPlotted").val() != "" && $("#ProposedLand_Area_Commercial").val() != "" && $("#ProposedLand_Area_Industrial").val() != "") {
+
+    //        if ((parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val())) < (parseFloat($("#ProposedLand_Area_ResidentialGroupHousing").val())) || (parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val())) < (parseFloat($("#ProposedLand_Area_ResidentialPlotted").val())) || (parseFloat(($("#ProposedLand_TobeDeveloped_Area_Total").val())) < (parseFloat($("#ProposedLand_Area_Commercial").val()))) || (parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val())) < (parseFloat($("#ProposedLand_Area_Industrial").val()))) {
+
+
+    //            alert("Value Cannot be more than Total Area of Land Proposed to be developed");
+    //            // parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val(0));
+
+    //            parseFloat($("#ProposedLand_Area_ResidentialGroupHousing").val(0));
+    //            parseFloat($("#ProposedLand_Area_ResidentialPlotted").val(0));
+    //            parseFloat($("#ProposedLand_Area_Commercial").val(0));
+    //            parseFloat($("#ProposedLand_Area_Industrial").val(0));
+    //            parseFloat($("#ProposedLand_Area_A_column").val(0));
+    //            return false;
+
+    //        }
+    //        else {
+    //            // alert("This Cannot be more than Total Area of Land Proposed to be developed");
+    //            var Developed_Area_Total = parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val());
+    //            var ResidentialGroupHousing = parseFloat($("#ProposedLand_Area_ResidentialGroupHousing").val());
+    //            var ResidentialPlotted = parseFloat($("#ProposedLand_Area_ResidentialPlotted").val());
+    //            var Area_Commercial = parseFloat($("#ProposedLand_Area_Commercial").val());
+    //            var Area_Industrial = parseFloat($("#ProposedLand_Area_Industrial").val());
+    //            var CArea = parseFloat(Developed_Area_Total - (ResidentialGroupHousing + ResidentialPlotted + Area_Commercial + Area_Industrial));
+
+    //            if (CArea > 0)
+    //                $("#ProposedLand_Area_A_column").val(CArea);
+    //            else
+    //                $("#ProposedLand_Area_A_column").val(0);
+    //        }
+    //    }
+    //    else {
+    //        //alert("Please select dates");
+    //        return false;
+    //    }
+
+
+    //}
+    //// to check open area against total arear
+    //function CheckOpenArea() {
+    //    debugger;
+    //    //alert("Value Cannot be more than Total Area of Land Proposed to be developed");
+    //    var Developed_Area_Total = parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val());
+    //    //Total Open Area under Land Proposed to be Developed
+
+    //    var Total_Open_Area = parseFloat($("#ProposedLand_TobeDeveloped_TotalOpenArea").val());
+
+    //    //Total Covered Area under Land Proposed to be Developed
+    //    // alert(Developed_Area_Total);
+    //    var Total_Covered_Area = parseFloat($("#ProposedLand_TobeDeveloped_TotalCoveredArea").val());
+    //    if (Total_Open_Area > Developed_Area_Total) {
+
+    //        alert("Value Cannot be more than Total Area of Land Proposed to be developed");
+    //        parseFloat($("#ProposedLand_TobeDeveloped_TotalOpenArea").val(0))
+
+    //    }
+    //    else {
+    //        $("#ProposedLand_TobeDeveloped_TotalCoveredArea").val(Developed_Area_Total - Total_Open_Area)
+
+
+
+    //        return true;
+
+    //    }
+    //}
+
+    //function CalculateCommonArea() {
+
+    //    if ($("#ProposedLand_TobeDeveloped_Area_Total").val() != "" && $("#ProposedLand_Area_ResidentialGroupHousing").val() != "" && $("#ProposedLand_Area_ResidentialPlotted").val() != "" && $("#ProposedLand_Area_Commercial").val() != "" && $("#ProposedLand_Area_Industrial").val() != "") {
+
+    //        if ((parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val())) < (parseFloat($("#ProposedLand_Area_ResidentialGroupHousing").val())) || (parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val())) < (parseFloat($("#ProposedLand_Area_ResidentialPlotted").val())) || (parseFloat(($("#ProposedLand_TobeDeveloped_Area_Total").val())) < (parseFloat($("#ProposedLand_Area_Commercial").val()))) || (parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val())) < (parseFloat($("#ProposedLand_Area_Industrial").val()))) {
+                
+    //            alert("Value Cannot be more than Total Area of Land Proposed to be developed");
+    //            // parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val(0));
+
+    //            parseFloat($("#ProposedLand_Area_ResidentialGroupHousing").val(0));
+    //            parseFloat($("#ProposedLand_Area_ResidentialPlotted").val(0));
+    //            parseFloat($("#ProposedLand_Area_Commercial").val(0));
+    //            parseFloat($("#ProposedLand_Area_Industrial").val(0));
+    //            parseFloat($("#ProposedLand_Area_A_column").val(0));
+    //            return false;
+    //        }
+    //        else {
+    //            // alert("This Cannot be more than Total Area of Land Proposed to be developed");
+    //            var Developed_Area_Total = parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val());
+    //            var ResidentialGroupHousing = parseFloat($("#ProposedLand_Area_ResidentialGroupHousing").val());
+    //            var ResidentialPlotted = parseFloat($("#ProposedLand_Area_ResidentialPlotted").val());
+    //            var Area_Commercial = parseFloat($("#ProposedLand_Area_Commercial").val());
+    //            var Area_Industrial = parseFloat($("#ProposedLand_Area_Industrial").val());
+    //            var CArea = parseFloat(Developed_Area_Total - (ResidentialGroupHousing + ResidentialPlotted + Area_Commercial + Area_Industrial));
+
+    //            if (CArea > 0)
+    //                $("#ProposedLand_Area_A_column").val(CArea.toFixed(4));
+    //            else
+    //                $("#ProposedLand_Area_A_column").val(0);
+    //        }
+    //    }
+    //    else {
+    //        //alert("Please select dates");
+    //        return false;
+    //    }
+
+    //    if ($("#ProposedLand_TobeDeveloped_Area_Total").val() != "" && $("#ProposedLand_TobeDeveloped_TotalOpenArea").val() != "") {
+    //        var Developed_Area_Total = parseFloat($("#ProposedLand_TobeDeveloped_Area_Total").val());
+
+    //        //Total Open Area under Land Proposed to be Developed
+    //        var Total_Open_Area = parseFloat($("#ProposedLand_TobeDeveloped_TotalOpenArea").val());
+
+    //        //Total Covered Area under Land Proposed to be Developed
+    //        var Total_Covered_Area = parseFloat($("#ProposedLand_TobeDeveloped_TotalCoveredArea").val());
+    //        if (Total_Open_Area > Developed_Area_Total) {
+
+    //            alert("Value Cannot be more than the Area of Land Not Owned by Promoter (in sqr mtrs)");
+    //            parseFloat($("#ProposedLand_TobeDeveloped_TotalOpenArea").val(0));
+    //        }
+    //        else {
+    //            $("#ProposedLand_TobeDeveloped_TotalCoveredArea").val((Developed_Area_Total - Total_Open_Area).toFixed(4));
+    //            return true;
+    //        }
+    //    }
+    //    else {
+    //        //alert("Please select dates");
+    //        return false;
+    //    }
+    //}
+
+</script>
+
+<script>
+    $(function () {
+        $('#FinancialYear_EndingOnDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+        $('#FormB_CompletionDate').datepicker({ dateFormat: 'dd-M-yy', changeMonth: true, changeYear: true, });
+
+        $('#ProjectStatementofAccountsRelated_ProjectID').change(function () {
+            $('#ProjectStatementofAccountsRelated_ProjectName').empty();
+            $("input[name='ProjectStatementofAccountsRelated_ProjectName']").val($("#ProjectStatementofAccountsRelated_ProjectID option:selected").text());
+        });
+
+        if($('#ProjectStatementofAccountsRelated_ProjectID').text() != '')
+        {
+            $('#ProjectStatementofAccountsRelated_ProjectName').empty();
+            $("input[name='ProjectStatementofAccountsRelated_ProjectName']").val($("#ProjectStatementofAccountsRelated_ProjectID option:selected").text());
+        };
+
+    });
+</script>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Audited Annual Report on Statement of Accounts (Form-5) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    @TempData["FormFivePreviewMessage"].ToString() Annual Audited Statement of Accounts Form as per Section 4(2)(l)(D) of the RERA Act, 2016
+                </div>
+            
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+            @using (Html.BeginForm("DropdownlistProjectStatementofAccountsApplication", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <fieldset class="col-md-12">
+                    <legend class="my">Select Project</legend>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-3"> <label class="control-label">Select Project</label></div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(m => m.ProjectStatementofAccountsRelated_ProjectID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "Select Project", new { @class = "form-control" })  
+                            </div>
+                            <div class="col-md-6"><input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" /></div>
+                        </div>
+                    </div>
+                </fieldset>          
+            }
+            <div @if (Session["Project_id"] != null) { @Html.Raw("style=''")    } else { @Html.Raw("style='display: none;'")    }>
+                @using (Html.BeginForm("Create_ProjectStatementofAccountsApplicationFormFive", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()                   
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.ProjectStatementofAccounts_IndexID, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.HiddenFor(model => model.ProjectStatementofAccounts_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.HiddenFor(model => model.ProjectStatementofAccountsRelated_ProjectID, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.HiddenFor(model => model.ProjectStatementofAccountsRelated_PromoterID, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.HiddenFor(model => model.ProjectStatementofAccountsRelated_UserID, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                    @Html.HiddenFor(model => model.ProjectStatementofAccounts_DiaryNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.HiddenFor(model => model.ProjectStatementofAccounts_DiaryID, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.HiddenFor(model => model.ProjectStatementofAccounts_DiaryYear, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.HiddenFor(model => model.ProjectStatementofAccountsRelated_ProjectName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.HiddenFor(model => model.ProjectStatementofAccountsRelated_ProjectDiaryNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Annual Report on Statement of Accounts</legend>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.FinancialYear_EndingOnDate, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.FinancialYear_EndingOnDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.FinancialYear_EndingOnDate, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.Percentage_of_Completion, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.Percentage_of_Completion, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.Percentage_of_Completion, "", new { @class = "text-danger" })
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    @*<div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.FormB_CompletionDate, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.FormB_CompletionDate, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                                                @Html.ValidationMessageFor(model => model.FormB_CompletionDate, "", new { @class = "text-danger" })
+                                            </div>                                                 
+                                        </div>
+                                    </div>*@ 
+                                    <hr/>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.LabelFor(model => model.ExplanatoryNote, htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Explanatory note regarding the reason for not completing the development works in the project within the period declared in Form-B at the time of making application for the registration of the project.">
+                                                @Html.EditorFor(model => model.ExplanatoryNote, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.ExplanatoryNote, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>                                        
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Amount collected and withdrawn for project Details</legend>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.Label("(a) Collected during the financial year (INR)", htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.CollectedDuring_FinancialYear_Amount_INR, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.CollectedDuring_FinancialYear_Amount_INR, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("(b) Collected till date (INR)", htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.CollectedTillDate_Amount_INR, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.CollectedTillDate_Amount_INR, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.Label("(c) Withdraw during the financial year (INR)", htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.WithdrawDuring_FinancialYear_Amount_INR, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.WithdrawDuring_FinancialYear_Amount_INR, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("(d) Withdrawn till date (INR)", htmlAttributes: new { @class = "control-label mand" })
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.EditorFor(model => model.WithdrawnTillDate_Amount_INR, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.WithdrawnTillDate_Amount_INR, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>                                                   
+                            
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Upload scan copy of Form 5 – CA Certificate</legend>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.Label("Annual Report to be uploaded", htmlAttributes: new { @class = "control-label mand" })                                                        
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="input-group">
+                                                    <label class="input-group-btn">
+                                                        <span class="btn btn-primary">
+                                                            Browse… <input type="file" id="Photo_Address" name="Photo_Address" onchange="showPhoto(this)" style="display: none;" multiple="" />
+                                                        </span>
+                                                    </label>
+                                                    <input type="text" id="Photo_AddressShow" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                @Html.HiddenFor(model => model.ImageFormFive_FilePath)
+                                                @Html.HiddenFor(model => model.ImageFormFive_FileName)
+                                            </div>                                            
+                                            <div class="col-md-3">
+                                                @if (Model.prpongoing != null)
+                                                {
+                                                    if (Path.GetExtension(Model.ImageFormFive_FileName.ToString()) == ".pdf")
+                                                    {
+                                                        <a href="~/@Html.DisplayFor(model => model.ImageFormFive_FilePath)@Html.DisplayFor(model => model.ImageFormFive_FileName)" target="_blank">
+                                                            <img id="user_Photo" src="~/images/pdf.png" alt="Document" height="35" width="35" />
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="~/@Html.DisplayFor(model => model.ImageFormFive_FilePath)@Html.DisplayFor(model => model.ImageFormFive_FileName)" target="_blank" data-spzoom>
+                                                            <img id="user_Photo" height="100" width="90" style="border:1px solid;" src="~/@Html.DisplayFor(model => model.ImageFormFive_FilePath)@Html.DisplayFor(model => model.ImageFormFive_FileName)" alt="No Image" />
+                                                        </a>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-6">
+                                                @TempData["notice"]<br />Document Should be in .JPG/.JPEG/.PDF format and less than 1 MB
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                {
+                                    <input type="submit" value="@TempData["submitvalueFormFive"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                }
+                                else
+                                {
+                                    if (Model.IsEvaluationDraft == 1)
+                                    {
+                                        <input type="submit" value="@TempData["submitvalueFormFive"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                    }
+                                    else
+                                    {
+                                        if (TempData["submitvalueFormFive"].ToString() == "Confirm")
+                                        {
+                                            <input type="submit" value="@TempData["submitvalueFormFive"]" id="BtnMainform" class="btn btn-danger" />
+                                        }
+                                        else
+                                        {
+                                            <input type="submit" value="@TempData["submitvalueFormFive"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                        }
+                                    }
+                                }
+                                &nbsp;
+                                @Html.ActionLink("Reset", "Create_ProjectStatementofAccountsApplicationFormFive", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                            </div>
+                        </div>
+                    </div>
+                   
+                }
+                    <div class="row">
+                        <div class="form-group">                        
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                        <thead>
+                                            <tr> 
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.ProjectStatementofAccountsRelated_ProjectName)
+                                                </th>                                                                                                
+                                                <th style="width:18%;">
+                                                    @Html.DisplayNameFor(model => model.FinancialYear_EndingOnDate)
+                                                </th>
+                                                @*<th style="width:15%;">
+                                                    @Html.DisplayNameFor(model => model.FormB_CompletionDate)
+                                                </th>*@
+                                                <th>
+                                                    @Html.DisplayNameFor(model => model.Percentage_of_Completion)
+                                                </th>
+                                                <th style="width:15%;">@Html.DisplayName("Application Status")</th>
+                                                <th align="center">
+                                                    @Html.DisplayName("View")
+                                                </th>                                                                                                
+                                                <th>@Html.DisplayName("Edit| Delete")</th>                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.prpongoing)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.ProjectStatementofAccountsRelated_ProjectName)
+                                                    </td>                                                     
+                                                    <td style="width:18%;">
+                                                        @Html.DisplayFor(modelItem => item.FinancialYear_EndingOnDate)
+                                                    </td>
+                                                    @*<td style="width:15%;">
+                                                        @Html.DisplayFor(modelItem => item.FormB_CompletionDate)
+                                                    </td>*@
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Percentage_of_Completion)
+                                                    </td>
+                                                    <td style="width:15%;">
+                                                        @if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                        {
+                                                            if (item.IsEvaluationDraft == 1)
+                                                            {
+                                                                <span><i class="fa fa-check" aria-hidden="true"></i>@Html.DisplayName("Submitted")
+                                                                @Html.DisplayName("(dated ")@Html.DisplayFor(modelItem => item.ModifyOn)@Html.DisplayName(")")
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.ActionLink("Preview & Confirm (Pending)", "Confirm_ProjectStatementofAccountsApplicationFormFive", new { ProjectRegistration_ID = item.ProjectStatementofAccountsRelated_ProjectID, ProjectStatementofAccounts_IndexID = item.ProjectStatementofAccounts_IndexID }, new { @class = "btn btn-warning", @title = "Click here to Preview & Confirm Form-5" })@*, new { onclick = "return confirm('Are sure wants to confirm?');" })*@
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("Preview & Confirm (Pending)", "Confirm_ProjectStatementofAccountsApplicationFormFive", new { ProjectRegistration_ID = item.ProjectStatementofAccountsRelated_ProjectID, ProjectStatementofAccounts_IndexID = item.ProjectStatementofAccounts_IndexID }, new { @class = "btn btn-warning", @title = "Click here to Preview & Confirm Form-5" })@*, new { onclick = "return confirm('Are sure wants to confirm?');" })*@
+                                                        }
+                                                    </td>
+                                                    <td align="center">
+                                                        <a href="~/@Html.DisplayFor(modelItem => item.ImageFormFive_FilePath)/@Html.DisplayFor(modelItem => item.ImageFormFive_FileName)" target="_blank" title="View Document"><i class="fa fa-external-link-square"></i></a>
+                                                    </td>                                                                                                    
+                                                    <td>
+                                                        @if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6)
+                                                        {
+                                                            @Html.ActionLink("View", "Edit_ProjectStatementofAccountsApplicationFormFive", new { ProjectRegistration_ID = item.ProjectStatementofAccountsRelated_ProjectID, ProjectStatementofAccounts_IndexID = item.ProjectStatementofAccounts_IndexID })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("Edit", "Edit_ProjectStatementofAccountsApplicationFormFive", new { ProjectRegistration_ID = item.ProjectStatementofAccountsRelated_ProjectID, ProjectStatementofAccounts_IndexID = item.ProjectStatementofAccounts_IndexID }) @("| ")
+                                                            @Html.ActionLink("Delete", "Delete_ProjectStatementofAccountsApplicationFormFive", new { ProjectRegistration_ID = item.ProjectStatementofAccountsRelated_ProjectID, ProjectStatementofAccounts_IndexID = item.ProjectStatementofAccounts_IndexID }, new { onclick = "return confirm('Are sure wants to delete?');" })
+                                                        }
+                                                    </td>                                                    
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    </div>
+                </div>
+
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}

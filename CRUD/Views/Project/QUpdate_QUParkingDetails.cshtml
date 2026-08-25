@@ -1,0 +1,1048 @@
+﻿@model CRUD.Models.PromoterProject.ClsPrp_QUpdateProject_ParkingDetails
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script>$.uiBackCompat = false;</script>
+
+<script>
+    function rowContentwithformat(d, Index, Counter) {
+        // `d` is the original data object for the row
+        //console.log(d);
+        //console.log(Index);
+        if (Counter > 0) {
+            var i;
+            var fLen = parseInt(Counter);
+            fLen = fLen + 1;
+
+            var parmVarPrkName = [];
+            var parmVarPrkBQ = [];
+            var parmVarPrkCBQ = [];
+            var parmVarPrkSQ = [];
+            var parmVarPrkBtotal = [];
+            var parmVarPrkStotal = [];            
+            var parmTableRows = '';
+
+            for (i = 1; i < fLen; i++) {
+                parmVarPrkName[i] = $.trim($(d).find('#hdnVarPrkName' + Index + 'arr' + i).val());
+                parmVarPrkBQ[i] = $.trim($(d).find('#hdnVarPrkBQ' + Index + 'arr' + i).val());
+                parmVarPrkCBQ[i] = $.trim($(d).find('#hdnVarPrkCBQ' + Index + 'arr' + i).val());
+                parmVarPrkSQ[i] = $.trim($(d).find('#hdnVarPrkSQ' + Index + 'arr' + i).val());
+                parmVarPrkBtotal[i] = $.trim($(d).find('#hdnVarPrkBtotal' + Index + 'arr' + i).val());
+                parmVarPrkStotal[i] = $.trim($(d).find('#hdnVarPrkStotal' + Index + 'arr' + i).val());
+                
+                parmTableRows = parmTableRows +
+                    '<tr>' +
+                        '<td><b>(' + i + ')</b> Parking Information <b>(in the Quarter)</b>: </td>' +
+                        '<td><b>' + parmVarPrkName[i] + '</b></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(a.) Number of Parking Units booked: </td>' +
+                        '<td><b>' + parmVarPrkBQ[i] + '</b> (in the Quarter)</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(b.) Number of Parking Units under canceled booking: </td>' +
+                        '<td><b>' + parmVarPrkCBQ[i] + '</b> (in the Quarter)</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(c.) Number of Parking Units sold: </td>' +
+                        '<td><b>' + parmVarPrkSQ[i] + '</b> (in the Quarter)</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(d.) Total Booked: </td>' +
+                        '<td><b>' + parmVarPrkBtotal[i] + '</b> (Total)</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                        '<td>&nbsp;(e.) Total Sold: </td>' +
+                        '<td><b>' + parmVarPrkStotal[i] + '</b> (Total)</td>' +
+                    '</tr>' +                    
+                    '<tr>' +
+                        '<td colspan="2"><br/></td>' +
+                    '</tr>';
+            }
+        }
+
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' + parmTableRows + '</table>';
+    }
+
+    $(document).ready(function () {
+        $('#dataTables-QUpdatesProjectParking tbody').on('click', 'td.details-control', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var qdataArrayIndex = $.trim($(parentRow).find('td.hdn-prk-array-number').attr('data-prk-array-number'));
+            var qdataSubArrayCounter = $.trim($(parentRow).find('td.hdn-array-counter').attr('data-array-counter'));
+            var mtable = $('#dataTables-QUpdatesProjectParking').DataTable();
+
+            var tr = $(this).closest('tr');
+            var row = mtable.row(tr);
+
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                row.child(rowContentwithformat(row.data(), qdataArrayIndex, qdataSubArrayCounter)).show();
+                tr.addClass('shown');
+            }
+        });
+    });
+</script>
+<style>
+    td.details-control:after {
+        font-family: FontAwesome;
+        content: "\f0fe";
+        color: grey;
+        cursor: pointer;
+    }
+
+    tr.shown td.details-control:after {
+        font-family: FontAwesome;
+        content: "\f146";
+        color: #FF4961;
+    }
+</style>
+<style>
+    .disabledlockunlock {
+        cursor: not-allowed;
+    }
+    .quborder-info {
+        border-color: #00cfd5 !important;
+        /*padding: 1rem !important;*/
+        /*margin-bottom: 1rem !important;*/
+        /*border: 1px solid #e3e6ec !important;*/
+        /*background-color: #eff3f9 !important;*/
+    }
+    .quborder-disabled {        
+        background-color: #eff3f9 !important;
+        cursor: not-allowed;
+    }
+    .qulinkaction-icon {
+        position: relative;
+    }
+        .qulinkaction-icon:before {
+            content: "\f040";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;            
+        }
+    .qulinkaction-lock {
+        position: relative;
+    }
+        .qulinkaction-lock:before {
+            content: "\f09c";
+            font-family: FontAwesome;
+            position: absolute;
+            left: auto;
+        }
+    .qulinkaction-trash {
+        position: relative;
+    }
+        .qulinkaction-trash:before {
+            content: "\f1f8";
+            font-family: FontAwesome;
+            position: absolute;
+            margin-left: 1.5em;
+        }
+
+    .display-btnlock {
+        display: none;
+    }
+    .display-btnunlock {
+        display: block;
+    }
+</style>
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#A_column').on("click", function () {
+            if ($(this).is(':checked')) {
+                $("input[name='ParkingSpaceUnits_NumberBookedInQuarter']").val('0');
+                $("input[name='ParkingSpaceUnits_NumberCanceledBookedInQuarter']").val('0');
+                $("input[name='ParkingSpaceUnits_NumberSoldInQuarter']").val('0');                
+            };
+        });
+    });
+</script>
+<script type="text/javascript">
+
+    @if (TempData["selectCntlParking"].ToString() != "")
+    {
+        <text>
+            $(document).ready(function()
+            {
+                var drpCntlText = "@TempData["selectCntlParking"]";
+                if (drpCntlText == "CntlLock") {
+                    $("#Related_ParkingProjectRegistration_ID").prop("disabled", true);
+                    $("#drpQYear").prop("disabled", true);
+                    $("#drpQName").prop("disabled", true);
+                    $("#BtnDrp").addClass("display-btnlock").removeClass("display-btnunlock");
+                    $("#Related_ParkingProjectRegistration_ID").addClass("quborder-disabled");
+                    $("#drpQYear").addClass("quborder-disabled");
+                    $("#drpQName").addClass("quborder-disabled");
+                }
+                else {
+                    $("#Related_ParkingProjectRegistration_ID").prop("disabled", false);
+                    $("#drpQYear").prop("disabled", false);
+                    $("#drpQName").prop("disabled", false);
+                    $("#BtnDrp").addClass("display-btnunlock").removeClass("display-btnlock");
+                    $("#Related_ParkingProjectRegistration_ID").removeClass("quborder-disabled");
+                    $("#drpQYear").removeClass("quborder-disabled");
+                    $("#drpQName").removeClass("quborder-disabled");
+                }
+            });
+        </text>
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var drpYearText = $(document).find("select#drpQYear").val();
+        var drpQuarterText = $(document).find("select#drpQName").val();
+
+        $("#hdnQYear").val(drpYearText);
+        $("#hdnQName").val(drpQuarterText);
+
+        $(document).on('click', '#BtnDrp', function (e) {
+            e.preventDefault();
+            var proceedButton = $(this);
+            var drpProjectText = $(document).find("select#Related_ParkingProjectRegistration_ID").val();
+            var drpYearPrjText = $(document).find("select#drpQYear").val();
+            var drpQuarterPrjText = $(document).find("select#drpQName").val();
+
+            if ($.trim(drpProjectText) == "" || $.trim(drpYearPrjText) == "" || $.trim(drpQuarterPrjText) == "NA") {
+                alert("Invalid Project/ Year/ Quarter! Please select the Project or Year or Quarter Name.")
+            }
+            else {
+                $("#idMainForm").show();
+                $(proceedButton).parents('form').submit();
+            }
+        });
+
+        $(document).on('click', '#BtnMainform', function (e) {
+            var submitButton = $(this);
+            e.preventDefault();
+            var drpText = $(document).find("select#Related_ParkingProjectRegistration_ID").val();
+            var drpYrPrjText = $(document).find("select#drpQYear").val();
+            var drpQtrPrjText = $(document).find("select#drpQName").val();
+            if ($.trim(drpText) == "" || $.trim(drpYrPrjText) == "" || $.trim(drpQtrPrjText) == "NA") {
+                alert("Invalid Project/ Year/ Quarter! Please select the Project or Year or Quarter Name.")
+                drpText = "";
+                drpYrPrjText = "";
+                drpQtrPrjText = "NA";
+                return false;
+            }
+            else {
+                $(submitButton).parents('form').submit();
+                // $("#idMainForm").show();
+            }
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+<script>
+    function CalculateParkingNumbers() {
+        if ($("#ParkingSpaceUnits_TotalNumberBooked").val() != "" && $("#ParkingSpaceUnits_TotalNumberSold").val() != "" && $("#ParkingSpaceUnits_NumberAvailableforSale").val() != "" && $("#ParkingSpaceUnits_NumberBookedSoldUptoRegistration").val() != "") {
+
+            var aspTotalNumberBooked = parseInt($("#ParkingSpaceUnits_TotalNumberBooked").val());
+            var aspTotalNumberSold = parseInt($("#ParkingSpaceUnits_TotalNumberSold").val());
+            var aspNumberAvailableforSale = parseInt($("#ParkingSpaceUnits_NumberAvailableforSale").val());
+            var aspNumberSoldUptoRegistration = parseInt($("#ParkingSpaceUnits_NumberBookedSoldUptoRegistration").val());
+            var aspQUtotalBookedSold = aspTotalNumberBooked + aspTotalNumberSold; // + aspNumberSoldUptoRegistration;
+
+            if ((parseInt(aspQUtotalBookedSold)) > (parseInt(aspNumberAvailableforSale))) {
+                alert("Invalid! Value cannot be more than Total Parking Space Units.");
+                parseInt($("#ParkingSpaceUnits_TotalNumberBooked").val(0));
+                parseInt($("#ParkingSpaceUnits_TotalNumberSold").val(0));
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    function CalculateParkingInQrSold() {
+        if ($("#ParkingSpaceUnits_TotalNumberBooked").val() != "" && $("#ParkingSpaceUnits_TotalNumberSold").val() != "" && $("#ParkingSpaceUnits_NumberAvailableforSale").val() != "" && $("#ParkingSpaceUnits_NumberBookedSoldUptoRegistration").val() != "" && $("#ParkingSpaceUnits_NumberSoldInQuarter").val() != "") {
+
+            var aspTotalNumberBooked = parseInt($("#ParkingSpaceUnits_TotalNumberBooked").val());
+            var aspTotalNumberSold = parseInt($("#ParkingSpaceUnits_TotalNumberSold").val());
+            var aspNumberAvailableforSale = parseInt($("#ParkingSpaceUnits_NumberAvailableforSale").val());
+            var aspNumberSoldUptoRegistration = parseInt($("#ParkingSpaceUnits_NumberBookedSoldUptoRegistration").val());
+            var aspNumberNumberSoldInQuarter = parseInt($("#ParkingSpaceUnits_NumberSoldInQuarter").val());
+            var aspQUtotalBookedSold = aspTotalNumberBooked + aspTotalNumberSold + aspNumberSoldUptoRegistration + aspNumberNumberSoldInQuarter;
+
+            if ((parseInt(aspQUtotalBookedSold)) > (parseInt(aspNumberAvailableforSale))) {
+                alert("Invalid! Value cannot be more than Total Parking Space Units.");
+                parseInt($("#ParkingSpaceUnits_NumberSoldInQuarter").val(0));
+                parseInt($("#ParkingSpaceUnits_TotalNumberSold").val(0));
+                return false;
+            }
+            else {
+                var calcQUPtotalSold = aspTotalNumberSold + aspNumberNumberSoldInQuarter;
+                if (calcQUPtotalSold > 0)
+                    $("#ParkingSpaceUnits_TotalNumberSold").val(calcQUPtotalSold);
+                else
+                    $("#ParkingSpaceUnits_TotalNumberSold").val(0);
+
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    function CalculateParkingInQrBooked() {
+        if ($("#ParkingSpaceUnits_TotalNumberBooked").val() != "" && $("#ParkingSpaceUnits_TotalNumberSold").val() != "" && $("#ParkingSpaceUnits_NumberAvailableforSale").val() != "" && $("#ParkingSpaceUnits_NumberBookedSoldUptoRegistration").val() != "" && $("#ParkingSpaceUnits_NumberBookedInQuarter").val() != "") {
+
+            var aspTotalNumberBooked = parseInt($("#ParkingSpaceUnits_TotalNumberBooked").val());
+            var aspTotalNumberSold = parseInt($("#ParkingSpaceUnits_TotalNumberSold").val());
+            var aspNumberAvailableforSale = parseInt($("#ParkingSpaceUnits_NumberAvailableforSale").val());
+            var aspNumberSoldUptoRegistration = parseInt($("#ParkingSpaceUnits_NumberBookedSoldUptoRegistration").val());
+            var aspNumberNumberBookedInQuarter = parseInt($("#ParkingSpaceUnits_NumberBookedInQuarter").val());
+            var aspQUtotalBookedSold = aspTotalNumberBooked + aspTotalNumberSold + aspNumberSoldUptoRegistration + aspNumberNumberBookedInQuarter;
+
+            if ((parseInt(aspQUtotalBookedSold)) > (parseInt(aspNumberAvailableforSale))) {
+                alert("Invalid! Value cannot be more than Total Parking Space Units.");
+                parseInt($("#ParkingSpaceUnits_NumberBookedInQuarter").val(0));
+                parseInt($("#ParkingSpaceUnits_TotalNumberBooked").val(0));
+                return false;
+            }
+            else {
+                var calcQUPtotalBooked = aspTotalNumberBooked + aspNumberNumberBookedInQuarter;
+                if (calcQUPtotalBooked > 0)
+                    $("#ParkingSpaceUnits_TotalNumberBooked").val(calcQUPtotalBooked);
+                else
+                    $("#ParkingSpaceUnits_TotalNumberBooked").val(0);
+
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    function CalculateParkingInQrCancelBooked() {
+        if ($("#ParkingSpaceUnits_NumberBookedInQuarter").val() != "" && $("#ParkingSpaceUnits_NumberSoldInQuarter").val() != "" && $("#ParkingSpaceUnits_NumberAvailableforSale").val() != "" && $("#ParkingSpaceUnits_NumberBookedSoldUptoRegistration").val() != "" && $("#ParkingSpaceUnits_NumberCanceledBookedInQuarter").val() != "") {
+
+            var aspNumberBookedInQuarter = parseInt($("#ParkingSpaceUnits_NumberBookedInQuarter").val());
+            var aspNumberSoldInQuarter = parseInt($("#ParkingSpaceUnits_NumberSoldInQuarter").val());
+            var aspNumberCanceledBookedInQuarter = parseInt($("#ParkingSpaceUnits_NumberCanceledBookedInQuarter").val());
+            var aspNumberAvailableforSale = parseInt($("#ParkingSpaceUnits_NumberAvailableforSale").val());
+            var aspNumberSoldUptoRegistration = parseInt($("#ParkingSpaceUnits_NumberBookedSoldUptoRegistration").val());
+            var aspQUtotalBookedSoldInQU = ((aspNumberBookedInQuarter + aspNumberSoldInQuarter + aspNumberSoldUptoRegistration) - (aspNumberCanceledBookedInQuarter));
+
+            if ((parseInt(aspQUtotalBookedSoldInQU)) > (parseInt(aspNumberAvailableforSale))) {
+                alert("Invalid! Value cannot be more than Total Parking Space Units.");
+                parseInt($("#ParkingSpaceUnits_NumberCanceledBookedInQuarter").val(0));
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Quarterly Updates: List of Number and Garages/ Covered Car Parking Details of Registered Project</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Quarterly Updates of Parking Details :- [Fill in the quarterly update details (Add option shown in "select" column) of garages/ covered car parking in the stilt and basement for sale and booked.]
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            @using (Html.BeginForm("DropdownlistProjectQUpdate_QUParkingDetails", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <fieldset class="col-md-12">
+                                    <legend class="my">Select Project and Quarterly Update Option(s)</legend>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Select Project</label>
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="For quarterly updates details of registered project, Registered project of quarterly updates are required.">
+                                                @Html.DropDownListFor(m => m.Related_ParkingProjectRegistration_ID, new SelectList((System.Collections.IEnumerable)TempData["list"], "ProjectRegistration_ID", "Project_Name"), "--Select--", new { @class = "form-control" })
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Select Year</label>
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="For quarterly updates details of registered project, Year of quarterly updates are required.">
+                                                @if (@TempData["QUpdatesSelectedYears"] != null)
+                                                {
+                                                    @Html.DropDownListFor(model => model.QUpdateParking_Year, new SelectList(ViewBag.Years, "Text", "Value", TempData["QUpdatesSelectedYears"]), "--Select--", new { @id = "drpQYear", @class = "form-control" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.DropDownListFor(model => model.QUpdateParking_Year, new SelectList(ViewBag.Years, "Text", "Value"), "--Select--", new { @id = "drpQYear", @class = "form-control" })
+                                                }
+                                                @Html.ValidationMessageFor(model => model.QUpdateParking_Year, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label mand">Select Quarter</label>
+                                                @{
+                                                    var listItems1 = new List<SelectListItem>
+                                                        {
+                                                            new SelectListItem {  Text = "--Select--" , Value="NA"  },
+                                                            new SelectListItem {  Text = "First Quarter (January-March)" , Value="FirstQTR"  },
+                                                            new SelectListItem {  Text = "Second Quarter (April-June)" , Value="SecondQTR"  },
+                                                            new SelectListItem {  Text = "Third Quarter (July-September)" , Value="ThirdQTR"  },
+                                                            new SelectListItem {  Text = "Fourth Quarter (October-December)" , Value="FourthQTR"  },
+                                                        };
+                                                }
+                                            </div>
+                                            <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="For quarterly updates details of registered project, Quarter Name of quarterly updates are required.">
+                                                @Html.DropDownListFor(model => model.QUpdateParking_QuarterName, new SelectList(listItems1, "Value", "Text"), new { @id = "drpQName", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.QUpdateParking_QuarterName, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="Submit" id="BtnDrp" value="Proceed" class="btn btn-outline btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                            }
+                            <div @if (Session["Project_id"] != null) { @Html.Raw("style=''") } else { @Html.Raw("style='display: none;'") }>
+                                @using (Html.BeginForm())
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    
+                                    @Html.HiddenFor(model => model.QUpdateProjectParking_IndexID)
+                                    @Html.HiddenFor(model => model.QUpdateProjectParking_ID)
+                                    @Html.HiddenFor(model => model.Related_ProjectParking_IndexID)
+                                    @Html.HiddenFor(model => model.Related_ProjectParking_ID)
+                                    @Html.HiddenFor(model => model.Related_ParkingProjectRegistration_ID)
+                                    @Html.HiddenFor(model => model.QUpdateParking_Year)
+                                    @Html.HiddenFor(model => model.QUpdateParking_QuarterName)
+
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <br />
+                                        </div>
+                                    </div>
+                                    if (Model.prpongoing != null)
+                                    {
+                                        if (Model.IsQuarterlyData != 5)
+                                        {
+                                            if (Model.IsRegisteredDiaryNumberLock != 9)
+                                            {
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-bordered" id="dataTables-QUpdatesProjectParking">
+                                                        <thead>
+                                                            <tr>
+                                                                <th><i class="fa fa-list-ol" aria-hidden="true"></i></th>
+                                                                <th>@Html.DisplayName("Select")</th>
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.ParkingType)
+                                                                </th>
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.ParkingSpaceUnits_TotalArea)
+                                                                </th>
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.ParkingSpaceUnits_NumberAvailableforSale)
+                                                                </th>
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.ParkingSpaceUnits_NumberBookedSoldUptoRegistration)
+                                                                </th>
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.ParkingSpaceUnits_TotalNumberBooked)
+                                                                </th>
+                                                                <th>
+                                                                    @Html.DisplayNameFor(model => model.ParkingSpaceUnits_TotalNumberSold)
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int snoParkings = 0;
+                                                                int counterParkings = 0;
+                                                                string snoAddQUpdateID = "";
+                                                                string snoDeleteQUpdateID = "";
+                                                            }
+                                                            @foreach (var item in Model.prpongoing)
+                                                            {
+                                                                {
+                                                                    counterParkings = 1;
+                                                                    snoParkings = snoParkings + 1;
+                                                                }
+                                                                <tr>
+                                                                    <td class="details-control"></td>
+                                                                    <td>
+                                                                        <script type="text/javascript">
+                                                                            $(document).ready(function () {
+                                                                                showSelectButtonColorEvent("@item.IsLock.ToString()", "@item.IsDraft.ToString()", "@item.IsRegisteredDiaryNumberLock.ToString()", "@item.IsQuarterlyData.ToString()", "@snoParkings.ToString()");
+                                                                            });
+                                                                        </script>
+                                                                        @{
+                                                                            snoAddQUpdateID = "btnAddQUpdateID" + @snoParkings.ToString();
+                                                                            snoDeleteQUpdateID = "btnDeleteQUpdateID" + @snoParkings.ToString();
+                                                                        }
+                                                                        @if (item.IsRegisteredDiaryNumberLock == 1) //RL
+                                                                        {
+                                                                            <span class="justify-content-center">
+                                                                                <a href="javascript:void(0);"><span id=@snoAddQUpdateID.ToString() title="Quarterly Updates Locked" class="qulinkaction-lock"></span></a>
+                                                                                <span>&nbsp;</span>
+                                                                                <a href="javascript:void(0);"><span id=@snoDeleteQUpdateID.ToString() title="Delete Quarterly Updates" class="qulinkaction-trash"></span></a>
+                                                                            </span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            if (item.IsLock == 1 || item.IsLock == 2) //RL
+                                                                            {
+                                                                                <span class="justify-content-center">
+                                                                                    <a href="javascript:void(0);"><span id=@snoAddQUpdateID.ToString() title="Quarterly Updates Locked" class="qulinkaction-lock"></span></a>
+                                                                                    <span>&nbsp;</span>
+                                                                                    <a href="javascript:void(0);"><span id=@snoDeleteQUpdateID.ToString() title="Delete Quarterly Updates" class="qulinkaction-trash"></span></a>
+                                                                                </span>
+                                                                            }
+                                                                            else //QU
+                                                                            {
+                                                                                if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3) //CL
+                                                                                {
+                                                                                    <span class="justify-content-center">
+                                                                                        <span>
+                                                                                            @Html.ActionLink(" ", "QUpdateEdit_QUParkingDetails", new { PRID = item.Related_ParkingProjectRegistration_ID, quPPIndexID = item.QUpdateProjectParking_IndexID, quPPID = item.QUpdateProjectParking_ID, rPPIndexID = item.Related_ProjectParking_IndexID, rPPID = item.Related_ProjectParking_ID }, new { @class = "qulinkaction-icon", title = "Add Quarterly Updates" })
+                                                                                        </span>
+                                                                                        <span>&nbsp;</span>
+                                                                                        <a href="javascript:void(0);"><span title="Quarterly Updates Locked" class="qulinkaction-trash disabledlockunlock"></span></a>
+                                                                                    </span>
+                                                                                }
+                                                                                else //QU
+                                                                                {
+                                                                                    if (item.IsDraft == 1 || item.IsDraft == 5 || item.IsDraft == 6) //CL
+                                                                                    {
+                                                                                        <span class="justify-content-center">
+                                                                                            <span>
+                                                                                                @Html.ActionLink(" ", "QUpdateEdit_QUParkingDetails", new { PRID = item.Related_ParkingProjectRegistration_ID, quPPIndexID = item.QUpdateProjectParking_IndexID, quPPID = item.QUpdateProjectParking_ID, rPPIndexID = item.Related_ProjectParking_IndexID, rPPID = item.Related_ProjectParking_ID }, new { @class = "qulinkaction-icon", title = "Add Quarterly Updates" })
+                                                                                            </span>
+                                                                                            <span>&nbsp;</span>
+                                                                                            <a href="javascript:void(0);"><span title="Quarterly Updates Locked" class="qulinkaction-trash disabledlockunlock"></span></a>
+                                                                                        </span>
+                                                                                    }
+                                                                                    else //QU
+                                                                                    {
+                                                                                        <span class="justify-content-center">
+                                                                                            <span>
+                                                                                                @Html.ActionLink(" ", "QUpdateEdit_QUParkingDetails", new { PRID = item.Related_ParkingProjectRegistration_ID, quPPIndexID = item.QUpdateProjectParking_IndexID, quPPID = item.QUpdateProjectParking_ID, rPPIndexID = item.Related_ProjectParking_IndexID, rPPID = item.Related_ProjectParking_ID }, new { @class = "qulinkaction-icon", title = "Add Quarterly Updates" })
+                                                                                            </span>
+                                                                                            <span>&nbsp;</span>
+                                                                                            <span>
+                                                                                                @Html.ActionLink(" ", "QUpdateDelete_QUParkingDetails", new { PRID = item.Related_ParkingProjectRegistration_ID, quPPIndexID = item.QUpdateProjectParking_IndexID, quPPID = item.QUpdateProjectParking_ID, rPPIndexID = item.Related_ProjectParking_IndexID, rPPID = item.Related_ProjectParking_ID }, new { @class = "qulinkaction-trash", title = "Delete Quarterly Updates", onclick = "return confirm('Are sure wants to delete?');" })
+                                                                                            </span>
+                                                                                        </span>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    </td>
+                                                                    @if (item.IsRegisteredDiaryNumberLock == 1)
+                                                                    {
+                                                                        if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3)
+                                                                        {
+                                                                            <td class="hdn-prk-array-number warning" data-prk-array-number="@snoParkings.ToString()" title="Quarterly updates locked">@Html.DisplayFor(modelItem => item.ParkingType)</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="hdn-prk-array-number success" data-prk-array-number="@snoParkings.ToString()" title="Quarterly updates locked">
+                                                                                <span><i class="fa fa-check" aria-hidden="true"></i></span>
+                                                                                @Html.DisplayFor(modelItem => item.ParkingType)
+                                                                            </td>
+                                                                        }                                                                        
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3)
+                                                                        {
+                                                                            <td class="hdn-prk-array-number" data-prk-array-number="@snoParkings.ToString()">@Html.DisplayFor(modelItem => item.ParkingType)</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="hdn-prk-array-number success" data-prk-array-number="@snoParkings.ToString()" title="Quarterly updates submitted successfully">
+                                                                                <span><i class="fa fa-check" aria-hidden="true"></i></span>
+                                                                                @Html.DisplayFor(modelItem => item.ParkingType)
+                                                                            </td>
+                                                                        }
+                                                                    }                                                                    
+                                                                    <td class="hdn-array-counter text-center" data-array-counter="@counterParkings.ToString()">
+                                                                        @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_TotalArea)
+                                                                        @Html.HiddenFor(modelItem => item.ParkingType, new { @id = "hdnVarPrkName" + snoParkings.ToString() + "arr" + counterParkings.ToString() })
+                                                                        @Html.HiddenFor(modelItem => item.ParkingSpaceUnits_NumberBookedInQuarter, new { @id = "hdnVarPrkBQ" + snoParkings.ToString() + "arr" + counterParkings.ToString() })
+                                                                        @Html.HiddenFor(modelItem => item.ParkingSpaceUnits_NumberCanceledBookedInQuarter, new { @id = "hdnVarPrkCBQ" + snoParkings.ToString() + "arr" + counterParkings.ToString() })
+                                                                        @Html.HiddenFor(modelItem => item.ParkingSpaceUnits_NumberSoldInQuarter, new { @id = "hdnVarPrkSQ" + snoParkings.ToString() + "arr" + counterParkings.ToString() })
+
+                                                                        @Html.HiddenFor(modelItem => item.ParkingSpaceUnits_TotalNumberBooked, new { @id = "hdnVarPrkBtotal" + snoParkings.ToString() + "arr" + counterParkings.ToString() })
+                                                                        @Html.HiddenFor(modelItem => item.ParkingSpaceUnits_TotalNumberSold, new { @id = "hdnVarPrkStotal" + snoParkings.ToString() + "arr" + counterParkings.ToString() })
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_NumberAvailableforSale)
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_NumberBookedSoldUptoRegistration)
+                                                                    </td>
+                                                                    @if (item.IsRegisteredDiaryNumberLock == 1)
+                                                                    {
+                                                                        if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3)
+                                                                        {
+                                                                            <td class="warning text-center" title="Quarterly updates locked">
+                                                                                <strong>
+                                                                                    @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_TotalNumberBooked)
+                                                                                </strong>
+                                                                            </td>
+                                                                            <td class="warning text-center" title="Quarterly updates locked">
+                                                                                <strong>
+                                                                                    @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_TotalNumberSold)
+                                                                                </strong>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="success text-center" title="Quarterly updates locked">
+                                                                                <strong>
+                                                                                    @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_TotalNumberBooked)
+                                                                                </strong>
+                                                                            </td>
+                                                                            <td class="success text-center" title="Quarterly updates locked">
+                                                                                <strong>
+                                                                                    @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_TotalNumberSold)
+                                                                                </strong>
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (item.IsQuarterlyData == 1 || item.IsQuarterlyData == 3)
+                                                                        {
+                                                                            <td class="text-center" style="background-color:darkgray">
+                                                                                <strong>
+                                                                                    @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_TotalNumberBooked)
+                                                                                </strong>
+                                                                            </td>
+                                                                            <td class="text-center" style="background-color:darkgray">
+                                                                                <strong>
+                                                                                    @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_TotalNumberSold)
+                                                                                </strong>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td class="success text-center" title="Quarterly updates submitted successfully">
+                                                                                <strong>
+                                                                                    @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_TotalNumberBooked)
+                                                                                </strong>
+                                                                            </td>
+                                                                            <td class="success text-center" title="Quarterly updates submitted successfully">
+                                                                                <strong>
+                                                                                    @Html.DisplayFor(modelItem => item.ParkingSpaceUnits_TotalNumberSold)
+                                                                                </strong>
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @Html.ActionLink("Cancel", "IndexPromoter", "Home", null, new { @class = "btn btn-outline btn-primary" })
+                                                            &nbsp;
+                                                            @Html.ActionLink("Reset", "QUpdate_QUParkingDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Not Applicable</legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-2">
+                                                                            @Html.Label("Quarterly Updates Status", htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-9 alert alert-warning">
+                                                                            Invalid! The registration of selected quarterly update details has been closed. Try Again. 
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @Html.ActionLink("Cancel", "IndexPromoter", "Home", null, new { @class = "btn btn-outline btn-primary" })
+                                                            &nbsp;
+                                                            @Html.ActionLink("Reset", "QUpdate_QUParkingDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    No record(s) found.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    @Html.ActionLink("Cancel", "IndexPromoter", "Home", null, new { @class = "btn btn-outline btn-primary" })
+                                                    &nbsp;
+                                                    @Html.ActionLink("Reset", "QUpdate_QUParkingDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    if (Model.prpongoing != null)
+                                    {
+                                        if (Model.IsQuarterlyData == 5)
+                                        {
+                                            if (Model.IsRegisteredDiaryNumberLock != 9)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Details of Parking Units</legend>
+
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Type of Parking</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.ParkingType, new { htmlAttributes = new { @class = "form-control quborder-disabled", @readonly = "readonly" } })
+                                                                            @Html.ValidationMessageFor(model => model.ParkingType, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Total Area of Parking Space (in sqr Mtrs)</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.ParkingSpaceUnits_TotalArea, new { htmlAttributes = new { @class = "form-control quborder-disabled", @readonly = "readonly" } })
+                                                                            @Html.ValidationMessageFor(model => model.ParkingSpaceUnits_TotalArea, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Total Number of Parking Units</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.ParkingSpaceUnits_NumberAvailableforSale, new { htmlAttributes = new { @class = "form-control quborder-disabled", @readonly = "readonly" } })
+                                                                            @Html.ValidationMessageFor(model => model.ParkingSpaceUnits_NumberAvailableforSale, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Number of Parking Units sold upto the date of Registration</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.ParkingSpaceUnits_NumberBookedSoldUptoRegistration, new { htmlAttributes = new { @class = "form-control quborder-disabled", @readonly = "readonly" } })
+                                                                            @Html.ValidationMessageFor(model => model.ParkingSpaceUnits_NumberBookedSoldUptoRegistration, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Parking Units Information of Registered Project (in the Quarter)</legend>
+
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            <label class="control-label">
+                                                                                @Html.CheckBox("A_column", Model.A_column == "YES" ? true : false)
+                                                                            </label>
+                                                                            <label class="control-label">Please check if parking information of registered project (in the Quarter) is same as  in the previous quarter?</label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Number of Parking Units booked in the Quarter</label>
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Number of Parking Units booked in the Quarter is required. Numbers should not exceed the limits of parking units provided at the time of registration.">
+                                                                            @Html.EditorFor(model => model.ParkingSpaceUnits_NumberBookedInQuarter, new { htmlAttributes = new { @class = "form-control quborder-info", onChange = "CalculateParkingInQrBooked(this);" } })
+                                                                            @Html.ValidationMessageFor(model => model.ParkingSpaceUnits_NumberBookedInQuarter, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Number of Parking Units under canceled booking in the Quarter</label>
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            @Html.EditorFor(model => model.ParkingSpaceUnits_NumberCanceledBookedInQuarter, new { htmlAttributes = new { @class = "form-control quborder-info", onChange = "CalculateParkingInQrCancelBooked(this);" } })
+                                                                            @Html.ValidationMessageFor(model => model.ParkingSpaceUnits_NumberCanceledBookedInQuarter, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Number of Parking Units sold in the Quarter</label>
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Number of Parking Units sold in the Quarter is required. Numbers should not exceed the limits of parking units provided at the time of registration.">
+                                                                            @Html.EditorFor(model => model.ParkingSpaceUnits_NumberSoldInQuarter, new { htmlAttributes = new { @class = "form-control quborder-info", onChange = "CalculateParkingInQrSold(this);" } })
+                                                                            @Html.ValidationMessageFor(model => model.ParkingSpaceUnits_NumberSoldInQuarter, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                                               
+                                                            </fieldset>
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Details of Total Parking Units</legend>
+                                                                                                                                
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Total Booked</label>
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Total booked in each of the building/ tower/ plotted development is required. Total numbers (sum of booked and sold) should not exceed the limits of parking units provided at the time of registration.">
+                                                                            @Html.EditorFor(model => model.ParkingSpaceUnits_TotalNumberBooked, new { htmlAttributes = new { @class = "form-control", onChange = "CalculateParkingNumbers(this);" } })
+                                                                            @Html.ValidationMessageFor(model => model.ParkingSpaceUnits_TotalNumberBooked, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                        <div class="col-md-3">
+                                                                            <label class="control-label mand">Total Sold</label>
+                                                                        </div>
+                                                                        <div class="col-md-3" data-toggle="tooltip" data-placement="top" title="Total sold in each of the building/ tower/ plotted development is required. Total numbers (sum of booked and sold) should not exceed the limits of parking units provided at the time of registration.">
+                                                                            @Html.EditorFor(model => model.ParkingSpaceUnits_TotalNumberSold, new { htmlAttributes = new { @class = "form-control", onChange = "CalculateParkingNumbers(this);" } })
+                                                                            @Html.ValidationMessageFor(model => model.ParkingSpaceUnits_TotalNumberSold, "", new { @class = "text-danger" })
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @if (Model.IsRegisteredDiaryNumberLock == 1 || Model.IsRegisteredDiaryNumberLock == 9)
+                                                            {
+                                                                <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Model.IsLock == 1 || Model.IsLock == 2)
+                                                                {
+                                                                    <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (Model.IsDraft == 1 || Model.IsDraft == 5 || Model.IsDraft == 6)
+                                                                    {
+                                                                        <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" disabled="disabled" />
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="submit" value="@TempData["submitvalue"]" id="BtnMainform" class="btn btn-outline btn-primary" />
+                                                                    }
+                                                                }
+                                                            }
+                                                            &nbsp;
+                                                            @Html.ActionLink("Reset", "QUpdate_QUParkingDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            <fieldset class="col-md-12">
+                                                                <legend class="my">Not Applicable</legend>
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-2">
+                                                                            @Html.Label("Quarterly Updates Status", htmlAttributes: new { @class = "control-label" })
+                                                                        </div>
+                                                                        <div class="col-md-9 alert alert-warning">
+                                                                            Invalid! The registration of selected quarterly update details has been closed. Try Again.
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+                                                        <div class="col-md-12">
+                                                            @Html.ActionLink("Cancel", "IndexPromoter", "Home", null, new { @class = "btn btn-outline btn-primary" })
+                                                            &nbsp;
+                                                            @Html.ActionLink("Reset", "QUpdate_QUParkingDetails", "Project", null, new { @class = "btn btn-outline btn-primary" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+
+<!-- Modal -->
+<div id="myFormQUpdateModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Quarterly Updates: List of Number and Garages/ Covered Car Parking Details</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <script>
+        function showSelectButtonColorEvent(srCntlFlag, srQuarterFlag, srDNoFlag, srRDFlag, srNo) {
+            var parmLockUnlock = srQuarterFlag;
+            var parmCntl = srCntlFlag;
+            var parmDNo = srDNoFlag;
+            var parmRD = srRDFlag;
+            var vargetAddQUpdateID = '#btnAddQUpdateID' + srNo;
+            var vargetDeleteQUpdateID = '#btnDeleteQUpdateID' + srNo;
+
+            if (parmDNo == 1) { //RL
+                $(document).find(vargetAddQUpdateID.trim()).prop('disabled', true);
+                $(document).find(vargetAddQUpdateID.trim()).addClass("disabledlockunlock");
+                $(document).find(vargetDeleteQUpdateID.trim()).prop('disabled', true);
+                $(document).find(vargetDeleteQUpdateID.trim()).addClass("disabledlockunlock");
+            }
+            else {
+                if (parmCntl == 1 || parmCntl == 2) { //RL
+                    $(document).find(vargetAddQUpdateID.trim()).prop('disabled', true);
+                    $(document).find(vargetAddQUpdateID.trim()).addClass("disabledlockunlock");
+                    $(document).find(vargetDeleteQUpdateID.trim()).prop('disabled', true);
+                    $(document).find(vargetDeleteQUpdateID.trim()).addClass("disabledlockunlock");
+                }
+                else {
+                    if (parmRD == 1 || parmRD == 3) { //RL
+                        $(document).find(vargetAddQUpdateID.trim()).prop('disabled', false);
+                        $(document).find(vargetAddQUpdateID.trim()).removeClass("disabledlockunlock");
+                        $(document).find(vargetDeleteQUpdateID.trim()).prop('disabled', true);
+                        $(document).find(vargetDeleteQUpdateID.trim()).addClass("disabledlockunlock");
+                    }
+                    else {
+                        if (parmLockUnlock == 1 || parmLockUnlock == 5 || parmLockUnlock == 6) { //RL
+                            $(document).find(vargetAddQUpdateID.trim()).prop('disabled', false);
+                            $(document).find(vargetAddQUpdateID.trim()).removeClass("disabledlockunlock");
+                            $(document).find(vargetDeleteQUpdateID.trim()).prop('disabled', true);
+                            $(document).find(vargetDeleteQUpdateID.trim()).addClass("disabledlockunlock");
+                        }
+                        else {
+                            $(document).find(vargetAddQUpdateID.trim()).prop('disabled', false);
+                            $(document).find(vargetAddQUpdateID.trim()).removeClass("disabledlockunlock");
+                            $(document).find(vargetDeleteQUpdateID.trim()).prop('disabled', false);
+                            $(document).find(vargetDeleteQUpdateID.trim()).removeClass("disabledlockunlock");
+                        }
+                    }
+                }
+            }
+        }
+
+        $('table#dataTables-QUpdatesProjectParking').dataTable({
+            responsive: true,
+            "pageLength": 15,
+            "lengthMenu": [[15, 30, 45, 60, 100], [15, 30, 45, 60, 100]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [1]
+            }],
+            "language": {
+                "info": "Showing _START_ to _END_ of _TOTAL_ records",
+                "lengthMenu": "Show _MENU_ records"
+            },
+            "pagingType": "full_numbers"
+        });
+    </script> 
+
+}

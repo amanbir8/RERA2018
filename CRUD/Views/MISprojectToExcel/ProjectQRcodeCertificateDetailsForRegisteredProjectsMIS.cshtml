@@ -1,0 +1,132 @@
+﻿@model CRUD.Models.MISprojectToExcel.Clsprp_MIS_ProjectQRcodeCertificateDetails
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">Project Details</legend>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_Name, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Promoter_Name, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Promoter_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_TotalAreaSTR, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_TotalArea, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.DisplayFor(model => model.Project_TotalAreaSTR, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.Project_TypeSTR, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.Project_TypeSTR, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                        
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressLine1, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressLine2, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressDistrictCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressDistrictCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressStateCode, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressStateCode, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">                                
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.BusinessPlace_AddressPIN, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.BusinessPlace_AddressPIN, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RERAnumberRegistration, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RERAnumberRegistration, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.LabelFor(model => model.RERAnumberRegUptoDate, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DisplayFor(model => model.RERAnumberRegUptoDate, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>                        
+                    </fieldset>
+                </div>
+            </div>
+        </div>     
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <fieldset class="col-md-12">
+                        <legend class="my">QR Code Image</legend> 
+                        <div class="row" style="align-content:center;">
+                            <div class="form-group">
+                                @*<div class="col-md-3">
+                                    @Html.LabelFor(model => model.QRcodeImage_A, htmlAttributes: new { @class = "control-label" })
+                                </div>*@
+                                <div class="col-md-12">
+                                    <img width="350" height="350" src="@Url.Action("GenerateQrCodeByRegisteredProjectID", "MISprojectToExcel", new { qrRERAnumber = Model.RERAnumberRegistration, qrValidUptoDate = Model.RERAnumberRegUptoDate, qrProjectName = Model.Project_Name, qrProjectType = Model.Project_TypeSTR, qrPromoterName = Model.Promoter_Name, qrProjectAddressLine1 = Model.Project_AddressLine1, qrProjectAddressLine2 = Model.Project_AddressLine2, qrProjectDistrictName = Model.Project_AddressDistrictCode, qrProjectStateName = Model.Project_AddressStateCode })" />
+                                </div>                               
+                            </div>
+                        </div>                        
+                    </fieldset>
+                </div>
+            </div>
+        </div>       
+
+    </div>
+</div>

@@ -1,0 +1,321 @@
+﻿@model CRUD.Models.Dashboard.ClsPrp_DashboardDesk_FactsFigure
+
+<style>
+    .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 0px;
+    }
+</style>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+<!--data table grid display Content-->
+<link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap4.css")" rel="stylesheet" />
+<script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
+<script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
+
+<script src="@Url.Content("~/js-highcharts/highcharts.js")"></script>
+<script src="@Url.Content("~/js-highcharts/data.js")"></script>
+<script src="@Url.Content("~/js-highcharts/drilldown.js")"></script>
+<script src="@Url.Content("~/js-highcharts/variable-pie.js")"></script>
+
+<link href="@Url.Content("~/dist/css/fixed-plugin.css")" rel="stylesheet" />
+
+<script>$.uiBackCompat = false;</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $('[data-spzoom]').spzoom();
+    });
+</script>
+<style>
+    #customTopBtn {
+        display: none; /* Hidden by default */
+        position: fixed; /* Fixed/sticky position */
+        bottom: 20px; /* Place the button at the bottom of the page */
+        right: 30px; /* Place the button 30px from the right */
+        z-index: 99; /* Make sure it does not overlap */
+        border: none; /* Remove borders */
+        outline: none; /* Remove outline */
+        background-color: #064576; /* Set a background color */
+        color: white; /* Text color */
+        cursor: pointer; /* Add a mouse pointer on hover */
+        padding: 15px; /* Some padding */
+        border-radius: 10px; /* Rounded corners */
+        font-size: 18px; /* Increase font size */
+    }
+
+        #customTopBtn:hover {
+            background-color: #555; /* Add a dark-grey background on hover */
+        }
+</style>
+<script>
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("customTopBtn").style.display = "block";
+        } else {
+            document.getElementById("customTopBtn").style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<script>
+    $(document).ready(function() {
+        $().ready(function () {
+
+            window_width = $(window).width();
+
+            if (window_width > 767) {                
+                //if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+                //    $('.fixed-plugin .dropdown').addClass('open');
+                //}
+                if ($('.fixed-plugin .dropdown').hasClass('show-dropdown')) {
+                    $('.fixed-plugin .dropdown').removeClass("open");
+                }
+            }
+
+            $('.fixed-plugin a').click(function (event) {
+                if ($(this).hasClass('switch-trigger')) {
+                    if (event.stopPropagation) {
+                        event.stopPropagation();
+                    } else if (window.event) {
+                        window.event.cancelBubble = true;
+                    }
+                }
+            });
+
+            initialize();
+        });
+    });
+</script>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDedrs6RwZX-gYx7M4RxaF0EANzlZ-VGRg"></script>
+<script type="text/javascript">
+    function initialize() {        
+        var lat = 30.737719; //document.getElementById('ProposedProjectLand_StartPoint_Latitude').value;
+        var lon = 76.792704; //document.getElementById('ProposedProjectLand_StartPoint_Longitude').value;
+        var myLatlng = new google.maps.LatLng(lat, lon) // This is used to center the map to show our markers
+        var mapOptions = {
+            center: myLatlng,
+            zoom: 6,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            marker: true
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+        var marker = new google.maps.Marker({
+            position: myLatlng
+        });
+        marker.setMap(map);
+}
+</script>
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Dashboard</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_RegisteredProjects)+</div>
+                                <div>Registered Projects</div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <a href="@Url.Action("ProjectByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_RegisteredAgents)+</div>
+                                <div>Registered Agents</div>
+                            </div>
+                            <!--  <div class="col-xs-5">
+                                <img src="images/icon1.png">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="@Url.Action("RealEstateAgentByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_SectionThreeOneComplaints)+</div>
+                                <div>Complaints (Section 31)</div>
+                            </div>
+
+                            <!--  <div class="col-xs-5">
+                                <img src="images/icon1.png">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="@Url.Action("ProjectByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-red">
+                    <div class="panel-heading">
+                        <div class="row">
+
+                            <div class="col-xs-12 text-left">
+                                <div class="hugeDB">@Html.DisplayFor(model => Model.Number_SectionFiveNineComplaints)+</div>
+                                <div>Notices (Section 59)</div>
+                            </div>
+                            <!--  <div class="col-xs-5">
+                                <img src="images/icon1.png">
+                            </div> -->
+                        </div>
+                    </div>
+                    <a href="@Url.Action("SectionFiveNineByAODashboard", "Dashboard")">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- /.row Header-->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <i class="fa fa-clock-o fa-lg" aria-hidden="true"></i> Full Screen Geo-Tag Map - Projects
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <div id="map_canvas" class="col-lg-12" style="height: 400px"></div>
+                                </div>
+                            </div>
+                        </div>          
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+        </div>
+        <!-- /.row -->
+    }
+</div>
+<!-- /.wrapper -->
+
+<div class="fixed-plugin">
+    <div class="dropdown show-dropdown open">
+        <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-cog fa-2x"> </i>
+        </a>
+        <ul class="dropdown-menu" x-placement="top-start" style="position: absolute; top: -47px; left: -303px; will-change: top, left;">
+            <li class="header-title"> Dashboard Filters</li>
+            <li class="adjustments-line">
+                <a href="javascript:void(0)" class="switch-trigger active-color">
+                    <div class="badge-colors ml-auto mr-auto text-center">
+                        <span class="badge filter badge-purple active" data-color="purple"></span>
+                        <span class="badge filter badge-azure" data-color="azure"></span>
+                        <span class="badge filter badge-green" data-color="green"></span>
+                        <span class="badge filter badge-warning" data-color="orange"></span>
+                        <span class="badge filter badge-danger" data-color="danger"></span>
+                        <span class="badge filter badge-rose" data-color="rose"></span>
+                    </div>
+                    <div class="clearfix"></div>
+                </a>
+            </li>
+            <li class="header-title">Full Screen Map</li>
+            <li class="button-container">
+                <a href="@Url.Action("ProjectGeoTagByAODashboard", "Dashboard")" class="btn btn-success btn-block" style="background-color:#7bb73f; font-size:small; font-weight:Normal;">
+                    Projects GeoTag Map (Full Screen)
+                </a>
+            </li>
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-default btn-block disabled" style="background-color:#064576; font-size:small; font-weight:Normal;">
+                    Project Extension (Form-E) Charts
+                </a>
+            </li>
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-success btn-block disabled" style="background-color:#7bb73f; font-size:small; font-weight:Normal;">
+                    Project Payment Charts
+                </a>
+            </li>
+            <li class="button-container">
+                <a href="javascript:void(0)" target="_blank" class="btn btn-default btn-block disabled" style="background-color:#064576; font-size:small; font-weight:Normal;">
+                    View Calendar & Documentation
+                </a>
+            </li>
+            <li class="header-title">Thank you for visiting geo location map!</li>
+            <li class="button-container text-center">
+                <div class="form-group">
+                    <button id="twitter" class="btn btn-round btn-twitter sharrre"><i class="fa fa-twitter"></i></button>
+
+                    <a href="https://www.facebook.com/MGSIPA/photos/a.2032773913682452/2032774290349081/?type=3&theater" target="_blank">
+                        <span class="btn btn-round btn-facebook sharrre">
+                            <i class="fa fa-facebook-f"></i>
+                        </span>
+                    </a>
+                </div>
+                <br>
+                <br>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<button onclick="topFunction()" id="customTopBtn" title="Go to top">Top</button>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+    <script src="@Url.Content("~/js/jquery.spzoom.js")"></script>
+}
+

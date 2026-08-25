@@ -1,0 +1,391 @@
+﻿@{
+    ViewBag.Title = "Complaintant Info";
+}
+
+<!--<h2>@ViewBag.Title.</h2>
+<h4>@ViewBag.Message</h4>-->
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {      
+        $(document).on("click", "a.info-help-details", infohelpHandlerComplainantPaneldetails);
+
+        var stack_bottomright = {
+            "dir1": "up",
+            "dir2": "left",
+            "firstpos1": 15,
+            "firstpos2": 25
+        };
+
+        new PNotify({
+            title: 'Notification',
+            text: '<i class="fa fa-check-square" style="color:#7bb73f"></i> To file any fresh complaint, the complainant may click the tab "Complaint Details".<br/> <i class="fa fa-check-square" style="color:#7bb73f"></i> In case of any incomplete submission of complaint (e.g. Only Step-1 is completed etc.) or if any complaint is already registered with the Authority, the complainant can view the status of complaint under the tab “View Status” only and can complete further steps for filing of complaint on-line.',
+            hide: false,
+            icon: false,
+            type: 'info',
+            addclass: "stack-bottomright",
+            stack: stack_bottomright
+        });
+    });
+    function infohelpHandlerComplainantPaneldetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Instruction(s)</b><br/> Please Read Instructions Carefully Before filing or Completing This Online Complaint Form (Form-M and Form-N).',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+</script>
+
+<style>
+    .bs-wizard {
+        display: flex;
+        margin: 20px 0;
+        border: none;
+    }
+
+    .bs-wizard-step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+    }
+
+    .bs-wizard-stepnum {
+        font-size: 16px;
+        font-weight: 600;
+        color: #064576;
+        margin-bottom: 35px;
+    }
+
+    /* Horizontal Line */
+    .bs-wizard-step::before {
+        content: "";
+        position: absolute;
+        top: 45px;
+        left: -50%;
+        width: 100%;
+        height: 6px;
+        background: #064576;
+        z-index: 1;
+    }
+
+    .bs-wizard-step:first-child::before {
+        display: none;
+    }
+
+    /* Circle */
+    .bs-wizard-dot {
+        width: 30px;
+        height: 30px;
+        background: #064576;
+        border-radius: 50%;
+        display: inline-block;
+        position: absolute;
+        left: 50%;
+        top: 32px;
+        transform: translateX(-50%);
+        z-index: 2;
+    }
+
+        .bs-wizard-dot::after {
+            content: "";
+            width: 14px;
+            height: 14px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+        }
+</style>
+
+<style>
+    .step-wizard-wrapper {
+        position: relative;
+        margin-bottom: 30px;
+
+        width: 75%;
+        margin-left: 0;
+    }
+
+    /* Base line alignment */
+    .step-progress-line {
+        height: 6px !important;
+        position: absolute;
+        width: 100%;
+        top: 15px;
+        left: 0;
+        margin: 0;
+        z-index: 1;
+    }
+
+    /* Flexbox container for perfect spacing */
+    .step-wizard-steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        z-index: 2;
+        width: 100%;
+    }
+
+    .step-item {
+        text-align: center;
+        width: 35px;
+    }
+
+        /* Square box design */
+        .step-item .step-num {
+            width: 36px;
+            height: 36px;
+            line-height: 32px;
+            border: 2px solid #ddd;
+            border-radius: 0% !important; /* Forces sharp square corners */
+            display: inline-block;
+            background-color: #fff;
+            font-weight: bold;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .step-item .step-title {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Active and completed states */
+        .step-item.active .step-num {
+            background-color: #5cb85c; /* Bootstrap Success Green */
+            border-color: #5cb85c;
+            color: #fff;
+        }
+
+        .step-item.active .step-title {
+            color: #333;
+            font-weight: 600;
+        }    
+
+
+</style>
+
+
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Instructions and Application Process Flow</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Step By Step - Instructions for filing Online Complaint Form (Form-M and Form-N)
+                    <span class="pull-right">                        
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i></span></a>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-12 text-justify" style="line-height: 28px; color: #000; font-family: roboto;">
+
+
+                                        <p style="text-align: justify;">
+                                            Online complaint registration facility should be used by a complainant to file a complaint with the Real Estate
+                                            Regulatory Authority, Punjab. In order to access this facility, the user may click on the “File Complaint” link
+                                            under the “Complaint” tab on the web portal.
+                                        </p>
+
+                                        <p>
+                                            Before the user starts filing the online complaint registration form, it is advisable to go through the
+                                            Rule No. 36 and 37 of the Punjab State Real Estate (Regulation and Development) Rules 2017, provided under
+                                            the “Document” tab of the web portal in order to understand about the type complaints that can filed with
+                                            the Authority.
+                                        </p>
+
+                                        <p>
+                                            <b>Please note:</b>
+                                        </p>
+                                        <p>
+                                            a)	A soft copy of the relevant documents related to the complaint should be kept in handy before filing out the complaint registration form.
+                                        </p>
+                                        <p>
+                                            b)	The complaint fee of INR. 1000/- <em>(One Thousands Only)</em> needs to be paid online. Hence, a debit card OR credit card OR bank account with net banking facility shall be required to pay the same.
+                                        </p>
+                                        <p>
+                                            c)	In case of any incomplete submission of complaint (e.g. Only Step-1 is completed etc.) or if any complaint is already registered with the Authority, the complainant can view the status of complaint
+                                            under the tab “View Status” only and can complete further steps for filing of complaint on-line. However, to file any fresh complaint, the complainant may click the tab "Complaint Details".
+                                        </p>
+                                        <p>
+                                            d)	After successful submission of complaint by user type as “Complainant”. The complainant is required to submit a hardcopy of the complaint and documents uploaded/ submitted on-line along with additional
+                                            copies thereof, equal in number to the number of respondents, with the Authority.
+                                        </p>
+                                        <p>
+                                            e)	Complainant is required to note down the complaint reference number generated on-line on successful submission (Step-4 of complaint), for any future references with the Authority.
+                                        </p>
+
+                                        <div class="panel-group" id="accordion">
+                                            <div class="panel panel-info">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" class="panel-accordion-toggle" aria-expanded="false">Instructions for Online Complaint Filing</a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapseThree" class="panel-collapse collapse in" aria-expanded="false" style="">
+                                                    <div class="panel-body">
+
+                                                        <p>
+                                                            <b>Step 1:</b> Click on the “File Complaint” link under the “Complaint” tab on the web portal and create your login ID with user type as “Complainant”.
+                                                        </p>
+                                                        <p>
+                                                            Fill in the all the required information and click on the “Create User” button. A confirmation email with a link shall be sent the email ID provided by the user.
+                                                            Click on the link in order to verify and activate the user account.
+                                                        </p>
+                                                        <p>
+                                                            <b>Step 2:</b> Log into the web portal with the user name and password set in the previous step and complete your profile in the “My Profile” section of the form.
+                                                            This is a one-time activity and multiple complaints can be filed through the same profile.
+                                                        </p>
+                                                        <p>
+                                                            <b>Step 3:</b> Select the type of complaint (Complaint Form ‘M’ or Complaint Form ‘N’) that the user needs to file with the Authority. Particulars of the complainant
+                                                            shall be auto-filled based on the information provided in the “My Profile” section.
+                                                        </p>
+                                                        <p>
+                                                            <b>Please note: </b> In order to understand the type of complaint to be filed, the user may go through the Rule No. 36 and 37 of the Punjab State Real Estate
+                                                            (Regulation and Development) Rules 2017.
+                                                        </p>
+                                                        <p>
+                                                            <b>Step 4:</b> Fill in the required information in the selected form. Tooltips in each field of the form have been provided for the user’s assistance.
+                                                        </p>
+                                                        <p>
+                                                            <b>Step 5:</b> Pay the requisite complaint registration fee online.
+                                                        </p>
+                                                        <p>
+                                                            <b>Step 6:</b> Upload relevant documents related to the complaint. <b>
+                                                                In case a complainant is being represented by a legal practitioner, a <em>Vakalatnama</em> in
+                                                                the prevailing format shall be required to be uploaded. In case the complainant is being represented
+                                                                by any authorized person, a Memorandum of Authorization, as per the Form 2 of the PunjabReal Estate Regulatory
+                                                                Authority (Procedure for handling complaints and related matters) Regulations, 2017. The same can be
+                                                                downloaded from the Documents tab of the web portal.
+                                                            </b>
+                                                        </p>
+                                                        <p>
+                                                            <b>Step 7:</b> Submit the complaint by clicking on the “Submit” button and note down the complaint
+                                                            reference number for future references.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="bs-wizard">
+
+                                                    <div class="bs-wizard-step">
+                                                        <div class="bs-wizard-stepnum">Step 1</div>
+                                                        <div class="bs-wizard-dot"></div>
+                                                    </div>
+
+                                                    <div class="bs-wizard-step">
+                                                        <div class="bs-wizard-stepnum">Step 2</div>
+                                                        <div class="bs-wizard-dot"></div>
+                                                    </div>
+
+                                                    <div class="bs-wizard-step">
+                                                        <div class="bs-wizard-stepnum">Step 3</div>
+                                                        <div class="bs-wizard-dot"></div>
+                                                    </div>
+
+                                                    <div class="bs-wizard-step">
+                                                        <div class="bs-wizard-stepnum">Step 4</div>
+                                                        <div class="bs-wizard-dot"></div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <hr />
+
+
+                                        <div class="container mt-5">
+                                            <!-- Step Indicator Wrapper -->
+                                            <div class="step-wizard-wrapper">
+                                                <!-- Progress Bar Background Line -->
+                                                <div class="progress step-progress-line">
+                                                    <!-- Adjust width dynamically (e.g., 0%, 33%, 66%, 100%) -->
+                                                    <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" style="width: 0%;"></div>
+                                                </div>
+                                                <!-- Step Circular Buttons -->
+                                                <div class="step-wizard-steps">
+                                                    <!-- Step 1: Completed -->
+                                                    <div class="step-item ">
+                                                        <span class="step-num">1</span>
+                                                        <p class="step-title">Step1</p>
+                                                    </div>
+                                                    <!-- Step 2: Active/Current -->
+                                                    <div class="step-item ">
+                                                        <span class="step-num">2</span>
+                                                        <p class="step-title">Step2</p>
+                                                    </div>
+                                                    <!-- Step 3: Upcoming -->
+                                                    <div class="step-item">
+                                                        <span class="step-num">3</span>
+                                                        <p class="step-title">Step3</p>
+                                                    </div>
+                                                    <!-- Step 4: Upcoming -->
+                                                    <div class="step-item">
+                                                        <span class="step-num">4</span>
+                                                        <p class="step-title">Step4</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">75%</div>
+                                        </div>
+
+                                    </div>
+                                    <!-- /.col-lg-6 (nested) -->
+                                    <!-- /.col-lg-6 (nested) -->
+                                </div>
+                                <!-- /.row (nested) -->
+                            </div>
+
+                            <!-- .panel-body -->
+
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+}

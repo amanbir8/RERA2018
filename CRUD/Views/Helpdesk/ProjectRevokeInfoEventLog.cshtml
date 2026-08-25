@@ -1,0 +1,46 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_AuthorityDesk_RevocationCancellationProjectEventLog
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.EventAction_IdentifiedOn)</th>
+                        <th>@Html.DisplayNameFor(model => model.Project_DiaryNumber)</th>
+                        <th>@Html.DisplayNameFor(model => model.EventAction_Aggregate)</th>
+                        <th>@Html.DisplayName("Prepared By")</th>
+                        <th>@Html.DisplayNameFor(model => model.Remarks_IfAny)</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.prpongoing)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Revoke_DiaryNumber)
+                                @Html.DisplayName(" of ")
+                                @Html.DisplayFor(modelItem => item.Project_DiaryNumber)                                
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.EventAction_Aggregate)</td>
+                            @if (item.EventAction_IdentifiedBy != "999")
+                            {
+                                <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedBy)</td>
+                            }
+                            else
+                            {
+                                <td>@Html.DisplayName(" ")</td>
+                            }
+                            <td align="justify">@Html.DisplayFor(modelItem => item.Remarks_IfAny)</td>                            
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

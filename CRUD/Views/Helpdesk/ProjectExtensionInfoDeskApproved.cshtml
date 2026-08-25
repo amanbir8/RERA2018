@@ -1,0 +1,635 @@
+﻿@model CRUD.Models.HelpDesk.ClsPrp_ExtensionAuthorityDesk_ProjectDiaryNumber
+
+@*<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+    <script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>*@
+
+<link rel="stylesheet" href="@Url.Content("~/dist/css/pnotify.custom.min.css")" />
+<link rel="stylesheet" href="@Url.Content("~/dist/css/daterangepicker.css")" />
+<script src="@Url.Content("~/dist/js/pnotify.custom.min.js")"></script>
+<script src="@Url.Content("~/dist/js/moment.js")"></script>
+<script src="@Url.Content("~/dist/js/daterangepicker.js")"></script>
+
+
+@*<style>
+        .dd-wrap {
+            position: relative;
+            display: inline-flex;
+        }
+
+        .dd-real-select {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dd-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            padding: 5px 10px;
+            border: 1px solid #2e6da4;
+            border-radius: 5px;
+            background: linear-gradient(180deg, #d9edf7 0%, #d9edf7 100%);
+            color: #2e6da4;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.4;
+            height: 24px;
+            white-space: nowrap;
+            cursor: pointer;
+            position: relative;
+            width: 160px;
+            box-sizing: border-box;
+        }
+
+            .dd-trigger:hover {
+                background: #cbe4f1;
+            }
+
+        .dd-label {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .dd-trigger .dd-caret {
+            flex-shrink: 0;
+            color: #2e6da4;
+            font-size: 11px;
+            transition: transform 0.15s ease;
+        }
+
+        .dd-trigger.open .dd-caret {
+            transform: rotate(180deg);
+        }
+
+        /* Panel now reuses .daterangepicker's own card/shadow/notch — just position + size it */
+        .dd-panel {
+            position: absolute;
+            top: 33px;
+            left: 0;
+            width: 180px;
+            max-width: none;
+            display: none;
+        }
+
+            /* Move daterangepicker notch to right */
+            .dd-panel:before,
+            .dd-panel:after {
+                left: auto !important;
+                right: 20px !important;
+            }
+
+        .dd-trigger.open + .dd-panel {
+            display: block;
+        }
+
+        .dd-panel .ranges {
+            float: none;
+        }
+
+            .dd-panel .ranges ul {
+                width: 100%;
+                font-weight: normal;
+                color: black;
+            }
+
+            /* Optional: align the active-item blue with your theme instead of plugin's default #08c */
+            .dd-panel .ranges li.active {
+                background-color: #08c;
+            }
+
+        /*.header-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+        }*/
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap; /* keeps trigger + icons on one row */
+            position: relative;
+        }
+
+
+        @@media (max-width: 767px) {
+
+        .panel-heading {
+            position: relative;
+            overflow: visible;
+            min-height: 70px;
+        }
+
+        .panel-heading .header-actions {
+            float: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            margin-top: 8px;
+            gap: 8px;
+            flex-wrap: nowrap;
+            position: relative;
+        }
+
+        .dd-wrap {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .dd-trigger {
+            width: 100% !important;
+            max-width: 185px;
+        }
+
+        .dd-panel {
+            left: 0 !important;
+            right: auto !important;
+            width: 180px !important;
+            z-index: 9999;
+        }
+
+        .modalDownloadExcelButton,
+        .info-help-details {
+            flex: 0 0 auto;
+        }
+    }
+    </style>*@
+
+@* ============================================================
+    SIMPLIFIED VERSION of the themed "ranges" dropdown
+    - No hidden native <select> to keep in sync
+    - List items are rendered server-side from ViewBag.ApplicationTypeList
+    - One click handler does select + submit, no separate change handler
+    ============================================================ *@
+
+<style>
+    .dd-wrap {
+        position: relative;
+        display: inline-flex;
+    }
+
+    .dd-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 5px 10px;
+        border: 1px solid #2e6da4;
+        border-radius: 5px;
+        background: #d9edf7;
+        color: #2e6da4;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+        height: 24px;
+        width: 160px;
+        white-space: nowrap;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+        .dd-trigger:hover {
+            background: #cbe4f1;
+        }
+
+    .dd-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .dd-trigger .dd-caret {
+        flex-shrink: 0;
+        color: #2e6da4;
+        font-size: 11px;
+        transition: transform .15s ease;
+    }
+
+    .dd-trigger.open .dd-caret {
+        transform: rotate(180deg);
+    }
+
+    /* Reuses .daterangepicker's own card / shadow / notch styling - just position + size it */
+    .dd-panel {
+        position: absolute;
+        top: 33px;
+        left: 0;
+        width: 162px;
+        max-width: none;
+        display: none;
+    }
+
+        .dd-panel:before,
+        .dd-panel:after {
+            left: auto !important;
+            right: 10px !important;
+        }
+
+    .dd-trigger.open + .dd-panel {
+        display: block;
+    }
+
+    .dd-panel .ranges {
+        float: none;
+    }
+
+        .dd-panel .ranges ul {
+            width: 100%;
+            font-weight: normal;
+            color: #000;
+        }
+
+        .dd-panel .ranges li.active {
+            background-color: #08c;
+        }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: nowrap;
+        position: relative;
+    }
+
+    @@media (max-width: 767px) {
+        .panel-heading {
+            position: relative;
+            overflow: visible;
+            min-height: 70px;
+        }
+
+            .panel-heading .header-actions {
+                float: none !important;
+                display: flex;
+                width: 100%;
+                margin-top: 8px;
+                gap: 8px;
+                flex-wrap: nowrap;
+            }
+
+        .dd-wrap {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .dd-trigger {
+            width: 100% !important;
+            max-width: 185px;
+        }
+
+        .dd-panel {
+            left: 0 !important;
+            right: auto !important;
+            width: 130px !important;
+            z-index: 9999;
+        }
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+
+        // ===== Themed dropdown for applicationType ($('.ranges') look, no real <select>) =====
+        var $wrap = $('#ExtnApplicationTypeWrap');
+        var $trigger = $wrap.find('.dd-trigger');
+        var $hidden = $wrap.find('#ExtnApplicationType');
+
+        $trigger.on('click', function (e) {
+            e.stopPropagation();
+            $(this).toggleClass('open');
+        });
+
+        $wrap.on('click', '.ranges li', function () {
+            $hidden.val($(this).data('value'));
+            $('#publicViewAppExtFilterForm').submit();
+        });
+
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('#ExtnApplicationTypeWrap').length) {
+                $trigger.removeClass('open');
+            }
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        var BASE_URL = $('body').attr('data-base-url');
+        stopPreloader();
+
+        $('#dataTables-example').DataTable({
+            responsive: true,
+            "pageLength": 50,
+            "lengthMenu": [[50, 100, 150, 200, 250], [50, 100, 150, 200, 250]],
+            'aoColumnDefs': [{
+                'bSortable': false,
+                'aTargets': [7, 8]
+            }]
+        });
+
+
+        $(document).on('click', '.modalDownloadExcelButton', function (e) {
+            e.preventDefault();
+            window.location = BASE_URL + 'Helpdesk/ApprovedApplicationsforExtensionProject_ExportToExcel';
+        });
+
+        $(document).on('click', '.info-help-details', infohelpHandlerExtnRegistrationdetails);
+
+        $(document).on('click', 'a#modalOpenerButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModal');
+            $(projectDetailsModal).find('.modal-body').html('');
+            // ajax to fetch data corresponding to projectId
+            var projectId = $.trim($(parentRow).find('input.hdnProjectID').val());
+            projectId = parseInt(projectId);
+            $.ajax({
+                url: BASE_URL + 'Helpdesk/ProjectExtensionInfoEventLog',
+                dataType: 'HTML',
+                type: 'GET',
+                data: { 'projectId': projectId },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.project-diary-number').attr('data-diary-no'));
+            var projectName = $.trim($(parentRow).find('td.project-name').attr('data-project-name'));
+            $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (' + projectName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+
+        // ===== Custom themed dropdown for #ExtnApplicationType =====
+        //(function () {
+        //    var $realSelect = $('#ExtnApplicationType');
+        //    var $trigger = $('#ExtnApplicationTypeTrigger');
+        //    var $label = $('#ExtnApplicationTypeLabel');
+        //    var $list = $('#ExtnApplicationTypeList');
+
+        //    function buildList() {
+        //        $list.empty();
+        //        $realSelect.find('option').each(function () {
+        //            var $opt = $(this);
+        //            $('<li>')
+        //                .text($opt.text())
+        //                .attr('data-value', $opt.val())
+        //                .toggleClass('active', $opt.is(':selected'))
+        //                .appendTo($list);
+        //        });
+        //        $label.text($realSelect.find('option:selected').text());
+        //    }
+
+        //    buildList();
+
+        //    $trigger.on('click', function (e) {
+        //        e.stopPropagation();
+        //        $(this).toggleClass('open');
+        //    });
+
+        //    $list.on('click', 'li', function () {
+        //        var value = $(this).attr('data-value');
+        //        var text = $(this).text();
+
+        //        $list.find('li').removeClass('active');
+        //        $(this).addClass('active');
+        //        $label.text(text);
+
+        //        // sync to the real select and fire change -> triggers existing auto-submit handler below
+        //        $realSelect.val(value).trigger('change');
+        //        $trigger.removeClass('open');
+        //    });
+
+        //    $(document).on('click', function (e) {
+        //        if (!$(e.target).closest('#ExtnApplicationTypeWrap').length) {
+        //            $trigger.removeClass('open');
+        //        }
+        //    });
+
+        //    // keep custom UI in sync if the real select is ever changed by other code
+        //    $realSelect.on('change', function () {
+        //        var val = $(this).val();
+        //        $list.find('li').removeClass('active')
+        //            .filter('[data-value="' + val + '"]').addClass('active');
+        //        $label.text($realSelect.find('option:selected').text());
+        //    });
+        //})();
+    });
+
+
+    function infohelpHandlerExtnRegistrationdetails() {
+
+        new PNotify({
+            title: 'Help',
+            text: '<b>Registration(s)</b><br/> <i class="fa fa-check-square" style="color:#fff"></i> Online Approved Applications (Form-E) for extension of registrations/ RERA number regarding real-estate project(s) by the Authority.<br/> <i class="fa fa-check-square" style="color:#fff"></i> For any additional questions or the feedback regarding web-portal, please contact IT team.',
+            hide: false,
+            icon: 'fa fa-question-circle-o fa-lg',
+            type: 'info',
+        });
+    }
+
+
+    $(document).on('change', '#ExtnApplicationType', function () {
+        $('#publicViewAppExtFilterForm').submit();
+    });
+</script>
+
+
+
+@* ============================================================
+    MARKUP
+    Replace your current @using (Html.BeginForm(...)) { @Html.DropDownList(...) } block with this.
+    Needs: ViewBag.ApplicationTypeList (SelectList) and ViewBag.SelectedApplicationType (int) - both already set by BindProjectExtensionInfoDeskApproved.
+    ============================================================ *@
+
+@{
+    var appTypeList = (SelectList)ViewBag.ApplicationTypeList;
+    var selectedText = appTypeList.FirstOrDefault(x => x.Selected)?.Text ?? "All";
+}
+<div id="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header" style="margin-top: 15px;">Extensions of Registration (Projects) : Approved Application(s) Details</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                @*<div class="panel-heading">
+                        List of Extensions for Registration/ Form-E : Approved Application(s) Details
+                        <div class="pull-right header-actions">
+
+                            <div>
+                                @using (Html.BeginForm("ProjectExtensionInfoDeskApproved", "Helpdesk", FormMethod.Post, new { id = "publicViewAppExtFilterForm" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.DropDownList("applicationType", (SelectList)ViewBag.ApplicationTypeList, new{id = "ExtnApplicationType",@class = "form-control input-sm"})
+                                }
+                            </div>
+
+                            <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+                            <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i> </span></a>
+                        </div>
+                    </div>*@
+                <div class="panel-heading">
+                    List of Extensions for Registration/ Form-E : Approved Application(s) Details
+                    <div class="pull-right header-actions">
+                        @*@using (Html.BeginForm("ProjectExtensionInfoDeskApproved", "Helpdesk", FormMethod.Post, new { id = "publicViewAppExtFilterForm" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="dd-wrap" id="ExtnApplicationTypeWrap">
+                                    @Html.DropDownList("applicationType", (SelectList)ViewBag.ApplicationTypeList, new { id = "ExtnApplicationType", @class = "dd-real-select" })
+
+                                    <div class="dd-trigger" id="ExtnApplicationTypeTrigger">
+                                        <span class="dd-label" id="ExtnApplicationTypeLabel">Select Type</span>
+                                        <i class="fa fa-chevron-down dd-caret" aria-hidden="true"></i>
+                                    </div>
+
+                                    <div class="daterangepicker dd-panel" id="ExtnApplicationTypePanel">
+                                        <div class="ranges">
+                                            <ul id="ExtnApplicationTypeList"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }*@
+                        @using (Html.BeginForm("ProjectExtensionInfoDeskApproved", "Helpdesk", FormMethod.Post, new { id = "publicViewAppExtFilterForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="dd-wrap" id="ExtnApplicationTypeWrap">
+                                <input type="hidden" name="applicationType" id="ExtnApplicationType" value="@ViewBag.SelectedApplicationType" />
+
+                                <div class="dd-trigger">
+                                    <span class="dd-label">@selectedText</span>
+                                    <i class="fa fa-chevron-down dd-caret" aria-hidden="true"></i>
+                                </div>
+
+                                <div class="daterangepicker dd-panel">
+                                    <div class="ranges">
+                                        <ul>
+                                            @foreach (SelectListItem opt in appTypeList)
+                                            {
+                                                <li data-value="@opt.Value" class="@(opt.Selected ? "active" : "")">@opt.Text</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <a class="modalDownloadExcelButton" href="javascript:void(0);" title="Download Excel"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-file-excel-o" aria-hidden="true"></i></span></a>
+                        <a class="a info-help-details" id="btnInfoHelpDetails" href="javascript:void(0);" title="Help"><span class="btn btn-outline btn-primary btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i> </span></a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table style="width:100%;" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.DisplayName("SNo")</th>
+                                            <th>@Html.DisplayNameFor(model => model.ProjectExtForm_RegDiaryNumber_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Project_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Promoter_Name)</th>
+                                            <th>@Html.DisplayNameFor(model => model.Project_AddressDistrictName)</th>
+                                            <th>@Html.DisplayName("Application Date")</th>
+                                            <th>@Html.DisplayName("Last Modified Date")</th>
+                                            <th>@Html.DisplayName("View Status")</th>
+                                            <th>@Html.DisplayName("View Details")</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int sno = 0;
+                                        }
+                                        @foreach (var item in Model.prpongoing)
+                                        {
+                                            {
+                                                sno = sno + 1;
+                                            }
+                                            <tr class="odd gradeX">
+                                                <td>@Html.DisplayName(sno.ToString())</td>
+                                                <td class="project-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.ProjectExtForm_RegDiaryNumber_Name)">@Html.DisplayFor(modelItem => item.ProjectExtForm_RegDiaryNumber_Name)</td>
+                                                <td class="project-name" data-project-name="@Html.DisplayFor(modelItem => item.Project_Name)">@Html.DisplayFor(modelItem => item.Project_Name)</td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Promoter_Name)
+                                                    @Html.HiddenFor(modelItem => item.Project_ID, new { @class = "hdnProjectID" })
+                                                    @Html.HiddenFor(modelItem => item.Promoter_ID)
+                                                </td>
+                                                <td>@Html.DisplayFor(modelItem => item.Project_AddressDistrictName)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.ProjectExtensionApplicationDate)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.EventAction_IdentifiedOn)</td>
+                                                <td class="center">
+                                                    <a id="modalOpenerButton" href="javascript:void(0);"><i class="fa fa-eye"></i></a>
+                                                </td>
+
+                                                <td class="center">
+                                                    @Html.ActionLink("View", "ProjectExtensionInfoEventInsertAction", new { ExtensionProjectDiaryNumber = item.ProjectExtForm_RegDiaryNumber_Name, ExtensionProjectName = item.Project_Name, ExtensionProjectID = item.Project_ID, ExtensionLastModifiedOn = item.EventAction_IdentifiedOn, ExtensionPromoterID = item.Promoter_ID })
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.row (nested) -->
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+    </div>
+</div>
+<!-- /.wrapper -->
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">File History Details - <a href="javascript:void(0);">Modal Title - File History</a></h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="@Url.Content("~/vendor/datatables/css/dataTables.bootstrap.min.css")" rel="stylesheet"></link>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Url.Content("~/vendor/metisMenu/metisMenu.min.js")"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-plugins/dataTables.bootstrap.min.js")"></script>
+    <script src="@Url.Content("~/vendor/datatables-responsive/dataTables.responsive.js")"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="@Url.Content("~/dist/js/sb-admin-2.js")"></script>
+}

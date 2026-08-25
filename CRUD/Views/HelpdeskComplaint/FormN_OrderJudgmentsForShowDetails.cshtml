@@ -1,0 +1,244 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormN_OrderJudgements
+
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.prpongoing != null)
+        {
+            if (Model.prpongoing.Count != 0)
+            {
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Complaint Hearing Details</legend>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oComplainantName, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oComplainantName, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oRespondentName, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oRespondentName, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oPresentComplainantAuthorityName, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oPresentComplainantAuthorityName, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>                                        
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oPresentRespondentAuthorityName, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oPresentRespondentAuthorityName, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oDate_of_Filing, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oDate_of_Filing, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oDate_of_Hearing, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oDate_of_Hearing, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oIsTransferCase, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @if (Model.oIsTransferCase == 1)
+                                            {
+                                                @Html.DisplayName("Yes")
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayName("No")
+                                            }
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oTransferTypeOption, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oTransferTypeOptionName, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oDate_of_Institution, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oDate_of_Institution, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oDate_of_Decision, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oDate_of_Decision, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>                                        
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Complaint Case Details</legend>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oBench_Name, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.DisplayFor(model => model.oBench_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>                                        
+                                    </div>
+                                </div>                                
+                                <div class="row">
+                                    <div class="form-group">                                        
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oeCourt_CaseType_Name, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.DisplayFor(model => model.oeCourt_CaseType_Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oeCourt_UnderSectionName, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oeCourt_UnderSectionName, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oA_column, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oA_column, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Order(s) Document Details</legend>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oBench_StampDescription, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.DisplayFor(model => model.oBench_StampDescription, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.Label("True-Copy Prepared By", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oTrueCopyPreparedBy, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("Date of True-Copy", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oDate_of_TrueCopy, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            @Html.LabelFor(model => model.oDate_of_Upload, htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oDate_of_Upload, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("Total Number of Pages", htmlAttributes: new { @class = "control-label" })
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.DisplayFor(model => model.oUpload_Total_PageNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                        </div>                                                                                
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <fieldset class="col-md-12">
+                                <legend class="my">Order & Judgement Details</legend>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-12">No record(s) found.</div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        <fieldset class="col-md-12">
+                            <legend class="my">Order & Judgement Details</legend>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">No record(s) found.</div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

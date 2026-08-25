@@ -1,0 +1,256 @@
+﻿@using CRUD.Models;
+@using CaptchaMvc.HtmlHelpers;
+@using CaptchaMvc;
+
+
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+
+<script src="@Url.Content("~/Scripts/jquery-1.12.4.js")"></script>
+<script src="@Url.Content("~/Scripts/modernizr-2.5.3.js")"></script>
+
+<link href="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/jquery-ui-1.12.1.custom/jquery-ui-1.12.1.custom/jquery-ui.min.js")"></script>
+
+<script src="~/Scripts/aes.js"></script>
+
+<style>
+    .btn-pv-capcha {
+        background-image: none !important;
+        background-color: #074c75 !important;
+    }
+
+    .btn-pv-capcha:hover {
+        transform: scale(1.1,1.1);
+        -webkit-transform: scale(1.1,1.1);
+        -moz-transform: scale(1.1,1.1);
+    } 
+    
+    .txt-pv-capcha {
+        border-bottom: 2px solid #efefef !important;
+    }
+
+    .img-align {
+        text-align: left;
+    }
+</style>
+<script type="text/javascript">
+    function encrypt() {  
+        var id = $('#Password').val();
+        var key = CryptoJS.enc.Utf8.parse('8080808080808080');
+        var iv = CryptoJS.enc.Utf8.parse('8080808080808080');
+        var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(id), key,
+        {
+            keySize: 128 / 8,
+            iv: iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+        });
+
+        $('#Password').val(encryptedpassword);
+    }
+</script>
+<script type="text/javascript">
+    var BASE_URL = $('body').attr('data-sync-url');
+
+    $(document).ready(function () {
+        $('#Input_CaptchaText').val('');
+    });
+
+    $(document).on('click', 'a.capcha-refresh', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: "GET",
+            url: BASE_URL + 'Account/FileBase64_webapplicationImageCpacha',
+            contentType: "image/png",
+            beforeSend: function () {
+                startPreloader();
+            },
+            success: function (data) {
+                stopPreloader();
+                $(".capcha-badge").attr("src", data);
+            },
+            error: function () {
+                stopPreloader();
+                alert("Error! Invalid Refresh.");
+            }
+        });
+    });
+</script>
+
+<div class="contianer-fluid" style="padding-right: 15px;    padding-left: 15px;    margin-right: auto;    margin-left: auto;">
+    @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row" style="margin-right: -15px;   margin-left: -15px;">
+            <div class="col-md-12">&nbsp;</div>
+            <div class="col-md-12">&nbsp;</div>
+            <div class="col-md-5"></div>
+            <div class="col-md-2 text-center">  <a href="index.html"><img src="@Url.Content("~/images/Rera_Design3b_03.png")" alt="RERA logo" class="logo" title="REAL ESTATE REGULATORY AUTHORITY, PUNJAB"></a></div>
+            <div class="col-md-5"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="">&nbsp;</div>
+            <div class="col-md-3"></div>
+            <div class="col-md-6 text-center" style="color: #fff; font-size: 15px;"> REAL ESTATE REGULATORY AUTHORITY, PUNJAB </div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="">&nbsp;</div>
+            <div class="col-md-2"></div>
+
+            <div class="col-md-4 text-center main-login main-center" style="background-color: #fff; ">
+
+                <div class="container login-updates">
+                    <div class="row" style="margin-top: 10px">
+                        <div class="col-12">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs nav-justified" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#home" role="tab">Help Desk</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#profile" role="tab">Instructions</a>
+                                </li>
+                            </ul>
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div class="tab-pane active text-justified" id="home" role="tabpanel">
+
+                                    <div class="notice-update-div text-left">
+                                        <span class="date-update">Contact Address</span>
+                                        <p class="news_para">
+                                            &nbsp;Real Estate Regulatory Authority, Punjab<br />
+                                            &nbsp;First Floor, Block-B, Plot Number-3, Sector-18A<br />
+                                            &nbsp;(Near Govt. Press UT), Madhya Marg,<br />
+                                            &nbsp;Chandigarh - 160018
+                                        </p>
+                                    </div>
+
+                                    <div class="notice-update-div text-left">
+                                        <span class="date-update">Email ID</span>
+                                        <span class="news_para">&nbsp;helprera[at]punjab[dot]gov[dot]in</span>
+                                    </div>
+
+                                    <div class="notice-update-div text-left">
+                                        <span class="date-update">Contact Number</span>
+                                        <span class="news_para">&nbsp;0172 - 5139810</span>
+                                    </div>
+
+                                    @*<div class="col-md-12 text-center">
+                                            <ul class="list-inline copyright">
+                                                <li class="list-inline-item"><a href="#" style="color: #c86c49;">view all instructions</a></li>
+                                            </ul>
+                                        </div>*@
+                                </div>
+                                <div class="tab-pane" id="profile" role="tabpanel">
+                                        
+                                    <div class="notice-update-div text-left">
+                                        <span class="date-update">Manuals</span>
+                                        <p class="news_para">Project Registration - Individual Promoter,<br /> Project Registration - Other Than Individual Promoter,<br /> Real Estate Agent Registration.</p>
+                                    </div>
+
+                                    <div class="notice-update-div text-left">
+                                        <span class="date-update">Check-List</span>
+                                        <p class="news_para">(i) Project Registration Checklist - Individual, (ii) Project Registration Checklist - Other than Individual, (iii) Agent Registration Checklist.</p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center main-login main-center" style="background-color: #fff;border-left: 2px solid #ddd; ">
+
+                <div class="" style="padding: 0px;">
+                    <div class="row">
+                        <div class="col-md-12  text-center" style="background-color: #7bb73f; height: 54px; color: #fff; padding: 14px 0px 0px 0px;">Sign in to your Account</div>
+                    </div>
+
+                    <div class="container">
+                        <div class="row">
+                            <!--LOGIN INPUTS-->
+                            <div class="col-md-12">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="login-form-1">
+                                    <div class="main-login-form">
+                                        <div class="login-group">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.UserName) })
+                                                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Password), onchange = "encrypt();", autocomplete = "off" })
+                                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-sm-5 img-align">
+                                                    <img class="capcha-badge" src='@Url.Action("FileView_webapplicationImageCpacha")' />
+                                                    <a href="javascript:void(0);" class="btn btn-outline btn-primary capcha-refresh btn-pv-capcha" title="Refresh?"><i class="fa fa-refresh" aria-hidden="true"></i></a>
+                                                </div>
+                                                <div class="col-sm-7">                                                    
+                                                    @Html.TextBoxFor(m => m.Input_CaptchaText, new { @class = "form-control", @placeholder = "Enter Captcha Text", @autocomplete = "off" })
+                                                    @Html.ValidationMessageFor(m => m.Input_CaptchaText, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 text-left">
+                                <div class="checkbox">
+                                    @Html.CheckBoxFor(m => m.RememberMe)
+                                    @Html.LabelFor(m => m.RememberMe)
+                                </div>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <!--LOGIN BTN-->
+                                <div class="col-md-12">
+                                    <input type="submit" value="Log in" class="btn btn-lg btn-block button_custom" />
+                                </div>
+                                <!--FORGET NEW REG-->
+                                <div class="col-md-12 text-center" style="margin-top: 10px;">
+                                    <ul class="list-inline copyright">
+                                        <li class="list-inline-item">
+                                            @(Html.ActionLink("Forgot Password", "ForgotPassword", new { id = 1 }, new { @style = "color: #c86c49;" }))
+                                        </li>
+                                        <li class="list-inline-item">|</li>
+                                        <li class="list-inline-item">
+                                            @(Html.ActionLink("New Registration", "Register", new { id = 1 }, new { @style = "color: #c86c49;" }))
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+        <div class="row " style="margin-top: 10px;">
+            <div class="text-md-center col-md-12">
+                <ul class="list-inline copyright" style="color: #fff; font-size: 11px;">
+                    <li class="list-inline-item">&copy; @DateTime.Now.Year RERA Punjab. All Rights Reserved</li>
+                    <li class="list-inline-item">|</li>
+                    <li class="list-inline-item">Designed and Developed by C-DAC Mohali</li>
+                </ul>
+            </div>
+        </div>
+    }
+    <!--END DATA CODE-->
+</div>
+
+@section Scripts {
+      @Scripts.Render("~/bundles/jqueryval")
+}
