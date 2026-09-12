@@ -18,10 +18,10 @@ namespace CRUD
             //app.UseHangfireServer();
             //app.UseHangfireDashboard(); // optional, browse to /hangfire
 
-            //RecurringJob.AddOrUpdate(
-            //    "auto-reverify-payments",
-            //    () => PaymentAutoReverifyJob.Run(),
-            //    "*/1 * * * *");
+           // RecurringJob.AddOrUpdate(
+               // "auto-reverify-payments",
+               // () => PaymentAutoReverifyJob.Run(),
+              //  "*/1 * * * *");
         }
     }
 }

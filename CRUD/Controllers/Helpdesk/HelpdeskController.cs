@@ -235,20 +235,55 @@ namespace CRUD.Controllers.Helpdesk
             string userRole = string.Empty;
             aa.prpongoing = sdb.Display_AuthorityDesk_ProjectDetailsApproved(userRole);
 
-            foreach (var item in aa.prpongoing)
-            {
-                ClsPrp_AuthorityDesk_ProjectDiaryNumberToExcel aaXlsInner = new ClsPrp_AuthorityDesk_ProjectDiaryNumberToExcel();
+            // foreach (var item in aa.prpongoing)
+            //  {
+            ClsPrp_AuthorityDesk_ProjectDiaryNumberToExcel aaXlsInner = new ClsPrp_AuthorityDesk_ProjectDiaryNumberToExcel();
 
-                aaXlsInner.Project_DiaryNumber = item.PromoterRegDiaryNumber_Name;
-                aaXlsInner.Application_Date = item.CreatedOn;
-                aaXlsInner.Project_Name = item.Project_Name;
-                aaXlsInner.ProjectAddress_District = item.Project_AddressDistrictName;
-                aaXlsInner.Promoter_Name = item.Promoter_Name;
-                aaXlsInner.ProjectCost = item.ProjectCost;
-                aaXlsInner.Status = item.EventAction_Aggregate;
-                aaXlsInner.Status_Date = item.EventAction_IdentifiedOn;
-                aaXls.prpongoing.Add(aaXlsInner);
-            }
+            aaXlsInner.Project_DiaryNumber = "PRJ2024LDH0181";// item.PromoterRegDiaryNumber_Name;
+            aaXlsInner.Application_Date = new DateTime(2025, 9, 11);// item.CreatedOn;
+            aaXlsInner.Project_Name = "TEST PROJECT";// item.Project_Name;
+            aaXlsInner.ProjectAddress_District = "Mohali";// item.Project_AddressDistrictName;
+            aaXlsInner.Project_RERAregistrationNumber = "PBRERA-SAS81-PR2546";// item.Project_RERAregistrationNumber;
+            aaXlsInner.IssueDate = new DateTime(2026, 9, 11);// item.IssueDate;
+            aaXlsInner.ValidUpToDate = new DateTime(2029, 9, 11);// item.ValidUpToDate;
+            aaXlsInner.Project_CompletionDate = new DateTime(2026, 5, 08);// item.Project_CompletionDate;
+
+            aaXlsInner.Promoter_Name = "OMNIA REALITY PRIVATE LIMITED (Other than Individual)";// item.Promoter_Name;
+            aaXlsInner.Status = "Application forwarded for issuance of RERA Registration and Letter / Certificate";//item.EventAction_Aggregate;
+            aaXlsInner.Status_Date = new DateTime(2026, 8, 11);// item.EventAction_IdentifiedOn;
+
+            aaXlsInner.Promoter_Address_Line1 = "Promoter_Address_Line1";// item.Promoter_Address_Line1;
+            aaXlsInner.Promoter_Address_Line2 = "Promoter_Address_Line2";// item.Promoter_Address_Line2;
+            aaXlsInner.Promoter_Address_District = "Mohali";// item.Promoter_Address_District;
+            aaXlsInner.Promoter_Address_State = "Punjab";// item.Promoter_Address_State;
+            aaXlsInner.Promoter_Address_Pin = "160055"; //item.Promoter_Address_Pin;
+            aaXlsInner.Type_of_Organization = "Type_of_Organization";// item.Type_of_Organization;
+            aaXlsInner.Email = "asdaj@yopmail.com";// item.Email;
+            aaXlsInner.MobileNumber = 9865748549;// item.MobileNumber;
+
+            aaXlsInner.Project_Address_Line1 = "Project_Address_Line1";// item.Project_Address_Line1;
+            aaXlsInner.Project_Address_Line2 = "Project_Address_Line2";// item.Project_Address_Line2;
+            aaXlsInner.ProjectAddress_District = "Mohali";// item.Project_AddressDistrictName;
+            aaXlsInner.Project_Address_State = "Punjab";// item.Project_Address_State;
+            aaXlsInner.Project_Address_Pin = "160088";// item.Project_Address_Pin;
+            aaXlsInner.Project_Address_SubDivision = "SAS NAGAR";// item.Project_Address_SubDivision;
+            aaXlsInner.Type_of_Project = "PM";// item.Type_of_Project;
+            aaXlsInner.Type_Display = "PI";// item.Type_Display;
+            aaXlsInner.ProjectCost = 78945400;// item.ProjectCost;
+            aaXlsInner.Total_Area = 569717;// item.Total_Area;
+            aaXlsInner.Bank_Name = "SBI";// item.Bank_Name;
+            aaXlsInner.Special_Bank_Account_Number = "SBIIN98746575";// item.Special_Bank_Account_Number;
+            aaXlsInner.Contruction_Type = "A,B,C";// item.Contruction_Type;
+            aaXlsInner.Inventory_Type = "A(50),B(10),C(0)";// item.Inventory_Type;
+
+            aaXlsInner.Column_A = "sdhbfsdhbf";// item.Column_A;
+            aaXlsInner.Column_B = "";//item.Column_B;
+            aaXlsInner.Column_C = "sdfsdf";//item.Column_C;
+            aaXlsInner.Column_D = "";// item.Column_D;
+            aaXlsInner.Column_E = "sdfsdfs";// item.Column_E;
+
+            aaXls.prpongoing.Add(aaXlsInner);
+            //  }
             Session["modelApprovedApplicationsforProjectMIS"] = aaXls.prpongoing;
             return View("ProjectInfoDeskApproved", aa);
         }
@@ -1518,6 +1553,13 @@ namespace CRUD.Controllers.Helpdesk
         {
             var objXlslist = Session["modelApprovedApplicationsforProjectMIS"] as List<ClsPrp_AuthorityDesk_ProjectDiaryNumberToExcel>;
 
+            bool showColumnA = objXlslist.Any(x => !string.IsNullOrWhiteSpace(Convert.ToString(x.Column_A)));
+            bool showColumnB = objXlslist.Any(x => !string.IsNullOrWhiteSpace(Convert.ToString(x.Column_B)));
+            bool showColumnC = objXlslist.Any(x => !string.IsNullOrWhiteSpace(Convert.ToString(x.Column_C)));
+            bool showColumnD = objXlslist.Any(x => !string.IsNullOrWhiteSpace(Convert.ToString(x.Column_D)));
+            bool showColumnE = objXlslist.Any(x => !string.IsNullOrWhiteSpace(Convert.ToString(x.Column_E)));
+
+
             Response.ClearContent();
             Response.Buffer = true;
             string strDateFormat = string.Empty;
@@ -1526,10 +1568,10 @@ namespace CRUD.Controllers.Helpdesk
             ExcelPackage excel = new ExcelPackage();
             var workSheet = excel.Workbook.Worksheets.Add("RERA Punjab - Sheet1");
             workSheet.TabColor = System.Drawing.Color.Black;
-            workSheet.DefaultRowHeight = 12;
+            workSheet.DefaultRowHeight = 15;
 
             //Header of table
-            workSheet.Row(1).Height = 20;
+            workSheet.Row(1).Height = 30;
             workSheet.Row(1).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             workSheet.Row(1).Style.Font.Bold = true;
 
@@ -1538,11 +1580,112 @@ namespace CRUD.Controllers.Helpdesk
             workSheet.Cells[1, 3].Value = "Application Date";
             workSheet.Cells[1, 4].Value = "Project Name";
             workSheet.Cells[1, 5].Value = "Project District Name";
-            workSheet.Cells[1, 6].Value = "Promoter Name";
-            workSheet.Cells[1, 7].Value = "Project Cost";
-            workSheet.Cells[1, 8].Value = "Status";
-            workSheet.Cells[1, 9].Value = "Status Date";
-            workSheet.Cells[1, 10].Value = "Remarks, if Any";
+            workSheet.Cells[1, 6].Value = "RERA Number";
+            workSheet.Cells[1, 7].Value = "Issue Date";
+            workSheet.Cells[1, 8].Value = "Valid Upto Date";
+            workSheet.Cells[1, 9].Value = "Proposed Date of Project Completion (As per Form-B)";
+            workSheet.Cells[1, 10].Value = "Promoter Name";
+            workSheet.Cells[1, 11].Value = "Status";
+            workSheet.Cells[1, 12].Value = "Status Date";
+            workSheet.Cells[1, 13].Value = "Remarks, if Any";
+            workSheet.Cells[1, 14].Value = "Promoter Address Line-1";
+            workSheet.Cells[1, 15].Value = "Promoter Address Line-2";
+            workSheet.Cells[1, 16].Value = "Promoter Address District";
+            workSheet.Cells[1, 17].Value = "Promoter Address State";
+            workSheet.Cells[1, 18].Value = "Promoter Address PIN";
+            workSheet.Cells[1, 19].Value = "Type of Organization";
+            workSheet.Cells[1, 20].Value = "Email";
+            workSheet.Cells[1, 21].Value = "Phone/Mobile";
+            workSheet.Cells[1, 22].Value = "Project Address Line-1";
+            workSheet.Cells[1, 23].Value = "Project Address Line-2";
+            workSheet.Cells[1, 24].Value = "Project Address District";
+            workSheet.Cells[1, 25].Value = "Project Address State";
+            workSheet.Cells[1, 26].Value = "Project Address PIN";
+            workSheet.Cells[1, 27].Value = "Project Address Sub-Division";
+            workSheet.Cells[1, 28].Value = "Type of Project";
+            workSheet.Cells[1, 29].Value = "Type (Display)";
+            workSheet.Cells[1, 30].Value = "Project Cost (INR)";
+            workSheet.Cells[1, 31].Value = "Total Area (sqr mtrs)";
+            workSheet.Cells[1, 32].Value = "Bank Name";
+            workSheet.Cells[1, 33].Value = "Special Bank Account Number";
+            workSheet.Cells[1, 34].Value = "Construction Type (Number)";
+            workSheet.Cells[1, 35].Value = "Inventory Type (Number)";
+
+            // COLUMN POSITIONS
+
+            int columnAIndex = 36;
+            int columnBIndex = 36;
+            if (showColumnA)
+            {
+                columnBIndex = 37;
+            }
+
+            int columnCIndex = 36;
+            if (showColumnA)
+            {
+                columnCIndex = columnCIndex + 1;
+            }
+            if (showColumnB)
+            {
+                columnCIndex = columnCIndex + 1;
+            }
+
+            int columnDIndex = 36;
+            if (showColumnA)
+            {
+                columnDIndex = columnDIndex + 1;
+            }
+            if (showColumnB)
+            {
+                columnDIndex = columnDIndex + 1;
+            }
+            if (showColumnC)
+            {
+                columnDIndex = columnDIndex + 1;
+            }
+
+            int columnEIndex = 36;
+            if (showColumnA)
+            {
+                columnEIndex = columnEIndex + 1;
+            }
+            if (showColumnB)
+            {
+                columnEIndex = columnEIndex + 1;
+            }
+            if (showColumnC)
+            {
+                columnEIndex = columnEIndex + 1;
+            }
+            if (showColumnD)
+            {
+                columnEIndex = columnEIndex + 1;
+            }
+
+
+            // COLUMN HEADERS
+
+            if (showColumnA)
+            {
+                workSheet.Cells[1, columnAIndex].Value = "ColumnA";
+            }
+            if (showColumnB)
+            {
+                workSheet.Cells[1, columnBIndex].Value = "ColumnB";
+            }
+            if (showColumnC)
+            {
+                workSheet.Cells[1, columnCIndex].Value = "ColumnC";
+            }
+            if (showColumnD)
+            {
+                workSheet.Cells[1, columnDIndex].Value = "ColumnD";
+            }
+            if (showColumnE)
+            {
+                workSheet.Cells[1, columnEIndex].Value = "ColumnE";
+            }
+
 
             //Body of table  
             int recordIndex = 2;
@@ -1553,15 +1696,88 @@ namespace CRUD.Controllers.Helpdesk
                 workSheet.Cells[recordIndex, 3].Value = QRcodeItem.Application_Date.HasValue ? QRcodeItem.Application_Date.Value.ToString("dd-MMM-yyyy") : string.Empty;
                 workSheet.Cells[recordIndex, 4].Value = QRcodeItem.Project_Name;
                 workSheet.Cells[recordIndex, 5].Value = QRcodeItem.ProjectAddress_District;
-                workSheet.Cells[recordIndex, 6].Value = QRcodeItem.Promoter_Name;
-                workSheet.Cells[recordIndex, 7].Value = QRcodeItem.ProjectCost;
-                workSheet.Cells[recordIndex, 8].Value = QRcodeItem.Status;
-                workSheet.Cells[recordIndex, 9].Value = QRcodeItem.Status_Date.HasValue ? QRcodeItem.Status_Date.Value.ToString("dd-MMM-yyyy") : string.Empty;
-                workSheet.Cells[recordIndex, 10].Value = string.Empty;
+                workSheet.Cells[recordIndex, 6].Value = QRcodeItem.Project_RERAregistrationNumber;
+                workSheet.Cells[recordIndex, 7].Value = QRcodeItem.IssueDate.HasValue ? QRcodeItem.IssueDate.Value.ToString("dd-MMM-yyyy") : string.Empty;
+                workSheet.Cells[recordIndex, 8].Value = QRcodeItem.ValidUpToDate.HasValue ? QRcodeItem.ValidUpToDate.Value.ToString("dd-MMM-yyyy") : string.Empty;
+                workSheet.Cells[recordIndex, 9].Value = QRcodeItem.Project_CompletionDate.HasValue ? QRcodeItem.Project_CompletionDate.Value.ToString("dd-MMM-yyyy") : string.Empty;
+                workSheet.Cells[recordIndex, 10].Value = QRcodeItem.Promoter_Name;
+                workSheet.Cells[recordIndex, 11].Value = QRcodeItem.Status;
+                workSheet.Cells[recordIndex, 12].Value = QRcodeItem.Status_Date.HasValue ? QRcodeItem.Status_Date.Value.ToString("dd-MMM-yyyy") : string.Empty;
+                workSheet.Cells[recordIndex, 13].Value = string.Empty;
+                workSheet.Cells[recordIndex, 14].Value = QRcodeItem.Promoter_Address_Line1;
+                workSheet.Cells[recordIndex, 15].Value = QRcodeItem.Promoter_Address_Line2;
+                workSheet.Cells[recordIndex, 16].Value = QRcodeItem.Promoter_Address_District;
+                workSheet.Cells[recordIndex, 17].Value = QRcodeItem.Promoter_Address_State;
+                workSheet.Cells[recordIndex, 18].Value = QRcodeItem.Promoter_Address_Pin;
+                workSheet.Cells[recordIndex, 19].Value = QRcodeItem.Type_of_Organization;
+                workSheet.Cells[recordIndex, 20].Value = QRcodeItem.Email;
+                workSheet.Cells[recordIndex, 21].Value = QRcodeItem.MobileNumber;
+                workSheet.Cells[recordIndex, 22].Value = QRcodeItem.Project_Address_Line1;
+                workSheet.Cells[recordIndex, 23].Value = QRcodeItem.Project_Address_Line2;
+                workSheet.Cells[recordIndex, 24].Value = QRcodeItem.ProjectAddress_District;
+                workSheet.Cells[recordIndex, 25].Value = QRcodeItem.Project_Address_State;
+                workSheet.Cells[recordIndex, 26].Value = QRcodeItem.Project_Address_Pin;
+                workSheet.Cells[recordIndex, 27].Value = QRcodeItem.Project_Address_SubDivision;
+                workSheet.Cells[recordIndex, 28].Value = QRcodeItem.Type_of_Project;
+                workSheet.Cells[recordIndex, 29].Value = QRcodeItem.Type_Display;
+                workSheet.Cells[recordIndex, 30].Value = QRcodeItem.ProjectCost;
+                workSheet.Cells[recordIndex, 31].Value = QRcodeItem.Total_Area;
+                workSheet.Cells[recordIndex, 32].Value = QRcodeItem.Bank_Name;
+                workSheet.Cells[recordIndex, 33].Value = QRcodeItem.Special_Bank_Account_Number;
+                workSheet.Cells[recordIndex, 34].Value = QRcodeItem.Contruction_Type;
+                workSheet.Cells[recordIndex, 35].Value = QRcodeItem.Inventory_Type;
+
+                // COLUMN DATA
+                if (showColumnA)
+                {
+                    workSheet.Cells[recordIndex, columnAIndex].Value = QRcodeItem.Column_A;
+                }
+                if (showColumnB)
+                {
+                    workSheet.Cells[recordIndex, columnBIndex].Value = QRcodeItem.Column_B;
+                }
+                if (showColumnC)
+                {
+                    workSheet.Cells[recordIndex, columnCIndex].Value = QRcodeItem.Column_C;
+                }
+                if (showColumnD)
+                {
+                    workSheet.Cells[recordIndex, columnDIndex].Value = QRcodeItem.Column_D;
+                }
+                if (showColumnE)
+                {
+                    workSheet.Cells[recordIndex, columnEIndex].Value = QRcodeItem.Column_E;
+                }
 
                 workSheet.Row(recordIndex).Height = 15;
+
                 recordIndex++;
             }
+
+            // LAST COLUMN
+
+            int lastColumn = 35;
+            if (showColumnA)
+            {
+                lastColumn = 36;
+            }
+            if (showColumnB)
+            {
+                lastColumn = lastColumn + 1;
+            }
+            if (showColumnC)
+            {
+                lastColumn = lastColumn + 1;
+            }
+            if (showColumnD)
+            {
+                lastColumn = lastColumn + 1;
+            }
+            if (showColumnE)
+            {
+                lastColumn = lastColumn + 1;
+            }
+
             workSheet.Column(1).AutoFit();
             workSheet.Column(2).AutoFit();
             workSheet.Column(3).AutoFit();
@@ -1572,21 +1788,71 @@ namespace CRUD.Controllers.Helpdesk
             workSheet.Column(8).AutoFit();
             workSheet.Column(9).AutoFit();
             workSheet.Column(10).AutoFit();
+            workSheet.Column(11).AutoFit();
+            workSheet.Column(12).AutoFit();
+            workSheet.Column(13).AutoFit();
+            workSheet.Column(14).AutoFit();
+            workSheet.Column(15).AutoFit();
+            workSheet.Column(16).AutoFit();
+            workSheet.Column(17).AutoFit();
+            workSheet.Column(18).AutoFit();
+            workSheet.Column(19).AutoFit();
+            workSheet.Column(20).AutoFit();
+            workSheet.Column(21).AutoFit();
+            workSheet.Column(22).AutoFit();
+            workSheet.Column(23).AutoFit();
+            workSheet.Column(24).AutoFit();
+            workSheet.Column(25).AutoFit();
+            workSheet.Column(26).AutoFit();
+            workSheet.Column(27).AutoFit();
+            workSheet.Column(28).AutoFit();
+            workSheet.Column(29).AutoFit();
+            workSheet.Column(30).AutoFit();
+            workSheet.Column(31).AutoFit();
+            workSheet.Column(32).AutoFit();
+            workSheet.Column(33).AutoFit();
+            workSheet.Column(34).AutoFit();
+            workSheet.Column(35).AutoFit();
 
-            workSheet.Cells["A1:I1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            workSheet.Cells["A1:I1"].Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#7bb73f"));
-            //workSheet.Cells["A1:I1"].Style.Fill.BackgroundColor.SetColor(Color.YellowGreen);
 
-            using (ExcelRange RangeQR = workSheet.Cells[1, 1, recordIndex - 1, 10])
+            if (showColumnA)
+            {
+                workSheet.Column(columnAIndex).AutoFit();
+            }
+            if (showColumnB)
+            {
+                workSheet.Column(columnBIndex).AutoFit();
+            }
+            if (showColumnC)
+            {
+                workSheet.Column(columnCIndex).AutoFit();
+            }
+            if (showColumnD)
+            {
+                workSheet.Column(columnDIndex).AutoFit();
+            }
+            if (showColumnE)
+            {
+                workSheet.Column(columnEIndex).AutoFit();
+            }
+
+            workSheet.Cells[1, 1, 1, lastColumn].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            workSheet.Cells[1, 1, 1, lastColumn].Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#7bb73f"));
+
+            using (ExcelRange RangeQR = workSheet.Cells[1, 1, recordIndex - 1, lastColumn])
             {
                 RangeQR.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 RangeQR.Style.Border.Top.Color.SetColor(Color.Black);
+
                 RangeQR.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                 RangeQR.Style.Border.Left.Color.SetColor(Color.Black);
+
                 RangeQR.Style.Border.Right.Style = ExcelBorderStyle.Thin;
                 RangeQR.Style.Border.Right.Color.SetColor(Color.Black);
+
                 RangeQR.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 RangeQR.Style.Border.Bottom.Color.SetColor(Color.Black);
+
                 RangeQR.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                 RangeQR.Style.VerticalAlignment = ExcelVerticalAlignment.Top;
             }

@@ -26,6 +26,7 @@ using CRUD.Models.ComplaintExecution;
 using System.Net.Cache;
 using static CRUD.Controllers.classAgentPayment.AgentPaymentController;
 using CRUD.Models.ComplaintPayment;
+using CRUD.Common;
 
 namespace CRUD.Controllers.ComplaintPayment
 {
@@ -3651,15 +3652,71 @@ namespace CRUD.Controllers.ComplaintPayment
         //        type = msgType
         //    }, JsonRequestBehavior.AllowGet);
         //}
+
+
         [AllowAnonymous]
         [HttpGet]
         public JsonResult reverifyTxnAPI(string gatewayTxnID)
         {
-            var result = PaymentReverifyService.ReverifyTransaction(gatewayTxnID);
-            return Json(new { message = result.Message, type = result.MsgType }, JsonRequestBehavior.AllowGet);
+            var objComplaint = new ClsMethod_ComplaintFormM_PaymentIntegration();
+
+            //var result = PaymentReverifyService.ReverifyTransaction(gatewayTxnID);
+
+
+            var beforeGateway = objComplaint.GetComplaintFormMByTxnId(gatewayTxnID);
+            var beforeDetails = beforeGateway != null ? objComplaint.GetComplaintFormMDetailsByComplaintId(beforeGateway.PaymentComplaint_RelatedComplainant_ID) : null;
+
+            var r = PaymentReverifyService.ReverifyTransaction(gatewayTxnID);
+
+            var afterGateway = objComplaint.GetComplaintFormMByTxnId(gatewayTxnID);
+            var afterDetails = beforeGateway != null ? objComplaint.GetComplaintFormMDetailsByComplaintId(beforeGateway.PaymentComplaint_RelatedComplainant_ID) : null;
+
+            LogDetailed("FORM-M", r);
+            Log($"FormM/{r.GatewayTxnId} - PaymentGateway row diff:{Environment.NewLine}{RowDiffLogger.BuildDiff(beforeGateway, afterGateway)}");
+            Log($"FormM/{r.GatewayTxnId} - FormDetails row diff (ComplaintFormM_ID={beforeGateway?.PaymentComplaint_RelatedComplainant_ID}):{Environment.NewLine}{RowDiffLogger.BuildDiff(beforeDetails, afterDetails)}");
+
+
+
+            return Json(new { message = r.Message, type = r.MsgType }, JsonRequestBehavior.AllowGet);
         }
+        //[AllowAnonymous]
+        //[HttpGet]
+        //public JsonResult reverifyTxnAPI(string gatewayTxnID)
+        //{
+        //    var result = PaymentReverifyService.ReverifyTransaction(gatewayTxnID);
+        //    LogDetailed("FORM-M", result);
+        //    return Json(new { message = result.Message, type = result.MsgType }, JsonRequestBehavior.AllowGet);
+        //}
 
 
         #endregion
+        private static void LogDetailed(string entityLabel, ReverifyResult r)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"{entityLabel}/{r.GatewayTxnId}");
+            sb.AppendLine($"    Gateway Status         : {r.GatewayUnmappedStatus}");
+            sb.AppendLine($"    Gateway Payment Status : {r.GatewayTxnStatus}");
+            sb.AppendLine($"    Result                 : {r.MsgType?.ToUpper()} - {r.Message}");
+            sb.AppendLine($"    DB Status              : {r.DbStatusCode}");
+            sb.AppendLine($"    SP Called              : {r.SpMethodCalled ?? "(not reached)"}");
+            sb.AppendLine($"    Mihpayid                : {r.Mihpayid}");
+            sb.AppendLine($"    Amount                  : {r.GatewayAmount}");
+            sb.AppendLine($"    Gateway Payment Date   : {r.GatewayPaymentDate}");
+            sb.AppendLine($"    Gateway Call           : {r.GatewayCallStartedAt:HH:mm:ss.fff} -> {r.GatewayCallCompletedAt:HH:mm:ss.fff} ({r.GatewayCallDuration.TotalMilliseconds:F0}ms)");
+            sb.AppendLine($"    SP Call                : {r.SpCallStartedAt:HH:mm:ss.fff} -> {r.SpCallCompletedAt:HH:mm:ss.fff} ({r.SpCallDuration.TotalMilliseconds:F0}ms)");
+
+            Log(sb.ToString());
+        }
+
+        private static void Log(string message)
+        {
+            string folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            string path = Path.Combine(folder, "autoreverify.log");
+            System.IO.File.AppendAllText(path,$"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {message}{Environment.NewLine}");
+        }
     }
 }
