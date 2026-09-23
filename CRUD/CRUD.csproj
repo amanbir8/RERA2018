@@ -622,6 +622,7 @@
     <Compile Include="Models\HelpDeskComplaint\ClsPrp_AuthDesk_FormExe_PreHearingNotice.cs" />
     <Compile Include="Models\HelpDeskComplaint\ClsPrp_AuthDesk_FormExe_SMTPsentlog.cs" />
     <Compile Include="Models\HelpDeskComplaint\ClsPrp_AuthDesk_FormExe_LogCommunication.cs" />
+    <Compile Include="Models\HelpDeskComplaint\ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom.cs" />
     <Compile Include="Models\HelpDeskComplaint\ClsPrp_AuthDesk_FormN_OrderJudgements.cs" />
     <Compile Include="Models\HelpDeskComplaint\ClsPrp_AuthDesk_FormM_OrderJudgements.cs" />
     <Compile Include="Models\HelpDeskComplaint\ClsPrp_AuthDesk_FormN_CaseTransferDetails.cs" />
@@ -3083,6 +3084,7 @@
     <Content Include="Views\ProjectPrintForm\Print_ProjectConsolidatedReport.cshtml" />
     <Content Include="Views\ProjectPrintForm\PrintProjectPromoDocument.cshtml" />
     <Content Include="Views\Shared\_AuthorityDeskNavMenuPartialPdf.cshtml" />
+    <Content Include="Views\HelpdeskComplaint\FormMECourtRoomDetails.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

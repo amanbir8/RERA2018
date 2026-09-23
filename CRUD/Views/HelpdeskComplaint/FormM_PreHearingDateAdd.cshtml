@@ -8,6 +8,7 @@
     table#promoter-documents-list-table tr td a.button {
         display: none;
     }
+
     table#promoter-documents-list-table tr:hover td a.button {
         display: inline-block;
     }
@@ -15,15 +16,23 @@
     .bg-border-show {
         position: relative !important;
     }
+
     .bg-plus-square-glow-show {
         /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
         /*box-shadow: 0 0 10px #FF4961;*/
         color: green;
     }
+
     .bg-pdf-glow-show {
         /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
         /*box-shadow: 0 0 10px #FF4961;*/
         color: #7bb73f;
+    }
+
+    .bg-courtroom-glow-show {
+        /*-webkit-box-shadow: 0 0 10px #7bb73f;*/
+        /*box-shadow: 0 0 10px #FF4961;*/
+        color: #ff0000;
     }
 </style>
 
@@ -38,9 +47,998 @@
 <script src="@Url.Content("~/vendor/datatables/js/jquery.dataTables.js")"></script>
 <script src="@Url.Content("~/vendor/datatables/js/dataTables.bootstrap4.min.js")"></script>
 
+
+
+<script type="text/javascript">
+
+    /* =========================================================
+       COMPLAINANT
+       ========================================================= */
+    function updateComplainantOrder() {
+
+        $('#tbodyComplainants tr').each(function (index) {
+
+            // Visible S.No.
+            $(this).find('.complainantSerialNo').text(index + 1);
+
+            // ONLY Applied Sequence changes
+            $(this)
+                .find('.hdnComplainantAppliedSeqOrder')
+                .val(index + 1);
+
+        });
+    }
+
+
+    function reIndexComplainants() {
+
+        $('#tbodyComplainants tr').each(function (index) {
+
+            $(this).find('input, textarea, select').each(function () {
+
+                var name = $(this).attr('name');
+
+                if (name) {
+
+                    name = name.replace(
+                        /Complainants\[\d+\]/g,
+                        'Complainants[' + index + ']'
+                    );
+
+                    $(this).attr('name', name);
+                }
+
+            });
+
+        });
+
+        updateComplainantOrder();
+    }
+
+
+    /* =========================================================
+       RESPONDANT
+       ========================================================= */
+    function updateRespondantOrder() {
+
+        $('#tbodyRespondants tr').each(function (index) {
+
+            $(this).find('.respondantSerialNo').text(index + 1);
+
+            $(this)
+                .find('.hdnRespondantAppliedSeqOrder')
+                .val(index + 1);
+
+        });
+    }
+
+
+    function reIndexRespondants() {
+
+        $('#tbodyRespondants tr').each(function (index) {
+
+            $(this).find('input, textarea, select').each(function () {
+
+                var name = $(this).attr('name');
+
+                if (name) {
+
+                    name = name.replace(
+                        /Respondents\[\d+\]/g,
+                        'Respondents[' + index + ']'
+                    );
+
+                    $(this).attr('name', name);
+                }
+
+            });
+
+        });
+
+        updateRespondantOrder();
+    }
+
+
+    /* =========================================================
+       MOVE UP
+       ========================================================= */
+
+    $(document)
+        .off('click.ecourtMoveUp', '.btnMoveUp')
+        .on('click.ecourtMoveUp', '.btnMoveUp', function (e) {
+
+            e.preventDefault();
+
+            var row = $(this).closest('tr');
+            var previousRow = row.prev('tr');
+
+            if (previousRow.length === 0) {
+                return;
+            }
+
+            row.insertBefore(previousRow);
+
+            if (row.parent().is('#tbodyComplainants')) {
+
+                reIndexComplainants();
+
+            }
+            else if (row.parent().is('#tbodyRespondants')) {
+
+                reIndexRespondants();
+
+            }
+
+        });
+
+
+    /* =========================================================
+       MOVE DOWN
+       ========================================================= */
+
+    $(document)
+        .off('click.ecourtMoveDown', '.btnMoveDown')
+        .on('click.ecourtMoveDown', '.btnMoveDown', function (e) {
+
+            e.preventDefault();
+
+            var row = $(this).closest('tr');
+            var nextRow = row.next('tr');
+
+            if (nextRow.length === 0) {
+                return;
+            }
+
+            row.insertAfter(nextRow);
+
+            if (row.parent().is('#tbodyComplainants')) {
+
+                reIndexComplainants();
+
+            }
+            else if (row.parent().is('#tbodyRespondants')) {
+
+                reIndexRespondants();
+
+            }
+
+        });
+
+
+    /* =========================================================
+       REMOVE NEW COMPLAINANT ONLY
+       ========================================================= */
+
+    $(document)
+        .off('click.ecourtRemoveComplainant', '.btnRemoveComplainant')
+        .on('click.ecourtRemoveComplainant', '.btnRemoveComplainant', function (e) {
+
+            e.preventDefault();
+
+            $(this).closest('tr').remove();
+
+            reIndexComplainants();
+
+        });
+
+
+    /* =========================================================
+       REMOVE NEW RESPONDANT ONLY
+       ========================================================= */
+
+    $(document)
+        .off('click.ecourtRemoveRespondant', '.btnRemoveRespondant')
+        .on('click.ecourtRemoveRespondant', '.btnRemoveRespondant', function (e) {
+
+            e.preventDefault();
+
+            $(this).closest('tr').remove();
+
+            reIndexRespondants();
+
+        });
+
+
+    /* =========================================================
+       ADD COMPLAINANT
+       ========================================================= */
+
+    $(document)
+        .off('click.ecourtAddComplainant', '.btnAddComplainant')
+        .on('click.ecourtAddComplainant', '.btnAddComplainant', function (e) {
+
+            e.preventDefault();
+
+            var tbody = $('#tbodyComplainants');
+
+            var index = tbody.find('tr').length;
+            var relatedComplaintID = $('#frmECourtRoomComplainants input[name="Related_ComplaintID"]').val();
+            var relatedComplaintCode = $('#tbodyComplainants tr:first input[name$=".Related_ComplaintCode"]').val();
+            var preHearingIndexID = $('#frmECourtRoomComplainants input[name="Related_PrehearingDate_IndexID"]').val();
+            var preHearingID = $('#frmECourtRoomComplainants input[name="Related_PrehearingDate_ID"]').val();
+            var complaintType = $('#frmECourtRoomComplainants input[name="ComplaintType_MN"]').val();
+            var courtRoomID = $('#frmECourtRoomComplainants input[name="CourtRoom_ID"]').val();
+
+            var newSeqOrder = 1;
+
+            $('#tbodyComplainants tr').each(function () {
+                var seq = parseInt(
+                    $(this).find('input[name$=".CRAS_SeqOrder"]').val(),
+                    10
+                );
+
+                if (!isNaN(seq) && seq >= newSeqOrder) {
+                    newSeqOrder = seq + 1;
+                }
+            });
+
+            var row = '';
+
+            row += '<tr>';
+
+            /* S.No. */
+            row += '<td>';
+
+            // New record has no original sequence
+            row += '<span class="complainantSerialNo">' + (index + 1) + '</span>';
+
+            row += '<input type="hidden" name="Complainants[' + index + '].CourtRoom_IndexID" value="0" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Complainants[' + index + '].CourtRoom_ID" ';
+            row += 'value="' + courtRoomID + '" />';
+            //row += '<input type="hidden" ';
+            //row += 'class="hdnComplainantOriginalSeqOrder" ';
+            //row += 'name="Complainants[' + index + '].CRAS_SeqOrder" ';
+            //row += 'value="0" />';
+            row += '<input type="hidden" ';
+            row += 'class="hdnComplainantOriginalSeqOrder" ';
+            row += 'name="Complainants[' + index + '].CRAS_SeqOrder" ';
+            row += 'value="' + newSeqOrder + '" />';
+
+            // This is the value that changes
+            row += '<input type="hidden" ';
+            row += 'class="hdnComplainantAppliedSeqOrder" ';
+            row += 'name="Complainants[' + index + '].CRAS_Ref_Applied_SeqOrder" ';
+            row += 'value="' + (index + 1) + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Complainants[' + index + '].Related_ComplaintID" ';
+            row += 'value="' + relatedComplaintID + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Complainants[' + index + '].Related_ComplaintCode" ';
+            row += 'value="' + relatedComplaintCode + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Complainants[' + index + '].Related_PrehearingDate_IndexID" ';
+            row += 'value="' + preHearingIndexID + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Complainants[' + index + '].Related_PrehearingDate_ID" ';
+            row += 'value="' + preHearingID + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Complainants[' + index + '].ComplaintType_MN" ';
+            row += 'value="' + complaintType + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Complainants[' + index + '].CRAS_Category" ';
+            row += 'value="Complainant" />';
+
+            row += '</td>';
+
+
+            /* NAME */
+            row += '<td>';
+
+            row += '<input type="text" ';
+            row += 'class="form-control" ';
+            row += 'name="Complainants[' + index + '].CRAS_Name" ';
+            row += 'placeholder="Enter Complainant Name" />';
+
+            row += '</td>';
+
+
+            /* PROXY */
+            row += '<td>';
+
+            row += '<input type="text" ';
+            row += 'class="form-control" ';
+            row += 'name="Complainants[' + index + '].CRAS_ProxyCouncilRepresentative" ';
+            row += 'placeholder="Enter Proxy Council Representative" />';
+
+            row += '</td>';
+
+
+            /* ADVOCATE */
+            //row += '<td>';
+
+            //row += '<textarea ';
+            //row += 'class="form-control" ';
+            //row += 'name="Complainants[' + index + '].CRAS_AdvocateName" ';
+            //row += 'rows="2" ';
+            //row += 'maxlength="250" ';
+            //row += 'placeholder="Enter Advocate Name"></textarea>';
+
+            //row += '</td>';
+            row += '<td>';
+
+            row += '<textarea ';
+            row += 'class="form-control" ';
+            row += 'name="Complainants[' + index + '].CRAS_AdvocateName" ';
+            row += 'rows="2" ';
+            row += 'maxlength="250" ';
+            row += 'placeholder="Enter Advocate Name"></textarea>';
+
+            row += '<button type="button" ';
+            row += 'class="btn btn-info btn-xs btnApplyAdvocateComplainant" ';
+            row += 'style="margin-top:5px;" ';
+            row += 'title="Apply this advocate to other rows">';
+
+            row += '<i class="fa fa-link"></i> ';
+            //row += 'Apply to Other Rows';
+
+            row += '</button>';
+
+            row += '</td>';
+
+
+            /* ORDER BUTTONS */
+            row += '<td class="text-center">';
+
+            row += '<button type="button" ';
+            row += 'class="btn btn-default btn-sm btnMoveUp" ';
+            row += 'title="Move Up">';
+
+            row += '<i class="fa fa-arrow-up"></i>';
+
+            row += '</button> ';
+
+
+            row += '<button type="button" ';
+            row += 'class="btn btn-default btn-sm btnMoveDown" ';
+            row += 'title="Move Down">';
+
+            row += '<i class="fa fa-arrow-down"></i>';
+
+            row += '</button>';
+
+            row += '</td>';
+
+
+            /* REMOVE BUTTON */
+            row += '<td class="text-center">';
+
+            row += '<button type="button" ';
+            row += 'class="btn btn-danger btn-sm btnRemoveComplainant" ';
+            row += 'title="Remove">';
+
+            row += '<i class="fa fa-minus"></i>';
+
+            row += '</button>';
+
+            row += '</td>';
+
+
+            row += '</tr>';
+
+
+            tbody.append(row);
+
+            reIndexComplainants();
+
+        });
+
+
+    /* =========================================================
+       ADD RESPONDANT
+       ========================================================= */
+
+    $(document)
+        .off('click.ecourtAddRespondant', '.btnAddRespondant')
+        .on('click.ecourtAddRespondant', '.btnAddRespondant', function (e) {
+
+            e.preventDefault();
+
+            var tbody = $('#tbodyRespondants');
+            var index = tbody.find('tr').length;
+            var relatedComplaintID = $('#frmECourtRoomRespondants input[name="Related_ComplaintID"]').val();
+            var relatedComplaintCode = $('#tbodyRespondants tr:first input[name$=".Related_ComplaintCode"]').val();
+            var preHearingIndexID = $('#frmECourtRoomRespondants input[name="Related_PrehearingDate_IndexID"]').val();
+            var preHearingID = $('#frmECourtRoomRespondants input[name="Related_PrehearingDate_ID"]').val();
+            var complaintType = $('#frmECourtRoomRespondants input[name="ComplaintType_MN"]').val();
+            var courtRoomID = $('#frmECourtRoomRespondants input[name="CourtRoom_ID"]').val();
+            var newSeqOrder = 1;
+
+            $('#tbodyRespondants tr').each(function () {
+                var seq = parseInt(
+                    $(this).find('input[name$=".CRAS_SeqOrder"]').val(),
+                    10
+                );
+
+                if (!isNaN(seq) && seq >= newSeqOrder) {
+                    newSeqOrder = seq + 1;
+                }
+            });
+
+            var row = '';
+
+            row += '<tr>';
+
+            /* S.No. */
+            row += '<td>';
+
+            row += '<span class="respondantSerialNo">' + (index + 1) + '</span>';
+
+            row += '<input type="hidden" name="Respondents[' + index + '].CourtRoom_IndexID" value="0" />';
+            row += '<input type="hidden" ';
+            row += 'name="Respondents[' + index + '].CourtRoom_ID" ';
+            row += 'value="' + courtRoomID + '" />';
+            // Original sequence - never changed
+
+            //row += '<input type="hidden" ';
+            //row += 'class="hdnRespondantOriginalSeqOrder" ';
+            //row += 'name="Respondents[' + index + '].CRAS_SeqOrder" ';
+            //row += 'value="0" />';
+            row += '<input type="hidden" ';
+            row += 'class="hdnRespondantOriginalSeqOrder" ';
+            row += 'name="Respondents[' + index + '].CRAS_SeqOrder" ';
+            row += 'value="' + newSeqOrder + '" />';
+
+            // Applied sequence - changes with order
+            row += '<input type="hidden" ';
+            row += 'class="hdnRespondantAppliedSeqOrder" ';
+            row += 'name="Respondents[' + index + '].CRAS_Ref_Applied_SeqOrder" ';
+            row += 'value="' + (index + 1) + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Respondents[' + index + '].Related_ComplaintID" ';
+            row += 'value="' + relatedComplaintID + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Respondents[' + index + '].Related_ComplaintCode" ';
+            row += 'value="' + relatedComplaintCode + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Respondents[' + index + '].Related_PrehearingDate_IndexID" ';
+            row += 'value="' + preHearingIndexID + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Respondents[' + index + '].Related_PrehearingDate_ID" ';
+            row += 'value="' + preHearingID + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Respondents[' + index + '].ComplaintType_MN" ';
+            row += 'value="' + complaintType + '" />';
+
+            row += '<input type="hidden" ';
+            row += 'name="Respondents[' + index + '].CRAS_Category" ';
+            row += 'value="Respondant" />';
+
+            row += '</td>';
+
+
+            /* NAME */
+            row += '<td>';
+
+            row += '<input type="text" ';
+            row += 'class="form-control" ';
+            row += 'name="Respondents[' + index + '].CRAS_Name" ';
+            row += 'placeholder="Enter Respondant Name" />';
+
+            row += '</td>';
+
+
+            /* PROXY */
+            row += '<td>';
+
+            row += '<input type="text" ';
+            row += 'class="form-control" ';
+            row += 'name="Respondents[' + index + '].CRAS_ProxyCouncilRepresentative" ';
+            row += 'placeholder="Enter Proxy Council Representative" />';
+
+            row += '</td>';
+
+
+            /* ADVOCATE */
+            //row += '<td>';
+
+            //row += '<textarea ';
+            //row += 'class="form-control" ';
+            //row += 'name="Respondents[' + index + '].CRAS_AdvocateName" ';
+            //row += 'rows="2" ';
+            //row += 'maxlength="250" ';
+            //row += 'placeholder="Enter Advocate Name"></textarea>';
+
+            //row += '</td>';
+            row += '<td>';
+
+            row += '<textarea ';
+            row += 'class="form-control" ';
+            row += 'name="Respondents[' + index + '].CRAS_AdvocateName" ';
+            row += 'rows="2" ';
+            row += 'maxlength="250" ';
+            row += 'placeholder="Enter Advocate Name"></textarea>';
+
+            row += '<button type="button" ';
+            row += 'class="btn btn-info btn-xs btnApplyAdvocateRespondant" ';
+            row += 'style="margin-top:5px;" ';
+            row += 'title="Apply this advocate to other rows">';
+
+            row += '<i class="fa fa-link"></i> ';
+            //row += 'Apply to Other Rows';
+
+            row += '</button>';
+
+            row += '</td>';
+
+
+            /* ORDER BUTTONS */
+            row += '<td class="text-center">';
+
+            row += '<button type="button" ';
+            row += 'class="btn btn-default btn-sm btnMoveUp" ';
+            row += 'title="Move Up">';
+
+            row += '<i class="fa fa-arrow-up"></i>';
+
+            row += '</button> ';
+
+
+            row += '<button type="button" ';
+            row += 'class="btn btn-default btn-sm btnMoveDown" ';
+            row += 'title="Move Down">';
+
+            row += '<i class="fa fa-arrow-down"></i>';
+
+            row += '</button>';
+
+            row += '</td>';
+
+
+            /* REMOVE BUTTON */
+            row += '<td class="text-center">';
+
+            row += '<button type="button" ';
+            row += 'class="btn btn-danger btn-sm btnRemoveRespondant" ';
+            row += 'title="Remove">';
+
+            row += '<i class="fa fa-minus"></i>';
+
+            row += '</button>';
+
+            row += '</td>';
+
+
+            row += '</tr>';
+
+
+            tbody.append(row);
+
+            reIndexRespondants();
+
+        });
+
+
+    /* =========================================================
+       SAVE COMPLAINANTS
+       ========================================================= */
+
+    $(document)
+        .off('click.ecourtSaveComplainants', '#btnSaveComplainants')
+        .on('click.ecourtSaveComplainants', '#btnSaveComplainants', function (e) {
+
+            e.preventDefault();
+            var form = $('#frmECourtRoomComplainants');
+            var baseUrl = $('body').attr('data-base-url');
+            var button = $(this);
+            updateComplainantOrder();
+            button.prop('disabled', true);
+            button.html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+            $.ajax({
+                url: baseUrl + 'HelpdeskComplaint/SaveECourtRoom',
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        alert('Complainants saved successfully.');
+                        // Set CourtRoom_ID returned from server
+                        form.find('input[name="CourtRoom_ID"]').val(response.CourtRoom_ID);
+                        form.find('input[name="IsUpdate"]').val('true');
+                        button.prop('disabled', false);
+                        button.removeClass('btn-success').addClass('btn-primary');
+                        button.html('Update');
+                    }
+                    else {
+                        alert(response.message || 'Unable to save complainants.');
+                        button.prop('disabled', false);
+                        button.html('Save');
+                    }
+                },
+
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                    alert('Error while saving complainants.');
+                    button.prop('disabled', false);
+                    button.html('Save');
+                }
+            });
+
+        });
+
+
+    /* =========================================================
+       SAVE RESPONDANTS
+       ========================================================= */
+
+    $(document)
+        .off('click.ecourtSaveRespondants', '#btnSaveRespondants')
+        .on('click.ecourtSaveRespondants', '#btnSaveRespondants', function (e) {
+            e.preventDefault();
+            var form = $('#frmECourtRoomRespondants');
+            var baseUrl = $('body').attr('data-base-url');
+            var button = $(this);
+            updateRespondantOrder();
+            button.prop('disabled', true);
+            button.html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+            $.ajax({
+                url: baseUrl + 'HelpdeskComplaint/SaveECourtRoom',
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        alert('Respondants saved successfully.');
+                        form.find('input[name="IsUpdate"]').val('true');
+                        form.find('input[name="CourtRoom_ID"]').val(response.CourtRoom_ID);
+                        button.prop('disabled', false);
+                        button.removeClass('btn-success').addClass('btn-primary');
+                        button.html('Update');
+                    }
+                    else {
+                        alert(response.message || 'Unable to save respondents.');
+                        button.prop('disabled', false);
+                        button.html('Save');
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                    alert('Error while saving respondents.');
+                    button.prop('disabled', false);
+                    button.html('Save');
+                }
+            });
+        });
+
+</script>
+
+<script>
+    /* =========================================================
+       APPLY ADVOCATE - COMPLAINANT
+       ========================================================= */
+
+    $(document)
+        .off(
+            'click.ecourtApplyComplainantAdvocate',
+            '.btnApplyAdvocateComplainant'
+        )
+        .on(
+            'click.ecourtApplyComplainantAdvocate',
+            '.btnApplyAdvocateComplainant',
+            function (e) {
+
+                e.preventDefault();
+
+                var button = $(this);
+                var row = button.closest('tr');
+
+                var advocate = row
+                    .find('textarea[name$=".CRAS_AdvocateName"]')
+                    .val();
+
+                if (!advocate || $.trim(advocate) === '') {
+
+                    alert('Please enter Advocate Name first.');
+
+                    return;
+                }
+
+                // Remove any existing panel
+                $('.applyAdvocateInlinePanel').remove();
+
+                var html = '';
+
+                html += '<div class="applyAdvocateInlinePanel" ';
+                html += 'style="margin-top:8px; padding:10px; ';
+                html += 'border:1px solid #ddd; ';
+                html += 'background:#f9f9f9;">';
+
+                html += '<strong>Select rows to apply this advocate:</strong>';
+
+                html += '<div style="max-height:180px; overflow-y:auto; margin-top:8px;">';
+
+                $('#tbodyComplainants tr').each(function () {
+
+                    var targetRow = $(this);
+
+                    // Do not show the row from which Apply was clicked
+                    if (targetRow[0] === row[0]) {
+                        return;
+                    }
+
+                    var rowNumber = targetRow.index() + 1;
+
+                    var name = targetRow
+                        .find('input[name$=".CRAS_Name"]')
+                        .val();
+
+                    if (!name) {
+                        name = 'Complainant';
+                    }
+
+                    var rowId = 'complainant_' + Date.now() + '_' + rowNumber;
+
+                    targetRow.attr(
+                        'data-advocate-row-id',
+                        rowId
+                    );
+
+                    html += '<div class="checkbox" style="margin-top:5px;">';
+
+                    html += '<label>';
+
+                    html += '<input type="checkbox" ';
+                    html += 'class="chkInlineAdvocateRow" ';
+                    html += 'data-row-id="' + rowId + '" /> ';
+
+                    html += '<strong>Row ' +
+                        rowNumber +
+                        '</strong> - ';
+
+                    html += $('<div>')
+                        .text(name)
+                        .html();
+
+                    html += '</label>';
+
+                    html += '</div>';
+                });
+
+                html += '</div>';
+
+                html += '<div style="margin-top:10px;">';
+
+                html += '<button type="button" ';
+                html += 'class="btn btn-primary btn-xs btnConfirmInlineAdvocate">';
+                html += '<i class="fa fa-check"></i> Apply';
+                html += '</button> ';
+
+                html += '<button type="button" ';
+                html += 'class="btn btn-default btn-xs btnCancelInlineAdvocate">';
+                html += 'Cancel';
+                html += '</button>';
+
+                html += '</div>';
+
+                html += '</div>';
+
+                button.after(html);
+            }
+        );
+
+    /* =========================================================
+   APPLY ADVOCATE - RESPONDANT
+   ========================================================= */
+
+    $(document)
+        .off(
+            'click.ecourtApplyRespondantAdvocate',
+            '.btnApplyAdvocateRespondant'
+        )
+        .on(
+            'click.ecourtApplyRespondantAdvocate',
+            '.btnApplyAdvocateRespondant',
+            function (e) {
+
+                e.preventDefault();
+
+                var button = $(this);
+                var row = button.closest('tr');
+
+                var advocate = row
+                    .find('textarea[name$=".CRAS_AdvocateName"]')
+                    .val();
+
+                if (!advocate || $.trim(advocate) === '') {
+
+                    alert('Please enter Advocate Name first.');
+
+                    return;
+                }
+
+                $('.applyAdvocateInlinePanel').remove();
+
+                var html = '';
+
+                html += '<div class="applyAdvocateInlinePanel" ';
+                html += 'style="margin-top:8px; padding:10px; ';
+                html += 'border:1px solid #ddd; ';
+                html += 'background:#f9f9f9;">';
+
+                html += '<strong>Select rows to apply this advocate:</strong>';
+
+                html += '<div style="max-height:180px; overflow-y:auto; margin-top:8px;">';
+
+                $('#tbodyRespondants tr').each(function () {
+
+                    var targetRow = $(this);
+
+                    // Do not show current/source row
+                    if (targetRow[0] === row[0]) {
+                        return;
+                    }
+
+                    var rowNumber = targetRow.index() + 1;
+
+                    var name = targetRow
+                        .find('input[name$=".CRAS_Name"]')
+                        .val();
+
+                    if (!name) {
+                        name = 'Respondant';
+                    }
+
+                    var rowId =
+                        'respondant_' +
+                        Date.now() +
+                        '_' +
+                        rowNumber;
+
+                    targetRow.attr(
+                        'data-advocate-row-id',
+                        rowId
+                    );
+
+                    html += '<div class="checkbox" style="margin-top:5px;">';
+
+                    html += '<label>';
+
+                    html += '<input type="checkbox" ';
+                    html += 'class="chkInlineAdvocateRow" ';
+                    html += 'data-row-id="' + rowId + '" /> ';
+
+                    html += '<strong>Row ' +
+                        rowNumber +
+                        '</strong> - ';
+
+                    html += $('<div>')
+                        .text(name)
+                        .html();
+
+                    html += '</label>';
+
+                    html += '</div>';
+                });
+
+                html += '</div>';
+
+                html += '<div style="margin-top:10px;">';
+
+                html += '<button type="button" ';
+                html += 'class="btn btn-primary btn-xs btnConfirmInlineAdvocate">';
+                html += '<i class="fa fa-check"></i> Apply';
+                html += '</button> ';
+
+                html += '<button type="button" ';
+                html += 'class="btn btn-default btn-xs btnCancelInlineAdvocate">';
+                html += 'Cancel';
+                html += '</button>';
+
+                html += '</div>';
+
+                html += '</div>';
+
+                button.after(html);
+            }
+        );
+
+    /* =========================================================
+   CONFIRM APPLY
+   ========================================================= */
+
+    $(document)
+        .off(
+            'click.ecourtConfirmInlineAdvocate',
+            '.btnConfirmInlineAdvocate'
+        )
+        .on(
+            'click.ecourtConfirmInlineAdvocate',
+            '.btnConfirmInlineAdvocate',
+            function (e) {
+
+                e.preventDefault();
+
+                var panel = $(this).closest(
+                    '.applyAdvocateInlinePanel'
+                );
+
+                // Find the button that opened this panel
+                var applyButton = panel.prev(
+                    '.btnApplyAdvocateComplainant, .btnApplyAdvocateRespondant'
+                );
+
+                var sourceRow = applyButton.closest('tr');
+
+                var advocate = sourceRow
+                    .find('textarea[name$=".CRAS_AdvocateName"]')
+                    .val();
+
+                if (!advocate || $.trim(advocate) === '') {
+
+                    alert('Advocate Name is empty.');
+
+                    return;
+                }
+
+                var selected =
+                    panel.find(
+                        '.chkInlineAdvocateRow:checked'
+                    );
+
+                if (selected.length === 0) {
+
+                    alert('Please select at least one row.');
+
+                    return;
+                }
+
+                selected.each(function () {
+
+                    var rowId =
+                        $(this).attr('data-row-id');
+
+                    var targetRow =
+                        $('tr[data-advocate-row-id="' +
+                            rowId +
+                            '"]');
+
+                    targetRow
+                        .find(
+                            'textarea[name$=".CRAS_AdvocateName"]'
+                        )
+                        .val(advocate);
+                });
+
+                panel.remove();
+            }
+        );
+
+    /* =========================================================
+   CANCEL APPLY
+   ========================================================= */
+
+    $(document)
+        .off(
+            'click.ecourtCancelInlineAdvocate',
+            '.btnCancelInlineAdvocate'
+        )
+        .on(
+            'click.ecourtCancelInlineAdvocate',
+            '.btnCancelInlineAdvocate',
+            function (e) {
+
+                e.preventDefault();
+
+                $(this)
+                    .closest('.applyAdvocateInlinePanel')
+                    .remove();
+            }
+        );
+</script>
+
 <script>
     $(function () {
-        var baseUrl = $('body').attr('data-base-url');      
+        var baseUrl = $('body').attr('data-base-url');
 
         $('[data-toggle="tooltip"]').tooltip();
 
@@ -100,6 +1098,57 @@
             $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (Bench: ' + agentName + ')');
             $(projectDetailsModal).modal('show');
         });
+
+
+        $(document).on('click', 'a#modalOpenerViewECourtRoomButton', function (e) {
+            e.preventDefault();
+            var elem = $(this);
+
+            var parentRow = $(elem).parents('tr');
+            var projectDetailsModal = $(document).find('#myModall');
+            $(projectDetailsModal).find('.modal-body').html('');
+
+            // Get required values from selected row
+            var PreHearingDate_IndexID = $.trim(parentRow.find('.hdnPreHearingDateIndexID').val());
+            var PreHearingDate_ID = $.trim(parentRow.find('.hdnHearingID').val());
+            var ComplaintID = $.trim(parentRow.find('.hdnComplaintID').val());
+            var ComplaintCode = $.trim(parentRow.find('.hdnComplaintCode').val());
+            var ComplaintTypeMN = $.trim(parentRow.find('.hdnComplaintTypeMN').val());
+
+            var FormM_Id = $.trim($(parentRow).find('input.hdnComplaintID').val());
+            //var HearingFormM_Id = $.trim($(parentRow).find('input.hdnHearingID').val());
+            FormM_Id = parseInt(FormM_Id);
+            //HearingFormM_Id = parseInt(HearingFormM_Id);
+            $.ajax({
+                url: baseUrl + 'HelpdeskComplaint/FormMECourtRoomDetails',
+                dataType: 'HTML',
+                type: 'GET',
+                data: {
+                    'FormM_Id': FormM_Id,
+                    'PreHearingDate_IndexID': PreHearingDate_IndexID,
+                    'PreHearingDate_ID': PreHearingDate_ID,
+                    'ComplainantApplicant_RelatedComplaint_ID': ComplaintID,
+                    'ComplainantApplicant_RelatedComplaint_Code': ComplaintCode,
+                    'ComplaintType_MN': ComplaintTypeMN
+                },
+                beforeSend: function () {
+                    startPreloader();
+                },
+                success: function (response) {
+                    stopPreloader();
+                    $(projectDetailsModal).find('.modal-body').html(response);
+                    $(projectDetailsModal).find('table').DataTable({
+                        responsive: true
+                    });
+                }
+            });
+            var diaryNo = $.trim($(parentRow).find('td.complaint-diary-number').attr('data-diary-no'));
+            var agentName = $.trim($(parentRow).find('td.bench-name').attr('data-bench-name'));
+            $(projectDetailsModal).find('h4.modal-title').html('Details of Interim Order(s) - <a href="javascript:void(0);"></a>');
+            $(projectDetailsModal).find('h4.modal-title a').html(diaryNo + ' (Bench: ' + agentName + ')');
+            $(projectDetailsModal).modal('show');
+        });
+
     });
 </script>
 <script>
@@ -127,7 +1176,7 @@
             changeMonth: true,
             changeYear: true,
 
-            onSelect: function (selected) {                
+            onSelect: function (selected) {
                 var dt = new Date(selected);
                 dt.setDate(dt.getDate());
                 $("#D_column").datepicker("option", "maxDate", dt);
@@ -173,19 +1222,19 @@
         }
 </style>
 <script type="text/javascript">
-		$(function() {
-		    $("#PreHearingTime").inputmask({ mask: function () { return ["9:99 AA", "99:99 AA"]; } });
+    $(function () {
+        $("#PreHearingTime").inputmask({ mask: function () { return ["9:99 AA", "99:99 AA"]; } });
 
-		    $('#PreHearingFixedForCode').change(function () {
-		        $('#PreHearingFixedForName').empty();
-		        $("input[name='PreHearingFixedForName']").val($("#PreHearingFixedForCode option:selected").text());
-		    });
+        $('#PreHearingFixedForCode').change(function () {
+            $('#PreHearingFixedForName').empty();
+            $("input[name='PreHearingFixedForName']").val($("#PreHearingFixedForCode option:selected").text());
+        });
 
-		    $('#PreHearingBench').change(function () {
-		        $('#B_column').empty();
-		        $("input[name='B_column']").val($("#PreHearingBench option:selected").text());
-		    });
-		});
+        $('#PreHearingBench').change(function () {
+            $('#B_column').empty();
+            $("input[name='B_column']").val($("#PreHearingBench option:selected").text());
+        });
+    });
 </script>
 
 <div id="wrapper">
@@ -239,7 +1288,7 @@
 
                             @using (Html.BeginForm("FormM_PreHearingDateAdd", "HelpdeskComplaint", FormMethod.Post, new { enctype = "multipart/form-data" }))
                             {
-                                @Html.AntiForgeryToken()                                
+                                @Html.AntiForgeryToken()
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                                 @Html.HiddenFor(model => model.PreHearingDate_IndexID)
@@ -259,14 +1308,14 @@
                                                     <div class="form-group">
                                                         <div class="col-md-3">
                                                             @Html.LabelFor(model => model.A_column, htmlAttributes: new { @class = "control-label mand" })
-                                                        </div>                                                        
+                                                        </div>
                                                         <div class="col-md-9">
-                                                            <label class="form-group">                                                                
+                                                            <label class="form-group">
                                                                 @Html.RadioButtonFor(model => model.A_column, "Hearing", new { id = "chkOtherPreHearing", @checked = "checked" }) Hearing
                                                                 @Html.RadioButtonFor(model => model.A_column, "Preliminary Hearing", new { id = "chkPreHearing" }) Preliminary Hearing
                                                             </label>
                                                             @Html.ValidationMessageFor(model => model.A_column, "", new { @class = "text-danger" })
-                                                        </div>                                                        
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -294,17 +1343,17 @@
                                                         </div>
                                                         <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Respective Bench of Preliminary-Hearing/ Hearing.">
                                                             @Html.DropDownListFor(m => m.PreHearingBench, new SelectList(Model.PreHearingBenchMaster, "PreHearingBenchCode", "PreHearingBenchName"), "Select", new { @class = "form-control" })
-                                                            @Html.ValidationMessageFor(model => model.PreHearingBench, "", new { @class = "text-danger" })                                                            
+                                                            @Html.ValidationMessageFor(model => model.PreHearingBench, "", new { @class = "text-danger" })
                                                         </div>
                                                         <div class="col-md-3">
                                                             <label class="control-label mand">Fixed For</label>
                                                         </div>
                                                         <div class="col-md-3">
                                                             @Html.DropDownListFor(m => m.PreHearingFixedForCode, new SelectList(Model.PreHearingFixedForMaster, "PreHearingFixedForCode", "PreHearingFixedForName"), "Select", new { @class = "form-control" })
-                                                            @Html.ValidationMessageFor(model => model.PreHearingFixedForCode, "", new { @class = "text-danger" })                                                            
+                                                            @Html.ValidationMessageFor(model => model.PreHearingFixedForCode, "", new { @class = "text-danger" })
                                                         </div>
                                                     </div>
-                                                </div>                                                
+                                                </div>
                                                 <div class="row">
                                                     <div class="form-group">
                                                         <div class="col-md-3">
@@ -313,7 +1362,7 @@
                                                         <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Period within which the respondent is required to file reply (in days).">
                                                             @Html.EditorFor(model => model.C_column, new { htmlAttributes = new { @class = "form-control" } })
                                                             @Html.ValidationMessageFor(model => model.C_column, "", new { @class = "text-danger" })
-                                                        </div>                                                        
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <hr />
@@ -329,7 +1378,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="form-group">                                                        
+                                                    <div class="form-group">
                                                         <div class="col-md-3">
                                                             @Html.LabelFor(model => model.Remarks_IfAny, htmlAttributes: new { @class = "control-label" })
                                                         </div>
@@ -342,7 +1391,7 @@
                                             </fieldset>
                                         </div>
                                     </div>
-                                </div>                                
+                                </div>
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="form-group">
@@ -356,9 +1405,9 @@
                                                         <div class="col-md-3" data-toggle="tooltip" data-placement="right" title="Preliminary-Hearing/ Hearing complaint status, if any.">
                                                             @Html.EditorFor(model => model.PreHearingStatus, new { htmlAttributes = new { @class = "form-control" } })
                                                             @Html.ValidationMessageFor(model => model.PreHearingStatus, "", new { @class = "text-danger" })
-                                                        </div>                                                        
+                                                        </div>
                                                     </div>
-                                                </div>                                                
+                                                </div>
                                             </fieldset>
                                         </div>
                                     </div>
@@ -368,131 +1417,139 @@
                                         <div class="col-md-12">
                                             @if (Model.IsDraft == 1)
                                             {
-                                                <input type="submit" value="@TempData["PreHearingMsubmitvalue"]" class="btn btn-outline btn-primary" disabled = "disabled" />
+                                                <input type="submit" value="@TempData["PreHearingMsubmitvalue"]" class="btn btn-outline btn-primary" disabled="disabled" />
                                             }
                                             else
                                             {
-                                                <input type="submit" value="@TempData["PreHearingMsubmitvalue"]" class="btn btn-outline btn-primary" />                                                
-                                            }                                            
+                                                <input type="submit" value="@TempData["PreHearingMsubmitvalue"]" class="btn btn-outline btn-primary" />
+                                            }
                                             &nbsp;
                                             @Html.ActionLink("Reset", "FormM_PreHearingDateAdd", "HelpdeskComplaint", null, new { @class = "btn btn-outline btn-primary" })
                                         </div>
                                     </div>
                                 </div>
                             }
-                                <div class="row">
-                                        <div class="form-group">                                            
-                                            <div class="col-md-12">
-                                                <div class="table-responsive">
-                                                    <table class="table table-striped table-bordered" id="promoter-documents-list-table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>
-                                                                    @Html.DisplayName("SNo")
-                                                                </th>                                                                
-                                                                <th>
-                                                                    @Html.DisplayName("Next Hearing Date")
-                                                                    @*@Html.DisplayNameFor(model => model.PreHearingDate)*@
-                                                                </th>
-                                                                <th>
-                                                                    @Html.DisplayName("Next Hearing Time")
-                                                                    @*@Html.DisplayNameFor(model => model.PreHearingTime)*@
-                                                                </th>
-                                                                <th>
-                                                                    @Html.DisplayNameFor(model => model.B_column)
-                                                                </th>
-                                                                <th>
-                                                                    @Html.DisplayNameFor(model => model.PreHearingFixedForName)
-                                                                </th>
-                                                                <th>
-                                                                    @*@Html.DisplayNameFor(model => model.D_column)*@
-                                                                    @Html.DisplayName("Business On Date")
-                                                                </th>
-                                                                <th>
-                                                                    @Html.DisplayNameFor(model => model.IsInterimOrder)
-                                                                </th>                                                                
-                                                                <th>
-                                                                    @Html.DisplayNameFor(model => model.Remarks_IfAny)
-                                                                </th>                                                                                                                                
-                                                                <th>
-                                                                    @*@Html.DisplayNameFor(model => model.CreatedOn)*@
-                                                                    @Html.DisplayName("Date of Upload")
-                                                                </th>                                                               
-                                                                <th>@Html.DisplayName("Edit| Delete")</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @{
-                                                                int srnumber = 0;
-                                                            }
-                                                            @foreach (var item in Model.prpongoing)
-                                                            {
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered" id="promoter-documents-list-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            @Html.DisplayName("SNo")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Next Hearing Date")
+                                                            @*@Html.DisplayNameFor(model => model.PreHearingDate)*@
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayName("Next Hearing Time")
+                                                            @*@Html.DisplayNameFor(model => model.PreHearingTime)*@
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.B_column)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.PreHearingFixedForName)
+                                                        </th>
+                                                        <th>
+                                                            @*@Html.DisplayNameFor(model => model.D_column)*@
+                                                            @Html.DisplayName("Business On Date")
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.IsInterimOrder)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.Remarks_IfAny)
+                                                        </th>
+                                                        <th>
+                                                            @*@Html.DisplayNameFor(model => model.CreatedOn)*@
+                                                            @Html.DisplayName("Date of Upload")
+                                                        </th>
+                                                        <th>@Html.DisplayName("Edit| Delete")</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        int srnumber = 0;
+                                                    }
+                                                    @foreach (var item in Model.prpongoing)
+                                                    {
+                                                        {
+                                                            srnumber = srnumber + 1;
+                                                        }
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DisplayName(srnumber.ToString())
+                                                            </td>
+                                                            <td class="complaint-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.PreHearingDate)">
+                                                                @Html.DisplayFor(modelItem => item.PreHearingDate)
+                                                                @Html.HiddenFor(modelItem => item.ComplainantApplicant_RelatedComplaint_ID, new { @class = "hdnComplaintID" })
+                                                                @Html.HiddenFor(modelItem => item.PreHearingDate_ID, new { @class = "hdnHearingID" })
+
+
+                                                                @Html.HiddenFor(modelItem => item.PreHearingDate_IndexID, new { @class = "hdnPreHearingDateIndexID" })
+
+                                                                @Html.HiddenFor(modelItem => item.ComplainantApplicant_RelatedComplaint_Code, new { @class = "hdnComplaintCode" })
+
+                                                                @Html.HiddenFor(modelItem => item.ComplaintType_MN, new { @class = "hdnComplaintTypeMN" })
+                                                            </td>
+                                                            <td class="bench-name" data-bench-name="@Html.DisplayFor(modelItem => item.B_column)">
+                                                                @Html.DisplayFor(modelItem => item.PreHearingTime)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.B_column)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.PreHearingFixedForName)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.D_column)
+                                                            </td>
+                                                            <td>
+                                                                <span class="bg-border-show">
+                                                                    @if (item.IsInterimOrder > 0)
+                                                                    {
+                                                                        @Html.DisplayFor(modelItem => item.InterimOrderStatusRemark)
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.DisplayName("Not Available")
+                                                                    }
+                                                                    <br />
+                                                                    <span class="pull-left">
+                                                                        <a class="button" title="Upload Interim Order(s)" href="@Url.Action("FormM_InterimOrderHearingDate", "HelpdeskComplaint", new { bmCFMcode = item.ComplainantApplicant_RelatedComplaint_ID, bmHFMcode = item.PreHearingDate_ID, bmHFMXcode= item.PreHearingDate_IndexID })"><i class="fa fa-upload fa-fw bg-plus-square-glow-show" aria-hidden="true"></i></a>
+                                                                        <a class="button" id="modalOpenerViewInterimOrderButton" href="javascript:void(0);" title="View Interim Order(s)"><i class="fa fa-file-text fa-fw bg-pdf-glow-show" aria-hidden="true"></i></a>
+                                                                        <a class="button" id="modalOpenerViewECourtRoomButton" href="javascript:void(0);" title="View EcourtRoom(s)"><i class="fa fa-user-plus fa-fw bg-courtroom-glow-show" aria-hidden="true"></i></a>
+                                                                    </span>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.Remarks_IfAny)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.CreatedOn)
+                                                            </td>
+                                                            <td>
+                                                                @if (item.IsDraft != 1)
                                                                 {
-                                                                    srnumber = srnumber + 1;
+                                                                    @Html.ActionLink("Edit", "Edit_FormM_PreHearingDateAdd", new { FormMPreHearingDate_IndexID = item.PreHearingDate_IndexID, ComplaintFormM_ID = item.ComplainantApplicant_RelatedComplaint_ID }) @("| ")
+                                                                    @Html.ActionLink("Delete", "Delete_FormM_PreHearingDateAdd", new { FormMPreHearingDate_IndexID = item.PreHearingDate_IndexID, ComplaintFormM_ID = item.ComplainantApplicant_RelatedComplaint_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })
                                                                 }
-                                                                <tr> 
-                                                                    <td>                                                                        
-                                                                        @Html.DisplayName(srnumber.ToString())                                                                        
-                                                                    </td>                                                                   
-                                                                    <td class="complaint-diary-number" data-diary-no="@Html.DisplayFor(modelItem => item.PreHearingDate)">
-                                                                        @Html.DisplayFor(modelItem => item.PreHearingDate)
-                                                                        @Html.HiddenFor(modelItem => item.ComplainantApplicant_RelatedComplaint_ID, new { @class = "hdnComplaintID" })
-                                                                        @Html.HiddenFor(modelItem => item.PreHearingDate_ID, new { @class = "hdnHearingID" })
-                                                                    </td>
-                                                                    <td class="bench-name" data-bench-name="@Html.DisplayFor(modelItem => item.B_column)">
-                                                                        @Html.DisplayFor(modelItem => item.PreHearingTime)
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.DisplayFor(modelItem => item.B_column)
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.DisplayFor(modelItem => item.PreHearingFixedForName)
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.DisplayFor(modelItem => item.D_column)
-                                                                    </td>
-                                                                    <td>                                                                        
-                                                                        <span class="bg-border-show">
-                                                                            @if (item.IsInterimOrder > 0)
-                                                                            {
-                                                                                @Html.DisplayFor(modelItem => item.InterimOrderStatusRemark)                                                                                
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                @Html.DisplayName("Not Available")
-                                                                            }
-                                                                            <br/>
-                                                                            <span class="pull-left">
-                                                                                <a class="button" title="Upload Interim Order(s)" href="@Url.Action("FormM_InterimOrderHearingDate", "HelpdeskComplaint", new { bmCFMcode = item.ComplainantApplicant_RelatedComplaint_ID, bmHFMcode = item.PreHearingDate_ID, bmHFMXcode= item.PreHearingDate_IndexID })"><i class="fa fa-upload fa-fw bg-plus-square-glow-show" aria-hidden="true"></i></a>
-                                                                                <a class="button" id="modalOpenerViewInterimOrderButton" href="javascript:void(0);" title="View Interim Order(s)"><i class="fa fa-file-text fa-fw bg-pdf-glow-show" aria-hidden="true"></i></a>                                                                                                                                                                
-                                                                            </span>
-                                                                        </span>
-                                                                    </td>                                                                    
-                                                                    <td>
-                                                                        @Html.DisplayFor(modelItem => item.Remarks_IfAny)
-                                                                    </td>                                                                                                                                        
-                                                                    <td>
-                                                                        @Html.DisplayFor(modelItem => item.CreatedOn)
-                                                                    </td>
-                                                                    <td>
-                                                                        @if (item.IsDraft != 1)
-                                                                        {
-                                                                            @Html.ActionLink("Edit", "Edit_FormM_PreHearingDateAdd", new { FormMPreHearingDate_IndexID = item.PreHearingDate_IndexID, ComplaintFormM_ID = item.ComplainantApplicant_RelatedComplaint_ID }) @("| ")
-                                                                            @Html.ActionLink("Delete", "Delete_FormM_PreHearingDateAdd", new { FormMPreHearingDate_IndexID = item.PreHearingDate_IndexID, ComplaintFormM_ID = item.ComplainantApplicant_RelatedComplaint_ID }, new { onclick = "return confirm('Are sure wants to delete?');" })
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @Html.ActionLink("View", "Edit_FormM_PreHearingDateAdd", new { FormMPreHearingDate_IndexID = item.PreHearingDate_IndexID, ComplaintFormM_ID = item.ComplainantApplicant_RelatedComplaint_ID })
-                                                                        }
-                                                                    </td>
-                                                                </tr>
-                                                            }
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                                                else
+                                                                {
+                                                                    @Html.ActionLink("View", "Edit_FormM_PreHearingDateAdd", new { FormMPreHearingDate_IndexID = item.PreHearingDate_IndexID, ComplaintFormM_ID = item.ComplainantApplicant_RelatedComplaint_ID })
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    </div>                         
+                                    </div>
+                                </div>
+                            </div>
                             <!-- /.col-lg-12 (nested) -->
                         </div>
                         <!-- /.row (nested) -->
@@ -528,6 +1585,105 @@
         </div>
     </div>
 </div>
+
+
+<!-- EcourtRoom Modal -->
+<div class="modal fade" id="myModall" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">EcourtRoom Details</h4>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     APPLY ADVOCATE MODAL
+     ========================================================= -->
+@*<div class="modal fade"
+         id="applyAdvocateModal"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="applyAdvocateModalLabel">
+
+        <div class="modal-dialog" role="document">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                    <h4 class="modal-title" id="applyAdvocateModalLabel">
+                        Apply Advocate to Other Rows
+                    </h4>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="applyAdvocateCategory" />
+
+                    <div class="form-group">
+
+                        <label>Advocate Name</label>
+
+                        <textarea id="applyAdvocateName"
+                                  class="form-control"
+                                  rows="2"
+                                  readonly></textarea>
+
+                    </div>
+
+                    <hr />
+
+                    <label>
+                        Select rows where this advocate should also be assigned:
+                    </label>
+
+                    <div id="applyAdvocateRows"
+                         style="max-height:300px; overflow-y:auto;">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-default"
+                            data-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="button"
+                            id="btnApplyAdvocate"
+                            class="btn btn-primary">
+                        <i class="fa fa-check"></i>
+                        Apply
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>*@
+
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

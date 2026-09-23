@@ -1,0 +1,249 @@
+﻿@model CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom
+
+
+
+@{
+    bool isComplainantCourtRoomSaved =
+        Convert.ToBoolean(TempData["IsComplainantCourtRoomSaved"] ?? false);
+
+    bool isRespondantCourtRoomSaved =
+        Convert.ToBoolean(TempData["IsRespondantCourtRoomSaved"] ?? false);
+}
+
+<fieldset>
+    <legend>Complainant(s)</legend>
+
+
+    <form id="frmECourtRoomComplainants">
+
+        <input type="hidden" name="IsUpdate" value="@(isComplainantCourtRoomSaved ? "true" : "false")" />
+        <input type="hidden" name="CRAS_Category" value="Complainant" />
+        @*@Html.HiddenFor(model => model.CourtRoom_IndexID)*@
+        @Html.HiddenFor(model => model.CourtRoom_ID)
+        @Html.HiddenFor(model => model.Related_ComplaintID)
+        @*@Html.HiddenFor(model => model.Related_ComplaintCode)*@
+        @Html.HiddenFor(model => model.Related_PrehearingDate_IndexID)
+        @Html.HiddenFor(model => model.Related_PrehearingDate_ID)
+        @Html.HiddenFor(model => model.ComplaintType_MN)
+
+        <table id="tblComplainants" class="table table-bordered table-striped table-hover">
+
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Complainant Name</th>
+                    <th>Proxy Council Representative</th>
+                    <th>Advocate Name</th>
+                    <th>Order</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="tbodyComplainants">
+
+                @if (Model.Complainants != null &&
+                     Model.Complainants.Count > 0)
+                {
+                    int index = 0;
+
+                    foreach (var item in Model.Complainants)
+                    {
+                        <tr>
+
+                            <td>
+                                <span class="complainantSerialNo">
+                                    @(index + 1)
+                                </span>
+                                <input type="hidden" name="Complainants[@index].CourtRoom_ID" value="@item.CourtRoom_ID" />
+                                <input type="hidden" name="Complainants[@index].CourtRoom_IndexID" value="@item.CourtRoom_IndexID" />
+                                <!-- ORIGINAL SEQUENCE - NEVER CHANGED -->
+                                <input type="hidden" name="Complainants[@index].CRAS_SeqOrder" value="@item.CRAS_SeqOrder" />
+                                <!-- APPLIED SEQUENCE - THIS CHANGES -->
+                                <input type="hidden" class="hdnComplainantAppliedSeqOrder" name="Complainants[@index].CRAS_Ref_Applied_SeqOrder" value="@(index + 1)" />
+                                <input type="hidden" name="Complainants[@index].Related_ComplaintID" value="@item.Related_ComplaintID" />
+                                <input type="hidden" name="Complainants[@index].Related_ComplaintCode" value="@item.Related_ComplaintCode" />
+                                <input type="hidden" name="Complainants[@index].Related_PrehearingDate_IndexID" value="@Model.Related_PrehearingDate_IndexID" />
+                                <input type="hidden" name="Complainants[@index].Related_PrehearingDate_ID" value="@Model.Related_PrehearingDate_ID" />
+                                <input type="hidden" name="Complainants[@index].ComplaintType_MN" value="@Model.ComplaintType_MN" />
+                                <input type="hidden" name="Complainants[@index].CRAS_Category" value="Complainant" />
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="Complainants[@index].CRAS_Name" value="@item.CRAS_Name" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="Complainants[@index].CRAS_ProxyCouncilRepresentative" value="@item.CRAS_ProxyCouncilRepresentative" placeholder="Enter Proxy Council Representative" />
+                            </td>
+                            @*<td>
+                                    <textarea class="form-control" name="Complainants[@index].CRAS_AdvocateName" rows="2" maxlength="250" placeholder="Enter Advocate Name">@item.CRAS_AdvocateName</textarea>
+                                </td>*@
+                            <td>
+                                <textarea class="form-control" name="Complainants[@index].CRAS_AdvocateName" rows="2" maxlength="250" placeholder="Enter Advocate Name"  style="resize: vertical; width:100%; box-sizing:border-box;">@item.CRAS_AdvocateName</textarea>
+
+                                <button type="button" class="btn btn-info btn-xs btnApplyAdvocateComplainant" style="margin-top:5px;" title="Apply this advocate to other rows">
+                                    <i class="fa fa-link"></i>
+                                </button>
+                            </td>
+
+                            <!-- ORDER ONLY -->
+                            <td class="text-center">
+                                <button type="button" class="btn btn-default btn-sm btnMoveUp" title="Move Up">
+                                    <i class="fa fa-arrow-up"></i>
+                                </button>
+
+                                <button type="button" class="btn btn-default btn-sm btnMoveDown" title="Move Down">
+                                    <i class="fa fa-arrow-down"></i>
+                                </button>
+                            </td>
+                            <!-- ADD ONLY -->
+                            <td class="text-center">
+                                @*<button type="button" class="btn btn-success btn-sm btnAddComplainant" title="Add Complainant">
+                                        <i class="fa fa-plus"></i>
+                                    </button>*@
+                                <button type="button" class="btn btn-danger btn-sm btnRemoveComplainant" title="Remove Complainant">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+            </tbody>
+        </table>
+        <div class="text-right" style="margin-top:10px;">
+
+            <button type="button" class="btn btn-success btn-sm btnAddComplainant">Add Complainant</button>
+
+            @if (isComplainantCourtRoomSaved)
+            {
+                <button type="button" id="btnSaveComplainants" class="btn btn-primary" style="margin-left:5px;">
+                    Update
+                </button>
+            }
+            else
+            {
+                <button type="button" id="btnSaveComplainants" class="btn btn-primary" style="margin-left:5px;">Save</button>
+            }
+
+        </div>
+    </form>
+
+</fieldset>
+
+<br />
+
+<fieldset>
+    <legend>Respondant(s)</legend>
+
+    <form id="frmECourtRoomRespondants">
+        <input type="hidden" name="IsUpdate" value="@(isRespondantCourtRoomSaved ? "true" : "false")" />
+        <input type="hidden" name="CRAS_Category" value="Respondant" />
+        @*@Html.HiddenFor(model => model.CourtRoom_IndexID)*@
+        @Html.HiddenFor(model => model.CourtRoom_ID)
+        @Html.HiddenFor(model => model.Related_ComplaintID)
+        @*@Html.HiddenFor(model => model.Related_ComplaintCode)*@
+        @Html.HiddenFor(model => model.Related_PrehearingDate_IndexID)
+        @Html.HiddenFor(model => model.Related_PrehearingDate_ID)
+        @Html.HiddenFor(model => model.ComplaintType_MN)
+
+        <table id="tblRespondants" class="table table-bordered table-striped table-hover">
+
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Respondant Name</th>
+                    <th>Proxy Council Representative</th>
+                    <th>Advocate Name</th>
+                    <th>Order</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="tbodyRespondants">
+
+                @if (Model.Respondents != null && Model.Respondents.Count > 0)
+                {
+                    int index = 0;
+                    foreach (var item in Model.Respondents)
+                    {
+                        <tr>
+                            <td>
+                                <span class="respondantSerialNo">
+                                    @(index + 1)
+                                </span>
+                                <input type="hidden" name="Respondents[@index].CourtRoom_ID" value="@item.CourtRoom_ID" />
+                                <input type="hidden" name="Respondents[@index].CourtRoom_IndexID" value="@item.CourtRoom_IndexID" />
+                                <!-- ORIGINAL SEQUENCE - NEVER CHANGED -->
+                                <input type="hidden" name="Respondents[@index].CRAS_SeqOrder" value="@item.CRAS_SeqOrder" />
+                                <!-- APPLIED SEQUENCE - THIS CHANGES -->
+                                <input type="hidden" class="hdnRespondantAppliedSeqOrder" name="Respondents[@index].CRAS_Ref_Applied_SeqOrder" value="@(index + 1)" />
+                                <input type="hidden" name="Respondents[@index].Related_ComplaintID" value="@item.Related_ComplaintID" />
+                                <input type="hidden" name="Respondents[@index].Related_ComplaintCode" value="@item.Related_ComplaintCode" />
+                                <input type="hidden" name="Respondents[@index].Related_PrehearingDate_IndexID" value="@Model.Related_PrehearingDate_IndexID" />
+                                <input type="hidden" name="Respondents[@index].Related_PrehearingDate_ID" value="@Model.Related_PrehearingDate_ID" />
+                                <input type="hidden" name="Respondents[@index].ComplaintType_MN" value="@Model.ComplaintType_MN" />
+                                <input type="hidden" name="Respondents[@index].CRAS_Category" value="Respondant" />
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="Respondents[@index].CRAS_Name" value="@item.CRAS_Name" />
+                            </td>
+
+                            <td>
+                                <input type="text" class="form-control" name="Respondents[@index].CRAS_ProxyCouncilRepresentative" value="@item.CRAS_ProxyCouncilRepresentative" placeholder="Enter Proxy Council Representative" />
+                            </td>
+
+                            @*<td>
+                                    <textarea class="form-control" name="Respondents[@index].CRAS_AdvocateName" rows="2" maxlength="250" placeholder="Enter Advocate Name">@item.CRAS_AdvocateName</textarea>
+                                </td>*@
+                            <td>
+                                <textarea class="form-control" name="Respondents[@index].CRAS_AdvocateName" rows="2" maxlength="250" placeholder="Enter Advocate Name"  style="resize: vertical; width:100%; box-sizing:border-box;">@item.CRAS_AdvocateName</textarea>
+
+                                <button type="button" class="btn btn-info btn-xs btnApplyAdvocateRespondant" style="margin-top:5px;" title="Apply this advocate to other rows">
+                                    <i class="fa fa-link"></i>
+                                </button>
+                            </td>
+
+                            <!-- ORDER ONLY -->
+                            <td class="text-center">
+
+                                <button type="button" class="btn btn-default btn-sm btnMoveUp" title="Move Up">
+                                    <i class="fa fa-arrow-up"></i>
+                                </button>
+
+                                <button type="button" class="btn btn-default btn-sm btnMoveDown" title="Move Down">
+                                    <i class="fa fa-arrow-down"></i>
+                                </button>
+                            </td>
+
+                            <!-- ADD ONLY -->
+                            <td class="text-center">
+                                @*<button type="button" class="btn btn-success btn-sm btnAddRespondant" title="Add Respondant">
+                                        <i class="fa fa-plus"></i>
+                                    </button>*@
+                                <button type="button" class="btn btn-danger btn-sm btnRemoveRespondant" title="Remove Respondant">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+            </tbody>
+        </table>
+        <div class="text-right" style="margin-top:10px;">
+
+            <button type="button" class="btn btn-success btn-sm btnAddRespondant">Add Respondant</button>
+
+            @if (isRespondantCourtRoomSaved)
+            {
+                <button type="button" id="btnSaveRespondants" class="btn btn-primary" style="margin-left:5px;">Update</button>
+            }
+            else
+            {
+                <button type="button" id="btnSaveRespondants" class="btn btn-primary" style="margin-left:5px;">Save</button>
+            }
+
+        </div>
+    </form>
+</fieldset>

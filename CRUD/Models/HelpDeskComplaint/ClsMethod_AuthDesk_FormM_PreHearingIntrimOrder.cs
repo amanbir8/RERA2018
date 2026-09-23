@@ -6,6 +6,8 @@ using MySql.Data.MySqlClient;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Data;
+using static CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom;
+using Microsoft.AspNet.Identity;
 
 namespace CRUD.Models.HelpdeskComplaint
 {
@@ -219,7 +221,7 @@ namespace CRUD.Models.HelpdeskComplaint
             }
             return new Tuple<Int64, Int64, Int64, Int64>(sumTotalVal, cntTotalVal, sumRelatedHearingDateVal, cntRelatedHearingDateVal);
         }
-        
+
         public bool Delete_ComplaintFormM_IntrimOrder(Int64? oInterimOrder_IndexID, Int64? oInterimOrder_ID, Int64? oFormM_ID, Int64? oHearingFormM_ID)
         {
             connection();
@@ -240,6 +242,500 @@ namespace CRUD.Models.HelpdeskComplaint
             else
                 return false;
         }
+
+
+
+        //public List<ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom> Display_ComplaintFormM_CourtRoom_ByComplaintFormM_ID(Int64? ComplaintFormM_ID)
+        //{
+        //    connection();
+        //    List<ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom> ComplaintFormM_Documents = new List<ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom>();
+
+        //    MySqlCommand cmd = new MySqlCommand("Display_Rera_CourtRoom_FormM_ByComplaintM_ID", con);
+        //    cmd.CommandType = CommandType.StoredProcedure;
+        //    cmd.Parameters.AddWithValue("p_ComplaintFormM_ID", ComplaintFormM_ID);
+        //    MySqlDataAdapter sd = new MySqlDataAdapter(cmd);
+        //    DataTable dt = new DataTable();
+
+        //    con.Open();
+        //    sd.Fill(dt);
+        //    con.Close();
+
+        //    foreach (DataRow dr in dt.Rows)
+        //    {
+        //        ComplaintFormM_Documents.Add(
+        //            new ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom
+        //            {
+        //                CourtRoom_IndexID = Convert.ToInt64(dr["CourtRoom_IndexID"]),
+        //                CourtRoom_ID = Convert.ToInt64(dr["CourtRoom_ID"]),
+
+        //                Related_ComplaintID = Convert.ToInt64(dr["Related_ComplaintID"]),
+        //                Related_ComplaintCode = Convert.ToString(dr["Related_ComplaintCode"]),
+        //                Related_PrehearingDate_IndexID = Convert.ToInt64(dr["Related_PrehearingDate_IndexID"]),
+        //                Related_PrehearingDate_ID = Convert.ToInt64(dr["Related_PrehearingDate_ID"]),
+
+        //                ComplaintType_MN = Convert.ToString(dr["ComplaintType_MN"]),
+        //                ComplaintType_TransferYN = Convert.ToString(dr["ComplaintType_TransferYN"]),
+        //                ComplaintType_BifurcationYN = Convert.ToString(dr["ComplaintType_BifurcationYN"]),
+
+        //                eRoom_AppliedDate = Convert.ToDateTime(dr["eRoom_AppliedDate"]),
+
+        //                CRAS_Name = Convert.ToString(dr["CRAS_Name"]),
+        //                CRAS_Category = Convert.ToString(dr["CRAS_Category"]),
+        //                CRAS_Attendance_YN = Convert.ToString(dr["CRAS_Attendance_YN"]),
+        //                CRAS_SeqOrder = Convert.ToInt32(dr["CRAS_SeqOrder"]),
+        //                CRAS_Ref_Applied_SeqOrder = Convert.ToInt32(dr["CRAS_Ref_Applied_SeqOrder"]),
+        //                CRAS_ProxyCouncilRepresentative = Convert.ToString(dr["CRAS_ProxyCouncilRepresentative"]),
+        //                CRAS_Advocate_Flag = Convert.ToInt32(dr["CRAS_Advocate_Flag"]),
+        //                CRAS_AdvocateName = Convert.ToString(dr["CRAS_AdvocateName"]),
+        //                CRAS_Advocate_MTO = Convert.ToInt32(dr["CRAS_Advocate_MTO"]),
+
+        //                A_column = Convert.ToString(dr["A_column"]),
+        //                B_column = Convert.ToString(dr["B_column"]),
+        //                C_column = Convert.ToString(dr["C_column"]),
+        //                D_column = Convert.ToString(dr["D_column"]),
+        //                IsActive = Convert.ToInt32(dr["IsActive"]),
+        //                IsDraft = Convert.ToInt32(dr["IsDraft"]),
+        //                IsLock = Convert.ToInt32(dr["IsLock"]),
+        //                IsPublicView = Convert.ToInt32(dr["IsPublicView"]),
+        //                CreatedBy = Convert.ToString(dr["CreatedBy"]),
+        //                CreatedOn = Convert.ToDateTime(dr["CreatedOn"]),
+        //                ModifyBy = Convert.ToString(dr["ModifyBy"]),
+        //                ModifyOn = Convert.ToDateTime(dr["ModifyOn"])
+        //            });
+        //    }
+        //    return ComplaintFormM_Documents;
+        //}
+
+        public ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom Display_ComplaintFormM_CourtRoom_ByComplaintFormM_ID(Int64? ComplaintFormM_ID)
+        {
+            connection();
+
+            ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom ComplaintFormM_CourtRoom = new ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom();
+
+            ComplaintFormM_CourtRoom.Complainants = new List<ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom>();
+            ComplaintFormM_CourtRoom.Respondents = new List<ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom>();
+
+            MySqlCommand cmd = new MySqlCommand("Display_Rera_CourtRoom_FormM_ByComplaintM_ID", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("p_ComplaintFormM_ID", ComplaintFormM_ID);
+
+            MySqlDataAdapter sd = new MySqlDataAdapter(cmd);
+            DataSet ds = new DataSet();
+            con.Open();
+            sd.Fill(ds);
+            con.Close();
+            if (ds.Tables.Count > 0)
+            {
+                DataTable dtComplainants = ds.Tables[0];
+
+                foreach (DataRow dr in dtComplainants.Rows)
+                {
+                    ComplaintFormM_CourtRoom.Complainants.Add(
+                        new ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom
+                        {
+                            Related_ComplaintID = Convert.ToInt64(dr["ComplaintFormM_ID"]),
+                            Related_ComplaintCode = Convert.ToString(dr["ComplaintFormM_Code"]),
+                            CRAS_Name = Convert.ToString(dr["Complainant_Name"]),
+                            CRAS_SeqOrder = Convert.ToInt32(dr["CRAS_SeqOrder"]),
+                            CRAS_Category = Convert.ToString(dr["PersonType"])
+                        }
+                    );
+                }
+            }
+
+            if (ds.Tables.Count > 1)
+            {
+                DataTable dtRespondents = ds.Tables[1];
+                foreach (DataRow dr in dtRespondents.Rows)
+                {
+                    ComplaintFormM_CourtRoom.Respondents.Add(
+                        new ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom
+                        {
+                            Related_ComplaintID = Convert.ToInt64(dr["ComplaintFormM_ID"]),
+                            Related_ComplaintCode = Convert.ToString(dr["ComplaintFormM_Code"]),
+                            CRAS_Name = Convert.ToString(dr["Respondent_Name"]),
+                            CRAS_SeqOrder = Convert.ToInt32(dr["CRAS_SeqOrder"]),
+                            CRAS_Category = Convert.ToString(dr["PersonType"])
+                        }
+                    );
+                }
+            }
+
+
+            return ComplaintFormM_CourtRoom;
+        }
+
+        public void SaveECourtRoom(ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom model)
+        {
+            connection();
+
+            try
+            {
+                // Save Complainants
+                if (model.Complainants != null && model.Complainants.Count > 0)
+                {
+                    foreach (var item in model.Complainants)
+                    {
+                        MySqlCommand cmd = new MySqlCommand("usp_Insert_Rera_CourtRoom_FormM", con);
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("p_Related_ComplaintID", model.Related_ComplaintID);
+                        cmd.Parameters.AddWithValue("p_Related_ComplaintCode", item.Related_ComplaintCode);
+                        cmd.Parameters.AddWithValue("p_Related_PrehearingDate_IndexID", model.Related_PrehearingDate_IndexID);
+                        cmd.Parameters.AddWithValue("p_Related_PrehearingDate_ID", model.Related_PrehearingDate_ID);
+                        cmd.Parameters.AddWithValue("p_ComplaintType_MN", model.ComplaintType_MN);
+
+                        cmd.Parameters.AddWithValue("p_CRAS_Name", item.CRAS_Name);
+                        cmd.Parameters.AddWithValue("p_CRAS_Category", "Complainant");
+                        cmd.Parameters.AddWithValue("p_CRAS_SeqOrder", item.CRAS_SeqOrder);
+                        cmd.Parameters.AddWithValue("p_CRAS_ProxyCouncilRepresentative", item.CRAS_ProxyCouncilRepresentative);
+                        cmd.Parameters.AddWithValue("p_CRAS_AdvocateName", item.CRAS_AdvocateName);
+
+                        cmd.Parameters.AddWithValue("p_eRoom_AppliedDate", item.eRoom_AppliedDate == DateTime.MinValue ? DateTime.Now : item.eRoom_AppliedDate);
+                        cmd.Parameters.AddWithValue("p_CRAS_Attendance_YN", string.IsNullOrEmpty(item.CRAS_Attendance_YN) ? "" : item.CRAS_Attendance_YN);
+                        cmd.Parameters.AddWithValue("p_CRAS_Ref_Applied_SeqOrder", item.CRAS_Ref_Applied_SeqOrder);
+                        cmd.Parameters.AddWithValue("p_CRAS_Advocate_Flag", item.CRAS_Advocate_Flag);
+                        cmd.Parameters.AddWithValue("p_CRAS_Advocate_MTO", item.CRAS_Advocate_MTO);
+
+                        cmd.Parameters.AddWithValue("p_A_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_B_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_C_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_D_column", string.Empty);
+
+                        cmd.Parameters.AddWithValue("p_IsActive", 1);
+                        cmd.Parameters.AddWithValue("p_IsDraft", 0);
+                        cmd.Parameters.AddWithValue("p_IsLock", 0);
+                        cmd.Parameters.AddWithValue("p_IsPublicView", 1);
+
+                        cmd.Parameters.AddWithValue("p_CreatedBy", model.CreatedBy);
+                        cmd.Parameters.AddWithValue("p_CreatedOn", DateTime.Now);
+                        cmd.Parameters.AddWithValue("p_ModifyBy", model.ModifyBy);
+                        cmd.Parameters.AddWithValue("p_ModifyOn", DateTime.Now);
+
+                        if (con.State != ConnectionState.Open)
+                            con.Open();
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                // Save Respondants
+                if (model.Respondents != null && model.Respondents.Count > 0)
+                {
+                    foreach (var item in model.Respondents)
+                    {
+                        MySqlCommand cmd = new MySqlCommand(
+                            "usp_Insert_Rera_CourtRoom_FormM",
+                            con);
+
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("p_Related_ComplaintID", model.Related_ComplaintID);
+                        cmd.Parameters.AddWithValue("p_Related_ComplaintCode", item.Related_ComplaintCode);
+                        cmd.Parameters.AddWithValue("p_Related_PrehearingDate_IndexID", model.Related_PrehearingDate_IndexID);
+                        cmd.Parameters.AddWithValue("p_Related_PrehearingDate_ID", model.Related_PrehearingDate_ID);
+                        cmd.Parameters.AddWithValue("p_ComplaintType_MN", model.ComplaintType_MN);
+
+                        cmd.Parameters.AddWithValue("p_CRAS_Name", item.CRAS_Name);
+                        cmd.Parameters.AddWithValue("p_CRAS_Category", "Respondant");
+                        cmd.Parameters.AddWithValue("p_CRAS_SeqOrder", item.CRAS_SeqOrder);
+                        cmd.Parameters.AddWithValue("p_CRAS_ProxyCouncilRepresentative", item.CRAS_ProxyCouncilRepresentative);
+                        cmd.Parameters.AddWithValue("p_CRAS_AdvocateName", item.CRAS_AdvocateName);
+
+                        cmd.Parameters.AddWithValue("p_eRoom_AppliedDate", item.eRoom_AppliedDate == DateTime.MinValue ? DateTime.Now : item.eRoom_AppliedDate);
+                        cmd.Parameters.AddWithValue("p_CRAS_Attendance_YN", string.IsNullOrEmpty(item.CRAS_Attendance_YN) ? "" : item.CRAS_Attendance_YN);
+                        cmd.Parameters.AddWithValue("p_CRAS_Ref_Applied_SeqOrder", item.CRAS_Ref_Applied_SeqOrder);
+                        cmd.Parameters.AddWithValue("p_CRAS_Advocate_Flag", item.CRAS_Advocate_Flag);
+                        cmd.Parameters.AddWithValue("p_CRAS_Advocate_MTO", item.CRAS_Advocate_MTO);
+
+                        cmd.Parameters.AddWithValue("p_A_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_B_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_C_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_D_column", string.Empty);
+
+                        cmd.Parameters.AddWithValue("p_IsActive", 1);
+                        cmd.Parameters.AddWithValue("p_IsDraft", 0);
+                        cmd.Parameters.AddWithValue("p_IsLock", 0);
+                        cmd.Parameters.AddWithValue("p_IsPublicView", 1);
+
+                        cmd.Parameters.AddWithValue("p_CreatedBy", model.CreatedBy);
+                        cmd.Parameters.AddWithValue("p_CreatedOn", DateTime.Now);
+                        cmd.Parameters.AddWithValue("p_ModifyBy", model.ModifyBy);
+                        cmd.Parameters.AddWithValue("p_ModifyOn", DateTime.Now);
+
+                        if (con.State != ConnectionState.Open)
+                            con.Open();
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void UpdateECourtRoom(ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom model)
+        {
+            connection();
+
+            try
+            {
+                // =====================================================
+                // Save Complainants
+                // =====================================================
+
+                if (model.Complainants != null && model.Complainants.Count > 0)
+                {
+                    MySqlCommand deactivateCmd = new MySqlCommand("usp_Deactivate_Rera_CourtRoom_FormM", con);
+                    deactivateCmd.CommandType = CommandType.StoredProcedure;
+
+                    deactivateCmd.Parameters.AddWithValue("p_CourtRoom_ID", model.CourtRoom_ID);
+                    deactivateCmd.Parameters.AddWithValue("p_Related_ComplaintID", model.Related_ComplaintID);
+                    deactivateCmd.Parameters.AddWithValue("p_Related_PrehearingDate_IndexID",model.Related_PrehearingDate_IndexID);
+                    deactivateCmd.Parameters.AddWithValue("p_Related_PrehearingDate_ID",model.Related_PrehearingDate_ID);
+                    deactivateCmd.Parameters.AddWithValue("p_ComplaintType_MN", model.ComplaintType_MN);
+                    deactivateCmd.Parameters.AddWithValue("p_CRAS_Category", "Complainant");
+                    if (con.State != ConnectionState.Open)
+                        con.Open();
+                    deactivateCmd.ExecuteNonQuery();
+
+                    foreach (var item in model.Complainants)
+                    {
+                        MySqlCommand cmd = new MySqlCommand("usp_Update_Rera_CourtRoom_FormM", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("p_CourtRoom_IndexID", item.CourtRoom_IndexID);
+                        cmd.Parameters.AddWithValue("p_CourtRoom_ID", model.CourtRoom_ID);
+                        cmd.Parameters.AddWithValue("p_Related_ComplaintID", model.Related_ComplaintID);
+                        cmd.Parameters.AddWithValue("p_Related_ComplaintCode", item.Related_ComplaintCode);
+                        cmd.Parameters.AddWithValue("p_Related_PrehearingDate_IndexID", model.Related_PrehearingDate_IndexID);
+                        cmd.Parameters.AddWithValue("p_Related_PrehearingDate_ID", model.Related_PrehearingDate_ID);
+                        cmd.Parameters.AddWithValue("p_ComplaintType_MN", model.ComplaintType_MN);
+                        cmd.Parameters.AddWithValue("p_CRAS_Name", item.CRAS_Name);
+                        cmd.Parameters.AddWithValue("p_CRAS_Category", "Complainant");
+                        cmd.Parameters.AddWithValue("p_CRAS_SeqOrder", item.CRAS_SeqOrder);
+                        cmd.Parameters.AddWithValue("p_CRAS_ProxyCouncilRepresentative", item.CRAS_ProxyCouncilRepresentative);
+                        cmd.Parameters.AddWithValue("p_CRAS_AdvocateName", item.CRAS_AdvocateName);
+                        cmd.Parameters.AddWithValue("p_eRoom_AppliedDate", item.eRoom_AppliedDate == DateTime.MinValue ? DateTime.Now : item.eRoom_AppliedDate);
+                        cmd.Parameters.AddWithValue("p_CRAS_Attendance_YN", string.IsNullOrEmpty(item.CRAS_Attendance_YN) ? "" : item.CRAS_Attendance_YN);
+                        cmd.Parameters.AddWithValue("p_CRAS_Ref_Applied_SeqOrder", item.CRAS_Ref_Applied_SeqOrder);
+                        cmd.Parameters.AddWithValue("p_CRAS_Advocate_Flag", item.CRAS_Advocate_Flag);
+                        cmd.Parameters.AddWithValue("p_CRAS_Advocate_MTO", item.CRAS_Advocate_MTO);
+                        cmd.Parameters.AddWithValue("p_A_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_B_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_C_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_D_column",string.Empty);
+                        //cmd.Parameters.AddWithValue("p_IsActive",1);
+                        //cmd.Parameters.AddWithValue("p_IsDraft",0);
+                        //cmd.Parameters.AddWithValue("p_IsLock",0);
+                        //cmd.Parameters.AddWithValue("p_IsPublicView",1);
+                        cmd.Parameters.AddWithValue("p_CreatedBy", model.CreatedBy);
+                        cmd.Parameters.AddWithValue("p_CreatedOn", DateTime.Now);
+                        cmd.Parameters.AddWithValue("p_ModifyBy", model.ModifyBy);
+                        cmd.Parameters.AddWithValue("p_ModifyOn", DateTime.Now);
+                        if (con.State != ConnectionState.Open)
+                            con.Open();
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+
+                // =====================================================
+                // Save Respondants
+                // =====================================================
+
+                if (model.Respondents != null && model.Respondents.Count > 0)
+                {
+                    MySqlCommand deactivateCmd = new MySqlCommand("usp_Deactivate_Rera_CourtRoom_FormM", con);
+                    deactivateCmd.CommandType = CommandType.StoredProcedure;
+
+                    deactivateCmd.Parameters.AddWithValue("p_CourtRoom_ID", model.CourtRoom_ID);
+                    deactivateCmd.Parameters.AddWithValue("p_Related_ComplaintID", model.Related_ComplaintID);
+                    deactivateCmd.Parameters.AddWithValue("p_Related_PrehearingDate_IndexID", model.Related_PrehearingDate_IndexID);
+                    deactivateCmd.Parameters.AddWithValue("p_Related_PrehearingDate_ID", model.Related_PrehearingDate_ID);
+                    deactivateCmd.Parameters.AddWithValue("p_ComplaintType_MN", model.ComplaintType_MN);
+                    deactivateCmd.Parameters.AddWithValue("p_CRAS_Category", model.CRAS_Category);
+                    if (con.State != ConnectionState.Open)
+                        con.Open();
+                    deactivateCmd.ExecuteNonQuery();
+
+                    foreach (var item in model.Respondents)
+                    {
+                        MySqlCommand cmd = new MySqlCommand("usp_Update_Rera_CourtRoom_FormM", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("p_CourtRoom_IndexID", item.CourtRoom_IndexID);
+                        cmd.Parameters.AddWithValue("p_CourtRoom_ID", model.CourtRoom_ID);
+                        cmd.Parameters.AddWithValue("p_Related_ComplaintID", model.Related_ComplaintID);
+                        cmd.Parameters.AddWithValue("p_Related_ComplaintCode", item.Related_ComplaintCode);
+                        cmd.Parameters.AddWithValue("p_Related_PrehearingDate_IndexID", model.Related_PrehearingDate_IndexID);
+                        cmd.Parameters.AddWithValue("p_Related_PrehearingDate_ID", model.Related_PrehearingDate_ID);
+                        cmd.Parameters.AddWithValue("p_ComplaintType_MN", model.ComplaintType_MN);
+                        cmd.Parameters.AddWithValue("p_CRAS_Name", item.CRAS_Name);
+                        cmd.Parameters.AddWithValue("p_CRAS_Category", "Respondant");
+                        cmd.Parameters.AddWithValue("p_CRAS_SeqOrder", item.CRAS_SeqOrder);
+                        cmd.Parameters.AddWithValue("p_CRAS_ProxyCouncilRepresentative", item.CRAS_ProxyCouncilRepresentative);
+                        cmd.Parameters.AddWithValue("p_CRAS_AdvocateName", item.CRAS_AdvocateName);
+                        cmd.Parameters.AddWithValue("p_eRoom_AppliedDate", item.eRoom_AppliedDate == DateTime.MinValue ? DateTime.Now : item.eRoom_AppliedDate);
+                        cmd.Parameters.AddWithValue("p_CRAS_Attendance_YN", string.IsNullOrEmpty(item.CRAS_Attendance_YN) ? "" : item.CRAS_Attendance_YN);
+                        cmd.Parameters.AddWithValue("p_CRAS_Ref_Applied_SeqOrder", item.CRAS_Ref_Applied_SeqOrder);
+                        cmd.Parameters.AddWithValue("p_CRAS_Advocate_Flag", item.CRAS_Advocate_Flag);
+                        cmd.Parameters.AddWithValue("p_CRAS_Advocate_MTO", item.CRAS_Advocate_MTO);
+                        cmd.Parameters.AddWithValue("p_A_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_B_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_C_column", string.Empty);
+                        cmd.Parameters.AddWithValue("p_D_column",string.Empty);
+                        //cmd.Parameters.AddWithValue("p_IsActive",1);
+                        //cmd.Parameters.AddWithValue("p_IsDraft",0);
+                        //cmd.Parameters.AddWithValue("p_IsLock",0);
+                        //cmd.Parameters.AddWithValue("p_IsPublicView",1);
+                        cmd.Parameters.AddWithValue("p_CreatedBy",model.CreatedBy);
+                        cmd.Parameters.AddWithValue("p_CreatedOn",DateTime.Now);
+                        cmd.Parameters.AddWithValue("p_ModifyBy",model.ModifyBy);
+                        cmd.Parameters.AddWithValue("p_ModifyOn",DateTime.Now);
+
+                        if (con.State != ConnectionState.Open)
+                            con.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+
+                throw ex;
+            }
+        }
+
+        public long GetCourtRoomID(long Related_ComplaintID,long Related_PrehearingDate_IndexID,long Related_PrehearingDate_ID,string ComplaintType_MN, string CRAS_Category)
+        {
+            connection();
+            MySqlCommand cmd = new MySqlCommand("GetCourtRoomId_ByRelated_PrehearingDate_IndexID", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("p_Related_ComplaintID",Related_ComplaintID);
+            cmd.Parameters.AddWithValue("p_Related_PrehearingDate_IndexID", Related_PrehearingDate_IndexID);
+            cmd.Parameters.AddWithValue("p_Related_PrehearingDate_ID", Related_PrehearingDate_ID);
+            cmd.Parameters.AddWithValue("p_ComplaintType_MN", ComplaintType_MN);
+            cmd.Parameters.AddWithValue("p_CRAS_Category", CRAS_Category);
+
+            if (con.State != ConnectionState.Open)
+                con.Open();
+
+            object result = cmd.ExecuteScalar();
+
+            return result == null || result == DBNull.Value? 0: Convert.ToInt64(result);
+        }
+
+
+        public ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom Display_ComplaintFormM_CourtRoom_Saved(Int64 ComplaintFormM_ID, Int64 PreHearingDate_IndexID, Int64 PreHearingDate_ID)
+        {
+            connection();
+            ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom model = new ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom();
+
+            try
+            {
+                model.Complainants = new List<ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom>();
+                model.Respondents = new List<ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom>();
+
+                MySqlCommand cmd = new MySqlCommand("Display_Rera_CourtRoom_FormM_Saved", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("p_ComplaintFormM_ID", ComplaintFormM_ID);
+                cmd.Parameters.AddWithValue("p_Related_PrehearingDate_IndexID", PreHearingDate_IndexID);
+                cmd.Parameters.AddWithValue("p_Related_PrehearingDate_ID", PreHearingDate_ID);
+
+                MySqlDataAdapter sd = new MySqlDataAdapter(cmd);
+                DataSet ds = new DataSet();
+
+                con.Open();
+                sd.Fill(ds);
+                con.Close();
+
+                if (ds.Tables.Count > 0)
+                {
+                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    {
+                        model.Complainants.Add(
+                            new ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom
+                            {
+                                CourtRoom_IndexID = Convert.ToInt64(dr["CourtRoom_IndexID"]),
+                                CourtRoom_ID = Convert.ToInt64(dr["CourtRoom_ID"]),
+                                Related_ComplaintID = Convert.ToInt64(dr["Related_ComplaintID"]),
+                                Related_ComplaintCode = Convert.ToString(dr["Related_ComplaintCode"]),
+                                Related_PrehearingDate_IndexID = Convert.ToInt64(dr["Related_PrehearingDate_IndexID"]),
+                                Related_PrehearingDate_ID = Convert.ToInt64(dr["Related_PrehearingDate_ID"]),
+                                ComplaintType_MN = Convert.ToString(dr["ComplaintType_MN"]),
+                                CRAS_Name = Convert.ToString(dr["CRAS_Name"]),
+                                CRAS_Category = Convert.ToString(dr["CRAS_Category"]),
+                                CRAS_Attendance_YN = Convert.ToString(dr["CRAS_Attendance_YN"]),
+                                CRAS_SeqOrder = Convert.ToInt32(dr["CRAS_SeqOrder"]),
+                                CRAS_Ref_Applied_SeqOrder = Convert.ToInt32(dr["CRAS_Ref_Applied_SeqOrder"]),
+                                CRAS_ProxyCouncilRepresentative = Convert.ToString(dr["CRAS_ProxyCouncilRepresentative"]),
+                                CRAS_Advocate_Flag = Convert.ToInt32(dr["CRAS_Advocate_Flag"]),
+                                CRAS_AdvocateName = Convert.ToString(dr["CRAS_AdvocateName"]),
+                                CRAS_Advocate_MTO = Convert.ToInt32(dr["CRAS_Advocate_MTO"]),
+                                eRoom_AppliedDate = Convert.ToDateTime(dr["eRoom_AppliedDate"]),
+                                IsActive = Convert.ToInt32(dr["IsActive"]),
+                                IsDraft = Convert.ToInt32(dr["IsDraft"]),
+                                IsLock = Convert.ToInt32(dr["IsLock"]),
+                                IsPublicView = Convert.ToInt32(dr["IsPublicView"])
+                            }
+                        );
+                    }
+                }
+
+                if (ds.Tables.Count > 1)
+                {
+                    foreach (DataRow dr in ds.Tables[1].Rows)
+                    {
+                        model.Respondents.Add(
+                            new ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom
+                            {
+                                CourtRoom_IndexID = Convert.ToInt64(dr["CourtRoom_IndexID"]),
+                                CourtRoom_ID = Convert.ToInt64(dr["CourtRoom_ID"]),
+                                Related_ComplaintID = Convert.ToInt64(dr["Related_ComplaintID"]),
+                                Related_ComplaintCode = Convert.ToString(dr["Related_ComplaintCode"]),
+                                Related_PrehearingDate_IndexID = Convert.ToInt64(dr["Related_PrehearingDate_IndexID"]),
+                                Related_PrehearingDate_ID = Convert.ToInt64(dr["Related_PrehearingDate_ID"]),
+                                ComplaintType_MN = Convert.ToString(dr["ComplaintType_MN"]),
+                                CRAS_Name = Convert.ToString(dr["CRAS_Name"]),
+                                CRAS_Category = Convert.ToString(dr["CRAS_Category"]),
+                                CRAS_Attendance_YN = Convert.ToString(dr["CRAS_Attendance_YN"]),
+                                CRAS_SeqOrder = Convert.ToInt32(dr["CRAS_SeqOrder"]),
+                                CRAS_Ref_Applied_SeqOrder = Convert.ToInt32(dr["CRAS_Ref_Applied_SeqOrder"]),
+                                CRAS_ProxyCouncilRepresentative = Convert.ToString(dr["CRAS_ProxyCouncilRepresentative"]),
+                                CRAS_Advocate_Flag = Convert.ToInt32(dr["CRAS_Advocate_Flag"]),
+                                CRAS_AdvocateName = Convert.ToString(dr["CRAS_AdvocateName"]),
+                                CRAS_Advocate_MTO = Convert.ToInt32(dr["CRAS_Advocate_MTO"]),
+                                eRoom_AppliedDate = Convert.ToDateTime(dr["eRoom_AppliedDate"]),
+                                IsActive = Convert.ToInt32(dr["IsActive"]),
+                                IsDraft = Convert.ToInt32(dr["IsDraft"]),
+                                IsLock = Convert.ToInt32(dr["IsLock"]),
+                                IsPublicView = Convert.ToInt32(dr["IsPublicView"])
+                            }
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                string strex = ex.ToString();
+            }
+            return model;
+
+        }
+
 
     }
 }

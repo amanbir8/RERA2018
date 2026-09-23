@@ -1693,7 +1693,16 @@ namespace CRUD.Controllers.Helpdesk
             {
                 workSheet.Cells[recordIndex, 1].Value = (recordIndex - 1).ToString();
                 workSheet.Cells[recordIndex, 2].Value = QRcodeItem.Project_DiaryNumber;
-                workSheet.Cells[recordIndex, 3].Value = QRcodeItem.Application_Date.HasValue ? QRcodeItem.Application_Date.Value.ToString("dd-MMM-yyyy") : string.Empty;
+                //workSheet.Cells[recordIndex, 3].Value = QRcodeItem.Application_Date.HasValue ? QRcodeItem.Application_Date.Value.ToString("dd-MMM-yyyy") : string.Empty;
+                if (QRcodeItem.Application_Date.HasValue)
+                {
+                    workSheet.Cells[recordIndex, 3].Value = QRcodeItem.Application_Date.Value;
+                    workSheet.Cells[recordIndex, 3].Style.Numberformat.Format = "dd-MMM-yyyy";
+                }
+                else
+                {
+                    workSheet.Cells[recordIndex, 3].Value = string.Empty;
+                }
                 workSheet.Cells[recordIndex, 4].Value = QRcodeItem.Project_Name;
                 workSheet.Cells[recordIndex, 5].Value = QRcodeItem.ProjectAddress_District;
                 workSheet.Cells[recordIndex, 6].Value = QRcodeItem.Project_RERAregistrationNumber;

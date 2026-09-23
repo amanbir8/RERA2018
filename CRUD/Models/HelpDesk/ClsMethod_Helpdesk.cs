@@ -377,7 +377,7 @@ namespace CRUD.Models.HelpDesk
                            Project_RegDiaryNumber_IndexID = Convert.ToInt64(dr["Project_RegDiaryNumber_IndexID"]),
                            Project_RegDiaryNumber_ID = Convert.ToInt64(dr["Project_RegDiaryNumber_ID"]),
                            PromoterRegDiaryNumber_Name = Convert.ToString(dr["PromoterRegDiaryNumber_Name"]),
-                           PromoterRegDiaryNumber_NameYear = Convert.ToString(dr["PromoterRegDiaryNumber_NameYear"]),
+                           PromoterRegDiaryNumber_NameYear = Convert.ToString(dr["PromoterRegDiaryNumber_NameYear"]), //ok
                            UserID = Convert.ToString(dr["UserID"]),
                            Promoter_ID = Convert.ToInt64(dr["Promoter_ID"]),
                            Project_ID = Convert.ToInt64(dr["Project_ID"]),
@@ -402,7 +402,7 @@ namespace CRUD.Models.HelpDesk
                            IsDraftSecMember = Convert.ToInt32(dr["IsDraftSecMember"]),
                            IsDraftMember = Convert.ToInt32(dr["IsDraftMember"]),
                            CreatedBy = Convert.ToString(dr["CreatedBy"]),
-                           CreatedOn = Convert.ToDateTime(dr["CreatedOn"]),
+                           CreatedOn = Convert.ToDateTime(dr["CreatedOn"]),//ok
                            ModifyBy = Convert.ToString(dr["ModifyBy"]),
                            ModifyOn = Convert.ToDateTime(dr["ModifyOn"]),
 

@@ -27,6 +27,7 @@ using System.Drawing;
 using CRUD.Models.HelpDeskComplaint;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
+using static CRUD.Models.HelpdeskComplaint.ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom;
 
 namespace CRUD.Controllers.HelpdeskComplaint
 {
@@ -7863,7 +7864,7 @@ namespace CRUD.Controllers.HelpdeskComplaint
         //    }, JsonRequestBehavior.AllowGet);
         //}
 
-       
+
         #endregion
 
         #region Display Form-Execution Complainant and Respondent
@@ -10330,7 +10331,7 @@ namespace CRUD.Controllers.HelpdeskComplaint
             ClsPrp_Master_Advocates aa = new ClsPrp_Master_Advocates();
             ClsMethodDistrictMaster objdis = new ClsMethodDistrictMaster();
             aa.stateMaster = objdis.State_list();
-            
+
             return Json(aa.stateMaster, JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
@@ -15580,6 +15581,187 @@ namespace CRUD.Controllers.HelpdeskComplaint
 
             return View("FormMInfoInterimOrderDetails", aa);
         }
+
+        //[HttpGet]
+        //public ActionResult FormMECourtRoomDetails(Int64? FormM_Id,Int64? PreHearingDate_IndexID,Int64? PreHearingDate_ID,Int64? ComplainantApplicant_RelatedComplaint_ID,string ComplainantApplicant_RelatedComplaint_Code,string ComplaintType_MN)
+        //{
+        //    ClsMethod_AuthDesk_FormM_PreHearingIntrimOrder sdb =new ClsMethod_AuthDesk_FormM_PreHearingIntrimOrder();
+
+        //    ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom aa =new ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom();
+
+        //    Int64 ComplaintFormMID =Convert.ToInt64(FormM_Id) == 0 ? 0 : Convert.ToInt64(FormM_Id);
+        //    Int64 PreHearingIndexID =Convert.ToInt64(PreHearingDate_IndexID);
+        //    Int64 PreHearingID =Convert.ToInt64(PreHearingDate_ID);
+
+        //    // First check saved CourtRoom data
+        //    aa = sdb.Display_ComplaintFormM_CourtRoom_Saved(ComplaintFormMID,PreHearingIndexID,PreHearingID);
+        //    if (aa.Complainants != null && aa.Complainants.Count > 0)
+        //    {
+        //        aa.CourtRoom_ID = aa.Complainants[0].CourtRoom_ID;
+        //    }
+        //    else if (aa.Respondents != null && aa.Respondents.Count > 0)
+        //    {
+        //        aa.CourtRoom_ID = aa.Respondents[0].CourtRoom_ID;
+        //    }
+        //    //bool isCourtRoomDataPresent =(aa.Complainants != null && aa.Complainants.Count > 0) || (aa.Respondents != null && aa.Respondents.Count > 0);
+        //    TempData["IsComplainantCourtRoomSaved"] =aa.Complainants != null && aa.Complainants.Count > 0;
+
+        //    TempData["IsRespondantCourtRoomSaved"] = aa.Respondents != null && aa.Respondents.Count > 0;
+
+        //    // If no CourtRoom data exists, use existing source data
+        //    if ((aa.Complainants == null || aa.Complainants.Count == 0) && (aa.Respondents == null || aa.Respondents.Count == 0))
+        //    {
+        //        aa = sdb.Display_ComplaintFormM_CourtRoom_ByComplaintFormM_ID(ComplaintFormMID);
+        //    }
+
+        //    // If no CourtRoom data exists, fetch existing source data
+        //    //if (!isCourtRoomDataPresent)
+        //    //{
+        //    //    aa = sdb.Display_ComplaintFormM_CourtRoom_ByComplaintFormM_ID(ComplaintFormMID);
+        //    //}
+
+        //    // Set modal-level values
+        //    aa.Related_PrehearingDate_IndexID = PreHearingIndexID;
+        //    aa.Related_PrehearingDate_ID = PreHearingID;
+        //    aa.Related_ComplaintID = ComplaintFormMID;
+        //    aa.ComplaintType_MN = ComplaintType_MN;
+
+        //    return PartialView("FormMECourtRoomDetails", aa);
+        //}
+        [HttpGet]
+        public ActionResult FormMECourtRoomDetails(Int64? FormM_Id,Int64? PreHearingDate_IndexID,Int64? PreHearingDate_ID,Int64? ComplainantApplicant_RelatedComplaint_ID,string ComplainantApplicant_RelatedComplaint_Code,string ComplaintType_MN)
+        {
+            ClsMethod_AuthDesk_FormM_PreHearingIntrimOrder sdb =new ClsMethod_AuthDesk_FormM_PreHearingIntrimOrder();
+            ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom aa =new ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom();
+
+            Int64 ComplaintFormMID =Convert.ToInt64(FormM_Id) == 0? 0: Convert.ToInt64(FormM_Id);
+
+            Int64 PreHearingIndexID =Convert.ToInt64(PreHearingDate_IndexID);
+
+            Int64 PreHearingID =Convert.ToInt64(PreHearingDate_ID);
+
+
+            aa = sdb.Display_ComplaintFormM_CourtRoom_Saved(ComplaintFormMID,PreHearingIndexID,PreHearingID);
+
+            bool hasSavedComplainants = aa.Complainants != null && aa.Complainants.Count > 0;
+            bool hasSavedRespondents = aa.Respondents != null && aa.Respondents.Count > 0;
+
+
+            if (hasSavedComplainants)
+            {
+                aa.CourtRoom_ID = aa.Complainants[0].CourtRoom_ID;
+            }
+            else if (hasSavedRespondents)
+            {
+                aa.CourtRoom_ID =aa.Respondents[0].CourtRoom_ID;
+            }
+
+
+            TempData["IsComplainantCourtRoomSaved"] =hasSavedComplainants;
+
+            TempData["IsRespondantCourtRoomSaved"] =hasSavedRespondents;
+
+            if (!hasSavedComplainants || !hasSavedRespondents)
+            {
+                ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom sourceData =sdb.Display_ComplaintFormM_CourtRoom_ByComplaintFormM_ID(ComplaintFormMID);
+
+                if (!hasSavedComplainants)
+                {
+                    aa.Complainants =sourceData.Complainants;
+                }
+
+                if (!hasSavedRespondents)
+                {
+                    aa.Respondents =sourceData.Respondents;
+                }
+            }
+
+            aa.Related_PrehearingDate_IndexID =PreHearingIndexID;
+            aa.Related_PrehearingDate_ID =PreHearingID;
+            aa.Related_ComplaintID =ComplaintFormMID;
+            aa.ComplaintType_MN =ComplaintType_MN;
+
+            return PartialView("FormMECourtRoomDetails",aa);
+        }
+        [HttpPost]
+        public ActionResult SaveECourtRoom(ClsPrp_AuthDesk_FormM_PreHearing_CourtRoom model)
+        {
+            ClsMethod_AuthDesk_FormM_PreHearingIntrimOrder sdb = new ClsMethod_AuthDesk_FormM_PreHearingIntrimOrder();
+
+            var UserName = string.Empty;
+            UserName=User.Identity.Name;
+            model.CreatedBy = UserName;
+            model.ModifyBy = UserName;
+
+
+            if (model.Complainants != null && model.Complainants.Count > 0)
+            {
+                foreach (var item in model.Complainants)
+                {
+                    item.CRAS_Advocate_MTO = 0;
+
+                    if (!string.IsNullOrWhiteSpace(item.CRAS_AdvocateName))
+                    {
+                        var advocates = item.CRAS_AdvocateName
+                            .Split(
+                                new[] { ',' },
+                                StringSplitOptions.RemoveEmptyEntries)
+                            .Select(x => x.Trim())
+                            .Where(x => !string.IsNullOrWhiteSpace(x))
+                            .ToList();
+
+                        if (advocates.Count > 1)
+                        {
+                            item.CRAS_Advocate_MTO = 1;
+                        }
+                    }
+                }
+            }
+
+            if (model.Respondents != null && model.Respondents.Count > 0)
+            {
+                foreach (var item in model.Respondents)
+                {
+                    item.CRAS_Advocate_MTO = 0;
+
+                    if (!string.IsNullOrWhiteSpace(item.CRAS_AdvocateName))
+                    {
+                        var advocates = item.CRAS_AdvocateName
+                            .Split(
+                                new[] { ',' },
+                                StringSplitOptions.RemoveEmptyEntries)
+                            .Select(x => x.Trim())
+                            .Where(x => !string.IsNullOrWhiteSpace(x))
+                            .ToList();
+
+                        if (advocates.Count > 1)
+                        {
+                            item.CRAS_Advocate_MTO = 1;
+                        }
+                    }
+                }
+            }
+
+            if (model.IsUpdate)
+            {
+                sdb.UpdateECourtRoom(model);
+            }
+            else
+            {
+                sdb.SaveECourtRoom(model);
+            }
+
+            if (model.CourtRoom_ID == 0)
+            {
+                model.CourtRoom_ID = sdb.GetCourtRoomID(model.Related_ComplaintID, model.Related_PrehearingDate_IndexID, model.Related_PrehearingDate_ID, model.ComplaintType_MN, model.CRAS_Category);
+            }
+
+            //sdb.SaveECourtRoom(model);
+
+            return Json(new { success = true,
+                CourtRoom_ID = model.CourtRoom_ID
+            });
+        }
         #endregion
 
         #region Form-M Order & Judgements
@@ -18769,9 +18951,9 @@ namespace CRUD.Controllers.HelpdeskComplaint
                 foreach (var item in aa.prpongoingNotice)
                 {
                     aa.ExecutionForm_IndexId = item.ExecutionForm_IndexId;
-                    aa.ExecutionForm_ID= item.ExecutionForm_ID;
-                    aa.ExecutionForm_Code= item.ExecutionForm_Code;
-                    aa.Complaint_Number= item.Complaint_Number;
+                    aa.ExecutionForm_ID = item.ExecutionForm_ID;
+                    aa.ExecutionForm_Code = item.ExecutionForm_Code;
+                    aa.Complaint_Number = item.Complaint_Number;
 
                     aa.Complainant_Name = (item.Complainant_Name).ToUpper();
                     aa.ComplainantOther_Name = item.ComplainantOther_Name;

@@ -115,7 +115,7 @@ E:\COPY Project 2018\RERA2018 project\CRUD\bin\tr-TR\Hangfire.Core.resources.dll
 E:\COPY Project 2018\RERA2018 project\CRUD\bin\zh\Hangfire.Core.resources.dll
 E:\COPY Project 2018\RERA2018 project\CRUD\bin\zh-TW\Hangfire.Core.resources.dll
 E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.csproj.CoreCompileInputs.cache
+E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.csproj.CopyComplete
 E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.dll
 E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.pdb
 E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.csprojAssemblyReference.cache
-E:\COPY Project 2018\RERA2018 project\CRUD\obj\Debug\CRUD.csproj.CopyComplete
